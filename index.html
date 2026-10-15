@@ -1106,6 +1106,15 @@ function featCost(f, s, cloth) {
   if (s.prior) d += 0.3; else d += (s.walk ? 0.2 : 0.8) * Math.abs((s.cl || 0) - cloth.v);
   return d;
 }
+// How badly one ball matches each number (lower is better): the best of the recognizer's answer, the built-in colour
+// guesses (a little less trusted) and the looks learned on this table. Tested on every saved session, judged on sessions
+// it never learned from: never worse than either alone. Also used to keep re-checking names while the balls sit still.
+function idCost(b, open, samples, cloth, recPen) {
+  const best = {}, learned = {}, prior = {}; if (recPen == null) recPen = 0.15;
+  if (b.feat) for (const sm of samples) { if (!open.includes(sm.id)) continue; const c = featCost(b.feat, sm, cloth); if (best[sm.id] === undefined || c < best[sm.id]) best[sm.id] = c; const t = sm.prior ? prior : learned; if (t[sm.id] === undefined || c < t[sm.id]) t[sm.id] = c; }
+  if (b.rec) for (const id of open) { if (id > 9) continue; const rc = -0.7 * Math.log(Math.max(1e-4, b.rec[id])) + (Array.isArray(recPen) ? recPen[id] : recPen); best[id] = Math.min(rc, prior[id] !== undefined ? prior[id] + 0.4 : 9, learned[id] !== undefined ? learned[id] : 9); }
+  return best;
+}
 // Give numbers to balls so that the total mismatch is lowest (best overall pairing, each number once). A ball whose best
 // fit is still poor (cost above 2.1) stays unnamed. Balls already locked to a number keep it.
 // opts.recPen: how much less the recognizer is trusted than this table's own learned looks (more for an away table)
@@ -1117,12 +1126,7 @@ function assignIds(balls, candIds, samples, cloth, opts) {
   if (!free.length) return balls;
   const n = free.length, m = open.length, N = n + m, C = [];
   for (let r = 0; r < n; r++) {
-    const b = balls[free[r]], best = {};
-    const learned = {}, prior = {};
-    for (const sm of samples) { if (!open.includes(sm.id)) continue; const c = featCost(b.feat, sm, cloth); if (best[sm.id] === undefined || c < best[sm.id]) best[sm.id] = c; const t = sm.prior ? prior : learned; if (t[sm.id] === undefined || c < t[sm.id]) t[sm.id] = c; }
-    // With the recognizer: the best of its answer, the built-in colour guesses (a little less trusted) and the looks learned
-    // on this table. Tested on every saved session, judged on sessions it never learned from: never worse than either alone.
-    if (b.rec) for (const id of open) { if (id > 9) continue; const rc = -0.7 * Math.log(Math.max(1e-4, b.rec[id])) + (Array.isArray(recPen) ? recPen[id] : recPen); best[id] = Math.min(rc, prior[id] !== undefined ? prior[id] + 0.4 : 9, learned[id] !== undefined ? learned[id] : 9); }
+    const b = balls[free[r]], best = idCost(b, open, samples, cloth, recPen);
     const row = []; for (let c = 0; c < m; c++) { const v = best[open[c]]; row.push(v === undefined || v > LIM ? 1e3 : v); }
     for (let c = 0; c < n; c++) row.push(c === r ? LIM : 1e6); // "leave this ball unnamed" option
     C.push(row);
@@ -1553,10 +1557,10 @@ const S = {
 };
 // Home / Away (V2.3): the player's own table and balls, and every other table. Each keeps its own table size, last
 // outline, camera zoom and learned ball looks, so what is learned at a pool hall never changes how the home balls are read.
-function profSnap() { return { ft: S.ft, ftSet: S.ftSet, quadN: S.quad && S.W && S.vr ? S.quad.map(vnFromSrc) : S.quadN, samples: S.samples.filter(x => x.walk).concat(S.samples.filter(x => !x.walk).slice(-260)), camZoom: S.camZoomSaved || null }; }
+function profSnap() { return { ft: S.ft, ftSet: S.ftSet, quadN: S.quad && S.W && S.vr ? S.quad.map(vnFromSrc) : S.quadN, samples: S.samples.filter(x => x.walk).concat(S.samples.filter(x => !x.walk).slice(-260)) }; }
 function profApply(p) {
   const d = (S.profiles && S.profiles[p]) || {}; S.prof = p;
-  S.ft = d.ft || (p === 'away' ? 9 : S.ft || 7); S.ftSet = !!d.ftSet; S.quadN = d.quadN || null; S.samples = d.samples || []; S.camZoomSaved = d.camZoom || null;
+  S.ft = d.ft || (p === 'away' ? 9 : S.ft || 7); S.ftSet = !!d.ftSet; S.quadN = d.quadN || null; S.samples = d.samples || [];
   S.P = mkP(); S.quad = null; S.cam = null; S.ref = null;
 }
 function setProfile(p) { if (p === S.prof) return; S.profiles[S.prof] = profSnap(); profApply(p); S.quickDone = false; save(); renderHome(); renderMenu(); }
@@ -1568,7 +1572,7 @@ function save() {
     if (S.profiles) S.profiles[S.prof] = profSnap();
     localStorage.setItem(KEY, JSON.stringify({ profiles: S.profiles, prof: S.prof, v23: true,
       ft: S.ft, game: S.game, group: S.group, skill: S.skill, speedSd: S.speedSd, lens: S.lens, rot: S.rot, anchors: S.anchors, phys: S.phys,
-      quadN: S.quad && S.W && S.vr ? S.quad.map(vnFromSrc) : S.quadN, samples: S.samples.filter(x => x.walk).concat(S.samples.filter(x => !x.walk).slice(-260)), drillStats: S.drillStats, history: S.history.slice(-40), aimSd: S.aimSd, pocket: S.pocket, tags: S.tags, ftSet: S.ftSet, calVer: 2, lastSess: S.lastSess, zoom: S.zoom, sound: S.sound, felt: S.felt, micOn: S.micOn, v21: true, v22: true,
+      quadN: S.quad && S.W && S.vr ? S.quad.map(vnFromSrc) : S.quadN, samples: S.samples.filter(x => x.walk).concat(S.samples.filter(x => !x.walk).slice(-260)), drillStats: S.drillStats, history: S.history.slice(-40), aimSd: S.aimSd, pocket: S.pocket, tags: S.tags, ftSet: S.ftSet, calVer: 2, lastSess: S.lastSess, zoom: S.zoom, sound: S.sound, felt: S.felt, micOn: S.micOn, v21: true, v22: true, v231: true,
     }));
   } catch (e) { }
 }
@@ -1581,6 +1585,7 @@ function load() {
     // shot timing was corrected in this version, so strength readings saved by older versions no longer line up: start them fresh
     if (d.calVer !== 2) { S.anchors = {}; S.phys = null; S.speedSd = 0.1; }
     if (d.profiles && d.profiles.home) { S.profiles = d.profiles; S.prof = d.prof === 'away' ? 'away' : 'home'; }
+    S.v231 = !!d.v231;
   } catch (e) { }
 }
 // pocket style only changes how wide the planner treats the pocket mouth, never the cloth or ball physics
@@ -1590,14 +1595,20 @@ S.profiles = null; S.prof = 'home';
 load();
 // before V2.3 there was one set of everything: it becomes Home
 if (!S.profiles) S.profiles = { home: { ft: S.ft, ftSet: S.ftSet, quadN: S.quadN, samples: S.samples, camZoom: null }, away: { ft: 9, ftSet: false, quadN: null, samples: [], camZoom: null } };
+// V2.3.1: ball looks learned while V2.3 had the camera below 1x (the blurry ultra-wide lens, from Oct 14 afternoon on) are
+// dropped, so they cannot outvote the recognizer; the V2.2 looks stay. Run "Show me the balls" again at 1x.
+if (!S.v231) { const cut = Date.UTC(2026, 9, 14, 20, 0); let n = 0;
+  for (const k of Object.keys(S.profiles)) { const pr = S.profiles[k]; if (!pr || !pr.samples) continue; if (pr.camZoom && pr.camZoom < 0.98) { const n0 = pr.samples.length; pr.samples = pr.samples.filter(x => !(x.walk && !x.prior && x.t && x.t >= cut)); n += n0 - pr.samples.length; } pr.camZoom = undefined; }
+  S.dropV23 = n; }
 profApply(S.prof);
 S.P = mkP();
+if (!S.v231) { S.v231 = true; save(); }
 const labelIds = () => S.drillMode && S.dr && S.dr.quick && !S.dr.done ? [S.dr.seq[S.dr.qi] ? S.dr.seq[S.dr.qi][0] : 0] : S.drillMode && S.dr && !S.dr.done ? [0, S.dr.ball] : (S.mode === 'train' || S.mode === 'calib') ? [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] : (S.mode === 'play9' || S.mode === 'play8') && !S.watch && S.gone && S.gone.length ? candIds().filter(i => !S.gone.includes(i)) : candIds();
 const allSamples = () => priorSamples().concat(S.samples);
 
 // ---------- debug log (kept for the whole session, saved from the stats screen) ----------
 // V2 = the new path (user, Oct 12): watch real play, collect labeled pictures, train a ball detector. V1 ideas are kept for later.
-const VERSION = 'V2.3';
+const VERSION = 'V2.3.1';
 const DBG = { t0: Date.now(), ev: [], hdr: null, snap: '', snapT: 0, hbT: 0, drop: 0, seen: {}, c: { scans: 0, skip: 0, shift: 0, maxSh: 0, maxD0: 0, maxFd: 0, relock: 0, f0: 0 } };
 const r1 = v => Math.round(v * 10) / 10, r2 = v => Math.round(v * 100) / 100;
 function dbg(k, d) {
@@ -1839,19 +1850,20 @@ async function restartCamera(why) {
   try {
     if (S.stream) S.stream.getTracks().forEach(t => { try { t.stop(); } catch (e) { } });
     await Promise.race([openStream(), new Promise((_, no) => setTimeout(() => no(new Error('timed out')), 8000))]);
-    { const zk = S.camZoom; S.camZoom = 1; if (zk && Math.abs(zk - 1) > 0.02) await setCamZoom(zk, 'restart'); } // a fresh camera starts at 1x
+    await setCamZoom(1, 'restart'); S.camZoom = 1; // always the main camera at 1x
     syncSize(); hookFrames(true); setStatus('Camera back on.');
   } catch (e) { dbg('error', { m: 'camera restart: ' + String(e && (e.name || e.message) || e).slice(0, 120) }); setStatus('The camera is off. Tap Menu, then start again.'); }
   finally { S.camBusy = false; VF.last = performance.now(); }
 }
-// ---------- camera zoom (V2.3) ----------
-// The phone's camera zooms from 0.5x (the ultra-wide lens) up. The app uses the narrowest zoom that still shows the whole
-// table with a little room around the pockets, so a 9 ft table fits from where the player can stand and the balls stay
-// as big as possible. It starts from the zoom used last time at this kind of table (Home or Away).
+// ---------- camera zoom ----------
+// V2.3.1: always 1x, never below. Under 1x the iPhone switches to the ultra-wide lens and crops it: the balls come out
+// smeared (stripes and the purple 4 wash out) and ball naming fell from about 96% to 65-80% (real7). If the table does not
+// fit at 1x the player moves the phone back or higher. The camera is only ever set back to 1x here.
 function camZoomCaps() { try { const tr = S.stream && S.stream.getVideoTracks()[0], c = tr && tr.getCapabilities ? tr.getCapabilities() : null; return c && c.zoom && c.zoom.min < 0.98 ? { min: Math.max(0.5, c.zoom.min), max: c.zoom.max } : null; } catch (e) { return null; } }
 async function setCamZoom(z, why) {
   const caps = camZoomCaps(), tr = S.stream && S.stream.getVideoTracks()[0]; if (!caps || !tr) return false;
-  z = Math.round(clamp(z, caps.min, 1) * 20) / 20; if (Math.abs(z - (S.camZoom || 1)) < 0.02) return false;
+  z = 1; let cur = null; try { cur = tr.getSettings ? tr.getSettings().zoom : null; } catch (e) { }
+  if (typeof cur === 'number' && Math.abs(cur - 1) < 0.02) { S.camZoom = 1; return false; }
   try {
     await tr.applyConstraints({ advanced: [{ zoom: z }] });
     if (tr.readyState !== 'live' || !S.live) return false;
@@ -2079,7 +2091,7 @@ function checkMoved() {
   return true;
 }
 // After the table outline changes, positions jump a little: settle again before watching for a shot.
-function tableMoved() { S.settleT0 = null; S.stable = 0; S.armPos = null; S.noShotUntil = performance.now() + 2500; TR.pre = 0; S.snap = null; STILL.cnt = null; STILL.mask = null; }
+function tableMoved() { MT.on = false; S.settleT0 = null; S.stable = 0; S.armPos = null; S.noShotUntil = performance.now() + 2500; TR.pre = 0; S.snap = null; STILL.cnt = null; STILL.mask = null; }
 // Are the rail diamonds where the current outline says? Returns the (slightly corrected) outline, or null.
 function diamondsFit(q0) {
   q0 = q0 || S.quad; const hi = hiFrame(); if (!hi || !q0 || !S.vr) return null;
@@ -2098,9 +2110,9 @@ async function startMode(mode) {
   // planning and rules switched off; it only watches, listens and writes everything down.
   const quick = mode === 'quick', drill = mode === 'drill' || quick, watch = mode === 'watch' || drill; if (watch) mode = 'play9'; S.watch = watch; S.drillMode = drill; S.dr = quick ? quickNew() : drill ? drillNew() : null; S.quickThenWatch = false;
   const motionAsked = watch ? motionStart() : null; if (watch) LEARNED.clear(); S.touchDown = false; S.freezeUntil = 0;
-  if (mode === 'play9' || mode === 'play8') dbgStart(quick ? 'quick' : drill ? 'drill' : watch ? 'watch' : mode); dbg('profile', { prof: S.prof, ft: S.ft, looks: S.samples.filter(x => x.walk).length });
+  if (mode === 'play9' || mode === 'play8') dbgStart(quick ? 'quick' : drill ? 'drill' : watch ? 'watch' : mode); dbg('profile', { prof: S.prof, ft: S.ft, looks: S.samples.filter(x => x.walk).length, dropV23: S.dropV23 || undefined });
   S.truth = watch && !drill ? { rack: 1, target: 1, uncertain: false, why: 'start', looks: [], nArm: null, seen: false, pend: null, minArm: 99 } : null; FR.bef = null; FR.pend = null;
-  S.mode = mode; S.phase = 'boot'; S.cands = []; S.balls = []; resetShotState(); S.meas = null; S.cal = null; S.drill = null; S.view = 'photo'; S.gone = [];
+  S.mode = mode; S.phase = 'boot'; S.cands = []; S.balls = []; S.ev = {}; resetShotState(); S.meas = null; S.cal = null; S.drill = null; S.view = 'photo'; S.gone = [];
   if (mode === 'play9' || mode === 'play8') S.sess = { t0: Date.now(), shots: [], ignored: 0, game: mode === 'play9' ? '9ball' : '8ball' }; else S.sess = null;
   
   if (mode === 'play9') S.game = '9ball'; if (mode === 'play8') S.game = '8ball';
@@ -2114,14 +2126,13 @@ async function startMode(mode) {
   if (watch && S.zoom && S.zoom.z > 1.02) setZoom(1, 0.5, 0.5);
   if (mode === 'learn') { S.phase = 'run'; S.view = 'photo'; document.body.classList.add('learnmode'); syncSize(); grab(); learnStart(); return; }
   await waitLandscape(); if (S.mode !== mode || !S.live) return;
-  S.zoomFit = 0; S.zoomOut = false; S.camZoom = 1;
-  { const caps = camZoomCaps(); if (caps && S.watch) await setCamZoom(S.camZoomSaved || caps.min, 'start'); }
+  await setCamZoom(1, 'start'); S.camZoom = 1; // 1x, the main camera (never the ultra-wide)
   if (S.mode !== mode || !S.live) return;
   // The phone may have been picked up since last time: always find the table fresh from where the camera is now.
   beginAuto();
 }
 // anything waiting on a shot, or about what blocks the view, belongs to one session on one table
-function resetShotState() { S.settleT0 = null; S.settling = null; S.snap = null; S.lastBefore = null; S.fix = null; STILL.cnt = null; STILL.mask = null; S.stillN = 0; S.lastCa = null; S.noShotUntil = 0; S.relockCand = null; S.pend = null; S.awaitAfter = false; S.armTrust = false; S.occ = null; S.occFrac = 0; S.tableN = null; S.armAll = 0; S.holdT = 0; S.lostT = 0; S.lostSaid = false; S.sameT = 0; S.rebase = 0; }
+function resetShotState() { MT.on = false; S.settleT0 = null; S.settling = null; S.snap = null; S.lastBefore = null; S.fix = null; STILL.cnt = null; STILL.mask = null; S.stillN = 0; S.lastCa = null; S.noShotUntil = 0; S.relockCand = null; S.pend = null; S.awaitAfter = false; S.armTrust = false; S.occ = null; S.occFrac = 0; S.tableN = null; S.armAll = 0; S.holdT = 0; S.lostT = 0; S.lostSaid = false; S.sameT = 0; S.rebase = 0; }
 function beginAuto() {
   S.phase = 'auto'; S.calRes = null; S.cands = []; hideCard(); setStatus('Looking for the felt and pockets…');
   let tries = 0, best = null;
@@ -2136,18 +2147,6 @@ function beginAuto() {
   setTimeout(step, 400);
 }
 function finishAuto(best) {
-  // the zoom: closer if the table has room around it, wider if it was not found (each tried once, then the player decides)
-  const caps = S.watch ? camZoomCaps() : null;
-  if (caps && best && best.quad && best.conf >= 0.7 && S.zoomFit < 2) {
-    const zt = clamp(zoomToFit(best.quad), caps.min, 1), cur = S.camZoom || 1;
-    if (zt > cur * 1.08 || (edgeNear(best.quad) && cur > caps.min + 0.02)) {
-      S.zoomFit++; S.phase = 'auto'; setStatus('Zooming to fit the table…');
-      const tok = S.modeTok; setCamZoom(edgeNear(best.quad) ? Math.max(caps.min, cur - 0.15) : zt * 0.97, 'fit').then(() => { if (S.live && tok === S.modeTok) beginAuto(); }); return;
-    }
-  }
-  if (caps && (!best || !best.quad || best.conf < 0.5) && !S.zoomOut && (S.camZoom || 1) > caps.min + 0.02) {
-    S.zoomOut = true; S.phase = 'auto'; setStatus('Zooming out to find the table…'); const tok = S.modeTok; setCamZoom(caps.min, 'not found').then(() => { if (S.live && tok === S.modeTok) beginAuto(); }); return;
-  }
   S.phase = 'verify';
   if (!best || !best.quad) { S.calRes = { conf: 0, tips: ['The felt was not found. Make sure the whole table is in view, the lights are on, and nothing is draped over the cloth.'], corners: 0, sides: 0 }; S.dia = null; setQuad([[S.W * .2, S.H * .25], [S.W * .8, S.H * .25], [S.W * .85, S.H * .8], [S.W * .15, S.H * .8]], 0); }
   else { S.calRes = best; setQuad(best.quad, best.rot); if (!S.ftSet) autoSize(true); runDiamonds(true); }
@@ -2158,12 +2157,11 @@ function finishAuto(best) {
 function showVerify() {
   const r = S.calRes || { conf: 0, tips: [], corners: 0, sides: 0 }, good = r.conf >= 0.7, d = S.dia;
   const title = good ? 'Table found' : 'Not sure about this one';
-  const edge = S.quad && edgeNear(S.quad), caps = S.watch ? camZoomCaps() : null;
-  const sub = [d ? 'Diamonds ' + d.n + ' of ' + d.exp : '', edge ? 'A pocket is at the edge of the picture: tap Wider, or move the phone back.' : '', good ? 'Drag a dot if the outline is off the pockets.' : ((r.tips && r.tips[0]) || 'Try again, or tap the four corner pockets.')].filter(Boolean).join(' · ');
+  const edge = S.quad && edgeNear(S.quad);
+  const sub = [d ? 'Diamonds ' + d.n + ' of ' + d.exp : '', edge ? 'A pocket is at the edge of the picture: move the phone back or higher.' : '', good ? 'Drag a dot if the outline is off the pockets.' : ((r.tips && r.tips[0]) || 'Try again, or tap the four corner pockets.')].filter(Boolean).join(' · ');
   const btns = good ? '<button class="btn primary" data-act="accept">Looks right</button><button class="btn" data-act="retry">Retry</button><button class="btn" data-act="manual">Tap pockets</button>' : '<button class="btn primary" data-act="retry">Retry</button><button class="btn" data-act="manual">Tap pockets</button><button class="btn" data-act="accept">Use anyway</button>';
   const sizes = '<div class="row sizes"><span class="lbl">Table</span>' + [7, 8, 9].map(f => '<button class="chip' + (S.ft === f ? ' on' : '') + '" data-act="ft' + f + '">' + f + ' ft</button>').join('') + '</div>';
-  const zoom = caps ? '<div class="row sizes"><span class="lbl">Camera ' + (S.camZoom || 1).toFixed(2).replace(/0$/, '') + '×</span><button class="chip" data-act="zoomOut">Wider</button><button class="chip" data-act="zoomIn">Closer</button></div>' : '';
-  showCard('<div class="slimtxt"><b>' + title + '</b><span>' + sub + '</span></div>' + sizes + zoom + '<div class="row">' + btns + '</div>', 0, 'slim');
+  showCard('<div class="slimtxt"><b>' + title + '</b><span>' + sub + '</span></div>' + sizes + '<div class="row">' + btns + '</div>', 0, 'slim');
 }
 function beginManual() { S.phase = 'manual'; S.man = { i: 0, pts: [], hold: null }; showManual(); }
 const MAN_NAMES = ['top-left', 'top-right', 'bottom-right', 'bottom-left'];
@@ -2191,7 +2189,7 @@ function sampleFelt() {
 function acceptTable() {
   sampleFelt();
   // the size shown on the card is the one the player accepted
-  S.ftSet = true; S.quadN = S.quad.map(vnFromSrc); S.diaLock = S.dia ? S.dia.n : 0; S.camZoomSaved = S.camZoom || null; S.quadAcc = S.quadN.map(p => p.slice()); save(); enterRun();
+  S.ftSet = true; S.quadN = S.quad.map(vnFromSrc); S.diaLock = S.dia ? S.dia.n : 0; S.quadAcc = S.quadN.map(p => p.slice()); save(); enterRun();
   if (S.watch) autoFrame();
   if (S.watch && !S.drillMode && S.prof === 'away' && !S.quickDone) showCard('<div class="slimtxt"><b>Away table: show me the balls first?</b><span>About 2 minutes. Put each ball on a ring when asked, no shooting. The app learns this table\'s balls before you play.</span></div><div class="row"><button class="btn primary" data-act="quickGo">Show me the balls</button><button class="btn" data-act="dismiss">Skip</button></div>', 0, 'slim');
 }
@@ -2277,13 +2275,55 @@ function frame(ts) {
   if (ts - lastDraw > 30) { lastDraw = ts; const t0 = performance.now(); render(); lagT('draw', t0); }
   rafId = requestAnimationFrame(frame);
 }
+// ---------- names keep being re-checked (V2.3.1) ----------
+// While the balls sit still, every look at a ball adds how well it matches each number (recognizer, colour guesses,
+// learned looks) to that ball's running total. The totals stay with the ball as long as its name does (the name follows
+// the ball: same spot, or its path through a shot). When the totals clearly say the names are mixed up (the 4 and the 7
+// swapped, the 8 called the 3), the names are swapped to match. A ball you named by hand is never changed.
+const EV = { B: 0.3, M: 0.45, N: 6 };
+function evForget(found) { if (!S.ev) S.ev = {}; for (const f of found) if (f.id != null && !f.locked) delete S.ev[f.id]; }
+function evShrink(ids) { if (!S.ev) return; for (const id of ids) { const e = S.ev[id]; if (e && e.n > 3) { for (let i = 0; i < 10; i++) e.s[i] *= 3 / e.n; e.n = 3; } } }
+function evOn() { return S.watch ? !S.drillMode : (S.mode === 'play9' || S.mode === 'play8'); }
+function evAdd(found) {
+  if (!S.ev) S.ev = {}; if (!evOn() || S.stable < 2 || S.recording || S.awaitAfter) return;
+  const ids = candIds().filter(i => i <= 9), sm = allSamples(), R = S.P.R, pen = recPen();
+  for (const b of found) {
+    if (b.id == null || b.id > 9 || b.miss || b.hid || b.pin || !b.feat || (b.mvd || 0) > 0.3 || (b.obs || []).length < 3) continue;
+    if (found.some(o => o !== b && !o.miss && Math.hypot(o.x - b.x, o.y - b.y) < 2.4 * R)) continue; // touching another ball: the picture of it is mixed
+    const c = idCost(b, ids, sm, S.cloth, pen), e = S.ev[b.id] || (S.ev[b.id] = { s: new Array(10).fill(0), n: 0 });
+    if (e.n >= 40) { for (let i = 0; i < 10; i++) e.s[i] *= 39 / 40; e.n = 39; } // the last 40 looks count
+    for (let i = 0; i < 10; i++) e.s[i] += Math.min(3, c[i] !== undefined ? c[i] : 3); e.n++;
+  }
+}
+function recheckNames(found) {
+  if (!S.ev || !evOn() || S.stable < 3 || S.pend || S.awaitAfter || S.recording || TR.rec) return;
+  const balls = found.filter(b => b.id != null && b.id <= 9 && !b.miss && !b.hid && !b.pin && S.ev[b.id] && S.ev[b.id].n >= EV.N);
+  if (!balls.length) return;
+  const fixed = new Set(found.filter(b => b.id != null && (b.pin || !balls.includes(b))).map(b => b.id)), gone = new Set(S.gone || []);
+  const ids = candIds().filter(i => i <= 9 && !fixed.has(i) && (!gone.has(i) || balls.some(b => b.id === i))), n = balls.length, m = ids.length;
+  if (m < n) return;
+  const mean = (b, id) => S.ev[b.id].s[id] / S.ev[b.id].n, C = [];
+  for (const b of balls) C.push(ids.map(id => mean(b, id) - (id === b.id ? EV.B : 0)));
+  for (let r = n; r < m; r++) C.push(ids.map(() => 0));
+  const as = hungarian(C), ch = [];
+  for (let r = 0; r < n; r++) { const b = balls[r], id = ids[as[r]]; if (id !== b.id) ch.push({ b, from: b.id, to: id, gain: C[r][ids.indexOf(b.id)] - C[r][as[r]] }); }
+  if (!ch.length) return;
+  // every ball that changes must clearly fit its new number better than its old one
+  if (ch.some(c => mean(c.b, c.from) - mean(c.b, c.to) < EV.M)) { dbgOnce('names_no', 8000, 'names_no', { ch: ch.map(c => [c.from, c.to, r2(mean(c.b, c.from) - mean(c.b, c.to))]) }); return; }
+  const ev = {}; for (const k of Object.keys(S.ev)) ev[k] = S.ev[k];
+  for (const c of ch) { ev[c.to] = S.ev[c.from]; if (!ch.some(o => o.to === c.from)) delete ev[c.from]; }
+  for (const c of ch) { c.b.id = c.to; c.b.conf = 0.8; c.b.rechecked = true; }
+  S.ev = ev;
+  dbg('names_fixed', { ch: ch.map(c => ({ from: c.from, to: c.to, at: [r1(c.b.x), r1(c.b.y)], fit: [r2(mean(c.b, c.to)), r2(S.ev[c.to] ? S.ev[c.to].s[c.from] / S.ev[c.to].n : 0)], looks: S.ev[c.to] ? S.ev[c.to].n : 0 })) });
+  if (S.watch && !(S.holdT && performance.now() < S.holdT)) holdStatus('Names fixed: ' + ch.map(c => (c.to === 0 ? 'cue ball' : 'the ' + c.to)).join(', ') + '.', 1500);
+}
 function mergeLabels(found) {
   // a ball keeps the number it had if it is still (about) where it was; closest pairs first so neighbours cannot trade numbers
   const prev = S.balls.filter(b => b.id != null && labelIds().includes(b.id)), pairs = [], reach = 2.6;
   found.forEach((f, fi) => prev.forEach((p, pi) => { const d = Math.hypot(p.x - f.x, p.y - f.y); if (d < reach) pairs.push([d, fi, pi]); }));
   pairs.sort((a, b) => a[0] - b[0]); const uf = new Set(), up = new Set();
   for (const [, fi, pi] of pairs) { if (uf.has(fi) || up.has(pi)) continue; uf.add(fi); up.add(pi); const f = found[fi], p = prev[pi]; f.id = p.id; f.locked = true; f.conf = p.conf || 1; }
-  assignIds(found, labelIds(), allSamples(), S.cloth, { recPen: recPen() });
+  assignIds(found, labelIds(), allSamples(), S.cloth, { recPen: recPen() }); evForget(found);
 }
 // A diamond is an eighth of the long rail. For now a ball has to travel a whole diamond before the app says the balls are moving.
 const diamond = () => S.P.L / 8;
@@ -2528,7 +2568,7 @@ function liveScan(force) {
     if (was >= 3 && !S.stable) dbg('unsettle', { mv: r1(dd.mv), who: dd.who, diff: dd.diff, setN: S.setN, known: known.length, b: dbgBalls(known) }); }
   { const rs = found.filter(b => b.k === 1).map(b => b.ratio).filter(r => r > 0.35 && r < 3).sort((a, b) => a - b);
     if (rs.length >= 4) { const m = rs[rs.length >> 1]; S.sizeBad = (m < 0.72 || m > 1.4) ? (S.sizeBad || 0) + 1 : 0; if (S.sizeBad >= 3 && performance.now() - (S.sizeT || 0) > 5000) { S.sizeBad = 0; S.sizeT = performance.now(); autoSize(); } } }
-  S.balls = found; dbgScan(found, dd);
+  S.balls = found; dbgScan(found, dd); evAdd(found); recheckNames(found);
   // how many balls are on the table, from moments when the whole table can be seen (used to tell what dropped)
   if (S.occFrac <= 0.02 && !found.some(b => b.hid || b.miss) && S.stable >= 2 && !S.pend && !S.awaitAfter) { S.tableN = found.length; S.tableNT = performance.now(); }
   // a number put back on the table (the 9 re-spotted after a foul) is in play again
@@ -2949,7 +2989,6 @@ function cardAct(a) {
   else if (a === 'retry') beginAuto();
   else if (a === 'quickGo') { hideCard(); resetShotState(); S.drillMode = true; S.dr = quickNew(); S.quickThenWatch = true; S.truthKeep = S.truth; S.truth = null; quickSetSpot(); $('#modeLbl').textContent = MODE_LBL.quick + (S.prof === 'away' ? ' · Away' : ''); setStatus(quickStatus()); dbg('quick', { start: true, fromWatch: true }); }
   else if (a === 'quickWatch') { hideCard(); quickToWatch(); }
-  else if (a === 'zoomOut' || a === 'zoomIn') { const caps = camZoomCaps(); if (caps) { hideCard(); S.zoomFit = 2; S.zoomOut = true; S.phase = 'auto'; const tok = S.modeTok; setCamZoom((S.camZoom || 1) + (a === 'zoomIn' ? 0.1 : -0.1), 'player').then(() => { if (S.live && tok === S.modeTok) beginAuto(); }); } }
   else if (a === 'dismiss') hideCard();
   else if (a === 'manual') beginManual();
   else if (a === 'undo') { if (S.man && S.man.pts.length) { S.man.pts.pop(); S.man.i--; showManual(); } }
@@ -2987,6 +3026,7 @@ function pickBall(id) {
   const b = S.pickFor; if (!b) return;
   const other = S.balls.find(o => o !== b && o.id === id); if (other) { other.id = null; other.locked = false; }
   dbg('manual', { id, at: [r1(b.x), r1(b.y)], was: b.id == null ? '?' : b.id, feat: featArr(b.feat) });
+  if (S.ev) { delete S.ev[id]; if (b.id != null) delete S.ev[b.id]; }
   b.id = id; b.locked = true; b.pin = true; b.pinShot = S.sess ? S.sess.shots.length : 0; b.pinT = Date.now(); b.conf = 1;
   if (S.watch) addLook(b.feat, id, 'tap'); else addSample(b, id); // a ball the player names by hand is a certain label: learned for this table (Home / Away)
   $('#sheet').hidden = true; S.pickFor = null; S.cands = []; updHud();
@@ -3964,17 +4004,148 @@ function hookFrames(again) {
   };
   vid.requestVideoFrameCallback(cb);
 }
+// ---------- every ball's path through a shot (V2.3.1) ----------
+// From the moment the cue ball leaves until the table has settled, every ball is followed on every camera frame (on the
+// small tracking picture). A ball that sits still keeps its spot (and its name); a ball that leaves its spot is followed to
+// where it stops, so its name travels with it; a ball that vanishes at a pocket went in. After the shot the names come from
+// these paths first, and colour only has to decide what the paths could not (balls that touched or crossed, or were hidden).
+const MT = { on: false, tr: [], key: '', px: null, cell: null, gw: 0, gh: 0, st: 2, m: null, lab: null, n: 0, ms: 0 };
+function mtSetup() {
+  const P = S.P, cam = TR.cam, st = MT.st, W = TR.w, H = TR.h;
+  const cs = [[0, 0], [P.L, 0], [P.L, P.W], [0, P.W]].map(p => cam.proj(p[0], p[1], 0));
+  const x0 = Math.max(0, Math.floor(Math.min(...cs.map(p => p[0])))), x1 = Math.min(W - 1, Math.ceil(Math.max(...cs.map(p => p[0]))));
+  const y0 = Math.max(0, Math.floor(Math.min(...cs.map(p => p[1])) - 4)), y1 = Math.min(H - 1, Math.ceil(Math.max(...cs.map(p => p[1]))));
+  const gw = Math.max(1, Math.floor((x1 - x0) / st) + 1), gh = Math.max(1, Math.floor((y1 - y0) / st) + 1), N = gw * gh;
+  MT.x0 = x0; MT.y0 = y0; MT.gw = gw; MT.gh = gh; MT.px = new Int32Array(N); MT.cell = new Int32Array(N); MT.m = new Uint8Array(N); MT.lab = new Int32Array(N);
+  const cg = Math.ceil(P.L / STILL.cs) + 1;
+  for (let j = 0; j < gh; j++) for (let i = 0; i < gw; i++) {
+    const k = j * gw + i, x = x0 + i * st, y = y0 + j * st, t = cam.unproj(x, y, 0);
+    MT.px[k] = (y * W + x) * 4;
+    // only the cloth (the same cells as the learned cushion shadows); the pocket holes are left out, so a ball dropping in
+    // vanishes there instead of being followed onto the dark hole
+    const hole = P.pockets.some(q => Math.hypot(q.x - t[0], q.y - t[1]) < q.r + 1);
+    MT.cell[k] = hole || t[0] < -0.5 || t[1] < -0.5 || t[0] > P.L + 0.5 || t[1] > P.W + 0.5 ? -2 : t[0] < 0 || t[1] < 0 || t[0] >= P.L || t[1] >= P.W ? -1 : Math.floor(t[1] / STILL.cs) * cg + Math.floor(t[0] / STILL.cs);
+  }
+  MT.key = TR.key;
+}
+// the felt test without making a new array for every pixel (it runs on every frame during a shot)
+function mtMask(d) {
+  const cl = S.cloth, N = MT.px.length, m = MT.m, sm = STILL.mask, vMin = (cl.v > 0.75 ? 0.52 : 0.42) * cl.v, deep = Math.min(0.95, cl.s + 0.15);
+  let on = 0;
+  for (let k = 0; k < N; k++) {
+    const c = MT.cell[k]; if (c === -2 || (sm && c >= 0 && sm[c])) { m[k] = 0; continue; }
+    const o = MT.px[k], r = d[o] / 255, g = d[o + 1] / 255, b = d[o + 2] / 255, mx = r > g ? (r > b ? r : b) : (g > b ? g : b), mn = r < g ? (r < b ? r : b) : (g < b ? g : b), dl = mx - mn;
+    let h = 0; if (dl > 1e-6) { h = mx === r ? ((g - b) / dl) % 6 : mx === g ? (b - r) / dl + 2 : (r - g) / dl + 4; h *= 60; if (h < 0) h += 360; }
+    const s = mx === 0 ? 0 : dl / mx, v = mx; let cloth = true;
+    if (v < vMin) cloth = false;
+    else if (cl.s > 0.2 && s > 0.2) { const dh = hueDiff(h, cl.h); if (dh > 24 || (dh > 13 && v < 0.8 * cl.v)) cloth = false; }
+    if (cloth && cl.s > 0.2 && v < 0.66 * cl.v && s > deep) cloth = false;
+    if (cloth && (Math.abs(s - cl.s) > 0.34 || v > 1.7 * cl.v)) cloth = false;
+    m[k] = cloth ? 0 : 1; on += m[k];
+  }
+  return on;
+}
+// blobs of not-felt on the bed: where each one is (table inches) and how big it is against one ball at that spot
+function mtBlobs() {
+  const m = MT.m, lab = MT.lab, gw = MT.gw, gh = MT.gh, st = MT.st, cam = TR.cam, R = S.P.R, out = []; lab.fill(0); const stack = [];
+  for (let k = 0; k < m.length; k++) {
+    if (!m[k] || lab[k]) continue; const id = out.length + 1; let n = 0, sx = 0, sy = 0; stack.length = 0; stack.push(k); lab[k] = id;
+    while (stack.length) { const p = stack.pop(), i = p % gw, j = (p / gw) | 0; n++; sx += i; sy += j;
+      if (i > 0 && m[p - 1] && !lab[p - 1]) { lab[p - 1] = id; stack.push(p - 1); } if (i < gw - 1 && m[p + 1] && !lab[p + 1]) { lab[p + 1] = id; stack.push(p + 1); }
+      if (j > 0 && m[p - gw] && !lab[p - gw]) { lab[p - gw] = id; stack.push(p - gw); } if (j < gh - 1 && m[p + gw] && !lab[p + gw]) { lab[p + gw] = id; stack.push(p + gw); } }
+    const px = MT.x0 + sx / n * st, py = MT.y0 + sy / n * st, t = cam.unproj(px, py, R), rp = cam.ballRad(t[0], t[1], R, R) / st;
+    out.push({ x: t[0], y: t[1], n, ratio: n / Math.max(1, Math.PI * rp * rp), cl: null });
+  }
+  return out;
+}
+// is there still something that is not felt right on this ball's spot? (its middle, about two thirds of its radius)
+function mtPresent(x, y) {
+  const cam = TR.cam, R = S.P.R, c = cam.proj(x, y, R), rp = Math.max(1.6, cam.ballRad(x, y, R, R) * 0.65 / MT.st), ci = (c[0] - MT.x0) / MT.st, cj = (c[1] - MT.y0) / MT.st;
+  let n = 0, on = 0, sm = 0;
+  for (let j = Math.floor(cj - rp); j <= Math.ceil(cj + rp); j++) for (let i = Math.floor(ci - rp); i <= Math.ceil(ci + rp); i++) {
+    if (i < 0 || j < 0 || i >= MT.gw || j >= MT.gh || (i - ci) ** 2 + (j - cj) ** 2 > rp * rp) continue; const k = j * MT.gw + i;
+    if (MT.cell[k] < 0 && MT.cell[k] === -2) continue; if (STILL.mask && MT.cell[k] >= 0 && STILL.mask[MT.cell[k]]) { sm++; continue; }
+    n++; on += MT.m[k];
+  }
+  return n < 3 ? null : on / n; // null: cannot tell (too small to see, or a learned cushion shadow covers it)
+}
+function mtStart(rec, now) {
+  const mk = (b, cue) => ({ id: b.id, x: b.x, y: b.y, x0: b.x, y0: b.y, rx: b.x, ry: b.y, vx: 0, vy: 0, st: cue ? 'move' : 'rest', gone: 0, lost: 0, slow: 0, moved: !!cue, path: [[0, r1(b.x), r1(b.y)]], cue: !!cue, t: now });
+  const cue = { id: 0, x: rec.last.x, y: rec.last.y };
+  MT.tr = rec.before.filter(b => b.id !== 0).map(b => mk(b)).concat((rec.un || []).map(b => mk(b))).concat([mk({ id: 0, x: rec.pos0.x, y: rec.pos0.y }, true)]);
+  const c = MT.tr[MT.tr.length - 1]; c.x = cue.x; c.y = cue.y; MT.on = true; MT.t0 = now; MT.n = 0; MT.ms = 0; MT.sum = 0;
+}
+function mtStep(im, now) {
+  if (!MT.on || !S.cloth) return; const t0 = performance.now();
+  if (MT.key !== TR.key || !MT.px) mtSetup();
+  mtMask(im.data); const bl = mtBlobs(), R = S.P.R, claim = new Map(); MT.n++;
+  const near = (x, y, lim, ok) => { let best = null, bd = lim; for (const b of bl) { if (ok && !ok(b)) continue; const d = Math.hypot(b.x - x, b.y - y); if (d < bd) { bd = d; best = b; } } return best; };
+  // the blob a ball's own middle sits in (exact for balls touching in a cluster), else the closest one
+  const blobAt = (x, y) => { const c = TR.cam.proj(x, y, R), i = Math.round((c[0] - MT.x0) / MT.st), j = Math.round((c[1] - MT.y0) / MT.st); if (i >= 0 && j >= 0 && i < MT.gw && j < MT.gh) { const l = MT.lab[j * MT.gw + i]; if (l) return bl[l - 1]; } return near(x, y, 1.3 * R); };
+  const own = (b, t) => { const l = claim.get(b) || []; if (!l.includes(t)) claim.set(b, l.concat([t])); }, at = t => t.st === 'rest' ? [t.rx, t.ry] : [t.x, t.y];
+  const push = (t, x, y) => { const l = t.path[t.path.length - 1]; if (Math.hypot(l[1] - x, l[2] - y) > 0.4) t.path.push([r2(now - MT.t0), r1(x), r1(y)]); };
+  // 1) balls at rest hold their spot for as long as something is still there; two looks with only felt there: it left
+  for (const t of MT.tr) {
+    if (t.st !== 'rest') continue; const pr = mtPresent(t.rx, t.ry);
+    if (pr === null || pr >= 0.35) { t.gone = 0; const b = blobAt(t.rx, t.ry); if (b) own(b, t); continue; }
+    if (++t.gone >= 2) { t.st = 'move'; t.moved = true; t.lost = 0; t.slow = 0; t.vx = 0; t.vy = 0; t.x = t.rx; t.y = t.ry; t.seenT = t.leftT || now; t.t = now; }
+    else t.leftT = now;
+  }
+  // 2) the cue ball: where its own tracker saw it on this frame, while that runs
+  const rec = TR.rec, ct = MT.tr.find(t => t.cue);
+  if (ct && rec && rec.track.length && rec.track[rec.track.length - 1][0] === now) { const dt = Math.max(1 / 120, now - ct.t); ct.vx = (rec.last.x - ct.x) / dt; ct.vy = (rec.last.y - ct.y) / dt; ct.x = rec.last.x; ct.y = rec.last.y; ct.t = now; ct.seenT = now; ct.lost = 0; ct.st = 'move'; push(ct, ct.x, ct.y); const b = blobAt(ct.x, ct.y); if (b) own(b, ct); ct.own = true; } else if (ct) ct.own = false;
+  // 3) moving balls: the closest pairs of (ball, spot of not-felt near where that ball should be by now) first, over all the
+  //    moving balls at once, so a ball just set rolling cannot take a spot another ball is clearly following. A spot already
+  //    holding k balls (touching ones) is only taken if it is clearly bigger than k balls, and then this ball is what is left.
+  //    A ball picked up again only after a long gap (far from where it could be) is marked unsure: its path names nothing.
+  const mv = MT.tr.filter(t => t.st === 'move' && !t.own), Q = new Map();
+  for (const t of mv) { const dt = Math.max(1 / 120, now - t.t), sp = Math.hypot(t.vx, t.vy), fresh = t.path.length < 2 || t.lost > 0, base = 2.2 + sp * dt * 1.6;
+    Q.set(t, { dt, px: t.x + t.vx * dt, py: t.y + t.vy * dt, base, gate: clamp(base + (fresh ? 70 * Math.min(0.2, now - (t.seenT || t.t)) : 0), 2.2, 24) }); }
+  const left = new Set(mv);
+  while (left.size) {
+    let best = null;
+    for (const t of left) { const q = Q.get(t);
+      for (const b of bl) {
+        const cl = claim.get(b) || [], k = cl.length; if (b.ratio < 0.25 || b.ratio > k + 2.2) continue; let x = b.x, y = b.y;
+        if (k) { if (b.ratio < k + 0.55) continue; let sx = 0, sy = 0; for (const o of cl) { const p = at(o); sx += p[0]; sy += p[1]; } x = (k + 1) * b.x - sx; y = (k + 1) * b.y - sy; }
+        const d = Math.hypot(x - q.px, y - q.py); if (d < q.gate && (!best || d < best.d)) best = { t, b, x, y, d };
+      } }
+    if (!best) break;
+    const t = best.t, q = Q.get(t); left.delete(t);
+    if (best.d > q.base + 2.3) t.unsure = true;
+    const nvx = (best.x - t.x) / q.dt, nvy = (best.y - t.y) / q.dt; t.vx = t.lost ? nvx : 0.4 * t.vx + 0.6 * nvx; t.vy = t.lost ? nvy : 0.4 * t.vy + 0.6 * nvy;
+    t.x = best.x; t.y = best.y; t.t = now; t.seenT = now; t.lost = 0; own(best.b, t); push(t, t.x, t.y);
+    t.slow = Math.hypot(t.vx, t.vy) < 2 ? t.slow + 1 : 0;
+    if (t.slow >= 8 && now - MT.t0 > 0.3) { t.st = 'rest'; t.rx = t.x; t.ry = t.y; t.gone = 0; }
+  }
+  for (const t of left) {
+    const q = Q.get(t), gap = now - (t.seenT || t.t); t.lost++; t.x = q.px; t.y = q.py; t.vx *= 0.85; t.vy *= 0.85; t.t = now;
+    // gone at a pocket: only a ball that was seen rolling (at least two spots along its way) and vanished at the pocket
+    const pk = S.P.pockets.findIndex(p => Math.hypot(p.x - t.x, p.y - t.y) < p.r + 2.5);
+    if (pk >= 0 && t.path.length >= 3 && t.lost >= 2 && gap > 0.05) { t.st = 'pocket'; t.pk = pk; push(t, t.x, t.y); }
+    else if (gap > 0.6) t.st = 'lost';
+  }
+  const el = performance.now() - t0; MT.ms = Math.max(MT.ms, el); MT.sum = (MT.sum || 0) + el;
+}
+// stop following; what each ball did, for naming the balls after the shot
+function mtFinish(shot) {
+  if (!MT.on) return null; MT.on = false;
+  const out = MT.tr.map(t => ({ id: t.id, st: t.st, x: t.st === 'rest' ? t.rx : t.x, y: t.st === 'rest' ? t.ry : t.y, moved: t.moved, pk: t.pk, from: [t.x0, t.y0], cue: t.cue, unsure: !!t.unsure }));
+  dbg('paths', { shot: shot && shot.id, frames: MT.n, ms: r1(MT.ms), avg: r1((MT.sum || 0) / Math.max(1, MT.n)), balls: MT.tr.filter(t => t.moved).map(t => ({ id: t.id == null ? '?' : t.id, st: t.st, pk: t.pk, unsure: t.unsure || undefined, path: t.path.length > 30 ? t.path.filter((p, i) => i % Math.ceil(t.path.length / 30) === 0 || i === t.path.length - 1) : t.path })), still: MT.tr.filter(t => !t.moved).map(t => t.id == null ? '?' : t.id) });
+  return out;
+}
 function trackFrame() {
   if (!S.live || !S.cam || !vid.videoWidth || S.phase !== 'run') return;
   if (S.drillMode && S.dr && S.dr.quick) { TR.rec = null; TR.pre = 0; return; } // showing the balls: balls are moved by hand, nothing is a shot
   let now;
   if (VF.on) { if (VF.n === TR.ct) return; TR.ct = VF.n; now = VF.t; } else { if (vid.currentTime === TR.ct) return; TR.ct = vid.currentTime; now = vid.currentTime; }
   const pt = VF.on && VF.pt ? VF.pt : performance.now(); // the same moment on the page clock, to line the microphone up with
-  if (!TR.rec && !S.armPos) { TR.pre = 0; TR.hereT = null; return; }
-  if (!TR.rec && frozen()) { TR.pre = 0; return; } // no shot starts while the phone is being touched or is swaying
+  if (!TR.rec && !S.armPos && !MT.on) { TR.pre = 0; TR.hereT = null; return; }
+  if (!TR.rec && frozen() && !MT.on) { TR.pre = 0; return; } // no shot starts while the phone is being touched or is swaying
   if (!TR.cam || TR.key !== trKey()) trackSetup();
   TR.cx.drawImage(vid, S.vr.x, S.vr.y, S.vr.w, S.vr.h, 0, 0, TR.w, TR.h); const im = TR.cx.getImageData(0, 0, TR.w, TR.h), rec = TR.rec;
   const excl = (S.armBalls || []).filter(b => b.id !== 0);
+  if (!rec && MT.on) { if (!frozen() && (MT.alt = !MT.alt)) { const t1 = performance.now(); mtStep(im, now); lagT('paths', t1); } if (!S.armPos || frozen()) return; }
   if (!rec) {
     if (performance.now() < (S.noShotUntil || 0)) { TR.pre = 0; return; }
     const here = findWhite(im, TR.cam, S.P, S.armPos, 1.3, 0); if (here) { TR.pre = 0; TR.hereT = now; return; }
@@ -3993,6 +4164,7 @@ function trackFrame() {
         if (!S.drillMode && S.settleT0) { const tn = performance.now(), young = b => b.id !== 0 && b.since && b.since > S.settleT0 + 300 && tn - b.since < 3000, yb = TR.rec.before.filter(young), yu = TR.rec.un.filter(young);
           if (yb.length || yu.length) { TR.rec.before = TR.rec.before.filter(b => !young(b)); TR.rec.un = TR.rec.un.filter(b => !young(b)); TR.rec.allN = Math.max(TR.rec.before.length, TR.rec.allN - yb.concat(yu).filter(b => !TR.rec.trust || b.since <= (S.tableNT || 0)).length); dbg('young', { ids: yb.map(b => b.id), un: yu.length, at: yb.concat(yu).map(b => [r1(b.x), r1(b.y)]) }); } }
         if (S.watch && FR.bef) { TR.rec.frBef = FR.bef; FR.bef.c._busy = true; } // the last clear picture before this shot, kept with it
+        if (S.watch || S.mode === 'play9' || S.mode === 'play8') mtStart(TR.rec, now);
         S.recording = true; TR.pre = 0; dbg('shot_start', { pos0: [r1(S.armPos.x), r1(S.armPos.y)], first: [r1(f.x), r1(f.y)], ctx: AU.ctx && AU.ctx.state, vf: VF.on }); S.holdT = 0; setStatus('Shot detected. Following the cue ball…');
       } else TR.pre = 0;
     } else TR.pre = 0;
@@ -4009,6 +4181,7 @@ function trackFrame() {
   if (f) { rec.lost = 0; const mv = Math.hypot(f.x - rec.last.x, f.y - rec.last.y); tk.push([now, f.x, f.y]); rec.pts.push(pt);
     if (tk.length >= 5 && rec.hand === undefined) rec.hand = handMoveCheck(rec);
     if (!rec.dinged && !rec.hand && tk.length >= 5 && (rec.bad || 0) * 4 < tk.length && Math.hypot(f.x - rec.pos0.x, f.y - rec.pos0.y) > 3) { rec.dinged = true; ding(); } rec.guess = { x: f.x, y: f.y }; rec.last = { x: f.x, y: f.y }; rec.still = mv < 0.22 ? rec.still + 1 : 0; } else rec.lost++;
+  if (MT.on) { const t1 = performance.now(); mtStep(im, now); lagT('paths', t1); }
   if (rec.still > 9 || rec.lost > 7 || now - rec.start > 9) endShot();
 }
 // Ball in hand (Watch & Learn): the cue ball moved with a hand right on it, slowly, and with no strike click (or very slowly
@@ -4028,13 +4201,13 @@ function endShot() {
   const tk = rec.track, far = Math.max(...tk.map(s => Math.hypot(s[1] - rec.pos0.x, s[2] - rec.pos0.y))), calib = S.mode === 'calib';
   if (!calib && rec.hand) { // the cue ball was moved by hand (ball in hand), not shot
     dbg('hand_move', { from: [r1(rec.pos0.x), r1(rec.pos0.y)], to: [r1(rec.last.x), r1(rec.last.y)], v0: r1(rec.hand.v0), strike: rec.hand.strike, mic: rec.hand.mic });
-    if (S.sess) S.sess.hand = (S.sess.hand || 0) + 1; setStatus('Ball in hand. Still watching.'); free(); return;
+    if (S.sess) S.sess.hand = (S.sess.hand || 0) + 1; setStatus('Ball in hand. Still watching.'); MT.on = false; free(); return;
   }
   dbg('shot_end', { bad: rec.bad || 0, pts: tk.length, far: r1(far), dur: r2(tk[tk.length - 1][0] - tk[0][0]), still: rec.still, lost: rec.lost, end: [r1(tk[tk.length - 1][1]), r1(tk[tk.length - 1][2])], kept: tk.length >= (calib ? 3 : 5) && far >= (calib ? 1.5 : 4) });
-  if (!calib && (rec.bad || 0) >= 3 && (rec.bad || 0) * 2 >= tk.length) { if (S.sess) S.sess.ignored++; dbg('not_shot', { bad: rec.bad, pts: tk.length }); setStatus('That was not the cue ball moving. Still watching.'); free(); return; }
-  if (tk.length < (calib ? 3 : 5) || far < (calib ? 1.5 : 4)) { if (S.sess) S.sess.ignored++; setStatus(calib ? 'That was too small to read. Hit a little firmer.' : 'That looked like a nudge, not a shot. Still watching.'); free(); return; }
+  if (!calib && (rec.bad || 0) >= 3 && (rec.bad || 0) * 2 >= tk.length) { if (S.sess) S.sess.ignored++; dbg('not_shot', { bad: rec.bad, pts: tk.length }); setStatus('That was not the cue ball moving. Still watching.'); MT.on = false; free(); return; }
+  if (tk.length < (calib ? 3 : 5) || far < (calib ? 1.5 : 4)) { if (S.sess) S.sess.ignored++; setStatus(calib ? 'That was too small to read. Hit a little firmer.' : 'That looked like a nudge, not a shot. Still watching.'); MT.on = false; free(); return; }
   const track = tk.map(s => [s[0] - tk[0][0], s[1], s[2]]);
-  if (calib) { calibShot(track, rec.pos0); return; }
+  if (calib) { MT.on = false; calibShot(track, rec.pos0); return; }
   if (S.pend) pendCheck(true);
   if (S.fix) applyFix(rec.pos0, rec); // a real shot from where the cue ball stopped: the last one was legal
   S.snap = null; // the next settled table is the new "before"
@@ -4047,7 +4220,7 @@ function endShot() {
 // before: the numbered balls before the shot; allN: how many balls were on the table in all, numbered or not
 function afterShot(before, end, allN, shot, trust, delay) {
   setTimeout(() => {
-    S.awaitAfter = false; if (!S.live) return; grab();
+    S.awaitAfter = false; const paths = mtFinish(shot); if (!S.live) return; grab();
     const info = { still: STILL.mask ? stillInfo() : undefined }, used = new Set(); let found = detectBalls(imgData(), S.cam, S.P, S.cloth, info);
     recogFound(found); found = dropNotBalls(found, before.map(b => ({ ...b, obs: [0, 0, 0, 0] })), true);
     before = before.filter((b, i, a) => b.id == null || a.findIndex(o => o.id === b.id) === i); // one copy of each number
@@ -4057,16 +4230,33 @@ function afterShot(before, end, allN, shot, trust, delay) {
     // and only what is left is told apart by colour. This keeps the cue ball and the 9 from swapping places.
     // Watch & Learn: the ball where the tracker saw the cue ball stop IS the cue ball, decided first. A soft straight shot
     // leaves the cue ball right where the object ball was, and the "did not move" rule below gave it the object ball's number.
-    if (S.watch && end && end.settled && before.some(b => b.id === 0)) {
+    // Paths (V2.3.1): each ball followed through the shot names the ball where its path ended. Closest pairs first; two
+    // paths ending on the same ball (they touched and could not be told apart) are left to the rules below.
+    if (paths) {
+      const ends = paths.filter(t => t.id != null && t.moved && t.st !== 'pocket' && t.st !== 'lost' && !t.unsure && (!t.cue || (end && end.settled && Math.hypot(t.x - end.x, t.y - end.y) < 1.5))), pairs = [];
+      // (a path never overrules a recognizer that is sure the ball is something else)
+      const veto = (t, f) => f.rec && f.rec[t.id] < 0.02 && Math.max(...f.rec.slice(0, 10)) > 0.9;
+      for (const t of ends) for (const f of found) { if (f.locked || veto(t, f)) continue; const d = Math.hypot(f.x - t.x, f.y - t.y); if (d < 1.6) pairs.push([d, t, f]); }
+      pairs.sort((a, b) => a[0] - b[0]); const ut = new Set(), uf = new Set(), named = [];
+      const twice = new Set(); for (const t of ends) if (ends.some(o => o !== t && Math.hypot(o.x - t.x, o.y - t.y) < 1.2)) twice.add(t);
+      for (const [, t, f] of pairs) { if (ut.has(t) || uf.has(f) || twice.has(t)) continue; ut.add(t); uf.add(f); f.id = t.id; f.locked = true; f.conf = 0.9; f.path = 1; named.push(t.id); const bp = before.find(b => b.id === t.id); if (bp) used.add(bp); }
+      // a ball whose path ended in a pocket went in: nothing else may take its number by colour (unless the count says it is still up)
+      const pk = paths.filter(t => t.id != null && t.st === 'pocket').map(t => t.id); if (shot) shot.pathPk = pk;
+      const seenN = found.length + before.filter(b => hiddenAt(b) && !found.some(f => Math.hypot(f.x - b.x, f.y - b.y) < 1.6)).length;
+      if (pk.length && (allN || before.length) - seenN >= pk.length) for (const id of pk) { const bp = before.find(b => b.id === id); if (bp) used.add(bp); if (shot) shot.pathGone = (shot.pathGone || []).concat([id]); }
+      dbg('path_ids', { named, pocket: pk, twice: [...twice].map(t => t.id), ends: ends.map(t => [t.id, t.st, r1(t.x), r1(t.y)]), pairs: pairs.length });
+    }
+    if (S.watch && end && end.settled && before.some(b => b.id === 0) && !found.some(f => f.locked && f.id === 0)) {
       let cf = null, cd = 1.5; for (const f of found) { const d = Math.hypot(f.x - end.x, f.y - end.y); if (d < cd) { cd = d; cf = f; } }
       if (cf) { cf.id = 0; cf.locked = true; cf.conf = 0.9; used.add(before.find(b => b.id === 0)); }
     }
     for (const f of found) { if (f.locked) continue; let bp = null, bd = 1.2; for (const b of before) { if (used.has(b)) continue; const d = Math.hypot(b.x - f.x, b.y - f.y); if (d < bd) { bd = d; bp = b; } } if (bp) { used.add(bp); f.id = bp.id; f.locked = true; f.conf = 0.9; } }
-    if (end && end.settled && ids.includes(0)) {
+    if (end && end.settled && ids.includes(0) && !found.some(f => f.locked && f.id === 0)) {
       let cf = null, cd = 5; for (const f of found) { if (f.locked) continue; const d = Math.hypot(f.x - end.x, f.y - end.y); if (d < cd) { cd = d; cf = f; } }
       if (cf) { cf.id = 0; cf.locked = true; cf.conf = 0.9; }
     }
-    assignIds(found, ids.length ? ids : candIds(), allSamples(), S.cloth, { recPen: recPen() });
+    { const skip = new Set((shot && shot.pathGone) || []), cand = (ids.length ? ids : candIds()).filter(i => !skip.has(i) || found.some(f => f.locked && f.id === i));
+      assignIds(found, cand, allSamples(), S.cloth, { recPen: recPen() }); evForget(found); evShrink(found.filter(f => f.locked && (f.path || f.id === 0)).map(f => f.id)); }
     // balls we cannot see because the player is in the way are not counted as gone; they are kept until they come into view
     for (const b of before) { if (used.has(b) || b.id == null || found.some(f => f.id === b.id)) continue; if (hiddenAt(b)) found.push({ ...b, hid: true, miss: 0 }); }
     const rules = (S.mode === 'play9' || S.mode === 'play8');
@@ -4122,11 +4312,15 @@ function shotResult(p, now, clear) {
   if (!clear) missing = missing.filter(i => { const b = i === 0 && end ? end : before.find(o => o.id === i); return b && !hiddenAt(b); });
   // the cue ball went in and was already put back: still a scratch, and it counts as one ball down
   if (p.cueGone && !missing.includes(0)) { missing.push(0); if (nowIds.has(0)) dropN++; }
+  // a ball seen rolling into a pocket (its path ended there) and not on the table now is down, even when the ball count
+  // could not show it (part of the table was blocked when the count was taken)
+  const pp = ((p.shot && p.shot.pathPk) || []).filter(i => missing.includes(i));
+  if (pp.length > dropN && (!clear || !p.trust || (p.allN || 0) < nowN)) { dbg('path_drop', { ids: pp, dropN }); dropN = pp.length; }
   let gone = missing, unsure = 0;
   if (missing.length > dropN) {
     // more numbers missing than balls missing: keep the ones most likely to have dropped (closest to a pocket before the shot)
     const pk = id => { const b = id === 0 && end ? end : before.find(o => o.id === id); return b ? Math.min(...S.P.pockets.map(q => Math.hypot(q.x - b.x, q.y - b.y))) : 99; };
-    gone = missing.slice().sort((a, b) => (b === 0 && p.cueGone) - (a === 0 && p.cueGone) || pk(a) - pk(b)).slice(0, dropN);
+    gone = missing.slice().sort((a, b) => (b === 0 && p.cueGone) - (a === 0 && p.cueGone) || pp.includes(b) - pp.includes(a) || pk(a) - pk(b)).slice(0, dropN);
   } else if (missing.length < dropN && clear) unsure = dropN - missing.length; // a ball dropped but its number was not read
   if (!clear) dropN = gone.length;
   let msg;
@@ -4366,7 +4560,7 @@ window.addEventListener('resize', () => { zoneCache = null; });
 renderHome();
 // test hook
 setInterval(() => { if (S.sess) dbgPersist(); }, 30000);
-window.__chalk = { recogFound, dropNotBalls, quickTick, quickNew, quickSetSpot, quickStatus, quickToWatch, setProfile, profSnap, zoomToFit, edgeNear, setCamZoom, camZoomCaps, finishAuto, assignIds, allSamples, recPen, labelIds, drillPlan, drillCands, drillResult, drillShotStart, drillLabel, drillStatus, drillSetSpot, drillSummary, pocketWord, LAG, unseenCheck, LEARNED, handMoveCheck, frozen, WOB, truthLook, truthShotStart, throwOutLast, watchResult, MIC, micPoll, watchShotInfo, makeZip, FR, settleWatch, DBG, dbgText, saveDebug, AU, ding, dong, audioInit, setZoom, vnFromSrc, srcFromVn, focalPx, ppPx, runDiamonds, bestCuePlacement, afterShot, eliminate, VF, judgeShot, spotHasBall, get MAP() { return MAP; }, stage, pickBall, openPicker, refDiff, mkP, autoSize, beginAuto, quadLooksRight, enterRun, S, planNow, liveScan, render, rebuildCam, TR, vid, startMode, speedOfLevel, levelOfSpeed, levelTable };
+window.__chalk = { MT, mtStart, mtStep, mtFinish, mtSetup, EV, evAdd, recheckNames, evForget, recogFound, dropNotBalls, quickTick, quickNew, quickSetSpot, quickStatus, quickToWatch, setProfile, profSnap, zoomToFit, edgeNear, setCamZoom, camZoomCaps, finishAuto, assignIds, allSamples, recPen, labelIds, drillPlan, drillCands, drillResult, drillShotStart, drillLabel, drillStatus, drillSetSpot, drillSummary, pocketWord, LAG, unseenCheck, LEARNED, handMoveCheck, frozen, WOB, truthLook, truthShotStart, throwOutLast, watchResult, MIC, micPoll, watchShotInfo, makeZip, FR, settleWatch, DBG, dbgText, saveDebug, AU, ding, dong, audioInit, setZoom, vnFromSrc, srcFromVn, focalPx, ppPx, runDiamonds, bestCuePlacement, afterShot, eliminate, VF, judgeShot, spotHasBall, get MAP() { return MAP; }, stage, pickBall, openPicker, refDiff, mkP, autoSize, beginAuto, quadLooksRight, enterRun, S, planNow, liveScan, render, rebuildCam, TR, vid, startMode, speedOfLevel, levelOfSpeed, levelTable };
 
 </script>
 
