@@ -447,3 +447,55 @@ learned looks had the wrong number; ~30 camera-moved corrections, many during sc
   (100/99/88%), t2watch, t21truth, t21info, t18unseen, t22unseen pass.
 - To test next: Show me the balls + Learn the balls at home; at the hall pick Away + 9 ft, run Show me the balls,
   then Watch & Learn. Check the zoom chosen, the pocket rings, and whether the outline stays put while people walk by.
+
+## real7 — V2.3 at home, 7 ft (Oct 14 evening: Show me the balls + Watch 13 shots, Learn the balls 31 shots, Watch 10 shots)
+Truth checked by eye (scratchpad r7truth.py). Same balls as always.
+- Names right (app): first Watch 91% (121/133), second Watch 67% (69/103). Recognizer alone: 72% / 80%; its guess on
+  the single ring ball: Show me the balls 14/20, drill 18/28 (was ~96% on V2.2 pictures).
+- MAIN CAUSE (V2.3 regression): auto zoom settled at 0.95x. Below 1x the iPhone switches to the ultra-wide lens, cropped
+  ~2x: balls come out smeared, stripes and the purple 4 wash out (side-by-side crops vs real5 look like a different
+  camera). Recognizer confusions all point that way: 9->cue, 4->8, 1->9, 5->3. Fix: stay at 1x whenever the table
+  fits at 1x; go below 1x only when it must (hall), and then capture at higher resolution.
+- Swaps after shots: the cue ball stopping next to the 4 took the "cue" name and the 4 was called pocketed (shot 5);
+  cue/9 swapped after they touched (shots 10-11).
+- Wrong names from the start never corrected: second Watch began with 4 and 7 swapped and the 8 called 4 (later 3)
+  for the whole session, while the recognizer had them right on most pictures.
+- Ideas agreed to discuss: follow every moving ball through the shot (not just the cue ball) so names travel with the
+  balls; keep re-checking names over many looks and swap when the evidence clearly disagrees.
+- User (Oct 14, 18:50): NEVER go below 1x, period (no auto zoom out, no Wider below 1x; hall table must fit at 1x —
+  the app should say "move the phone back/up" instead). Track every ball's path so the app can say continuously
+  "this is the x, these are the y's". Order of real7: Show me the balls (+ Watch shots 1-13 right after), Learn the
+  balls drill, then Watch session. Note: the last session, after both trainings, was the worst (67%): the looks
+  learned in V2.3 were taken through the blurry 0.95x lens and the min() rule lets a bad learned look win.
+  Next version is V2.3.1 (user: not really adding anything): 1x lock, track every ball, keep re-checking names, drop
+  the looks learned in V2.3 sessions (keep V2.2's), user re-runs Show me the balls at 1x.
+
+## V2.3.1 (built Oct 14 evening) — 1x lock, ball paths, names re-checked
+- Camera: always 1x (setCamZoom only sets 1; no auto fit, no Wider/Closer). Table not fitting -> "move the phone back
+  or higher" on the verify card.
+- Migration (flag v231): learned looks taken after Oct 14 20:00 UTC are dropped from a profile whose saved camera zoom
+  was below 1x (the user's Home: 0.95x). V2.2 looks kept. Re-run Show me the balls at 1x.
+- Ball paths (MT, mtStart/mtStep/mtFinish): from shot start until the table settles, every camera frame (every other
+  one after the cue ball stops) on the tracker picture (<=640 px): not-felt mask on a 2-px grid over the cloth (z=0 cells,
+  learned cushion shadows and pocket holes left out), blobs. A ball at rest holds its spot while its middle is not felt;
+  2 felt looks = it left. Moving balls matched closest-pair-first over all balls at once; a blob already holding k
+  balls is taken only if bigger than k+0.55 balls (position = (k+1)*centroid - others). Picked up only after a long gap
+  = unsure. Vanished within pocket r+2.5" after being seen moving = 'pocket'. The cue ball uses its own tracker while
+  that runs. Cost about 0.7 ms a frame (desktop test). dbg 'paths' has every moved ball's path (<=30 points).
+- After the shot: path ends name balls first (not unsure; the cue only if its tracker saw it settle there; never
+  against a recognizer >0.9 sure of another number), then the cue-end rule, the did-not-move rule, then colour.
+  A ball whose path went into a pocket is kept out of colour naming (if the count, hidden balls included, allows) and
+  is counted down even when the ball count could not show it (count untrusted / lower than now). This fixed the old
+  "shot while 3 balls were blocked" case (shotocc2: now "Off the table: 4").
+- Names re-checked (S.ev, evAdd/recheckNames): every live look at a still, separate, named ball adds its cost for each
+  number (idCost = recognizer / colour guesses / learned looks); the last 40 looks count. With >= 6 looks, a Hungarian
+  reassignment with 0.3 bonus for the current name; applied only if every changed ball fits its new number by >= 0.45
+  better. Pinned (hand-named) balls and the drill are never touched; pocketed numbers are not handed out. Evidence moves
+  with the name; colour-assigned names start fresh; path/cue-named keep only 3 looks. Status "Names fixed: ...".
+  Simulated on saved pictures (truth by eye): real3 95->99%, real5 93->99% (21 fixed, 0 broken), real7 1707 94->95%,
+  1729 75->81% (blurry 0.95x pictures).
+- Synthetic tests added: frozen.y4m (cue stops against the 4), follow.y4m (cue follows onto the 4's old spot while the 4
+  rolls on; V2.3 called the cue ball the 4 in 9-ball mode, V2.3.1 right in both modes).
+- Independent review (12 findings) fixed: global matching, unsure pick-ups, cue path only when settled, pocket only after
+  moving, hidden balls in the count, shadow/pocket cells in the right frame, small far balls "unknown" not "left",
+  no double claims, cue seenT, evidence shrink, migration only for <1x profiles, setCamZoom always applies 1x.
