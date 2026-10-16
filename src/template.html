@@ -1,0 +1,209 @@
+<title>Chalkline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+<style>
+/* Stage 1: always dark, frosted glass, one teal accent. Red glass = control that is not running yet. */
+:root {
+  color-scheme: dark;
+  --bg: #0b1014; --fg: #eaf1f4; --muted: #8fa0aa; --line: rgba(255,255,255,.10);
+  --accent: #59d6e8; --on-accent: #04161a; --amber: #ffb84d; --target: #59d6e8; --good: #5be3a0; --bad: #ff7a70;
+  --glass: rgba(16,24,30,.58); --glass2: rgba(255,255,255,.08); --glass-line: rgba(255,255,255,.13);
+  --red: #ff8b8b; --red-glass: rgba(255,90,90,.16); --red-line: rgba(255,110,110,.38);
+  --felt: #1d6b57; --rail: #4b3527; --diamond: #e9dcc0;
+  --f: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: ui-monospace, Menlo, monospace;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--fg); font: 400 14px/1.4 var(--f); overflow: hidden; -webkit-text-size-adjust: 100%; }
+* { box-sizing: border-box; }
+button { font-family: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.glass { background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); border-radius: 14px; }
+.inert, .glass.inert { background: var(--red-glass) !important; border-color: var(--red-line) !important; color: var(--red) !important; }
+.seg.inert button, .btn.inert { color: var(--red) !important; }
+
+/* ---------- home ---------- */
+#home { position: fixed; inset: 0; overflow-y: auto; padding: calc(env(safe-area-inset-top, 0px) + 22px) calc(env(safe-area-inset-right, 0px) + 18px) calc(env(safe-area-inset-bottom, 0px) + 28px) calc(env(safe-area-inset-left, 0px) + 18px); -webkit-overflow-scrolling: touch;
+  background: radial-gradient(120% 60% at 50% -10%, rgba(89,214,232,.14), transparent 60%), var(--bg); }
+.wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.brand { font-weight: 300; font-size: 44px; letter-spacing: -.02em; line-height: 1; margin: 0; }
+.brand span { color: var(--accent); font-weight: 500; }
+.ver { font: 500 11px var(--f-mono); color: var(--muted); margin-left: 8px; letter-spacing: .04em; vertical-align: middle; }
+.lead { color: var(--muted); margin: 8px 0 0; }
+.modes { display: flex; flex-direction: column; gap: 10px; }
+.mode { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center; text-align: left; color: var(--fg); padding: 14px 16px; min-height: 68px; cursor: pointer; }
+.mode b { font-weight: 600; font-size: 18px; letter-spacing: -.01em; }
+.mode small { grid-column: 1; color: var(--muted); font-size: 13px; }
+.mode i { grid-row: 1 / span 2; grid-column: 2; font-style: normal; font-weight: 300; font-size: 26px; color: var(--accent); }
+.mode.primary { background: rgba(89,214,232,.20); border-color: rgba(89,214,232,.5); }
+.mode.inert small, .mode.inert i { color: var(--red); opacity: .85; }
+.card { padding: 12px 14px; }
+.lbl { font: 500 13px var(--f); color: var(--muted); }
+.seg { display: inline-flex; background: var(--glass2); border-radius: 10px; padding: 3px; gap: 2px; }
+.seg button { border: 0; background: none; color: var(--muted); font: 500 13px var(--f); padding: 8px 14px; border-radius: 8px; min-height: 36px; }
+.seg button.on { background: rgba(89,214,232,.22); color: var(--fg); box-shadow: inset 0 0 0 1px rgba(89,214,232,.5); }
+.seg.inert { background: var(--red-glass); }
+.seg.inert button.on { background: rgba(255,90,90,.22); box-shadow: inset 0 0 0 1px var(--red-line); }
+.stat { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 13px; }
+.stat:first-of-type { border-top: 0; }
+.stat em { font: 500 12px var(--f-mono); font-style: normal; color: var(--muted); text-align: right; }
+.stat em.ok { color: var(--good); } .stat em.warn { color: var(--amber); }
+.tips { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--glass-line); background: var(--glass2); color: var(--fg); font: 500 14px var(--f); cursor: pointer; }
+.btn.primary { background: rgba(89,214,232,.26); border-color: rgba(89,214,232,.6); color: #eafcff; }
+.btn.good { color: var(--good); } .btn.bad { color: var(--bad); }
+.btn.small { min-height: 36px; padding: 0 12px; font-size: 13px; }
+.btn:disabled { opacity: .5; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.slider { display: flex; align-items: center; gap: 12px; }
+.slider input { flex: 1; accent-color: var(--accent); }
+.slider output { font: 500 13px var(--f-mono); min-width: 56px; text-align: right; }
+
+/* ---------- camera ---------- */
+#cam { position: fixed; inset: 0; background: #000; color: var(--fg); }
+#stage { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+#topbar { position: absolute; left: 0; right: 0; top: 0; display: flex; gap: 8px; align-items: center; padding: calc(env(safe-area-inset-top, 0px) + 8px) calc(env(safe-area-inset-right, 0px) + 12px) 6px calc(env(safe-area-inset-left, 0px) + 12px); pointer-events: none; }
+#topbar > * { pointer-events: auto; }
+.tb { color: var(--fg); font: 500 13px var(--f); min-height: 36px; padding: 0 14px; cursor: pointer; }
+#modeLbl { font: 600 14px var(--f); padding: 0 14px; line-height: 36px; white-space: nowrap; }
+#status { flex: 1; min-width: 0; font: 500 12px/1.3 var(--f); padding: 8px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+#status:empty { visibility: hidden; }
+#hud { position: absolute; left: calc(env(safe-area-inset-left, 0px) + 12px); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); display: flex; gap: 14px; align-items: center; padding: 10px 14px 10px 10px; border-radius: 20px; }
+#tip { width: 78px; height: 78px; flex: none; }
+#lvl { display: flex; flex-direction: column; align-items: flex-start; min-width: 72px; }
+#lvlCap { font: 500 11px var(--f); opacity: .6; letter-spacing: .06em; text-transform: uppercase; }
+#lvlNum { font: 300 54px/1 var(--f); letter-spacing: -.03em; }
+#lvlWord { font: 500 12px var(--f); opacity: .75; min-height: 15px; }
+#candNav { display: flex; align-items: center; gap: 4px; }
+#candNav button { border: 1px solid var(--glass-line); width: 38px; height: 38px; border-radius: 12px; background: var(--glass2); font-size: 18px; cursor: pointer; }
+#candNav span { font: 500 12px var(--f-mono); min-width: 34px; text-align: center; opacity: .8; }
+#aggr { position: absolute; right: calc(env(safe-area-inset-right, 0px) + 12px); top: 50%; transform: translateY(-50%); width: 46px; height: min(46vh, 220px); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 10px 0; cursor: pointer; border-radius: 23px; }
+#aggr b { font: 600 10px var(--f); letter-spacing: .08em; text-transform: uppercase; }
+#aggr .track { flex: 1; width: 3px; margin: 8px 0; background: currentColor; opacity: .35; border-radius: 2px; position: relative; }
+#aggr .knob { position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; background: currentColor; opacity: .9; }
+#card { position: absolute; right: calc(env(safe-area-inset-right, 0px) + 12px); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); width: min(42vw, 360px); max-height: calc(100% - 70px); overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; border-radius: 18px; }
+body.playrun #card { right: calc(env(safe-area-inset-right, 0px) + 70px); }
+#card.slim { left: 50%; right: auto; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); width: min(94vw, 800px); flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; padding: 9px 14px; pointer-events: none; }
+body.playrun #card.slim { right: auto; }
+#card.slim.atTop { top: calc(env(safe-area-inset-top, 0px) + 56px); bottom: auto; }
+#card.slim .btn { pointer-events: auto; }
+#card .sizes { display: flex; gap: 6px; align-items: center; flex: 0 0 auto; } #card .sizes .chip { min-height: 38px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--glass-line); background: var(--glass2); color: var(--fg); font: 600 13px var(--f); pointer-events: auto; } #card .sizes .chip.on { box-shadow: 0 0 0 2px var(--accent) inset; color: var(--accent); }
+#card .slimtxt { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 260px; }
+#card .slimtxt b { font: 600 14px var(--f); } #card .slimtxt span { font: 400 12px/1.35 var(--f); color: rgba(234,241,244,.8); }
+#card h3 { margin: 0; font: 600 18px var(--f); letter-spacing: -.01em; }
+#card p { margin: 0; font-size: 13px; line-height: 1.45; color: rgba(234,241,244,.88); }
+#card .row .btn { min-height: 38px; font-size: 13px; padding: 0 12px; }
+#card ul { margin: 0; padding-left: 0; list-style: none; font-size: 12px; opacity: .9; }
+.dots { display: flex; gap: 6px; } .dots i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.22); } .dots i.on { background: var(--accent); }
+#toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 22px); transform: translateX(-50%); padding: 9px 16px; font: 500 13px var(--f); z-index: 30; pointer-events: none; white-space: nowrap; }
+#rotMsg { display: none; position: absolute; inset: 0; background: rgba(6,10,14,.94); z-index: 6; align-items: center; justify-content: center; flex-direction: column; gap: 10px; text-align: center; padding: 24px; }
+#rotMsg b { font: 300 28px var(--f); } #rotMsg span { max-width: 320px; opacity: .8; }
+@media (orientation: portrait) { body:not(.learnmode) #cam:not([hidden]) #rotMsg { display: flex; } }
+body.learnmode #modeLbl { display: none; }
+#sheet, #menu, #stats { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; z-index: 9; }
+.sheetBox { background: rgba(18,26,32,.92); border: 1px solid var(--glass-line); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); color: var(--fg); width: min(100%, 580px); max-height: 100%; overflow-y: auto; border-radius: 20px 20px 0 0; padding: 18px 18px calc(18px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 12px; }
+.sheetBox h2 { margin: 0; font: 600 19px var(--f); letter-spacing: -.01em; }
+.sheetBox .set { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 18px; }
+@media (max-width: 560px) { .sheetBox .set { grid-template-columns: 1fr; } }
+.set > div { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.sheetBox hr { border: 0; border-top: 1px solid var(--line); margin: 2px 0; width: 100%; }
+@media (orientation: landscape) { #sheet, #menu, #stats { align-items: center; } .sheetBox { border-radius: 20px; max-height: 94%; } }
+#pickGrid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+@media (orientation: portrait) { #pickGrid { grid-template-columns: repeat(4, 1fr); } }
+.chip.ball { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border-radius: 12px; border: 1px solid var(--glass-line); background: var(--glass2); color: var(--fg); font: 600 15px var(--f); }
+.chip.ball i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,.35); }
+.chip.ball.on { box-shadow: 0 0 0 2px var(--accent) inset; } .chip.ball.used { opacity: .45; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+#endFab { position: absolute; right: calc(env(safe-area-inset-right, 0px) + 14px); bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); min-height: 58px; padding: 0 30px; font: 600 18px var(--f); color: var(--fg); cursor: pointer; z-index: 5; border-color: rgba(255,255,255,.35); box-shadow: 0 6px 22px rgba(0,0,0,.4); }
+#undoBtn { position: absolute; left: calc(env(safe-area-inset-left, 0px) + 14px); bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); min-height: 50px; padding: 0 18px; font: 600 15px var(--f); color: var(--fg); cursor: pointer; z-index: 5; border-color: rgba(255,255,255,.28); }
+#undoBtn:disabled { opacity: .45; }
+#flagBtn { position: absolute; left: calc(env(safe-area-inset-left, 0px) + 14px); bottom: calc(env(safe-area-inset-bottom, 0px) + 74px); min-height: 50px; padding: 0 18px; font: 600 15px var(--f); color: var(--fg); cursor: pointer; z-index: 5; border-color: rgba(255,200,90,.45); }
+#flagBtn:disabled { opacity: .55; }
+#stats .big { display: flex; align-items: baseline; gap: 10px; } #stats .big b { font: 300 46px var(--f); letter-spacing: -.02em; } #stats .big span { color: var(--muted); }
+#stats .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } #stats .grid3 div { background: var(--glass2); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; } #stats .grid3 b { font: 600 22px var(--f); } #stats .grid3 span { color: var(--muted); font-size: 12px; }
+#stats .slist { display: flex; flex-direction: column; gap: 4px; max-height: 38vh; overflow-y: auto; }
+.dsum .slist { display: flex; flex-direction: column; gap: 4px; max-height: 42vh; overflow-y: auto; margin: 8px 0; } .dsum .srow { display: grid; grid-template-columns: 28px 1fr auto; gap: 8px; align-items: baseline; padding: 6px 10px; border-radius: 10px; background: var(--glass2); font-size: 13px; } .dsum .srow.ok em { color: var(--good); } .dsum .srow.no em { color: var(--bad); } .dsum .srow em { font: 500 11px var(--f-mono); font-style: normal; text-align: right; }
+#stats .srow { display: grid; grid-template-columns: 28px 1fr auto; gap: 8px; align-items: baseline; padding: 6px 10px; border-radius: 10px; background: var(--glass2); font-size: 13px; } #stats .srow.ok span { color: var(--good); } #stats .srow.no span { color: var(--bad); } #stats .srow em { font: 500 11px var(--f-mono); font-style: normal; color: var(--muted); text-align: right; }
+#stats p { margin: 0; } #statsBody { display: flex; flex-direction: column; gap: 12px; }
+</style>
+
+<div id="home">
+  <div class="wrap">
+    <div><h1 class="brand">Chalk<span>line</span><span class="ver" id="verTag">V1</span></h1><p class="lead">Mount the phone sideways where it sees the whole table, then pick what you want to do.</p></div>
+    <div class="modes">
+      <button class="mode glass primary" data-mode="watch"><b>Watch &amp; Learn</b><small>Throw the nine balls out, take ball in hand and run them in order. Chalkline watches, listens and saves every shot with its pictures.</small><i>›</i></button>
+      <button class="mode glass" data-mode="quick"><b>Show me the balls</b><small>A 2-minute setup for a table's balls: put each ball on the table when asked, no shooting. Do it first at any new table.</small><i>›</i></button>
+      <button class="mode glass" data-mode="drill"><b>Learn the balls</b><small>A guided drill: the 1 to the 9, three made shots each. Put the ball and the cue ball anywhere and shoot it into any pocket. Only those two balls on the table.</small><i>›</i></button>
+      <button class="btn" id="lastBtn" hidden>Last session stats</button>
+    </div>
+    <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table</div><div class="seg" id="segProf"></div><div class="lbl" id="profHint" style="margin:8px 0 12px"></div><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
+    <div class="card glass" id="status0"></div>
+    <div class="card glass"><div class="lbl" style="margin-bottom:6px">For the best read</div><ul class="tips"><li>Turn Rotation Lock off in Control Center, then hold the phone sideways.</li><li>Open Chalkline from the Home Screen icon to hide Safari's bars.</li><li>Mount high, at the end or a corner, with all six pockets in view.</li><li>Frame the table so it fills at least 40% of the screen.</li><li>Keep the lights steady. Glare on the felt hurts the read.</li></ul></div>
+  </div>
+</div>
+
+<div id="cam" hidden>
+  <canvas id="stage" aria-label="Table camera"></canvas>
+  <div id="topbar">
+    <button class="tb glass" id="homeBtn" aria-label="Back to menu">‹ Menu</button>
+    <div class="glass" id="modeLbl"></div>
+    <div class="glass" id="status"></div>
+    <button class="tb glass" id="planBtn" hidden>Plan</button>
+    <button class="tb glass" id="zoomBtn" hidden aria-label="Reset zoom"></button>
+    <button class="tb glass" id="menuBtn" aria-label="More">More</button>
+  </div>
+  <div class="glass" id="hud" hidden>
+    <canvas id="tip" width="156" height="156" aria-label="Where to hit the cue ball"></canvas>
+    <div id="lvl"><span id="lvlCap">Strength</span><span id="lvlNum">–</span><span id="lvlWord"></span></div>
+    <div id="candNav"><button id="prevC" aria-label="Previous option">‹</button><span id="candIdx"></span><button id="nextC" aria-label="Next option">›</button></div>
+  </div>
+  <div class="glass inert" id="aggr" hidden aria-label="Safe to Bold (not running yet)"><b>Bold</b><div class="track"><div class="knob"></div></div><b>Safe</b></div>
+  <button class="glass" id="endFab" hidden>■ End session</button>
+  <button class="glass" id="undoBtn" hidden>↶ Throw out last shot</button>
+  <button class="glass" id="flagBtn" hidden>⚑ This shot was wrong</button>
+  <div class="glass" id="card" hidden></div>
+  <div id="rotMsg"><b>Turn your phone sideways</b><span>If it will not rotate, turn Rotation Lock off in Control Center.</span><button class="btn" id="rotBack">‹ Back to menu</button></div>
+</div>
+
+<div class="glass" id="toast" hidden></div>
+
+<div id="sheet" hidden><div class="sheetBox"><h2 id="pickTitle">Which ball is this?</h2><div id="pickGrid"></div><div class="row"><button class="btn" id="pickHand">Taken off by hand</button><button class="btn" id="pickRemove">Not a ball</button><button class="btn" id="pickCancel">Cancel</button></div></div></div>
+
+<div id="stats" hidden><div class="sheetBox"><div id="statsBody"></div><div class="row" id="statsBtns"></div></div></div>
+
+<div id="menu" hidden><div class="sheetBox">
+  <h2>More</h2>
+  <div class="set">
+    <div><span class="lbl">Table size</span><div class="seg" id="mFt"></div></div>
+    <div id="mGameRow"><span class="lbl">Game</span><div class="seg" id="mGame"></div></div>
+    <div id="mGroupRow"><span class="lbl">8-ball group</span><div class="seg" id="mGroup"></div></div>
+    <div><span class="lbl">Pocket style</span><div class="seg" id="mPocket"></div></div>
+    <div><span class="lbl">Ball number tags</span><div class="seg" id="mTags"></div></div>
+    <div><span class="lbl">Shot sounds (ding, dong)</span><div class="seg" id="mSound"></div></div>
+    <div><span class="lbl">Video of every shot (for testing)</span><div class="seg" id="mClips"></div></div>
+    <div><span class="lbl">Ball path dots</span><div class="seg" id="mTrails"></div></div>
+    <div id="mMicRow"><span class="lbl">Listen for shots (microphone)</span><div class="seg" id="mMic"></div></div>
+  </div>
+  <div class="set">
+    <div style="width:100%"><span class="lbl">Your aim error</span><div class="slider" style="width:100%"><input id="skill" type="range" min="0.15" max="0.9" step="0.05"><output id="skillVal"></output></div></div>
+    <div style="width:100%"><span class="lbl">Lens (leave at 0.86 unless paths look skewed)</span><div class="slider" style="width:100%"><input id="lens" type="range" min="0.55" max="1.4" step="0.01"><output id="lensVal"></output></div></div>
+  </div>
+  <hr>
+  <div class="lbl">Not running yet</div>
+  <div class="set">
+    <div><span class="lbl inertlbl" style="color:var(--red)">Diamond ruler</span><div class="seg inert" id="mRuler" data-inert="Diamond ruler is not running yet"><button class="on">Off</button><button>On</button></div></div>
+    <div><span class="lbl" style="color:var(--red)">Shot style</span><div class="seg inert" id="mStyle" data-inert="Shot styles are not running yet"><button class="on">Simple</button><button>Advanced</button></div></div>
+    <div><span class="lbl" style="color:var(--red)">Table profile</span><div class="seg inert" id="mProfile" data-inert="Table profiles are not running yet"><button class="on">Table 1</button></div></div>
+  </div>
+  <hr>
+  <div class="row"><button class="btn" id="mView">Show table map</button><button class="btn" id="mRecal">Recalibrate table</button><button class="btn" id="mTeach">Teach balls one by one</button><button class="btn" id="mGeo">Geometry check</button><button class="btn" id="mForget">Forget learned looks</button></div>
+  <div class="row"><button class="btn primary" id="mClose">Done</button><button class="btn bad" id="mStop">Stop camera</button></div>
+</div></div>
+
+<script>
+/*CORE*/
+/*VISION*/
+/*APP*/
+</script>

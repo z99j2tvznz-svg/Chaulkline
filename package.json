@@ -1,0 +1,13 @@
+{
+  "name": "chalkline",
+  "private": true,
+  "description": "Chalkline: iPhone pool tracking web app (single-file build in index.html)",
+  "scripts": {
+    "build": "python3 build.py",
+    "test": "python3 build.py --check && node --test \"tests/*.test.js\"",
+    "replay": "node tools/replay-pictures.js"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}
