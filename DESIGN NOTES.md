@@ -561,3 +561,88 @@ Truth checked by eye (scratchpad r7truth.py). Same balls as always.
   shotocc2 stable ("Off the table: 4" every run).
 - Tests: regression suite same results as V2.3.1; t232truth (t21truth with realistic names: after the 1 -> next 2,
   two down -> next 4); t23rec 100/99/89%.
+
+## real9 — V2.3.2 at home (Oct 15, 21:07): Show me the balls, then Watch & Learn 51 shots / 4 racks (no drill)
+- Pictures sharp; setup: recognizer knew 19/20 before being shown (the 9 stripe-down read as cue once).
+- Rack 3 perfect: 9 shots, every target / first ball / ball down right. Lowest-ball target worked all session.
+- App names vs recognizer agree 88%; checked by eye, the app was right on most disagreements (recognizer: 9 stripe
+  hidden -> cue 36x, maroon 7 half hidden -> 4 13x). Real app errors:
+  * shot 41: the cue tracker jumped to the red 3 after contact and followed it; the 5" cue-end rule then named the red 3
+    "cue" and left the real cue ball unnamed. Next, the re-check (real cue not in the matching) turned the real 9
+    (stripe down, reads as cue) into "cue" and the red 3 into 9, then 3. User had to tap the 9.
+  * 1<->9 swapped for shots 26-27 (yellow solid vs yellow stripe); the re-check was blocked 3x at gain 0.37-0.41 (< 0.45)
+    and only fixed it after 40 looks.
+  * 3<->7 swap (red vs maroon) in rack 4, fixed by the re-check after one shot.
+  * shot 37: the 8 stopped frozen to the cue ball, detection saw one ball, the count dropped -> "8 down" (false), the 8
+    then could not be named (made numbers excluded) and the 1 made next shot was not counted (count unchanged).
+  * shot 6: a ghost at the corner pocket was named 1 (conf 0.3 = eliminate(), which also resets S.gone when 9 numbers
+    are visible) -> "3, 7, 1 down" when only 3 and 7 went.
+- Fix ideas (V2.3.3): recognizer veto on the cue-end rules and a cue check after each shot (a ball read as clearly not
+  the cue is never named cue; the unnamed ball that reads as cue takes it); re-check never hands out "cue" while an
+  unnamed white ball is on the table, and M 0.45 -> 0.35; a ball whose path ended at rest touching another ball is not
+  down (the count saw one blob); eliminate() off in Watch.
+
+## Reviews (Oct 15, ChatGPT x2) and agreed direction
+- Agreed next step V2.3.3 = testing foundation: per-shot video clips (frame-rate check), "this shot was wrong" button,
+  path trails (diagnostic), remove eliminate() and the 5" cue-end rule, end-of-shot cue-ball check. Later (tested on
+  clips): colour-aware cue tracking, touching balls, evidence kept per physical ball, confirmed/likely/unsure results
+  with later evidence correcting earlier shots, hall + 2-hour test. Detector experiment only if measurements point there.
+- User (Oct 15): balls frozen on the near and far rails were NOT seen until moved by hand. Detection misses leave no
+  trace in the logs, so the error count from logs under-counted detection. Two suspected causes in the code (not yet
+  proven): (1) the learned cushion-shadow mask (STILL) learns a rail ball the detector missed as "shadow" and only frees
+  a cell when plain cloth shows there, i.e. after the ball is moved; (2) a blob touching the cushion edge counts as
+  something coming in from outside (arm/person -> occluder), so a ball merged with the cushion shadow is not a ball.
+  Plan: find these cases in saved pictures (real8/real9), confirm the cause, fix (check rail spots with the recognizer
+  before masking or calling them occluders), add to V2.3.3.
+- Confirmed in real9 pictures (rack 3 start, shots 26-27): the blue 2 sitting by the far cushion just right of the far
+  side pocket was never detected (no spot in 3 pictures); the maroon 7 near the far cushion was detected ~1.5" off.
+  Suspect the far-pocket-hole exclusion zone (pk.r + 2.5" around far pockets) and/or the learned cushion mask. The
+  6-on-the-near-rail case the user remembers was not found in racks 3-4 of real9 (may be another session).
+- User is not confident the table geometry overlay matches the real table. Proposal: a one-time geometry check —
+  balls on known spots (frozen to the rails at given diamonds, foot/head spot), save debug, compare app positions to
+  the true ones in inches. Turns "not confident" into numbers; decides whether lens distortion / outline fit need work.
+
+## V2.3.3 (built Oct 15, late) — testing foundation + rail balls + geometry check
+- Rail / pocket balls (cause found in real9 pictures, both confirmed offline):
+  - The learned cushion-shadow mask (STILL) had grown to ~890 sq in and covered a blue ball by the far rail. New:
+    `still_bad` — a mask larger than a 2.5"-wide band around the whole cushion is thrown away and relearned.
+  - `maskRecheck` (every 15 scans, table clear): detection is run once without the mask; a spot the recognizer is sure
+    is a ball (p ≥ 0.6, not "not-a-ball") clears the mask cells under the ball's picture (dbg `unmask`).
+  - Rail balls merged with a piece of cushion shadow failed the fill/aspect test. New `discFit` fallback in vision.js:
+    the best ball-sized disc inside the blob; kept if it is ≥ 72% covered and passes the pocket/edge checks (`fit: 1`).
+  - Checked: real9 shots 26/27/41 now find the far-rail 7, 3 and 9; real3/5/6 recognition regression: more balls found
+    (152/369/356 vs 150/366/357), no ghost spots named.
+- Shot videos: one clip per shot (MediaRecorder, H.264 mp4 on iPhone, 1 Mbps, mic audio when listening), stored with
+  the pictures as shotNNN.mp4 and in the debug zip. Recording starts when the cue ball is ready; while nobody shoots a
+  fresh recording starts every 12 s and the old one is dropped 3 s later, so each clip has ≥ 3 s before the shot (~1.5 MB
+  per shot). labels.json: clip {file, secs, shotAt (seconds into the clip the shot starts), kb}. Only the current and
+  previous session keep clips. Turned off for the session if the camera frame rate drops > 20% while recording
+  (dbg `clip_off`). Menu: "Video of every shot" On/Off. Purpose: replay real shots through new versions (real-video
+  regression), as the reviews asked.
+- "⚑ This shot was wrong" button above "Throw out last shot": marks the shot (shots[].flag, labels flag, dbg `flag`).
+  Flagged shots + their clips are the first test cases.
+- Ball path dots: a dot for every frame each ball was seen, in the ball's colour; ring = counted into a pocket, "?" =
+  path lost/unsure. Live during the shot, kept until the next. Also saved as shotNNN-paths.jpg (after picture stays
+  clean). Menu: "Ball path dots".
+- Removed: eliminate() in Watch (named a pocket shadow the 1, real9 shot 6); the 5" cue-end rule (named the red 3 the
+  cue ball, real9 shot 41). The 1.5" cue-end rule now applies in all modes, unless the recognizer is sure it is a
+  coloured ball.
+- cueCheck after every shot: if the ball named the cue ball is confidently a coloured ball, the cue name moves to the
+  whitest ball (rec cue ≥ 0.8) and the rest are named again (dbg `cue_check`).
+- Geometry check (More → Geometry check): balls frozen to the cushions at the real diamonds — 1-4 near rail and 5-8 far
+  rail at diamonds 1, 3, 5, 7 from the screen-left end, the 9 at the middle diamond of the left short rail. Measure
+  reports average error along the rail and off the rail per rail, the max, and per ball (dbg `geo`, picture geo-*.jpg
+  in the zip). No shots are armed while it is open. Reading it: a whole rail off in the same direction = outline/lens
+  fit; scattered errors = detection.
+- Still deferred until clips exist: colour-aware cue tracking, touching balls, re-check thresholds, confirmed/likely/
+  unsure results, hall test, 2-hour test.
+- Independent review before delivery (13 findings, all fixed): mask re-check counter never started (NaN), debug zip
+  now holds at most 80 MB of videos (flagged shots first, then newest; the log says which were left out), 250 MB of
+  videos per session and none once the app's storage is 85% full, discFit size guard was inside a comment (+ cost cap),
+  flag tapped while a shot was being saved could be lost, false shot starts left the clip's shot time set, cueCheck no
+  longer removes the cue name when no white ball can take it (no made-up scratch), recorder stopped on camera restart
+  and errors handled (overlap turned off if two recordings at once fail on the phone), flag button disabled while the
+  next shot is read, path dots drawn with the camera of that moment, clips only start once the normal frame rate is
+  known, old path dots cleared on a new session, geometry check cannot reopen the camera after leaving.
+- Known flake (pre-existing, also in V2.3.2): the camera-moved test (s9) briefly shows a ghost spot by the corner
+  pocket until the table is found again.
