@@ -646,3 +646,18 @@ Truth checked by eye (scratchpad r7truth.py). Same balls as always.
   known, old path dots cleared on a new session, geometry check cannot reopen the camera after leaving.
 - Known flake (pre-existing, also in V2.3.2): the camera-moved test (s9) briefly shows a ghost spot by the corner
   pocket until the table is found again.
+
+## Repo in order (Oct 16, step 1 of the engineering assessment) — no change to the app
+- The source now lives in the repo: src/ (app.js, vision.js, core.js, template.html, recog.json) + build.py (relative
+  paths; `--check` proves index.html is exactly what src/ builds). index.html is a built file from now on.
+- Tests in the repo (the old workspace tests were lost): tests/unit.test.js (homography, camera model, table sizes,
+  Hungarian matching, colour conversion), tests/smoke.test.js (built app loads in headless Chromium with a fake camera,
+  right version shown, Watch / Show me the balls / Learn the balls each start without an error). `npm test`.
+- Real-session data: data/sessions.csv lists all 13 debug zips (real1-real9); the pictures stay out of this public repo,
+  in the project's shared files (chalkline-data/sessions/). library/manifest.csv = the hand-checked labels (real1-6).
+- tools/replay-pictures.js: the V2.3.3 ball finder + recognizer over every saved picture, scored against the labels with
+  failure types kept apart. Baseline (finder alone, without the live filters: shadow mask, not-a-ball drop, tracking):
+  balls found again real1 88%, real2 95%, real3 91%, real4 87%, real5 96%, real6 (hall) 94%; recognizer names found balls
+  right 98-100% at home (in-sample: it was trained on these sessions) and 89% at the hall. real7-real9 have no labels yet.
+  Outline check (saved spots vs the logged outline): median 2-11 px; real1 (digital zoom) and real4 highest.
+- Still missing: shot-level tests (need the V2.3.3 shot clips), labels for real7-real9, the old synthetic-video tests.
