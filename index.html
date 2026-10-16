@@ -139,8 +139,8 @@ body.learnmode #modeLbl { display: none; }
     <div><h1 class="brand">Chalk<span>line</span><span class="ver" id="verTag">V1</span></h1><p class="lead">Mount the phone sideways where it sees the whole table, then pick what you want to do.</p></div>
     <div class="modes">
       <button class="mode glass primary" data-mode="watch"><b>Watch &amp; Learn</b><small>Throw the nine balls out, take ball in hand and run them in order. Chalkline watches, listens and saves every shot with its pictures.</small><i>›</i></button>
-      <button class="mode glass" data-mode="quick"><b>Show me the balls</b><small>A 2-minute setup for a table's balls: put each ball on a ring when asked, no shooting. Do it first at any new table.</small><i>›</i></button>
-      <button class="mode glass" data-mode="drill"><b>Learn the balls</b><small>A guided drill: the 1 to the 9, three made shots each. Put the ball and the cue ball on the rings and shoot it in. Only those two balls on the table.</small><i>›</i></button>
+      <button class="mode glass" data-mode="quick"><b>Show me the balls</b><small>A 2-minute setup for a table's balls: put each ball on the table when asked, no shooting. Do it first at any new table.</small><i>›</i></button>
+      <button class="mode glass" data-mode="drill"><b>Learn the balls</b><small>A guided drill: the 1 to the 9, three made shots each. Put the ball and the cue ball anywhere and shoot it into any pocket. Only those two balls on the table.</small><i>›</i></button>
       <button class="btn" id="lastBtn" hidden>Last session stats</button>
     </div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table</div><div class="seg" id="segProf"></div><div class="lbl" id="profHint" style="margin:8px 0 12px"></div><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
@@ -1336,7 +1336,7 @@ function findCue(img, cam, P, guess, searchIn) {
 
 
 // Find white-ball-sized bright blobs near a point; return the one closest to `center` (table inches).
-function findWhite(img, cam, P, center, radIn, minDistIn, exclude) {
+function findWhite(img, cam, P, center, radIn, minDistIn, exclude, skip) {
   const W = img.width, H = img.height, R = P.R;
   const c = cam.proj(center.x, center.y, R), rpx = cam.ballRad(center.x, center.y, R, R), sr = Math.max(rpx * 2, cam.rad(center.x, center.y, R, radIn));
   const x0 = Math.max(0, Math.floor(c[0] - sr)), x1 = Math.min(W - 1, Math.ceil(c[0] + sr)), y0 = Math.max(0, Math.floor(c[1] - sr)), y1 = Math.min(H - 1, Math.ceil(c[1] + sr));
@@ -1362,6 +1362,7 @@ function findWhite(img, cam, P, center, radIn, minDistIn, exclude) {
     const t = cam.unproj(x0 + sx / n, y0 + sy / n, R), d = Math.hypot(t[0] - center.x, t[1] - center.y);
     if (d < (minDistIn || 0)) continue;
     if (exclude && exclude.some(e => Math.hypot(t[0] - e.x, t[1] - e.y) < 1.8)) continue;
+    if (skip && skip({ x: t[0], y: t[1] })) continue; // not a ball on the cloth (a hand, a sleeve): look past it
     if (d < bd) { bd = d; best = { x: t[0], y: t[1], n }; }
   }
   return best;
@@ -1603,12 +1604,12 @@ if (!S.v231) { const cut = Date.UTC(2026, 9, 14, 20, 0); let n = 0;
 profApply(S.prof);
 S.P = mkP();
 if (!S.v231) { S.v231 = true; save(); }
-const labelIds = () => S.drillMode && S.dr && S.dr.quick && !S.dr.done ? [S.dr.seq[S.dr.qi] ? S.dr.seq[S.dr.qi][0] : 0] : S.drillMode && S.dr && !S.dr.done ? [0, S.dr.ball] : (S.mode === 'train' || S.mode === 'calib') ? [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] : (S.mode === 'play9' || S.mode === 'play8') && !S.watch && S.gone && S.gone.length ? candIds().filter(i => !S.gone.includes(i)) : candIds();
+const labelIds = () => S.drillMode && S.dr && S.dr.quick && !S.dr.done ? [S.dr.seq[S.dr.qi] ? S.dr.seq[S.dr.qi][0] : 0] : S.drillMode && S.dr && !S.dr.done ? [0, S.dr.ball] : (S.mode === 'train' || S.mode === 'calib') ? [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] : (S.mode === 'play9' || S.mode === 'play8') && !S.drillMode && S.gone && S.gone.length ? candIds().filter(i => !S.gone.includes(i)) : candIds(); // a ball already made cannot come back (V2.3.2: Watch too)
 const allSamples = () => priorSamples().concat(S.samples);
 
 // ---------- debug log (kept for the whole session, saved from the stats screen) ----------
 // V2 = the new path (user, Oct 12): watch real play, collect labeled pictures, train a ball detector. V1 ideas are kept for later.
-const VERSION = 'V2.3.1';
+const VERSION = 'V2.3.2';
 const DBG = { t0: Date.now(), ev: [], hdr: null, snap: '', snapT: 0, hbT: 0, drop: 0, seen: {}, c: { scans: 0, skip: 0, shift: 0, maxSh: 0, maxD0: 0, maxFd: 0, relock: 0, f0: 0 } };
 const r1 = v => Math.round(v * 10) / 10, r2 = v => Math.round(v * 100) / 100;
 function dbg(k, d) {
@@ -2191,7 +2192,7 @@ function acceptTable() {
   // the size shown on the card is the one the player accepted
   S.ftSet = true; S.quadN = S.quad.map(vnFromSrc); S.diaLock = S.dia ? S.dia.n : 0; S.quadAcc = S.quadN.map(p => p.slice()); save(); enterRun();
   if (S.watch) autoFrame();
-  if (S.watch && !S.drillMode && S.prof === 'away' && !S.quickDone) showCard('<div class="slimtxt"><b>Away table: show me the balls first?</b><span>About 2 minutes. Put each ball on a ring when asked, no shooting. The app learns this table\'s balls before you play.</span></div><div class="row"><button class="btn primary" data-act="quickGo">Show me the balls</button><button class="btn" data-act="dismiss">Skip</button></div>', 0, 'slim');
+  if (S.watch && !S.drillMode && S.prof === 'away' && !S.quickDone) showCard('<div class="slimtxt"><b>Away table: show me the balls first?</b><span>About 2 minutes. Put each ball on the table when asked, no shooting. The app learns this table\'s balls before you play.</span></div><div class="row"><button class="btn primary" data-act="quickGo">Show me the balls</button><button class="btn" data-act="dismiss">Skip</button></div>', 0, 'slim');
 }
 // Watch & Learn: zoom the working picture onto the table and its rails (with some room around it), so the balls get as many
 // pixels as the camera has. From the side the table is a thin strip, and on the far side a ball was only a few pixels across.
@@ -2211,7 +2212,7 @@ function enterRun() {
   resetShotState();
   S.phase = 'run'; S.stable = 0; S.armPos = null; S.ref = null; S.failN = 0; S.sizeBad = 0; S.balls = []; S.cands = []; hideCard(); updHud();
   if (S.drillMode && S.dr && S.dr.quick) { quickSetSpot(); setStatus(quickStatus()); }
-  else if (S.drillMode && S.dr) { S.dr.plan = null; drillSetSpot(); /* planned for where the camera is now */ setStatus(drillHead() + ' · put the ' + S.dr.ball + ' and the cue ball on the rings'); }
+  else if (S.drillMode && S.dr) { S.dr.plan = null; drillSetSpot(); /* planned for where the camera is now */ setStatus(drillHead() + ' · put the ' + S.dr.ball + ' and the cue ball on the table'); }
   else if (S.mode === 'play9' || S.mode === 'play8') setStatus('Waiting for the balls to settle…');
   else if (S.mode === 'train') { setStatus(''); nextDrill(); }
   else if (S.mode === 'teach') { setStatus(''); showTeachCard(); }
@@ -2238,7 +2239,7 @@ function recogFound(list) {
   } catch (e) { dbgOnce('recerr', 30000, 'error', { m: 'recognizer ' + String(e).slice(0, 80) }); }
 }
 // Spots the recognizer is sure are not balls (fingers, a sleeve, the cue) are dropped, unless a ball has been sitting right
-// there for a while (a ball is never thrown away on one picture) or it is on the drill's ring.
+// there for a while (a ball is never thrown away on one picture) or it is where the drill ball was last seen.
 function dropNotBalls(found, prev, after) {
   if (!RECOG) return found;
   const tn = performance.now(); S.nbTr = (S.nbTr || []).filter(q => tn - q.t < 2000);
@@ -2247,12 +2248,13 @@ function dropNotBalls(found, prev, after) {
     // fingers and sleeves usually come as a blob split into several "balls"; a single round spot must be very clearly not a ball
     // (after a shot two balls can come to rest touching, which also splits: there only a clearly ragged or certain spot goes)
     if (!(p[RECOG_NB] > 0.8 && p[RECOG_NB] > 3 * mb && ((!after && (f.k || 1) >= 2) || (f.fill || 1) < 0.55 || p[RECOG_NB] > 0.97))) return true;
-    if (prev.some(q => q.id != null && !q.miss && (q.obs || []).length >= 4 && Math.hypot(q.x - f.x, q.y - f.y) < 1)) return true;
-    if (S.drillMode && S.dr && S.dr.spot && Math.hypot(f.x - S.dr.spot.obj[0], f.y - S.dr.spot.obj[1]) < DRILL.ZO * DRILL.ACC) return true;
+    if (prev.some(q => q.id != null && !q.miss && ((q.obs || []).length >= 4 || q.locked) && Math.hypot(q.x - f.x, q.y - f.y) < 1)) return true;
+    if (S.drillMode && S.dr && S.dr.objAt && Math.hypot(f.x - S.dr.objAt[0], f.y - S.dr.objAt[1]) < 2) return true; // the drill ball where it was last seen
     // hands move and come with a person over the table; a ball sits still. Kept once it has stayed on one spot for 1 s with
     // nobody over the table, or for 4 s whatever else is going on.
     if (!after) { let q = S.nbTr.find(q => Math.hypot(q.x - f.x, q.y - f.y) < 0.8); if (q) { q.t = tn; q.n++; } else S.nbTr.push(q = { x: f.x, y: f.y, t0: tn, t: tn, n: 1 });
-      if ((q.n >= 3 && tn - q.t0 >= 1000 && (S.occFrac || 0) <= 0.005) || (q.n >= 8 && tn - q.t0 >= 4000)) { if (!q.kept) { q.kept = 1; dbg('nb_keep', { at: [r1(f.x), r1(f.y)], n: q.n }); } return true; } }
+      // V2.3.2: only a single round spot (bridge-hand pieces resting on the rail come split and ragged, and were kept)
+      if ((f.k || 1) === 1 && (f.fill || 1) >= 0.55 && ((q.n >= 4 && tn - q.t0 >= 2500 && (S.occFrac || 0) <= 0.005) || (q.n >= 8 && tn - q.t0 >= 4000))) { if (!q.kept) { q.kept = 1; dbg('nb_keep', { at: [r1(f.x), r1(f.y)], n: q.n }); } return true; } }
     RC.nb++; f.notBall = true; f.since = performance.now(); (S.nbSeen = S.nbSeen || []).push(f); if (S.nbSeen.length > 40) S.nbSeen.shift(); return false;
   });
 }
@@ -2300,10 +2302,11 @@ function recheckNames(found) {
   const balls = found.filter(b => b.id != null && b.id <= 9 && !b.miss && !b.hid && !b.pin && S.ev[b.id] && S.ev[b.id].n >= EV.N);
   if (!balls.length) return;
   const fixed = new Set(found.filter(b => b.id != null && (b.pin || !balls.includes(b))).map(b => b.id)), gone = new Set(S.gone || []);
-  const ids = candIds().filter(i => i <= 9 && !fixed.has(i) && (!gone.has(i) || balls.some(b => b.id === i))), n = balls.length, m = ids.length;
+  const ids = candIds().filter(i => i <= 9 && !fixed.has(i)), n = balls.length, m = ids.length;
   if (m < n) return;
   const mean = (b, id) => S.ev[b.id].s[id] / S.ev[b.id].n, C = [];
-  for (const b of balls) C.push(ids.map(id => mean(b, id) - (id === b.id ? EV.B : 0)));
+  // a number already made costs 1.0 more: the ball has to be very clearly it (the made call was wrong) to bring it back
+  for (const b of balls) C.push(ids.map(id => mean(b, id) - (id === b.id ? EV.B : 0) + (gone.has(id) && id !== b.id ? 1 : 0)));
   for (let r = n; r < m; r++) C.push(ids.map(() => 0));
   const as = hungarian(C), ch = [];
   for (let r = 0; r < n; r++) { const b = balls[r], id = ids[as[r]]; if (id !== b.id) ch.push({ b, from: b.id, to: id, gain: C[r][ids.indexOf(b.id)] - C[r][as[r]] }); }
@@ -2312,7 +2315,7 @@ function recheckNames(found) {
   if (ch.some(c => mean(c.b, c.from) - mean(c.b, c.to) < EV.M)) { dbgOnce('names_no', 8000, 'names_no', { ch: ch.map(c => [c.from, c.to, r2(mean(c.b, c.from) - mean(c.b, c.to))]) }); return; }
   const ev = {}; for (const k of Object.keys(S.ev)) ev[k] = S.ev[k];
   for (const c of ch) { ev[c.to] = S.ev[c.from]; if (!ch.some(o => o.to === c.from)) delete ev[c.from]; }
-  for (const c of ch) { c.b.id = c.to; c.b.conf = 0.8; c.b.rechecked = true; }
+  for (const c of ch) { c.b.id = c.to; c.b.conf = 0.8; c.b.rechecked = true; if (gone.has(c.to)) { S.gone = S.gone.filter(i => i !== c.to); dbg('ungone', { id: c.to }); } }
   S.ev = ev;
   dbg('names_fixed', { ch: ch.map(c => ({ from: c.from, to: c.to, at: [r1(c.b.x), r1(c.b.y)], fit: [r2(mean(c.b, c.to)), r2(S.ev[c.to] ? S.ev[c.to].s[c.from] / S.ev[c.to].n : 0)], looks: S.ev[c.to] ? S.ev[c.to].n : 0 })) });
   if (S.watch && !(S.holdT && performance.now() < S.holdT)) holdStatus('Names fixed: ' + ch.map(c => (c.to === 0 ? 'cue ball' : 'the ' + c.to)).join(', ') + '.', 1500);
@@ -2376,7 +2379,7 @@ function dedupeIds(found) {
 // It is recorded from the before and after layouts (no speed, first ball hit unknown). The cue ball alone moving is ball in
 // hand, not a shot; more balls than before is a new rack.
 function unseenCheck(found) {
-  if (S.drillMode) return; // in the drill, balls moved onto the next rings are not a shot
+  if (S.drillMode) return; // in the drill, balls set up for the next shot are not a shot (drillUnseen catches a missed make)
   if (!(S.mode === 'play9' || S.mode === 'play8') || S.pend || TR.rec || S.recording || S.awaitAfter) return;
   const clear = S.occFrac <= 0.02 && !found.some(b => b.hid || b.miss) && S.stable >= 3; if (!clear) return;
   const all = found.map(b => ({ id: b.id, x: b.x, y: b.y })), mk = () => ({ balls: all, t: Date.now() });
@@ -2551,14 +2554,14 @@ function liveScan(force) {
   }
   { const t = performance.now(); S.lostSp = (S.lostSp || []).filter(q => t - q.t < 10000);
     for (const f of found) if (!f.since) { const q = S.lostSp.find(q => Math.hypot(q.x - f.x, q.y - f.y) < 1); f.since = q && q.since ? q.since : t; } }
-  found = dedupeIds(found);
+  found = dedupeIds(found); if (S.drillMode) drillLabel(found); // (the drill's names win over names carried by position)
   { const cap = S.mode === 'play9' ? 10 : 16;
     if (found.length > cap) { // the least ball-like unnamed spots go first
       const score = b => (b.id != null ? 10 : 0) + (b.hid || b.pin ? 5 : 0) - Math.abs(Math.log(b.ratio || 1)) - (b.miss ? 1 : 0);
       found = found.slice().sort((a, b) => score(b) - score(a)).slice(0, cap);
     } }
   { const cap = S.mode === 'play9' ? 10 : 16, n = found.filter(b => !b.miss && !b.hid).length; // more balls than could still be up: a new rack
-    if (S.gone.length && (n >= cap || n >= cap - S.gone.length + 2)) { dbg('rack', { n, gone: S.gone.length }); S.gone = []; } }
+    if (S.gone.length && !S.watch && (n >= cap || n >= cap - S.gone.length + 2)) { dbg('rack', { n, gone: S.gone.length }); S.gone = []; } }
   if (S.scratch && found.some(b => b.id === 0 && !b.hid)) S.scratch = null;
   eliminate(found); found = dedupeIds(found);
   const known = found.filter(b => b.id != null), dd = idDiff(prev, known);
@@ -2577,17 +2580,21 @@ function liveScan(force) {
   if (S.pend) pendCheck();
   unseenCheck(found);
   const cue = known.find(b => b.id === 0 && !b.hid), settled = S.stable >= 3 && cue;
+  // V2.3.2: ready as soon as the cue ball itself has sat still for two looks (about half a second), even if the rest of
+  // the table has not settled yet (a ball just set down by hand and shot right away was missed)
+  const cueReady = settled || (cue && (cue.obs || []).length >= 2 && (cue.mvd || 0) < 0.3 && dd.mv < 1 && !S.setN && !S.pend && !S.awaitAfter && !S.recording && !TR.rec);
+  if (cueReady && !settled && !S.settleT0) S.settleT0 = performance.now(); // for the young-ball rule
   if (S.stable >= 3 && !S.settleT0 && !S.pend && !S.awaitAfter && !S.recording) S.settleT0 = performance.now();
   const armMode = S.mode === 'play9' || S.mode === 'play8' || S.mode === 'train' || S.mode === 'calib';
-  if (settled && armMode) { S.armPos = { x: cue.x, y: cue.y }; S.armT = performance.now(); }
+  if (cueReady && armMode) { if (!settled && !S.armPos) dbgOnce('armq', 3000, 'arm_quick', { at: [r1(cue.x), r1(cue.y)], st: S.stable }); S.armPos = { x: cue.x, y: cue.y }; S.armT = performance.now(); }
   else if (S.armPos && !TR.rec) { const hc = known.find(b => b.id === 0 && b.hid); if (hc && Math.hypot(hc.x - S.armPos.x, hc.y - S.armPos.y) < 2) S.armT = performance.now(); } // cue tip touching the ball at address
   else if (!TR.rec && S.armPos && performance.now() - (S.armT || 0) > 2500) S.armPos = null;
-  if (settled && S.armPos) { S.armBalls = known.map(b => ({ id: b.id, x: b.x, y: b.y, feat: b.feat, conf: b.conf, since: b.since, rec: b.rec })); S.armUn = found.filter(b => b.id == null && !b.miss && !b.hid).map(b => ({ id: null, x: b.x, y: b.y, feat: b.feat, since: b.since, rec: b.rec }));
-    if (S.watch) { truthLook(found); if (S.stable >= (S.drillMode ? 3 : 5)) frameKeepBefore(found); } S.armAll = S.tableN != null ? S.tableN : found.filter(b => !b.miss && !b.hid).length; S.armTrust = S.tableN != null; }
+  if (cueReady && S.armPos) { S.armBalls = known.map(b => ({ id: b.id, x: b.x, y: b.y, feat: b.feat, conf: b.conf, since: b.since, rec: b.rec })); S.armUn = found.filter(b => b.id == null && !b.miss && !b.hid).map(b => ({ id: null, x: b.x, y: b.y, feat: b.feat, since: b.since, rec: b.rec }));
+    if (S.watch) { if (settled) truthLook(found); if (S.stable >= (S.drillMode ? 3 : 5)) frameKeepBefore(found); } S.armAll = S.tableN != null ? S.tableN : found.filter(b => !b.miss && !b.hid).length; S.armTrust = S.tableN != null; }
   if ((S.mode === 'play9' || S.mode === 'play8') && !S.watch && settled && S.auto && !S.planning && !S.cands.length) planNow();
   if (S.holdT && !S.pend && S.holdT === Infinity) S.holdT = 0;
   if (S.drillMode && S.dr && S.dr.quick) { quickTick(found); if (!(S.holdT && performance.now() < S.holdT)) setStatus(quickStatus()); }
-  else if (S.drillMode) { if (!(S.holdT && performance.now() < S.holdT)) setStatus(drillStatus(found, settled)); else drillZones(found); }
+  else if (S.drillMode) { drillUnseen(found); if (!(S.holdT && performance.now() < S.holdT)) setStatus(drillStatus(found, settled)); else drillZones(found); }
   else if (S.watch && !(S.holdT && performance.now() < S.holdT)) setStatus(watchStatus(found, settled));
   else if ((S.mode === 'play9' || S.mode === 'play8') && !S.planning && !(S.holdT && performance.now() < S.holdT)) {
     if (S.pend) setStatus('Shot recorded. Reading the result as the table comes into view…');
@@ -3553,6 +3560,9 @@ function hiddenSee(f, at) {
 // that blinks out of sight, or a hand read as a ball, does not change it. A shot's drop is the clean count before it minus
 // the clean count before the next one: a ball that only went out of sight comes back and is not counted as down.
 // New rack: the clean count goes from 3 or fewer (or a finished rack) to 8 or more.
+// V2.3.2: the ball to shoot is the lowest number on the table, from the names (balls made are gone for good, until the next
+// rack). Unsure when the names and the clean count of balls disagree (a ball without a name, a ghost with one).
+function lowestUp(list) { const g = new Set(S.gone || []), up = (list || []).filter(b => b.id != null && b.id >= 1 && b.id <= 9 && !b.miss && !g.has(b.id)).map(b => b.id); return { lo: up.length ? Math.min(...up) : null, n: new Set(up).size }; }
 function truthLook(found) {
   const T = S.truth; if (!T || found.some(b => b.hid || b.miss)) return;
   // nobody near the table; if that never happens for 20 s (something the camera keeps calling a person), a nearly clear view will do
@@ -3568,8 +3578,9 @@ function truthLook(found) {
     const sh = S.sess && S.sess.shots[p.idx]; if (sh) { sh.drop = d; sh.confirmed = true; }
     dbg('truth_confirm', { shot: p.idx + 1, before: p.nBefore, now: nArm, down: d, target: T.target, unsure: T.uncertain || undefined });
   }
-  if (nArm >= 8 && (T.target == null || T.minArm <= 3)) { T.rack++; T.target = 1; T.uncertain = false; T.minArm = nArm; dbg('truth_rack', { rack: T.rack, n: nArm }); toast('New rack. Watching for the 1.'); return; }
+  if (nArm >= 8 && (T.target == null || T.minArm <= 3)) { T.rack++; T.target = 1; T.uncertain = false; T.minArm = nArm; S.gone = []; dbg('truth_rack', { rack: T.rack, n: nArm }); toast('New rack. Watching for the 1.'); return; }
   T.minArm = Math.min(T.minArm, nArm);
+  { const u = lowestUp(found); if (u.lo != null && u.n === nArm) { if (u.lo !== T.target) dbg('target', { was: T.target, now: u.lo, named: u.n, count: nArm }); T.target = u.lo; T.uncertain = false; } else if (u.lo != null) T.uncertain = true; else if (nArm === 0) T.target = null; }
 }
 // a shot is starting: remember what was known just before it, and start counting fresh for after it
 function truthShotStart() {
@@ -3579,6 +3590,7 @@ function truthShotStart() {
     if (p.target != null && p.drop >= 1) { T.target = p.target + 1; if (p.drop >= 2) T.uncertain = true; if (T.target > 9) T.target = null; }
     dbg('truth_confirm', { shot: p.idx + 1, fallback: true, down: p.drop, target: T.target });
   }
+  { const u = lowestUp(S.balls); if (T.seen && u.lo != null && u.n === T.nArm) T.target = u.lo; }
   const info = { target: T.seen ? T.target : null, nBefore: T.looks.length >= 5 ? T.nArm : null, uncertain: !!T.uncertain, steady: !!T.steady && T.looks.length >= 5, snap: { target: T.target, uncertain: T.uncertain, rack: T.rack, minArm: T.minArm } };
   T.looks = []; return info;
 }
@@ -3599,6 +3611,10 @@ function addPlaySample(feat, id) {
 }
 function watchResult(p, now, r) {
   const shot = p.shot || {}, t0 = performance.now(), T = S.truth || {};
+  // made balls are out of play at once (so nothing takes their numbers meanwhile); never the 9 (a foul brings it back,
+  // a legal 9 ends the rack), nothing from a result that looked wrong
+  if (!shot.drill && !r.doubt) for (const i of r.gone) if (i >= 1 && i <= 8 && !S.gone.includes(i)) S.gone.push(i);
+  if (!shot.drill && r.gone.includes(9) && !r.gone.includes(0) && S.truth) { S.truth.target = null; S.truth.minArm = 0; } // 9 down: rack over
   const tr = shot.truth || truthShotStart() || {}; S.watchWait = true;
   const wait = () => {
     if (!S.live) { S.watchWait = false; return; } if (!shot.meas && !shot.failed && !shot.unseen && performance.now() - t0 < 3500) { setTimeout(wait, 150); return; }
@@ -3634,6 +3650,7 @@ function throwOutLast() {
   const se = S.sess; if (!se || !se.shots.length || S.recording || S.settling || S.awaitAfter || S.pend || S.watchWait) return;
   const idx = se.shots.length - 1, sh = se.shots[idx]; if (sh.thrown) return;
   sh.thrown = true;
+  if (S.watch && !sh.drill && sh.made && S.gone) S.gone = S.gone.filter(i => !sh.made.includes(i)); // what it called made is back in play
   const L = LEARNED.get(idx) || []; for (const m of L) { const k = S.samples.indexOf(m); if (k >= 0) S.samples.splice(k, 1); }
   if (L.removed && L.removed.length) { S.samples.push(...L.removed); if (S.dr && S.dr.fresh && L.removed.fresh != null) delete S.dr.fresh[L.removed.fresh]; } // looks the shot had replaced come back
   LEARNED.delete(idx); save();
@@ -3711,7 +3728,12 @@ function drillPlan() {
   dbg('drill_plan', { n: cs.length, regs, C: S.cam && S.cam.C ? S.cam.C.map(r1) : null });
   return plan;
 }
-function drillSetSpot() { const d = S.dr; if (!d) return; if (!d.plan || !d.plan.length) d.plan = drillPlan(); d.spot = d.plan.length ? d.plan[d.slot % d.plan.length] : null; d.objIn = d.cueIn = false; d.cueInT = 0; }
+// V2.3.2: no rings. Only the cue ball and the called ball are on the table, put down anywhere; the player shoots it into
+// any pocket (the ball's path says which). For different light on the ball, the app asks now and then for the other half.
+function drillSetSpot() { const d = S.dr; if (!d) return; d.spot = null; d.objAt = null; d.both = null; d.gone = null; d.want = d.quick ? null : d.k === 1 ? 'far' : d.k === 2 ? 'near' : null; d.objIn = d.cueIn = false; d.cueInT = 0; }
+// the half of the table nearer the camera, and the other one
+const nearLow = () => !(S.cam && S.cam.C && isFinite(S.cam.C[1])) || S.cam.C[1] < S.P.W / 2;
+const inHalf = (b, h) => (h === 'near') === (nearLow() ? b.y < S.P.W / 2 : b.y > S.P.W / 2);
 // the pocket as the player sees it on the screen
 function pocketWord(pi) {
   const pk = S.P.pockets[pi]; if (!S.cam || !pk) return 'pocket';
@@ -3719,20 +3741,25 @@ function pocketWord(pi) {
   const lr = q[0] < mid[0] - 2 ? 'left' : q[0] > mid[0] + 2 ? 'right' : '', fn = q[1] < mid[1] ? 'far' : 'near';
   return pk.corner ? fn + ' ' + lr + ' corner' : (lr && Math.abs(q[1] - mid[1]) < Math.abs(q[0] - mid[0]) ? lr : fn) + ' side pocket';
 }
-// on every look: the ball on the object ring IS the drill ball, the other one is the cue ball
+// on every look: the whitest ball is the cue ball, the ball that best fits the called number is the drill ball; anything
+// else is a hand, the cue or a shadow and gets no number
 function drillLabel(found) {
-  const d = S.dr; if (!d || d.done || !d.spot) return;
-  if (d.quick) { const id = d.seq[d.qi] && d.seq[d.qi][0]; let ob = null, bd = DRILL.ZO * DRILL.ACC; for (const f of found) { if (f.hid || f.miss) continue; const e = Math.hypot(f.x - d.spot.obj[0], f.y - d.spot.obj[1]); if (e < bd) { bd = e; ob = f; } } if (ob && id != null) { for (const f of found) if (f !== ob && f.id === id) { f.id = null; f.locked = false; } ob.id = id; ob.locked = true; ob.conf = 1; } return; }
-  const sp = d.spot, ro = DRILL.ZO * DRILL.ACC, rc = DRILL.ZC * DRILL.ACC;
-  let ob = null, bd = ro; for (const f of found) { if (f.hid || f.miss) continue; const e = Math.hypot(f.x - sp.obj[0], f.y - sp.obj[1]); if (e < bd && !(f.id === 0 && f.feat && f.feat.wf > 0.6)) { bd = e; ob = f; } }
-  if (ob) { for (const f of found) if (f !== ob && f.id === d.ball) { f.id = null; f.locked = false; } ob.id = d.ball; ob.locked = true; ob.conf = 1; }
-  let cb = null; bd = rc; for (const f of found) { if (f === ob || f.hid || f.miss || !(f.id === 0 || (f.feat && f.feat.wf > 0.5))) continue; const e = Math.hypot(f.x - sp.cue[0], f.y - sp.cue[1]); if (e < bd) { bd = e; cb = f; } }
-  if (cb && (cb.id == null || cb.id === d.ball)) { for (const f of found) if (f !== cb && f.id === 0) { f.id = null; f.locked = false; } cb.id = 0; cb.locked = true; cb.conf = 1; }
+  const d = S.dr; if (!d || d.done) return;
+  if (d.quick) { const c = d.candAt; let best = null, bd = 1.5; if (c) for (const f of found) { if (f.hid || f.miss) continue; const e = Math.hypot(f.x - c[0], f.y - c[1]); if (e < bd) { bd = e; best = f; } }
+    for (const f of found) { if (f === best) { f.id = d.ball; f.locked = true; f.conf = 1; } else if (f.id === d.ball || f.id != null) { f.id = null; f.locked = false; f.conf = 0; } } return; }
+  const vis = found.filter(f => !f.hid && !f.miss && !f.notBall);
+  const white = f => Math.max(f.rec ? f.rec[0] : 0, f.feat ? f.feat.wf : 0);
+  let cb = null; for (const f of vis) if (white(f) > 0.5 && (!cb || white(f) > white(cb))) cb = f;
+  if (!cb) cb = vis.find(f => f.id === 0) || null; // the colour naming's own cue ball
+  const fit = f => { const c = idCost(f, [d.ball], allSamples(), S.cloth, recPen())[d.ball]; return (c === undefined ? 3 : c) - ((f.obs || []).length >= 3 ? 0.3 : 0) + (d.objAt && Math.hypot(f.x - d.objAt[0], f.y - d.objAt[1]) < 2 ? -0.5 : 0); };
+  let ob = null, bc = 2.6; for (const f of vis) { if (f === cb) continue; const c = fit(f); if (c < bc) { bc = c; ob = f; } }
+  { const others = vis.filter(f => f !== cb); if (!ob && others.length === 1) ob = others[0]; } // only one other ball: it is the drill ball, however it looks
+  for (const f of found) { if (f.hid || f.miss) continue; if (f === ob) { f.id = d.ball; f.locked = true; f.conf = 1; } else if (f === cb) { f.id = 0; f.locked = true; f.conf = 1; } else if (f.id != null) { f.id = null; f.locked = false; f.conf = 0; } }
+  if (ob) d.objAt = [ob.x, ob.y];
 }
 function drillZones(found) {
-  const d = S.dr; if (!d || !d.spot) return; const sp = d.spot, vis = found.filter(b => !b.miss && !b.hid);
-  d.objIn = vis.some(b => b.id !== 0 && Math.hypot(b.x - sp.obj[0], b.y - sp.obj[1]) < DRILL.ZO * DRILL.ACC);
-  const was = d.cueIn; d.cueIn = vis.some(b => b.id === 0 && Math.hypot(b.x - sp.cue[0], b.y - sp.cue[1]) < DRILL.ZC * DRILL.ACC);
+  const d = S.dr; if (!d) return; const vis = found.filter(b => !b.miss && !b.hid);
+  d.objIn = vis.some(b => b.id === d.ball); const was = d.cueIn; d.cueIn = vis.some(b => b.id === 0);
   if (d.cueIn && !was) d.cueInT = performance.now();
 }
 function drillHead() { const d = S.dr; return 'The ' + d.ball + ' ball · shot ' + (d.k + 1) + ' of ' + DRILL.N; }
@@ -3741,22 +3768,37 @@ function drillStatus(found, settled) {
   if (d.done) return 'All nine balls done. Tap End for the pictures, or Menu.';
   if (S.pend) return 'Reading the result as the table comes into view…';
   if (frozen()) return 'Holding still while the phone settles…';
-  if (!d.spot) return 'No room for a drill shot on this table outline.';
   drillZones(found);
-  const head = drillHead() + (d.again ? ' · again' : ''), pw = pocketWord(d.spot.pi);
-  if (d.objIn && d.cueIn) return head + (settled ? ' · shoot it into the ' + pw + ', then step back' : ' · hold still…');
-  if (d.cueIn && settled && performance.now() - d.cueInT > 4000) return head + ' · can\'t see the ' + d.ball + ', shoot it into the ' + pw + ' anyway';
-  return head + ' · put the ' + d.ball + ' and the cue ball on the rings';
+  const head = drillHead() + (d.again ? ' · again' : ''), where = d.want ? ' (the ' + d.want + ' half this time)' : '';
+  if (d.objIn && d.cueIn) return head + (settled ? ' · shoot the ' + d.ball + ' into any pocket, then step back' : ' · hold still…');
+  return head + ' · put the ' + d.ball + ' and the cue ball on the table' + where;
 }
-// the shot is starting: what was on the rings just before it
+// the shot is starting: which ball was the drill ball just before it
 function drillShotStart(rec) {
-  const d = S.dr; if (!d || d.done || !d.spot) return null;
-  const sp = d.spot, all = (rec.before || []).concat(rec.un || []);
-  let ob = null, bd = DRILL.ZO * DRILL.ACC; for (const b of all) { if (b.id === 0) continue; const e = Math.hypot(b.x - sp.obj[0], b.y - sp.obj[1]); if (e < bd) { bd = e; ob = b; } }
-  const cb = all.find(b => b.id === 0), cueIn = Math.hypot(rec.pos0.x - sp.cue[0], rec.pos0.y - sp.cue[1]) < DRILL.ZC * DRILL.ACC * 1.5;
-  // the recognizer's own guess for the ball on the ring, made without being told (a score per ball for the summary)
+  const d = S.dr; if (!d || d.done) return null;
+  const all = (rec.before || []).concat(rec.un || []);
+  let ob = all.find(b => b.id === d.ball) || null;
+  if (!ob && d.objAt) { let bd = 2; for (const b of all) { if (b.id === 0) continue; const e = Math.hypot(b.x - d.objAt[0], b.y - d.objAt[1]); if (e < bd) { bd = e; ob = b; } } }
+  const cb = all.find(b => b.id === 0);
+  // the recognizer's own guess for the drill ball, made without being told (a score per ball for the summary)
   const guess = ob && ob.rec ? recogTop(ob.rec) : null;
-  return { ball: d.ball, k: d.k, slot: d.slot, spot: sp, seen: !!ob, objFeat: ob ? ob.feat : null, objAt: ob ? [r1(ob.x), r1(ob.y)] : null, cueFeat: cb ? cb.feat : null, cueIn, guess };
+  return { ball: d.ball, k: d.k, slot: d.slot, spot: null, seen: !!ob, objFeat: ob ? ob.feat : null, objAt: ob ? [r1(ob.x), r1(ob.y)] : null, cueFeat: cb ? cb.feat : null, cueIn: !!cb, guess, half: ob ? (inHalf(ob, 'near') ? 'near' : 'far') : null };
+}
+// A make the camera did not see as a shot (the shot started before the app was ready, or the cue ball was lost at once):
+// the drill ball vanished from the table in clear view (nobody near it), stays gone, and the cue ball has moved. Counted
+// as made; Throw out if that was wrong.
+function drillUnseen(found) {
+  const d = S.dr; if (!d || d.done || d.quick || TR.rec || S.recording || S.awaitAfter || S.pend || S.watchWait) { if (d) d.gone = null; return; }
+  const vis = found.filter(b => !b.miss && !b.hid), ob = vis.find(b => b.id === d.ball), cb = vis.find(b => b.id === 0), n = S.sess ? S.sess.shots.length : 0;
+  if (ob && cb) { if (S.stable >= 2 && S.occFrac <= 0.02) d.both = { obj: [ob.x, ob.y], cue: [cb.x, cb.y], n }; d.gone = null; return; }
+  const bt = d.both; if (!bt || bt.n !== n || ob) { d.gone = null; return; }
+  // (the player is usually still at the table right after a shot; a hand picking the ball up is ON its spot when it goes)
+  if (!d.gone) { d.gone = { clear: !hiddenAt({ x: bt.obj[0], y: bt.obj[1] }), k: 0 }; return; }
+  if (!d.gone.clear || !cb || Math.hypot(cb.x - bt.cue[0], cb.y - bt.cue[1]) < 4 || hiddenAt({ x: bt.obj[0], y: bt.obj[1] }) || found.some(b => !b.miss && Math.hypot(b.x - bt.obj[0], b.y - bt.obj[1]) < 1.5)) return;
+  if (++d.gone.k < 3) return;
+  d.both = null; d.gone = null; dbg('drill_unseen', { ball: d.ball, at: bt.obj.map(r1), cueFrom: bt.cue.map(r1), cueTo: [r1(cb.x), r1(cb.y)] });
+  const shot = { unseen: true, failed: true, drill: { ball: d.ball, k: d.k, slot: d.slot, spot: null, seen: true, objFeat: null, objAt: bt.obj.map(r1), cueFeat: null, cueIn: true, guess: null, unseen: true } };
+  drillResult(shot, { gone: [d.ball], clear: true, dropN: 1, unsure: 0 }, 1, false, n, found);
 }
 // a look the player confirmed by naming a ball by hand; at most 16 learned looks a ball (the oldest go)
 function addLook(feat, id, kind) {
@@ -3784,7 +3826,9 @@ function drillResult(shot, r, objDrop, scratch, idx, now) {
   const left = (now || []).filter(b => !b.hid && !b.miss && b.id !== 0 && !(b.rec && b.rec[RECOG_NB] > 0.5));
   // still there = seen with its number, or hidden behind the player (a hidden ball is not taken as made)
   const there = (now || []).some(b => b.id === sd.ball && !b.miss);
-  const made = !sd.seen || (!there && (r.gone.includes(sd.ball) || (r.clear && !left.length)));
+  // V2.3.2: or its path ended in a pocket (which pocket goes in the message)
+  // (a ball not picked out before the shot: made if a ball went down)
+  const pk = shot.pathPkAt && shot.pathPkAt[sd.ball], made = sd.seen ? !there && (pk != null || r.gone.includes(sd.ball) || (r.clear && !left.length)) : objDrop >= 1;
   learned.removed = [];
   if (sd.seen && sd.objFeat) { const m = addDrillSample(sd.objFeat, sd.ball, learned.removed); if (m) learned.push(m); }
   if (sd.cueFeat && sd.cueIn && S.samples.filter(x => x.id === 0 && x.drill).length < 12) { const m = addDrillSample(sd.cueFeat, 0, learned.removed); if (m) learned.push(m); }
@@ -3795,53 +3839,57 @@ function drillResult(shot, r, objDrop, scratch, idx, now) {
   if (made) {
     d.k++; d.again = false; d.slot++;
     if (d.k >= DRILL.N) { d.k = 0; d.ball++; if (d.ball > 9) d.done = true; }
-    msg = d.done ? 'Made it. All nine balls done!' : d.k === 0 ? 'Made it. Now the ' + d.ball + ' ball.' : 'Made it. Next spot.';
+    const inPk = pk != null ? ' (' + pocketWord(pk) + ')' : sd.unseen ? ' (the shot was not seen: Throw out if you missed)' : '';
+    msg = d.done ? 'Made it' + inPk + '. All nine balls done!' : d.k === 0 ? 'Made it' + inPk + '. Now the ' + d.ball + ' ball.' : 'Made it' + inPk + '. Set up the next one.';
     if (!d.done) drillSetSpot();
-  } else { d.again = true; msg = 'Missed. Put them back on the rings and shoot it again.'; }
-  dbg('drill', { shot: idx + 1, ball: sd.ball, of3: sd.k + 1, made, seen: sd.seen, guess: sd.guess, left: left.length, blind: !sd.seen || undefined, drop: objDrop, scratch, cueIn: sd.cueIn, learned: learned.length, objAt: sd.objAt, spot: sd.spot.obj });
+  } else { d.again = true; msg = 'Missed. Set it up again and shoot.'; }
+  dbg('drill', { shot: idx + 1, ball: sd.ball, of3: sd.k + 1, made, seen: sd.seen, guess: sd.guess, left: left.length, blind: !sd.seen || undefined, drop: objDrop, scratch, cueIn: sd.cueIn, learned: learned.length, objAt: sd.objAt, pk: pk != null ? pk : undefined, half: sd.half || undefined, unseen: sd.unseen || undefined });
   if (S.sess) S.sess.shots.push({ t: Date.now(), made: made && sd.seen ? [sd.ball] : [], drop: objDrop, scratch, drill: 1, ball: sd.ball, dmade: made, blind: !sd.seen || undefined, first: sd.ball, target: sd.ball, agree: null, learned: learned.length > 0 || undefined, drSnap: snap, low: null });
-  frameSaveShot(idx + 1, { drill: 1, ball: sd.ball, target: sd.ball, made, seen: sd.seen, guess: sd.guess, objAt: sd.objAt, spot: { obj: sd.spot.obj, cue: sd.spot.cue, pocket: sd.spot.pi }, cueIn: sd.cueIn, drop: objDrop, scratch, settleTimeout: !!shot.settleTimeout }, shot);
+  frameSaveShot(idx + 1, { drill: 1, ball: sd.ball, target: sd.ball, made, seen: sd.seen, guess: sd.guess, objAt: sd.objAt, pocket: pk != null ? pk : undefined, unseen: sd.unseen || undefined, cueIn: sd.cueIn, drop: objDrop, scratch, settleTimeout: !!shot.settleTimeout }, shot);
   holdStatus(msg, 3500); updUndo(); dong();
   if (d.done) setTimeout(drillSummary, 1200);
 }
-// ---------- Show me the balls (V2.3): a 2-minute setup for a table's ball set, no shooting ----------
-// Each ball (cue ball, then 1 to 9) is put on a ring on the near half, then moved to a ring on the far half. Once it has
-// sat still with nobody over the table, its look is learned for this table (Home or Away) and its picture saved.
-function quickNew() { const seq = []; for (const id of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) { seq.push([id, 0]); seq.push([id, 1]); } return { quick: true, seq, qi: 0, emptySeen: [true, true], holdN: 0, gN: 0, gOk: 0, got: [], done: false, spot: null, objIn: false, stats: {}, ball: 0, k: 0 }; }
-function quickSpots() {
-  const P = S.P, C = S.cam && S.cam.C ? S.cam.C : [P.L / 2, -60, 40], nearY = C[1] < P.W / 2 ? P.W * 0.32 : P.W * 0.68, farY = P.W - nearY;
-  return [{ obj: [r1(P.L * 0.42), r1(nearY)], cue: null, pi: 0 }, { obj: [r1(P.L * 0.58), r1(farY)], cue: null, pi: 0 }];
-}
-function quickSetSpot() { const d = S.dr; if (!d || !d.quick) return; if (!d.spots) d.spots = quickSpots(); const st = d.seq[d.qi]; d.spot = st ? d.spots[st[1]] : null; d.ball = st ? st[0] : 0; }
+// ---------- Show me the balls (V2.3; no rings since V2.3.2): a 2-minute setup for a table's ball set, no shooting ----------
+// Each ball (cue ball, then 1 to 9) is put down anywhere on the near half, away from the cushions, then moved to the far
+// half. Once it has sat still with nobody over the table, its look is learned for this table (Home or Away) and its
+// picture saved. Balls left lying where they were shown are ignored (only a ball new to its spot counts).
+function quickNew() { const seq = []; for (const id of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) { seq.push([id, 0]); seq.push([id, 1]); } return { quick: true, seq, qi: 0, holdN: 0, gN: 0, gOk: 0, got: [], done: false, parked: [], objIn: false, many: false, stats: {}, ball: 0, k: 0 }; }
+function quickSetSpot() { const d = S.dr; if (!d || !d.quick) return; const st = d.seq[d.qi]; d.spot = null; d.ball = st ? st[0] : 0; d.half = st ? (st[1] ? 'far' : 'near') : null; d.candAt = null; }
 const qName = id => id === 0 ? 'cue ball' : 'the ' + id;
 function quickStatus() {
   const d = S.dr; if (!d) return ''; if (d.done) return 'All the balls learned for this table.';
   const st = d.seq[d.qi]; if (!st) return ''; if (frozen()) return 'Holding still while the phone settles…';
-  const ringWord = st[1] ? 'far ring' : 'near ring', step = 'Show me the balls · ' + (d.qi + 1) + ' of ' + d.seq.length + ' · ';
-  if (!d.emptySeen[st[1]]) return step + 'take the last ball off the ' + ringWord;
+  const nm = st[0] === 0 ? 'the cue ball' : 'the ' + st[0], step = 'Show me the balls · ' + (d.qi + 1) + ' of ' + d.seq.length + ' · ';
+  if (d.many) return step + 'only one new ball on the ' + d.half + ' half, please';
   if (d.objIn && S.occFrac > 0.005) return step + 'step back from the table…';
-  return step + (d.objIn ? 'hold still…' : 'put ' + (st[0] === 0 ? 'the cue ball' : 'the ' + st[0]) + ' on the ' + ringWord);
+  if (d.objIn) return step + 'hold still…';
+  return step + (st[1] ? 'now move ' + nm + ' to the far half' : 'put ' + nm + ' on the near half, away from the cushions');
 }
 function quickTick(found) {
-  const d = S.dr; if (!d || d.done || !d.spot || frozen()) return;
-  const st = d.seq[d.qi], sp = d.spot, vis = found.filter(b => !b.miss && !b.hid), on = vis.filter(b => Math.hypot(b.x - sp.obj[0], b.y - sp.obj[1]) < DRILL.ZO * DRILL.ACC);
-  d.objIn = on.length > 0;
-  (d.spots || []).forEach((q, i) => { if (q && !vis.some(b => Math.hypot(b.x - q.obj[0], b.y - q.obj[1]) < DRILL.ZO * DRILL.ACC)) d.emptySeen[i] = true; });
-  if (!on.length) { d.emptySeen[st[1]] = true; d.holdN = 0; return; }
-  if (!d.emptySeen[st[1]]) return; // the ball from the last step is still there
-  const b = on[0];
-  if (on.length !== 1 || S.occFrac > 0.005 || (b.obs || []).length < 3 || (b.mvd || 0) > 0.3) { d.holdN = 0; return; }
+  const d = S.dr; if (!d || d.done || !d.half || frozen()) return;
+  const st = d.seq[d.qi], P = S.P, vis = found.filter(b => !b.miss && !b.hid && !b.notBall);
+  // a ball shown earlier (or already on the table when this started) and still lying there is not new; once its spot has
+  // been seen empty twice in clear view (not just covered by an arm for a moment), that spot is free again
+  if (!d.seeded) { d.seeded = true; for (const b of vis) d.parked.push([b.x, b.y, 0]); }
+  for (const p of d.parked) { if (found.some(b => Math.hypot(b.x - p[0], b.y - p[1]) < 2.5)) p[2] = 0; else if (S.occFrac <= 0.005 && !hiddenAt({ x: p[0], y: p[1] })) p[2]++; }
+  d.parked = d.parked.filter(p => p[2] < 2);
+  const away = b => b.x > 3 && b.x < P.L - 3 && b.y > 3 && b.y < P.W - 3;
+  const cands = vis.filter(b => inHalf(b, d.half) && away(b) && !d.parked.some(p => Math.hypot(b.x - p[0], b.y - p[1]) < 2.5));
+  d.objIn = cands.length > 0; d.many = cands.length > 1; d.candAt = cands.length === 1 ? [cands[0].x, cands[0].y] : null;
+  if (cands.length !== 1) { d.holdN = 0; return; }
+  const b = cands[0];
+  if (S.occFrac > 0.005 || (b.obs || []).length < 3 || (b.mvd || 0) > 0.3) { d.holdN = 0; return; }
   if (++d.holdN < 3) return;
   // learned: this ball, this table
   const id = st[0], guess = b.rec ? recogTop(b.rec) : null;
   if (b.feat) addDrillSample(b.feat, id, []);
   if (guess != null) { d.gN++; if (guess === id) d.gOk++; }
-  d.got.push({ id, ring: st[1], guess, at: [r1(b.x), r1(b.y)] });
-  dbg('quick', { id, ring: st[1], guess, at: [r1(b.x), r1(b.y)], feat: featArr(b.feat), prof: S.prof });
-  frameSaveLook(d.qi + 1, { quick: 1, ball: id, ring: st[1], guess, at: [r1(b.x), r1(b.y)], prof: S.prof }, found);
-  ding(); d.emptySeen[st[1]] = false; d.holdN = 0; d.qi++;
+  d.got.push({ id, half: d.half, guess, at: [r1(b.x), r1(b.y)] });
+  dbg('quick', { id, half: d.half, guess, at: [r1(b.x), r1(b.y)], feat: featArr(b.feat), prof: S.prof });
+  frameSaveLook(d.qi + 1, { quick: 1, ball: id, half: d.half, guess, at: [r1(b.x), r1(b.y)], prof: S.prof }, found);
+  ding(); d.parked.push([b.x, b.y, 0]); d.holdN = 0; d.qi++;
   if (d.qi >= d.seq.length) { d.done = true; S.quickDone = true; save(); setTimeout(quickSummary, 600); }
-  else { quickSetSpot(); d.objIn = false; holdStatus('Got the ' + (id === 0 ? 'cue ball' : id) + '.', 1200); }
+  else { quickSetSpot(); d.objIn = false; holdStatus('Got ' + (id === 0 ? 'the cue ball' : 'the ' + id) + '.', 1200); }
 }
 function quickSummary() {
   const d = S.dr; if (!d || !d.done) return;
@@ -3872,20 +3920,16 @@ function drillThrowOut(sh) {
   const d = S.dr, s = sh && sh.drSnap; if (!d || !s) return;
   Object.assign(d, JSON.parse(JSON.stringify(s))); drillSetSpot(); hideCard();
 }
+// Show me the balls: the half of the table the ball goes on, with its number; Learn the balls: the half asked for, if any
 function drawDrillSpots() {
-  const d = S.dr; if (!d || d.done || !d.spot || !S.cam) return; const sp = d.spot, P = S.P, pk = P.pockets[sp.pi], R = P.R;
-  if (d.quick) { const id = d.seq[d.qi] ? d.seq[d.qi][0] : 0, col = ballColor(id), g = 'rgba(60,225,125,'; ring(sp.obj[0], sp.obj[1], DRILL.ZO / R, d.objIn ? g + '1)' : col, 3, d.objIn ? g + '.25)' : 'rgba(255,255,255,.10)', d.objIn ? [] : [7, 5]);
-    const q = MAP.p(sp.obj[0], sp.obj[1], R), r = MAP.r(sp.obj[0], sp.obj[1]) * (DRILL.ZO / R); sctx.save(); sctx.fillStyle = col; sctx.beginPath(); sctx.arc(q[0], q[1] - r - 14, 12, 0, 7); sctx.fill(); sctx.strokeStyle = '#fff'; sctx.lineWidth = 1.5; sctx.stroke();
-    sctx.fillStyle = id === 0 || id === 1 || id === 9 ? '#16181b' : '#fff'; sctx.font = '700 15px Inter, system-ui, sans-serif'; sctx.textAlign = 'center'; sctx.textBaseline = 'middle'; sctx.fillText(id === 0 ? 'Q' : String(id), q[0], q[1] - r - 13); sctx.restore(); return; }
-  line([sp.obj, [pk.x, pk.y]], '#ffffff', 1.5, [6, 6], .45);
-  { const q = MAP.p(pk.x, pk.y), q2 = MAP.p(pk.x + pk.r * 1.5, pk.y), rr = Math.hypot(q2[0] - q[0], q2[1] - q[1]); sctx.save(); sctx.strokeStyle = '#ffffff'; sctx.globalAlpha = .7; sctx.lineWidth = 2; sctx.beginPath(); sctx.arc(q[0], q[1], rr, 0, 7); sctx.stroke(); sctx.restore(); }
-  const g = 'rgba(60,225,125,', col = ballColor(d.ball);
-  ring(sp.cue[0], sp.cue[1], DRILL.ZC / R, d.cueIn ? g + '1)' : '#ffffff', 2.5, d.cueIn ? g + '.25)' : 'rgba(255,255,255,.10)', d.cueIn ? [] : [7, 5]);
-  ring(sp.obj[0], sp.obj[1], DRILL.ZO / R, d.objIn ? g + '1)' : col, 3, d.objIn ? g + '.25)' : 'rgba(255,255,255,.10)', d.objIn ? [] : [7, 5]);
-  // the ball's number beside its ring
-  const q = MAP.p(sp.obj[0], sp.obj[1], R), r = MAP.r(sp.obj[0], sp.obj[1]) * (DRILL.ZO / R), fs = 15;
-  sctx.save(); sctx.fillStyle = col; sctx.beginPath(); sctx.arc(q[0], q[1] - r - 14, 12, 0, 7); sctx.fill(); sctx.strokeStyle = '#fff'; sctx.lineWidth = 1.5; sctx.stroke();
-  sctx.fillStyle = d.ball === 1 || d.ball === 9 ? '#16181b' : '#fff'; sctx.font = '700 ' + fs + 'px Inter, system-ui, sans-serif'; sctx.textAlign = 'center'; sctx.textBaseline = 'middle'; sctx.fillText(String(d.ball), q[0], q[1] - r - 13); sctx.restore();
+  const d = S.dr; if (!d || d.done || !S.cam) return; const h = d.quick ? d.half : d.want; if (!h) return;
+  const P = S.P, lowNear = nearLow(), y0 = (h === 'near') === lowNear ? 3 : P.W / 2 + 1, y1 = (h === 'near') === lowNear ? P.W / 2 - 1 : P.W - 3;
+  const on = d.quick && d.objIn, col = on ? 'rgba(60,225,125,1)' : '#ffffff';
+  line([[3, y0], [P.L - 3, y0], [P.L - 3, y1], [3, y1], [3, y0]], col, 2, on ? [] : [8, 6], d.quick ? 0.75 : 0.4);
+  if (!d.quick) return;
+  const id = d.ball, bc = ballColor(id), q = MAP.p(P.L / 2, (y0 + y1) / 2, 0);
+  sctx.save(); sctx.fillStyle = bc; sctx.beginPath(); sctx.arc(q[0], q[1], 14, 0, 7); sctx.fill(); sctx.strokeStyle = '#fff'; sctx.lineWidth = 1.5; sctx.stroke();
+  sctx.fillStyle = id === 0 || id === 1 || id === 9 ? '#16181b' : '#fff'; sctx.font = '700 16px Inter, system-ui, sans-serif'; sctx.textAlign = 'center'; sctx.textBaseline = 'middle'; sctx.fillText(id === 0 ? 'Q' : String(id), q[0], q[1] + 1); sctx.restore();
 }
 
 // ---------- pictures: the table just before each shot and once everything has stopped ----------
@@ -4114,7 +4158,7 @@ function mtStep(im, now) {
     const t = best.t, q = Q.get(t); left.delete(t);
     if (best.d > q.base + 2.3) t.unsure = true;
     const nvx = (best.x - t.x) / q.dt, nvy = (best.y - t.y) / q.dt; t.vx = t.lost ? nvx : 0.4 * t.vx + 0.6 * nvx; t.vy = t.lost ? nvy : 0.4 * t.vy + 0.6 * nvy;
-    t.x = best.x; t.y = best.y; t.t = now; t.seenT = now; t.lost = 0; own(best.b, t); push(t, t.x, t.y);
+    t.x = best.x; t.y = best.y; t.t = now; t.seenT = now; t.lost = 0; t.seen = [t.x, t.y, t.vx, t.vy]; own(best.b, t); push(t, t.x, t.y);
     t.slow = Math.hypot(t.vx, t.vy) < 2 ? t.slow + 1 : 0;
     if (t.slow >= 8 && now - MT.t0 > 0.3) { t.st = 'rest'; t.rx = t.x; t.ry = t.y; t.gone = 0; }
   }
@@ -4123,7 +4167,12 @@ function mtStep(im, now) {
     // gone at a pocket: only a ball that was seen rolling (at least two spots along its way) and vanished at the pocket
     const pk = S.P.pockets.findIndex(p => Math.hypot(p.x - t.x, p.y - t.y) < p.r + 2.5);
     if (pk >= 0 && t.path.length >= 3 && t.lost >= 2 && gap > 0.05) { t.st = 'pocket'; t.pk = pk; push(t, t.x, t.y); }
-    else if (gap > 0.6) t.st = 'lost';
+    else if (gap > 0.6) {
+      // lost for good: if it was last seen rolling straight at a pocket (within reach at that speed), it went in there
+      const z = t.seen, sp = z ? Math.hypot(z[2], z[3]) : 0; let pi = -1;
+      if (z && sp > 8 && t.path.length >= 3) S.P.pockets.forEach((p, i) => { const dx = p.x - z[0], dy = p.y - z[1], along = (dx * z[2] + dy * z[3]) / sp, off = Math.abs(dx * z[3] - dy * z[2]) / sp; if (along > 0 && along < sp * 0.6 + 6 && off < p.r + 1.5 && pi < 0) pi = i; });
+      if (pi >= 0) { t.st = 'pocket'; t.pk = pi; t.via = 'heading'; push(t, S.P.pockets[pi].x, S.P.pockets[pi].y); } else t.st = 'lost';
+    }
   }
   const el = performance.now() - t0; MT.ms = Math.max(MT.ms, el); MT.sum = (MT.sum || 0) + el;
 }
@@ -4149,9 +4198,11 @@ function trackFrame() {
   if (!rec) {
     if (performance.now() < (S.noShotUntil || 0)) { TR.pre = 0; return; }
     const here = findWhite(im, TR.cam, S.P, S.armPos, 1.3, 0); if (here) { TR.pre = 0; TR.hereT = now; return; }
-    let f = findWhite(im, TR.cam, S.P, S.armPos, 22, 1.3, excl);
-    // something white moving near the cue ball but off the cloth, or inside a person (a shirt, a hand) is not the cue ball
-    if (f && (f.x < -0.5 || f.y < -0.5 || f.x > S.P.L + 0.5 || f.y > S.P.W + 0.5 || hiddenAt(f))) { dbgOnce('notcue', 2000, 'not_cue', { at: [r1(f.x), r1(f.y)] }); f = null; }
+    // something white near the cue ball but off the cloth, or inside a person (a shirt, a hand) is not the cue ball; V2.3.2:
+    // it is looked past (the next white thing out may be the cue ball rolling away), not taken as "no cue ball"
+    let skipped = null; const offCloth = t => { const o = t.x < -0.5 || t.y < -0.5 || t.x > S.P.L + 0.5 || t.y > S.P.W + 0.5 || hiddenAt(t); if (o && !skipped) skipped = t; return o; };
+    let f = findWhite(im, TR.cam, S.P, S.armPos, 22, 1.3, excl, offCloth);
+    if (skipped) dbgOnce('notcue', 2000, 'not_cue', { at: [r1(skipped.x), r1(skipped.y)], next: f ? [r1(f.x), r1(f.y)] : null });
     // first sighting has to be about where a ball leaving the cue's spot could be by now (frames can be skipped while the
     // phone is busy); after the cue ball has been out of sight a while (the player's body over it), 14 inches
     const gap = TR.hereT != null ? now - TR.hereT : 1, lim = gap < 0.3 ? Math.max(9, 4 + 450 * gap) : 14;
@@ -4204,6 +4255,13 @@ function endShot() {
     if (S.sess) S.sess.hand = (S.sess.hand || 0) + 1; setStatus('Ball in hand. Still watching.'); MT.on = false; free(); return;
   }
   dbg('shot_end', { bad: rec.bad || 0, pts: tk.length, far: r1(far), dur: r2(tk[tk.length - 1][0] - tk[0][0]), still: rec.still, lost: rec.lost, end: [r1(tk[tk.length - 1][1]), r1(tk[tk.length - 1][2])], kept: tk.length >= (calib ? 3 : 5) && far >= (calib ? 1.5 : 4) });
+  // the drill: the cue ball lost at once in the middle of the table, never seen stopping, and no strike heard = picked up
+  // by hand to set up the next shot (it was counted as a shot twice in real8)
+  if (S.drillMode && !calib && rec.lost > 7 && rec.still === 0) {
+    const last = tk[tk.length - 1], dur = last[0] - tk[0][0], nearPk = S.P.pockets.some(pk => Math.hypot(pk.x - last[1], pk.y - last[2]) < pk.r + 4);
+    const t0 = (rec.pts || [])[0], strike = MIC.on && MIC.n > 0 && t0 ? micClicks(t0 - 450, t0 + 150).length > 0 : false;
+    if (dur < 0.8 && far < 25 && !nearPk && !strike && !(MT.on && MT.tr.some(t => !t.cue && t.moved))) { dbg('hand_lift', { far: r1(far), dur: r2(dur), end: [r1(last[1]), r1(last[2])] }); setStatus('Ball picked up, not a shot. Still watching.'); MT.on = false; free(); return; }
+  }
   if (!calib && (rec.bad || 0) >= 3 && (rec.bad || 0) * 2 >= tk.length) { if (S.sess) S.sess.ignored++; dbg('not_shot', { bad: rec.bad, pts: tk.length }); setStatus('That was not the cue ball moving. Still watching.'); MT.on = false; free(); return; }
   if (tk.length < (calib ? 3 : 5) || far < (calib ? 1.5 : 4)) { if (S.sess) S.sess.ignored++; setStatus(calib ? 'That was too small to read. Hit a little firmer.' : 'That looked like a nudge, not a shot. Still watching.'); MT.on = false; free(); return; }
   const track = tk.map(s => [s[0] - tk[0][0], s[1], s[2]]);
@@ -4241,7 +4299,7 @@ function afterShot(before, end, allN, shot, trust, delay) {
       const twice = new Set(); for (const t of ends) if (ends.some(o => o !== t && Math.hypot(o.x - t.x, o.y - t.y) < 1.2)) twice.add(t);
       for (const [, t, f] of pairs) { if (ut.has(t) || uf.has(f) || twice.has(t)) continue; ut.add(t); uf.add(f); f.id = t.id; f.locked = true; f.conf = 0.9; f.path = 1; named.push(t.id); const bp = before.find(b => b.id === t.id); if (bp) used.add(bp); }
       // a ball whose path ended in a pocket went in: nothing else may take its number by colour (unless the count says it is still up)
-      const pk = paths.filter(t => t.id != null && t.st === 'pocket').map(t => t.id); if (shot) shot.pathPk = pk;
+      const pk = paths.filter(t => t.id != null && t.st === 'pocket').map(t => t.id); if (shot) { shot.pathPk = pk; shot.pathPkAt = {}; for (const t of paths) if (t.id != null && t.st === 'pocket') shot.pathPkAt[t.id] = t.pk; }
       const seenN = found.length + before.filter(b => hiddenAt(b) && !found.some(f => Math.hypot(f.x - b.x, f.y - b.y) < 1.6)).length;
       if (pk.length && (allN || before.length) - seenN >= pk.length) for (const id of pk) { const bp = before.find(b => b.id === id); if (bp) used.add(bp); if (shot) shot.pathGone = (shot.pathGone || []).concat([id]); }
       dbg('path_ids', { named, pocket: pk, twice: [...twice].map(t => t.id), ends: ends.map(t => [t.id, t.st, r1(t.x), r1(t.y)]), pairs: pairs.length });
@@ -4560,7 +4618,7 @@ window.addEventListener('resize', () => { zoneCache = null; });
 renderHome();
 // test hook
 setInterval(() => { if (S.sess) dbgPersist(); }, 30000);
-window.__chalk = { MT, mtStart, mtStep, mtFinish, mtSetup, EV, evAdd, recheckNames, evForget, recogFound, dropNotBalls, quickTick, quickNew, quickSetSpot, quickStatus, quickToWatch, setProfile, profSnap, zoomToFit, edgeNear, setCamZoom, camZoomCaps, finishAuto, assignIds, allSamples, recPen, labelIds, drillPlan, drillCands, drillResult, drillShotStart, drillLabel, drillStatus, drillSetSpot, drillSummary, pocketWord, LAG, unseenCheck, LEARNED, handMoveCheck, frozen, WOB, truthLook, truthShotStart, throwOutLast, watchResult, MIC, micPoll, watchShotInfo, makeZip, FR, settleWatch, DBG, dbgText, saveDebug, AU, ding, dong, audioInit, setZoom, vnFromSrc, srcFromVn, focalPx, ppPx, runDiamonds, bestCuePlacement, afterShot, eliminate, VF, judgeShot, spotHasBall, get MAP() { return MAP; }, stage, pickBall, openPicker, refDiff, mkP, autoSize, beginAuto, quadLooksRight, enterRun, S, planNow, liveScan, render, rebuildCam, TR, vid, startMode, speedOfLevel, levelOfSpeed, levelTable };
+window.__chalk = { drillUnseen, inHalf, nearLow, lowestUp, drillLabel: (f) => drillLabel(f), MT, mtStart, mtStep, mtFinish, mtSetup, EV, evAdd, recheckNames, evForget, recogFound, dropNotBalls, quickTick, quickNew, quickSetSpot, quickStatus, quickToWatch, setProfile, profSnap, zoomToFit, edgeNear, setCamZoom, camZoomCaps, finishAuto, assignIds, allSamples, recPen, labelIds, drillPlan, drillCands, drillResult, drillShotStart, drillLabel, drillStatus, drillSetSpot, drillSummary, pocketWord, LAG, unseenCheck, LEARNED, handMoveCheck, frozen, WOB, truthLook, truthShotStart, throwOutLast, watchResult, MIC, micPoll, watchShotInfo, makeZip, FR, settleWatch, DBG, dbgText, saveDebug, AU, ding, dong, audioInit, setZoom, vnFromSrc, srcFromVn, focalPx, ppPx, runDiamonds, bestCuePlacement, afterShot, eliminate, VF, judgeShot, spotHasBall, get MAP() { return MAP; }, stage, pickBall, openPicker, refDiff, mkP, autoSize, beginAuto, quadLooksRight, enterRun, S, planNow, liveScan, render, rebuildCam, TR, vid, startMode, speedOfLevel, levelOfSpeed, levelTable };
 
 </script>
 

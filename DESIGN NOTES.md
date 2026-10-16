@@ -499,3 +499,65 @@ Truth checked by eye (scratchpad r7truth.py). Same balls as always.
 - Independent review (12 findings) fixed: global matching, unsure pick-ups, cue path only when settled, pocket only after
   moving, hidden balls in the count, shadow/pocket cells in the right frame, small far balls "unknown" not "left",
   no double claims, cue seenT, evidence shrink, migration only for <1x profiles, setCamZoom always applies 1x.
+
+## real8 — V2.3.1 at home (Oct 15 evening): Learn the balls drill (35 shots), Show me the balls, Watch (26 shots, 2 racks)
+- Pictures at 1x are sharp again. Show me the balls: recognizer knew 18/20 before the ball was placed (1 called 9 once,
+  9 called cue once). Watch naming good; names re-check fixed 3 (9->cue, 8->1, 6->8 at the re-rack). Paths logged.
+- Data looked freshly cleared (drill started with 0 learned looks and the 9 ft default).
+- Drill: 35 shots recorded (29 made). 2 were hand placements recorded as shots (thrown out by user). 3 real shots missed
+  ("made it and nothing happened"):
+  * t=872 s: a white thing just off the cloth near the cue ball (hand/sleeve, 'not_cue' at y=41.7) was the CLOSEST white
+    to the cue's spot every frame; findWhite returns only the closest, it was rejected, so the real cue ball rolling away
+    was never picked up. Fix: skip off-cloth / inside-person candidates inside the search, take the next closest.
+  * t=161 s, 334 s: cue ball placed by hand (rightly ignored as not a shot), then shot within ~1 s, before the table had
+    re-settled (arming needs the whole table still for ~3 scans). Fix: arm on the cue ball alone being still ~0.5 s.
+  * In the drill a missed shot can't be recovered (unseen-shot check is off in the drill).
+- Watch: the "next: the N" target is count-based (target+1 per drop, from V2.1 when names were unreliable): after the 3
+  went in out of order it said "next: the 3" while the 4 was lowest; a ghost named 4 (4 already made) appeared at rack 2.
+  Bridge-hand pieces at the rail kept by the V2.3 "still not-a-ball is kept after 1 s" rule (nb_keep at the rails, k 2-5).
+- User ideas (Oct 15): drop the rings in both drills if they are not needed ("put the 1 ball and the cue ball on the
+  table, let them come to rest"); maybe a reset gesture (move the cue ball back and forth); target = the lowest-numbered
+  ball actually on the table; a ball made 3 shots ago can't be back on the table (smarter understanding of the rack);
+  the top label should say "shoot the lowest ball next" from what is on the table.
+- Rings, what they were for: (1) the one spot that is surely the called ball (hands/ghosts not learned), (2) looks from
+  two parts of the table (near/far light), away from cushions and pockets, (3) a known pocket/shot so made/miss could be
+  judged. Now: only one object ball is on the table, the recognizer and hand filter are better, and paths show which
+  pocket it went in, so rings can go; variety by prompts ("now the far half").
+
+## V2.3.2 (built Oct 15 evening) — no rings, shots not missed, lowest ball on the table
+- Shot start: findWhite(…, skip) looks past white things off the cloth or inside a person (dbg not_cue now has `next`:
+  what it found instead). Arming on the cue ball alone being still for 2 looks (cueReady; dbg arm_quick), not only on
+  the whole table settled. Drill only: cue ball lost at once mid-table (<0.8 s, <25", not near a pocket, no strike
+  heard) = picked up by hand (dbg hand_lift), not a shot.
+- Learn the balls, no rings: "put the N and the cue ball on the table" (shot 2 suggests the far half, shot 3 the near
+  half); "shoot the N into any pocket". drillLabel: whitest ball = cue ball, best idCost fit to N = drill ball (bonus
+  for still / near where it was), all else unnamed; re-applied after the position merge. Made = its path ended in a
+  pocket (message names the pocket), or gone after the shot. drillUnseen: both balls seen settled, then the drill ball
+  vanished in clear view (no hand near it) and stays gone 3 looks while the cue ball moved > 4" with no shot recorded
+  -> counted as made ("the shot was not seen: Throw out if you missed"; dbg drill_unseen). drillPlan/drillCands kept
+  (unused) for later Train modes.
+- Show me the balls, no rings: "put the N on the near half, away from the cushions", then "now move it to the far
+  half". The one new still ball in that half, > 3" from the cushions, nobody over the table, 3 holds. Balls shown
+  earlier and still lying there are parked (ignored) until their spot is seen empty. Two new balls -> "only one new ball
+  on the near half, please". The half is outlined on screen with the ball's number.
+- Watch: S.gone used in Watch too (made numbers, not the 9 on a scratch; back on throw-out; cleared at a new rack).
+  Colour naming never hands out a made number; the re-check can bring one back only with +1.0 cost (then 'ungone').
+  "next: the N" = lowest named ball on the table (lowestUp); "(unsure)" when the named count != the clean count.
+- Ghost keep: only a single round spot (k=1, fill >= 0.55), still 2.5 s (or 4 s with people around).
+- Tests: t232quick (20 steps with balls left lying, two-new-balls prompt, same spot not emptied, cushion), t232drill
+  (path make with pocket word, missed make counted, hand pickup and cue-still not counted, throw-out, real video shot:
+  path into pocket 2 -> made), t232target (out-of-order 3 -> next 4, unnamed -> unsure, rack done, new rack clears).
+- Independent review (12 findings) fixed: parked spots freed only after 2 clear empty looks, balls on the table when the
+  setup starts are parked; drill made only if the ball is not still there (a path "pocket" alone is not enough); drill
+  naming falls back (only one other ball = the drill ball; cue ball = whitest by recognizer or colour, else the colour
+  naming's cue ball); a drill ball not picked out = made only if a ball went down; drillUnseen needs the spot really
+  empty and no hand on it (the player may still be at the table); hand_lift only if no other ball moved; named balls
+  just placed by the after-shot reading protected from the not-a-ball drop; Watch S.gone filled at once, never the 9,
+  not from a doubtful result; 9 made without a scratch = rack over; count-based rack reset off in Watch; lowest-ball
+  target only when names and the clean count agree (else unsure, count target kept); truthLook only on a settled
+  table; early arming only when nothing else moved (and sets the settle time for the young-ball rule); drill state
+  cleared per setup.
+- Paths: a ball lost for good while last seen rolling straight at a pocket in reach = 'pocket' (via 'heading'); made
+  shotocc2 stable ("Off the table: 4" every run).
+- Tests: regression suite same results as V2.3.1; t232truth (t21truth with realistic names: after the 1 -> next 2,
+  two down -> next 4); t23rec 100/99/89%.
