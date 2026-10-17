@@ -14,8 +14,9 @@ const TRACK_DEFAULTS = {
   gateSpeedK: 1.6,    // extra gate per in of expected travel this frame
   confirmHits: 5,     // frames seen before a new spot counts as a ball
   moveSpeed: 6,       // in/s: faster than this = moving
-  restHold: 0.7,      // s the table must be still before a shot can start
+  restHold: 0.5,      // s the table must be still before a shot can start
   shotSpeed: 10,      // in/s the cue ball must reach to count as a shot
+  hiddenStart: false, // also start a shot when a still ball is hit by a ball that was hidden until it was already rolling
   rackCount: 4,       // this many balls starting together without the cue ball first = racking/hands, not a shot
   pocketDist: 5.5,    // in from a pocket's mouth: a ball lost inside this went in
   pocketReach: 12,    // in: a fast ball lost this far out, running straight at a pocket, went in
@@ -179,6 +180,20 @@ function makeTracker(table, opts = {}) {
     }
     // a new shot: the table was still, then one ball starts rolling fast on its own. That ball is the cue ball,
     // whatever the recogniser thinks of it, unless it is clearly a numbered ball (then hands are moving balls).
+    // the shooter's arm or body often hides the cue ball until it is already rolling. Then the shot shows as a
+    // still ball being hit by a fast ball that came from nowhere.
+    if (O.hiddenStart) for (const ob of moving) {
+      if (ob.movedAt === lastShotAt || t - ob.movedAt > 0.3 || stillBefore(ob.movedAt) < O.restHold) continue;
+      const rest = ob.path.filter(p => p[0] < ob.movedAt - 0.2).pop(); if (!rest) continue;
+      const hitter = tracks.find(tr => tr !== ob && tr.hits >= 3 && t - tr.born < 2 && tr.path.length >= 3
+        && tr.path.some(p => p[0] >= ob.movedAt - 0.5 && p[0] <= ob.movedAt + 0.05 && Math.hypot(p[1] - rest[1], p[2] - rest[2]) < O.touchDist + 1)
+        && Math.hypot(tr.path[tr.path.length - 1][1] - tr.path[0][1], tr.path[tr.path.length - 1][2] - tr.path[0][2]) >= 4);
+      if (!hitter) continue;
+      lastShotAt = ob.movedAt;
+      shot = { t: hitter.born, made: [], cue: hitter.id, first: ident(ob), firstTrack: ob.id, hidden: true };
+      shots.push(shot); events.push({ k: 'shot', t: hitter.born, cue: hitter.id, hiddenStart: true });
+      return;
+    }
     const starters = moving.filter(tr => tr.movedAt !== lastShotAt && t - tr.movedAt <= 0.6 && speed(tr) > O.shotSpeed && rolledFromRest(tr));
     if (!starters.length) return;
     const cue = starters.sort((a, b) => a.movedAt - b.movedAt)[0];
@@ -210,7 +225,17 @@ function makeTracker(table, opts = {}) {
     // swapping onto a neighbouring ball or a stray spot)
     let maxStep = 0, places = 0;
     for (let i = 1; i < after.length; i++) { const st2 = Math.hypot(after[i][1] - after[i - 1][1], after[i][2] - after[i - 1][2]); maxStep = Math.max(maxStep, st2); if (st2 > 0.3) places++; }
-    if (maxStep > 0.6 * len || places < 2) return why(tr, 'hop');
+    if (maxStep > 0.6 * len || places < 2) {
+      // one exception: the ball was hidden (the shooter's arm) and reappears already rolling. Then the big step is
+      // the first one, and it keeps going the same way afterwards.
+      const i0 = after.findIndex((p, i) => i > 0 && Math.hypot(p[1] - after[i - 1][1], p[2] - after[i - 1][2]) > 0.3);
+      const a = after[i0 - 1], b = after[i0], e = after[after.length - 1];
+      const ok = i0 > 0 && Math.hypot(b[1] - a[1], b[2] - a[2]) === maxStep && after.length - i0 >= 3 && (() => {
+        const ux = b[1] - a[1], uy = b[2] - a[2], wx = e[1] - b[1], wy = e[2] - b[2], w = Math.hypot(wx, wy);
+        return w >= 2 && (ux * wx + uy * wy) / (Math.hypot(ux, uy) * w) > 0.7;
+      })();
+      if (!ok) return why(tr, 'hop');
+    }
     return true;
   }
   function why(tr, w) { if (O.debug) events.push({ k: 'reject', t, track: tr.id, why: w }); return false; }
