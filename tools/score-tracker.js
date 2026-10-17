@@ -11,6 +11,9 @@ const TJ = JSON.parse(fs.readFileSync(TRUTH, 'utf8')), truth = TJ.clips, OPTS = 
 
 const tot = { clips: 0, realShots: 0, shotsFound: 0, fakeShots: 0, made: 0, caught: 0, named: 0, wrongName: 0, missed: 0, phantom: 0, falseScratch: 0, firstChecked: 0, firstRight: 0 };
 const lines = [];
+// when the app put the shot in each clip (seconds into the clip); a found shot must be within 1.5 s of it
+let SHOT_AT = {};
+if (TJ.shotAt) SHOT_AT = TJ.shotAt;
 for (const clip of Object.keys(truth).sort()) {
   const f = path.join(DET, clip + '.json'); if (!fs.existsSync(f)) continue;
   const d = JSON.parse(fs.readFileSync(f, 'utf8')), T = truth[clip];
@@ -18,9 +21,9 @@ for (const clip of Object.keys(truth).sort()) {
   for (const fr of d.frames) tr.step(fr);
   const r = tr.finish();
   tot.clips++;
-  const got = r.shots.length > 0;
+  const at = T.at ?? SHOT_AT[clip], got = r.shots.some(s => at == null || Math.abs(s.t - at) < 1.5);
   if (T.shot) { tot.realShots++; if (got) tot.shotsFound++; }
-  tot.fakeShots += T.shot ? Math.max(0, r.shots.length - 1) : r.shots.length;
+  tot.fakeShots += T.shot ? r.shots.length - (got ? 1 : 0) : r.shots.length;
   // every pocket the tracker saw in this clip, inside a shot or not
   const pockets = r.events.filter(e => e.k === 'pocket').map(e => ({ ...e, ball: (r.tracks.find(t => t.id === e.track) || {}).ball ?? e.ball }));
   const left = T.made.slice(); let caught = 0, named = 0, wrong = 0, phantom = 0;
@@ -36,7 +39,7 @@ for (const clip of Object.keys(truth).sort()) {
   if (scratch && !T.scratch) tot.falseScratch++;
   let firstNote = '';
   if (T.shot && got && T.first != null) {
-    tot.firstChecked++; const f1 = r.shots[0].first;
+    tot.firstChecked++; const f1 = r.shots.find(s => at == null || Math.abs(s.t - at) < 1.5).first;
     if (f1 === T.first) tot.firstRight++;
     firstNote = `first ${f1 ?? '-'}${f1 === T.first ? '' : ' (truth ' + T.first + ')'}`;
   }

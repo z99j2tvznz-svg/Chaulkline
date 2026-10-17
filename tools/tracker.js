@@ -18,15 +18,21 @@ const TRACK_DEFAULTS = {
   shotSpeed: 10,      // in/s the cue ball must reach to count as a shot
   rackCount: 4,       // this many balls starting together without the cue ball first = racking/hands, not a shot
   pocketDist: 5.5,    // in from a pocket's mouth: a ball lost inside this went in
+  pocketReach: 12,    // in: a fast ball lost this far out, running straight at a pocket, went in
   pocketWait: 1.0,    // s a ball lost at a pocket must stay gone
+  minVotes: 10,       // recogniser votes before a spot counts as a ball
+  goodShare: 0.6,     // share of looks the recogniser must call a ball
+  launchGate: 12,     // in: how far a struck ball may jump between two frames
   hiddenGate: 4.0,    // in: a hidden ball is found again if something turns up this close to where it was
   touchDist: 3.6,     // in between centres: cue ball "next to" another ball (2.25 in = touching)
+  pockets: null,      // pocket mouths in table inches, when the outline is known to be off
+  inJaws: 2.2,        // in: a ball that stops this close to a pocket mouth is in the pocket (seen sitting in it)
   railBand: null,     // [ymin, ymax]: spots outside this band are on the rails (hands, legs, cushion), except at a pocket mouth
 };
 
 function makeTracker(table, opts = {}) {
   const O = { ...TRACK_DEFAULTS, ...opts }, [L, W] = table;
-  const pockets = [[0, 0], [L / 2, -0.6], [L, 0], [0, W], [L / 2, W + 0.6], [L, W]];
+  const pockets = O.pockets || [[0, 0], [L / 2, -0.6], [L, 0], [0, W], [L / 2, W + 0.6], [L, W]];
   const nearPocket = (x, y) => pockets.some(p => Math.hypot(x - p[0], y - p[1]) < O.pocketDist);
   let nextId = 1, tracks = [], t = 0, stillSince = 0, shot = null;
   const shots = [], events = [];
@@ -54,6 +60,10 @@ function makeTracker(table, opts = {}) {
     return d / (b[0] - a[0]);
   }
   const ballness = tr => tr.votes.reduce((a, v) => a + v, 0);
+  // how far a ball got from where it was at time `from`
+  function travelled(tr, from) {
+    const p0 = tr.path.find(p => p[0] >= from); return p0 ? Math.hypot(tr.x - p0[1], tr.y - p0[2]) : 0;
+  }
   function step(frame) {
     const dt = Math.max(1e-3, frame.t - t); t = frame.t;
     const onCloth = b => !O.railBand || (b.y >= O.railBand[0] && b.y <= O.railBand[1]) || b.x < 4.5 || b.x > L - 4.5 || Math.abs(b.x - L / 2) < 3;
@@ -69,6 +79,15 @@ function makeTracker(table, opts = {}) {
     pairs.sort((a, b) => a[0] - b[0]);
     const matched = new Set();
     for (const [, tr, j] of pairs) { if (matched.has(tr) || dets[j].used) continue; matched.add(tr); dets[j].used = true; see(tr, dets[j]); }
+    // a ball that is suddenly struck can jump several inches between frames (the clips drop frames): give live balls
+    // that found nothing a second, wider look, closest pairs first
+    const far = [];
+    for (const tr of live) if (!matched.has(tr) && ballness(tr) >= O.minVotes) dets.forEach((d, j) => {
+      if (d.used) return; const dd = Math.hypot(d.x - tr.x, d.y - tr.y);
+      if (dd < O.launchGate && (d.rec == null || ident(tr) == null || d.rec === ident(tr) || d.nb > 0.5 || d.p < 0.6)) far.push([dd, tr, j]);
+    });
+    far.sort((a, b) => a[0] - b[0]);
+    for (const [, tr, j] of far) { if (matched.has(tr) || dets[j].used) continue; matched.add(tr); dets[j].used = true; see(tr, dets[j]); }
     for (const tr of tracks) if (tr.state === 'hidden' || tr.state === 'lostAtPocket') {
       let bj = -1, bd = O.hiddenGate;
       dets.forEach((d, j) => { if (!d.used) { const dd = Math.hypot(d.x - tr.x, d.y - tr.y); if (dd < bd) { bd = dd; bj = j; } } });
@@ -78,6 +97,13 @@ function makeTracker(table, opts = {}) {
     for (const d of dets) if (!d.used) {
       const tr = { id: nextId++, x: d.x, y: d.y, vx: 0, vy: 0, t, born: t, hits: 0, votes: new Array(10).fill(0), state: 'resting', real: false, path: [], lostAt: null, movedAt: null };
       tracks.push(tr); see(tr, d);
+    }
+    // a ball that rolled into a pocket and stopped where the camera still sees it, sitting in the pocket
+    for (const tr of tracks) if (tr.state === 'resting' && isBall(tr) && tr.movedAt != null && t - tr.movedAt < 3
+      && pockets.some(p => Math.hypot(tr.x - p[0], tr.y - p[1]) < O.inJaws) && travelled(tr, tr.movedAt - 0.3) >= 6) {
+      tr.state = 'pocketed';
+      const ev = { k: 'pocket', t, track: tr.id, ball: ident(tr), jaws: true };
+      events.push(ev); if (shot) shot.made.push(ev);
     }
     // a ball lost at a pocket that stays gone went in
     for (const tr of tracks) if (tr.state === 'lostAtPocket' && t - tr.lostAt >= O.pocketWait) {
@@ -102,21 +128,36 @@ function makeTracker(table, opts = {}) {
     const sp = speed(tr);
     // only trust the number on a ball that is standing still (moving balls are blurred)
     if (sp === 0 && d.rec != null && d.nb != null && d.nb < 0.5 && d.p >= 0.6) tr.votes[d.rec] += d.p;
-    if (sp > O.moveSpeed) { if (tr.state !== 'moving') tr.movedAt = t; tr.state = 'moving'; }
+    if (sp === 0) { tr.still = (tr.still || 0) + 1; if (d.nb != null && d.nb < 0.3) tr.good = (tr.good || 0) + 1; }
+    if (sp > O.moveSpeed) { if (tr.state !== 'moving') tr.movedAt = t; tr.state = 'moving'; tr.lastMoving = t; }
     else { tr.state = 'resting'; tr.vx *= 0.5; tr.vy *= 0.5; }
   }
 
+  // was the ball heading into that pocket when it vanished? (a ball that vanishes behind a player standing at a
+  // corner is usually going somewhere else, or not moving at all)
+  function headingIn(tr) {
+    const h = tr.path, b = h[h.length - 1], a = h.filter(p => p[0] <= b[0] - 0.3).pop(); if (!a) return false;
+    const vx = b[1] - a[1], vy = b[2] - a[2], v = Math.hypot(vx, vy); if (v / (b[0] - a[0]) < 3) return false;
+    const sp = v / (b[0] - a[0]);
+    return pockets.some(p => {
+      const dx = p[0] - b[1], dy = p[1] - b[2], d = Math.hypot(dx, dy), cos = (vx * dx + vy * dy) / (v * d);
+      // close to the pocket and going its way, or further out but running fast straight at it (dark balls fade
+      // into the pocket's shadow before they reach it)
+      return (d < O.pocketDist && (d < 1.5 || cos > 0.4)) || (d < O.pocketReach && cos > 0.95 && sp > 10);
+    });
+  }
   function lose(tr) {
     if (!tr.real) { tr.state = 'gone'; return; }
     const px = tr.x + tr.vx * 0.05, py = tr.y + tr.vy * 0.05;
-    if ((nearPocket(tr.x, tr.y) || nearPocket(px, py)) && (ballness(tr) >= 2 || tr.state === 'moving')) { tr.state = 'lostAtPocket'; tr.lostAt = t; }
+    if (ballness(tr) >= O.minVotes && tr.lastMoving != null && t - tr.lastMoving < 0.6 && travelled(tr, tr.movedAt - 0.3) >= 3 && headingIn(tr)) { tr.state = 'lostAtPocket'; tr.lostAt = t; }
     else tr.state = 'hidden';
     tr.vx = tr.vy = 0;
   }
 
   // a ball we trust: seen for a while and recognised as a ball. Short-lived spots (hands, legs behind the far rail,
   // cue tip) come and go and never get here.
-  const isBall = tr => tr.real && ballness(tr) >= 2 && (t - tr.born >= 1.0 || tr.born === 0);
+  // and mostly looking like a ball (spots the recogniser keeps calling "not a ball" are hands, legs, cushion)
+  const isBall = tr => tr.real && ballness(tr) >= O.minVotes && (t - tr.born >= 1.0 || tr.born === 0) && (tr.good || 0) >= O.goodShare * (tr.still || 0);
   function updateShot() {
     const real = tracks.filter(tr => isBall(tr) && (tr.state === 'resting' || tr.state === 'moving'));
     const moving = real.filter(tr => tr.state === 'moving');
@@ -138,7 +179,7 @@ function makeTracker(table, opts = {}) {
     }
     // a new shot: the table was still, then one ball starts rolling fast on its own. That ball is the cue ball,
     // whatever the recogniser thinks of it, unless it is clearly a numbered ball (then hands are moving balls).
-    const starters = moving.filter(tr => tr.movedAt !== lastShotAt && t - tr.movedAt <= 0.4 && speed(tr) > O.shotSpeed);
+    const starters = moving.filter(tr => tr.movedAt !== lastShotAt && t - tr.movedAt <= 0.6 && speed(tr) > O.shotSpeed && rolledFromRest(tr));
     if (!starters.length) return;
     const cue = starters.sort((a, b) => a.movedAt - b.movedAt)[0];
     lastShotAt = cue.movedAt;
@@ -146,10 +187,28 @@ function makeTracker(table, opts = {}) {
     if (others.length >= O.rackCount - 1) { events.push({ k: 'notShot', t, why: 'many balls started together' }); return; }
     if (stillBefore(cue.movedAt) < O.restHold) { events.push({ k: 'notShot', t, why: 'table not still before' }); return; }
     const id = ident(cue);
-    if (id != null && id !== 0 && cue.votes[id] > 3 * (cue.votes[0] + 1)) { events.push({ k: 'notShot', t, why: 'a numbered ball moved first' }); return; }
+    if (O.numberedFirstIsHands && id != null && id !== 0 && cue.votes[id] > 3 * (cue.votes[0] + 1)) { events.push({ k: 'notShot', t, why: 'a numbered ball moved first' }); return; }
     shot = { t: cue.movedAt - 0.2, made: [], cue: cue.id };
     shots.push(shot); events.push({ k: 'shot', t: cue.movedAt, cue: cue.id });
   }
+  // a struck ball sat still in one place first, then runs off in a near-straight line. Hands, legs and the cue
+  // stick make spots that appear, jump about or crawl.
+  function rolledFromRest(tr) {
+    const st = tr.movedAt - 0.25, before = tr.path.filter(p => p[0] < st && p[0] >= st - O.restHold);
+    if (before.length < O.restHold * 8) return why(tr, 'few looks before');
+    // where it sat: the middle of its recent spots (the cue stick and hand near the ball add stray spots)
+    const med = a => a.slice().sort((u, v) => u - v)[a.length >> 1];
+    const r0 = [0, med(before.map(p => p[1])), med(before.map(p => p[2]))];
+    if (before.filter(p => Math.hypot(p[1] - r0[1], p[2] - r0[2]) <= 1.0).length < 0.7 * before.length) return why(tr, 'not still before');
+    const after = tr.path.filter(p => p[0] >= st && p[0] <= st + 0.45);
+    if (after.length < 4) return false;
+    let len = 0; for (let i = 1; i < after.length; i++) len += Math.hypot(after[i][1] - after[i - 1][1], after[i][2] - after[i - 1][2]);
+    const e = after[after.length - 1], disp = Math.hypot(e[1] - r0[1], e[2] - r0[2]);
+    if (disp < 3) return why(tr, 'short run');
+    if (disp < 0.7 * len) return why(tr, 'not straight');
+    return true;
+  }
+  function why(tr, w) { if (O.debug) events.push({ k: 'reject', t, track: tr.id, why: w }); return false; }
   let lastShotAt = null;
   const stillLog = [];
   // how long the table had been still just before time `at`
@@ -171,6 +230,13 @@ function makeTracker(table, opts = {}) {
       tr.state = 'pocketed'; const ev = { k: 'pocket', t: tr.lostAt, track: tr.id, ball: ident(tr), late: true };
       events.push(ev); if (shot) shot.made.push(ev);
     }
+    // a ball counted in that shows up again later (picked up by hand, or it was only behind someone) was not in
+    for (const ev of events.filter(e => e.k === 'pocket')) {
+      const tr = tracks.find(x => x.id === ev.track), b = tr ? ident(tr) : ev.ball; if (b == null) continue;
+      if (tracks.some(x => x !== tr && x.born > ev.t && x.state !== 'pocketed' && isBall(x) && ident(x) === b && x.votes[b] >= 5)) ev.undone = true;
+    }
+    for (let i = events.length - 1; i >= 0; i--) if (events[i].undone) events.splice(i, 1);
+    for (const s of shots) s.made = s.made.filter(e => !e.undone);
     const cue = cueTrack();
     for (const s of shots) {
       s.made = s.made.map(e => ({ ...e, ball: tracks.find(tr => tr.id === e.track) ? ident(tracks.find(tr => tr.id === e.track)) : e.ball }));
