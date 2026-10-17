@@ -23,7 +23,10 @@ for (const clip of Object.keys(truth).sort()) {
   tot.clips++;
   const at = T.at ?? SHOT_AT[clip], got = r.shots.some(s => at == null || Math.abs(s.t - at) < 1.5);
   if (T.shot) { tot.realShots++; if (got) tot.shotsFound++; }
-  tot.fakeShots += T.shot ? r.shots.length - (got ? 1 : 0) : r.shots.length;
+  // more: start times of further real shots in the same clip
+  const more = (T.more || []).filter(m => r.shots.some(s => Math.abs(s.t - m) < 1.5));
+  tot.realShots += (T.more || []).length; tot.shotsFound += more.length;
+  tot.fakeShots += (T.shot ? r.shots.length - (got ? 1 : 0) : r.shots.length) - more.length;
   // every pocket the tracker saw in this clip, inside a shot or not
   const pockets = r.events.filter(e => e.k === 'pocket').map(e => ({ ...e, ball: (r.tracks.find(t => t.id === e.track) || {}).ball ?? e.ball }));
   const left = T.made.slice(); let caught = 0, named = 0, wrong = 0, phantom = 0;
