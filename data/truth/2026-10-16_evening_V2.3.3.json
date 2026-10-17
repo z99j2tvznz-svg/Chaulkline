@@ -1,5 +1,5 @@
 {
- "about": "Hand-checked truth per shot clip of the Oct 16 evening session (V2.3.3), from watching the clips. shot = a real shot starts inside this clip; made = balls that drop inside this clip; first = first ball the cue ball hits (null = not checked); scratch = cue ball pocketed. Notes say what else is in the clip. at = seconds into the clip when the shot starts (the app's own timing, corrected by eye for shots 7 and 35); a found shot must be within 1.5 s.",
+ "about": "Hand-checked truth per shot clip of the Oct 16 evening session (V2.3.3), from watching the clips. shot = a real shot starts inside this clip; made = balls that drop inside this clip; first = first ball the cue ball hits (null = not checked); scratch = cue ball pocketed. Notes say what else is in the clip. at = seconds into the clip when the shot starts (the app's own timing, corrected by eye for shots 7, 13, 30 and 35); a found shot must be within 1.5 s.",
  "trackerOpts": {
   "pockets": [
    [
@@ -105,7 +105,7 @@
    "first": 7,
    "scratch": false,
    "note": "first ball likely, not certain",
-   "at": 6.29
+   "at": 4.8
   },
   "shot014": {
    "shot": true,
@@ -209,10 +209,10 @@
   "shot030": {
    "shot": true,
    "made": [],
-   "first": null,
+   "first": 6,
    "scratch": false,
    "note": "player blocks the view after the shot",
-   "at": 13.26
+   "at": 9.1
   },
   "shot031": {
    "shot": true,

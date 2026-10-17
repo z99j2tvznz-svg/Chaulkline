@@ -129,7 +129,7 @@ function makeTracker(table, opts = {}) {
     // only trust the number on a ball that is standing still (moving balls are blurred)
     if (sp === 0 && d.rec != null && d.nb != null && d.nb < 0.5 && d.p >= 0.6) tr.votes[d.rec] += d.p;
     if (sp === 0) { tr.still = (tr.still || 0) + 1; if (d.nb != null && d.nb < 0.3) tr.good = (tr.good || 0) + 1; }
-    if (sp > O.moveSpeed) { if (tr.state !== 'moving') tr.movedAt = t; tr.state = 'moving'; tr.lastMoving = t; }
+    if (sp > O.moveSpeed) { if (tr.state !== 'moving') { tr.movedAt = t; tr.peak = 0; } tr.state = 'moving'; tr.lastMoving = t; tr.peak = Math.max(tr.peak || 0, sp); }
     else { tr.state = 'resting'; tr.vx *= 0.5; tr.vy *= 0.5; }
   }
 
@@ -168,7 +168,7 @@ function makeTracker(table, opts = {}) {
     if (shot && !shot.end) {
       // first ball hit: the first other ball to start moving that the cue ball had just reached
       const cue = tracks.find(tr => tr.id === shot.cue);
-      if (shot.first === undefined && cue) for (const tr of moving) {
+      if (shot.first === undefined && cue) for (const tr of moving.slice().sort((a, b) => a.movedAt - b.movedAt)) {
         if (tr === cue || tr.movedAt < shot.t) continue;
         const rest = tr.path.filter(p => p[0] < tr.movedAt - 0.2).pop(); if (!rest) continue;
         const near = cue.path.some(p => p[0] >= tr.movedAt - 0.5 && p[0] <= tr.movedAt + 0.05 && Math.hypot(p[1] - rest[1], p[2] - rest[2]) < O.touchDist);
@@ -203,9 +203,14 @@ function makeTracker(table, opts = {}) {
     const after = tr.path.filter(p => p[0] >= st && p[0] <= st + 0.45);
     if (after.length < 4) return false;
     let len = 0; for (let i = 1; i < after.length; i++) len += Math.hypot(after[i][1] - after[i - 1][1], after[i][2] - after[i - 1][2]);
-    const e = after[after.length - 1], disp = Math.hypot(e[1] - r0[1], e[2] - r0[2]);
-    if (disp < 3) return why(tr, 'short run');
-    if (disp < 0.7 * len) return why(tr, 'not straight');
+    // it must really travel: a struck cue ball can stop on an object ball within a few inches, so count the whole
+    // way it went, not just how far it ended up
+    if (len < 3) return why(tr, 'short run');
+    // and keep rolling: seen at several places along the way, not one hop between two spots (which is the track
+    // swapping onto a neighbouring ball or a stray spot)
+    let maxStep = 0, places = 0;
+    for (let i = 1; i < after.length; i++) { const st2 = Math.hypot(after[i][1] - after[i - 1][1], after[i][2] - after[i - 1][2]); maxStep = Math.max(maxStep, st2); if (st2 > 0.3) places++; }
+    if (maxStep > 0.6 * len || places < 2) return why(tr, 'hop');
     return true;
   }
   function why(tr, w) { if (O.debug) events.push({ k: 'reject', t, track: tr.id, why: w }); return false; }
