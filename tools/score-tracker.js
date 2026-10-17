@@ -7,14 +7,14 @@ const { makeTracker } = require('./tracker.js');
 
 const argv = process.argv.slice(2), VERBOSE = argv.includes('--v');
 const [DET, TRUTH] = argv.filter(a => !a.startsWith('--'));
-const truth = JSON.parse(fs.readFileSync(TRUTH, 'utf8')).clips;
+const TJ = JSON.parse(fs.readFileSync(TRUTH, 'utf8')), truth = TJ.clips, OPTS = TJ.trackerOpts || {};
 
 const tot = { clips: 0, realShots: 0, shotsFound: 0, fakeShots: 0, made: 0, caught: 0, named: 0, wrongName: 0, missed: 0, phantom: 0, falseScratch: 0, firstChecked: 0, firstRight: 0 };
 const lines = [];
 for (const clip of Object.keys(truth).sort()) {
   const f = path.join(DET, clip + '.json'); if (!fs.existsSync(f)) continue;
   const d = JSON.parse(fs.readFileSync(f, 'utf8')), T = truth[clip];
-  const tr = makeTracker(d.table);
+  const tr = makeTracker(d.table, OPTS);
   for (const fr of d.frames) tr.step(fr);
   const r = tr.finish();
   tot.clips++;

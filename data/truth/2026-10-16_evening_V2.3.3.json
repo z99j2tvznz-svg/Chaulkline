@@ -1,34 +1,213 @@
 {
-  "about": "Hand-checked truth per shot clip of the Oct 16 evening session (V2.3.3), from watching the clips. shot = a real shot starts inside this clip; made = balls that drop inside this clip; first = first ball the cue ball hits (null = not checked); scratch = cue ball pocketed. Notes say what else is in the clip.",
-  "clips": {
-    "shot004": { "shot": false, "made": [], "note": "nothing moves" },
-    "shot005": { "shot": true, "made": [1], "first": 1, "scratch": false },
-    "shot006": { "shot": true, "made": [2], "first": 2, "scratch": false },
-    "shot007": { "shot": true, "made": [3], "first": 3, "scratch": false },
-    "shot008": { "shot": false, "made": [], "note": "starts with the 4 still rolling from a shot the clips missed; then the player walks past" },
-    "shot009": { "shot": true, "made": [4], "first": 4, "scratch": false },
-    "shot010": { "shot": true, "made": [5], "first": 5, "scratch": false },
-    "shot011": { "shot": true, "made": [6], "first": 6, "scratch": false },
-    "shot012": { "shot": true, "made": [], "first": 7, "scratch": false },
-    "shot013": { "shot": true, "made": [], "first": 7, "scratch": false, "note": "first ball likely, not certain" },
-    "shot014": { "shot": true, "made": [7], "first": 7, "scratch": false },
-    "shot015": { "shot": true, "made": [8], "first": 8, "scratch": false },
-    "shot016": { "shot": false, "made": [], "note": "player moves the cue ball by hand" },
-    "shot017": { "shot": true, "made": [9], "first": 9, "scratch": false },
-    "shot021": { "shot": true, "made": [1], "first": 1, "scratch": false },
-    "shot022": { "shot": true, "made": [], "first": 2, "scratch": false },
-    "shot023": { "shot": true, "made": [2], "first": 2, "scratch": false },
-    "shot024": { "shot": true, "made": [3], "first": 3, "scratch": false },
-    "shot025": { "shot": true, "made": [4], "first": 4, "scratch": false },
-    "shot026": { "shot": false, "made": [], "note": "nothing moves" },
-    "shot027": { "shot": true, "made": [5], "first": 5, "scratch": false },
-    "shot028": { "shot": false, "made": [], "note": "tail of shot 27, cue ball still rolling" },
-    "shot029": { "shot": true, "made": [], "first": null, "scratch": false },
-    "shot030": { "shot": true, "made": [], "first": null, "scratch": false, "note": "player blocks the view after the shot" },
-    "shot031": { "shot": true, "made": [], "first": null, "scratch": false },
-    "shot032": { "shot": true, "made": [6], "first": 6, "scratch": false },
-    "shot033": { "shot": true, "made": [], "first": 7, "scratch": false, "note": "the 7 drops after the clip ends" },
-    "shot034": { "shot": true, "made": [8], "first": 8, "scratch": false, "note": "player's body blocks the view during the shot" },
-    "shot035": { "shot": true, "made": [9], "first": 9, "scratch": false }
+ "about": "Hand-checked truth per shot clip of the Oct 16 evening session (V2.3.3), from watching the clips. shot = a real shot starts inside this clip; made = balls that drop inside this clip; first = first ball the cue ball hits (null = not checked); scratch = cue ball pocketed. Notes say what else is in the clip.",
+ "trackerOpts": {},
+ "clips": {
+  "shot004": {
+   "shot": false,
+   "made": [],
+   "note": "nothing moves"
+  },
+  "shot005": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "first": 1,
+   "scratch": false
+  },
+  "shot006": {
+   "shot": true,
+   "made": [
+    2
+   ],
+   "first": 2,
+   "scratch": false
+  },
+  "shot007": {
+   "shot": true,
+   "made": [
+    3
+   ],
+   "first": 3,
+   "scratch": false
+  },
+  "shot008": {
+   "shot": false,
+   "made": [],
+   "note": "starts with the 4 still rolling from a shot the clips missed; then the player walks past"
+  },
+  "shot009": {
+   "shot": true,
+   "made": [
+    4
+   ],
+   "first": 4,
+   "scratch": false
+  },
+  "shot010": {
+   "shot": true,
+   "made": [
+    5
+   ],
+   "first": 5,
+   "scratch": false
+  },
+  "shot011": {
+   "shot": true,
+   "made": [
+    6
+   ],
+   "first": 6,
+   "scratch": false
+  },
+  "shot012": {
+   "shot": true,
+   "made": [],
+   "first": 7,
+   "scratch": false
+  },
+  "shot013": {
+   "shot": true,
+   "made": [],
+   "first": 7,
+   "scratch": false,
+   "note": "first ball likely, not certain"
+  },
+  "shot014": {
+   "shot": true,
+   "made": [
+    7
+   ],
+   "first": 7,
+   "scratch": false
+  },
+  "shot015": {
+   "shot": true,
+   "made": [
+    8
+   ],
+   "first": 8,
+   "scratch": false
+  },
+  "shot016": {
+   "shot": false,
+   "made": [],
+   "note": "player moves the cue ball by hand"
+  },
+  "shot017": {
+   "shot": true,
+   "made": [
+    9
+   ],
+   "first": 9,
+   "scratch": false
+  },
+  "shot021": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "first": 1,
+   "scratch": false
+  },
+  "shot022": {
+   "shot": true,
+   "made": [],
+   "first": 2,
+   "scratch": false
+  },
+  "shot023": {
+   "shot": true,
+   "made": [
+    2
+   ],
+   "first": 2,
+   "scratch": false
+  },
+  "shot024": {
+   "shot": true,
+   "made": [
+    3
+   ],
+   "first": 3,
+   "scratch": false
+  },
+  "shot025": {
+   "shot": true,
+   "made": [
+    4
+   ],
+   "first": 4,
+   "scratch": false
+  },
+  "shot026": {
+   "shot": false,
+   "made": [],
+   "note": "nothing moves"
+  },
+  "shot027": {
+   "shot": true,
+   "made": [
+    5
+   ],
+   "first": 5,
+   "scratch": false
+  },
+  "shot028": {
+   "shot": false,
+   "made": [],
+   "note": "tail of shot 27, cue ball still rolling"
+  },
+  "shot029": {
+   "shot": true,
+   "made": [],
+   "first": null,
+   "scratch": false
+  },
+  "shot030": {
+   "shot": true,
+   "made": [],
+   "first": null,
+   "scratch": false,
+   "note": "player blocks the view after the shot"
+  },
+  "shot031": {
+   "shot": true,
+   "made": [],
+   "first": null,
+   "scratch": false
+  },
+  "shot032": {
+   "shot": true,
+   "made": [
+    6
+   ],
+   "first": 6,
+   "scratch": false
+  },
+  "shot033": {
+   "shot": true,
+   "made": [],
+   "first": 7,
+   "scratch": false,
+   "note": "the 7 drops after the clip ends"
+  },
+  "shot034": {
+   "shot": true,
+   "made": [
+    8
+   ],
+   "first": 8,
+   "scratch": false,
+   "note": "player's body blocks the view during the shot"
+  },
+  "shot035": {
+   "shot": true,
+   "made": [
+    9
+   ],
+   "first": 9,
+   "scratch": false
   }
+ }
 }

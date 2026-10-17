@@ -21,6 +21,7 @@ const TRACK_DEFAULTS = {
   pocketWait: 1.0,    // s a ball lost at a pocket must stay gone
   hiddenGate: 4.0,    // in: a hidden ball is found again if something turns up this close to where it was
   touchDist: 3.6,     // in between centres: cue ball "next to" another ball (2.25 in = touching)
+  railBand: null,     // [ymin, ymax]: spots outside this band are on the rails (hands, legs, cushion), except at a pocket mouth
 };
 
 function makeTracker(table, opts = {}) {
@@ -55,7 +56,8 @@ function makeTracker(table, opts = {}) {
   const ballness = tr => tr.votes.reduce((a, v) => a + v, 0);
   function step(frame) {
     const dt = Math.max(1e-3, frame.t - t); t = frame.t;
-    const dets = frame.balls.map(b => ({ ...b, used: false }));
+    const onCloth = b => !O.railBand || (b.y >= O.railBand[0] && b.y <= O.railBand[1]) || b.x < 4.5 || b.x > L - 4.5 || Math.abs(b.x - L / 2) < 3;
+    const dets = frame.balls.filter(onCloth).map(b => ({ ...b, used: false }));
     // match live tracks first (closest pairs first), then hidden ones
     const live = tracks.filter(tr => tr.state === 'resting' || tr.state === 'moving');
     const pairs = [];
