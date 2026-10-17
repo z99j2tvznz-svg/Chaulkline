@@ -144,13 +144,13 @@ function makeTracker(table, opts = {}) {
       const dx = p[0] - b[1], dy = p[1] - b[2], d = Math.hypot(dx, dy), cos = (vx * dx + vy * dy) / (v * d);
       // close to the pocket and going its way, or further out but running fast straight at it (dark balls fade
       // into the pocket's shadow before they reach it)
-      return (d < O.pocketDist && (d < 1.5 || cos > 0.4)) || (d < O.pocketReach && cos > 0.95 && sp > 10);
+      return (d < O.pocketDist && (d < 1.5 || cos > 0.4)) || (d < O.pocketReach && cos > 0.95 && sp > 10 && ident(tr) !== 0);
     });
   }
   function lose(tr) {
     if (!tr.real) { tr.state = 'gone'; return; }
     const px = tr.x + tr.vx * 0.05, py = tr.y + tr.vy * 0.05;
-    if (ballness(tr) >= O.minVotes && tr.lastMoving != null && t - tr.lastMoving < 0.6 && travelled(tr, tr.movedAt - 0.3) >= 3 && headingIn(tr)) { tr.state = 'lostAtPocket'; tr.lostAt = t; }
+    if (ballness(tr) >= O.minVotes && tr.lastMoving != null && t - tr.lastMoving < 0.6 && travelled(tr, tr.movedAt - 0.3) >= 1.5 && headingIn(tr)) { tr.state = 'lostAtPocket'; tr.lostAt = t; }
     else tr.state = 'hidden';
     tr.vx = tr.vy = 0;
   }
