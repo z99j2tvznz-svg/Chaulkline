@@ -1,0 +1,136 @@
+{
+ "about": "Hand-checked truth per shot clip of the Oct 17 3pm session from the other side of the table (V2.3.3, one rack of 9-ball, balls partly shot out of order), from contact sheets of the clips. Same fields as the Oct 16 file. at = seconds into the clip when the cue ball starts moving, checked by eye (the app's own time was wrong for clips 4 and 15, and missing for 6-14). Clips 5 and 9 were never saved. Balls that dropped between clips (the 2 before clip 4, the 6 after clip 12, the 8 before clip 14) are not counted.",
+ "trackerOpts": {
+  "pockets": [
+   [
+    2.5,
+    3.0
+   ],
+   [
+    39.0,
+    0.5
+   ],
+   [
+    75.0,
+    3.0
+   ],
+   [
+    3.0,
+    35.5
+   ],
+   [
+    39.0,
+    35.8
+   ],
+   [
+    74.5,
+    36.0
+   ]
+  ]
+ },
+ "trackerOptsWhy": "Same pocket mouths as the Oct 16 file: this outline also puts balls on the far rail at y~34-35, and balls were last seen going in at about (38.3,33.4) side and (74.8,33.8) corner.",
+ "clips": {
+  "shot001": {
+   "shot": false,
+   "made": [],
+   "note": "setting up; the app's shot is not real"
+  },
+  "shot002": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "first": 1,
+   "scratch": false,
+   "at": 8.45
+  },
+  "shot003": {
+   "shot": true,
+   "made": [],
+   "first": 2,
+   "scratch": false,
+   "at": 9.15,
+   "note": "the 2 stays up near the right side; the app's made '?' is a phantom"
+  },
+  "shot004": {
+   "shot": true,
+   "made": [
+    3
+   ],
+   "first": 3,
+   "scratch": false,
+   "at": 5.8,
+   "note": "the 3 goes in the top-left corner about 6.2 s and stays visible in the mouth; the app put the shot at 16.7 s"
+  },
+  "shot006": {
+   "shot": true,
+   "made": [
+    4
+   ],
+   "first": 4,
+   "scratch": false,
+   "at": 5.1,
+   "note": "4 in the top-right corner"
+  },
+  "shot007": {
+   "shot": true,
+   "made": [],
+   "first": 5,
+   "scratch": false,
+   "at": 7.8,
+   "note": "the 5 stops in the mouth of the top side pocket"
+  },
+  "shot008": {
+   "shot": true,
+   "made": [
+    5
+   ],
+   "first": 5,
+   "scratch": false,
+   "at": 4.5,
+   "note": "5 in the top side pocket, cue then moves the 6"
+  },
+  "shot010": {
+   "shot": false,
+   "made": [],
+   "note": "end of a shot that started before the clip; cue ball rolls to a stop"
+  },
+  "shot011": {
+   "shot": true,
+   "made": [],
+   "first": 6,
+   "scratch": false,
+   "at": 3.3
+  },
+  "shot012": {
+   "shot": false,
+   "made": [],
+   "note": "0.8 s, nothing starts"
+  },
+  "shot013": {
+   "shot": true,
+   "made": [
+    7
+   ],
+   "first": 7,
+   "scratch": false,
+   "at": 5.2,
+   "note": "7 in the top-left corner"
+  },
+  "shot014": {
+   "shot": false,
+   "made": [],
+   "note": "only the 9 and cue left; end of a shot (the 8 already gone), the 9 rolls to a stop"
+  },
+  "shot015": {
+   "shot": true,
+   "made": [
+    9
+   ],
+   "first": 9,
+   "scratch": false,
+   "at": 3.8,
+   "note": "9 in the top-right corner; afterwards the cue ball is picked up and moved by hand"
+  }
+ }
+}
