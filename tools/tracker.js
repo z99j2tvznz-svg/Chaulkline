@@ -27,7 +27,7 @@ const TRACK_DEFAULTS = {
   hiddenGate: 4.0,    // in: a hidden ball is found again if something turns up this close to where it was
   touchDist: 3.6,     // in between centres: cue ball "next to" another ball (2.25 in = touching)
   pockets: null,      // pocket mouths in table inches, when the outline is known to be off
-  inJaws: 2.2,        // in: a ball that stops this close to a pocket mouth is in the pocket (seen sitting in it)
+  inJaws: 1.5,        // in: a ball that stops this close to a pocket mouth is in the pocket (seen sitting in it)
   railBand: null,     // [ymin, ymax]: spots outside this band are on the rails (hands, legs, cushion), except at a pocket mouth
 };
 
@@ -166,6 +166,15 @@ function makeTracker(table, opts = {}) {
       if (!stillSince) stillSince = t;
       if (shot && !shot.end && t - stillSince > 1.0) shot.end = stillSince;
     } else stillSince = 0;
+    if (shot && !shot.end && !shot.checked && t > shot.t + 1.2) {
+      // a struck cue ball does not come back to where it sat. When it seems to, the "roll" was the cue stick's tip
+      // being taken for the ball during practice strokes: not a shot.
+      shot.checked = true;
+      const cue = tracks.find(tr => tr.id === shot.cue), r0 = shot.from;
+      if (cue && r0 && cue.path.some(p => p[0] > shot.t + 0.8 && Math.hypot(p[1] - r0[0], p[2] - r0[1]) < 1.5) && !shot.made.length) {
+        shots.splice(shots.indexOf(shot), 1); events.push({ k: 'notShot', t, why: 'cue ball came back (practice stroke)' }); shot = null; return;
+      }
+    }
     if (shot && !shot.end) {
       // first ball hit: the first other ball to start moving that the cue ball had just reached
       const cue = tracks.find(tr => tr.id === shot.cue);
@@ -203,7 +212,8 @@ function makeTracker(table, opts = {}) {
     if (stillBefore(cue.movedAt) < O.restHold) { events.push({ k: 'notShot', t, why: 'table not still before' }); return; }
     const id = ident(cue);
     if (O.numberedFirstIsHands && id != null && id !== 0 && cue.votes[id] > 3 * (cue.votes[0] + 1)) { events.push({ k: 'notShot', t, why: 'a numbered ball moved first' }); return; }
-    shot = { t: cue.movedAt - 0.2, made: [], cue: cue.id };
+    const rs = cue.path.filter(p => p[0] < cue.movedAt - 0.25).pop();
+    shot = { t: cue.movedAt - 0.2, made: [], cue: cue.id, from: rs ? [rs[1], rs[2]] : null };
     shots.push(shot); events.push({ k: 'shot', t: cue.movedAt, cue: cue.id });
   }
   // a struck ball sat still in one place first, then runs off in a near-straight line. Hands, legs and the cue
