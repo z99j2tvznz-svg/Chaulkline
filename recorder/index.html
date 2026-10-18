@@ -51,7 +51,7 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 // short clip per step (video, sound, motion sensor, camera settings) and the player's tap answers, and saves them as
 // zip files that each stay under the 30 MB upload limit. It does no tracking. Section contents and the reasons behind
 // them: chalkline-data/plans/test-recorder-sections.md in the project files.
-const VERSION = 'R0.1';
+const VERSION = 'R0.2';
 const MB = 1048576, PART_LIMIT = 25 * MB, CLIP_MAX = 29 * MB;
 const $ = s => document.querySelector(s);
 const panel = $('#panel'), view = $('#view');
@@ -67,15 +67,16 @@ function along(pk, d) { const [px, py] = PK[pk], [dx, dy] = INTO[pk], k = Math.h
 // a straight-in shot: the object ball ob diamonds out of the pocket, the striker cb diamonds out, on one line
 function straight(pk, ob = 1.3, cb = 3, obBall = 1, striker = 0) { return { pocket: pk, balls: [{ b: obBall, at: along(pk, ob) }, { b: striker, at: along(pk, cb) }], aim: [striker, obBall] }; }
 const SPREAD16 = [[1, 1], [2.2, 3], [3, 1.6], [4.6, 2.4], [5.6, 1], [6.8, 3], [7, 1.8], [1.6, 2.2], [2.8, 0.6], [3.6, 3.4], [5, 3.2], [6, 2.2], [7.4, 0.8], [0.8, 3.2], [4.2, 1.2], [5.4, 1.9]];
-const LAYOUT = {
-  spread16: { balls: SPREAD16.map((at, i) => ({ b: i, at })) },
-  cluster5: { balls: [{ b: 0, at: [2, 2] }, { b: 1, at: [5.5, 2] }, { b: 2, at: [5.7, 2] }, { b: 3, at: [5.6, 2.17] }, { b: 4, at: [5.6, 1.83] }, { b: 5, at: [5.9, 2] }] },
-  frozen3: { balls: [{ b: 0, at: [2, 2] }, { b: 1, at: [2.5, 0.1] }, { b: 2, at: [6, 3.9] }, { b: 3, at: [7.9, 2] }] },
-  jaws: { balls: [{ b: 0, at: [4, 2] }, { b: 1, at: [7.82, 3.82] }], pocket: 'F' },
-};
+// The balls are set up once (spread16) and each later "at rest" layout only moves a few of them, so the player never
+// has to set the whole table up again.
+function moved(base, moves, extra = {}) { return { ...extra, balls: base.balls.map(o => moves[o.b] ? { b: o.b, at: moves[o.b] } : o) }; }
+const SPREAD = { balls: SPREAD16.map((at, i) => ({ b: i, at })) };
+const CLUSTER = moved(SPREAD, { 1: [3.6, 2.3], 2: [3.8, 2.3], 3: [3.7, 2.47], 4: [3.7, 2.13], 5: [4, 2.3] });
+const FROZEN = moved(CLUSTER, { 6: [2.5, 0.1], 7: [6, 3.9], 8: [7.9, 2] });
+const LAYOUT = { spread16: SPREAD, cluster5: CLUSTER, frozen3: FROZEN, jaws: moved(FROZEN, { 9: [7.82, 3.82] }, { pocket: 'F' }) };
 
 // ---------- the sections (see test-recorder-sections.md) ----------
-// kind: camtest | clip | measure | play. ask: 'shot' asks which balls went in and whether any left the table.
+// kind: camtest | clip | measure | play | note. ask: 'shot' asks which balls went in and whether any left the table.
 // short: part of the short version for other camera spots. cd: countdown before recording, dur: seconds recorded.
 const STILL = { cd: 6, dur: 10 }, HAND = { cd: 5, dur: 14 }, SHOT = { cd: 8, dur: 16, ask: 'shot' };
 const LIGHTS = ['Normal lights', 'Table light off, room light on', 'One lamp off to one side', 'Warm lights mixed with daylight'];
@@ -88,11 +89,12 @@ const SECTIONS = [
     { id: 'bump', ...STILL, cd: 8, short: true, text: 'When it starts recording, nudge the tripod so the view shifts a little, and leave it there. Then step away.' },
     { id: 'measure', kind: 'measure', text: 'Optional, once per table: tape measurements, in inches. Leave any you don\'t have blank.' }] },
   { id: 'rest', title: 'Balls at rest', steps: [
-    { id: 'spread', ...STILL, short: true, layout: 'spread16', text: 'Place all 16 balls roughly like the picture, none touching. Step away.' },
-    { id: 'cluster', ...STILL, layout: 'cluster5', text: 'Make a cluster of five balls all touching, like the picture. Step away.' },
-    { id: 'frozen', ...STILL, layout: 'frozen3', text: 'Put three balls right against the rails (frozen), like the picture. Step away.' },
-    { id: 'jaws', ...STILL, layout: 'jaws', text: 'Set one ball in a pocket\'s jaws, sitting on the edge without dropping. Step away.' },
-    ...LIGHTS.slice(1).map((l, i) => ({ id: 'light' + (i + 1), ...STILL, cd: 10, layout: 'spread16', light: l, text: 'Same spread of 16 balls. Change the lighting to: ' + l + '. Step away.' }))] },
+    { id: 'spread', ...STILL, short: true, layout: 'spread16', text: 'Place all 16 balls roughly like the picture, none touching. You\'ll keep this layout for the whole section. Step away.' },
+    ...LIGHTS.slice(1).map((l, i) => ({ id: 'light' + (i + 1), ...STILL, cd: 10, layout: 'spread16', light: l, text: 'Don\'t move any balls. Change the lighting to: ' + l + '. Step away.' })),
+    { id: 'lightBack', kind: 'note', text: 'Put the lighting back to normal. Leave the balls where they are.' },
+    { id: 'cluster', ...STILL, layout: 'cluster5', text: 'Move only the 1, 2, 3, 4 and 5 together into a cluster, all touching, like the picture. Leave the rest. Step away.' },
+    { id: 'frozen', ...STILL, layout: 'frozen3', text: 'Move only the 6, 7 and 8 right against the rails (frozen), like the picture. Leave the rest. Step away.' },
+    { id: 'jaws', ...STILL, layout: 'jaws', text: 'Move only the 9 into the marked pocket\'s jaws, sitting on the edge without dropping. Leave the rest. Step away.' }] },
   { id: 'hands', title: 'Hands and things', intro: 'These aren\'t shots. The recorder knows what you did, so there are no questions.', steps: [
     { id: 'pickpocket', ...HAND, text: 'Pick up a ball by hand and drop it in a pocket.' },
     { id: 'fromPocket', ...HAND, text: 'Take a ball out of a pocket and set it on the table.' },
@@ -102,7 +104,7 @@ const SECTIONS = [
     { id: 'cueOnTable', ...HAND, text: 'Lay a cue across the table, then pick it up again.' },
     { id: 'chalk', ...HAND, dur: 18, text: 'Put chalk on the rail, then on the cloth, then take it away.' },
     { id: 'lean', ...HAND, text: 'Lean over the table for a few seconds without touching any ball.' },
-    { id: 'practice', ...HAND, layout: 'spread16', text: 'Take 5 practice strokes at the white ball without hitting it.' }] },
+    { id: 'practice', ...HAND, text: 'Take 5 practice strokes at the white ball without hitting it.' }] },
   { id: 'shots', title: 'Simple shots', intro: 'Set up each shot like the picture (close is fine). After each one, tap which balls went in.', steps: [
     ...['A', 'B', 'C', 'D', 'E', 'F'].map(pk => ({ id: 'straight' + pk, ...SHOT, short: true, layout: straight(pk), text: 'Straight in: shoot the 1 into the marked pocket.' })),
     { id: 'stop', ...SHOT, layout: straight('F', 1.5, 3.5), text: 'Stop shot: the white should stop where the 1 was.' },
@@ -128,7 +130,7 @@ const SECTIONS = [
     { id: 'walkFront', ...HAND, text: 'Walk between the camera and the table, then step away.' },
     { id: 'standFront', ...HAND, text: 'Stand right in front of the phone for 5 seconds, then step away.' },
     { id: 'rollTap', ...HAND, cd: 6, text: 'Roll a ball by hand, then tap the tripod while it\'s still rolling.' },
-    { id: 'coverPocket', ...SHOT, layout: straight('F'), text: 'Shoot the 1 at the far pocket while leaning so your body covers that pocket.' },
+    { id: 'awayShot', ...SHOT, text: 'Set up any easy shot into a pocket on the far side, so you shoot away from the phone. Stand on your shot line as normal. Your body may hide some of the table, and that\'s fine.' },
     { id: 'helperWalk', ...SHOT, opt: true, text: 'Only if someone else is there: they walk past behind the table while you shoot.' },
     { id: 'helperLean', ...SHOT, opt: true, text: 'Only if someone else is there: they lean on the rail while you shoot.' }] },
   { id: 'breaks', title: 'Breaks', intro: 'After each break, tap which balls went in.', steps: [
@@ -389,6 +391,7 @@ function showStep() {
   let h = '<h2>' + esc(sec.title) + '</h2>';
   if (S.step === 0 && sec.intro) h += '<p class="muted">' + esc(sec.intro) + '</p>';
   if (step.kind === 'measure') return showMeasure(h, step);
+  if (step.kind === 'note') { panel.innerHTML = h + '<p>' + esc(step.text) + '</p><div class="row"><button class="primary big" id="noteOk">Done</button></div>'; $('#noteOk').onclick = next; return; }
   h += '<p>' + (step.kind === 'play' ? 'Shot ' + (S.playN + 1) + '. ' : 'Step ' + (S.step + 1) + ' of ' + sec.steps.length + '. ') + esc(step.text) + '</p>';
   if (step.opt) h += '<p class="muted">Optional.</p>';
   if (step.layout) h += layoutSvg(step.layout);
