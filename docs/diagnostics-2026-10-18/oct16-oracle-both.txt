@@ -1,0 +1,55 @@
+2026-10-16_evening_V2.3.3.json  (code 63e2ce6)  ORACLE-ASSISTED DIAGNOSTIC: both
+                                              continuous    from checkpoints
+  real-shot clips                             24            24
+    correct automatically                     3             14
+    unresolved                                16            5
+    confidently wrong                         5             5
+  real shots missed                           4             4
+  false shots (all clips)                     2             2
+  phantom pockets (confirmed, not in)         0             0
+  made balls left unresolved                  5             5
+  made balls called on the table              0             0
+  state errors (memory confidently wrong)     0             0
+  observation: on table, not named            0             0
+  observation: named, but gone                0             0
+  clips with checkable inventory              29            29
+  racks                                       2             2
+    completed with no intervention            0             0
+    no confidently wrong result               0             0
+    unresolved items to settle                5             5
+  first ball hit (research only)              13/19         13/19
+  diagnostics (continuous; checkpoint where it differs)
+    shots: realShotEvents 24, found 20, missed 4, falseInNonShotClips 1, nonShotClips 5, extraInShotClips 1, minutes 6.3
+    final look still : clips 18, correct 3, unresolved 10, wrong 5  | checkpoint: clips 18, correct 13, unresolved 0, wrong 5
+    final look moving: clips 6, correct 0, unresolved 6, wrong 0  | checkpoint: clips 6, correct 1, unresolved 5, wrong 0
+    finder at the final look (inventory verified): looks 29, ballsOnTable 152, namedRight 134, notNamedRight 18, groupsSeen 152, unnamedGroups 7, wrongNumberGroups 11, undetectedAtLeast 7, extraGroupsAtLeast 7, namedButGone 0, namedButGoneRepeatedNextClip 0, goneLikelyMisread 0, goneLikelyStillMisread 0, goneLikelyMark 0, goneCannotTell 0
+    what-if pocket rule: calls 12, right 9, wrong 3, cannotTell 0
+  rack 1 shot004: confidently wrong | wrong:  false shot
+  rack 1 shot005: unresolved | open: 1 went in; left unresolved (not seen; table not settled)
+  rack 1 shot006: unresolved | open: 1 gone, left unconfirmed
+  rack 1 shot007: unresolved | open: 1 gone, left unconfirmed
+  rack 1 shot008: unresolved | open: 1 gone, left unconfirmed
+  rack 1 shot009: unresolved | open: 4 went in; left unresolved (not seen; table not settled); 1 gone, left unconfirmed
+  rack 1 shot010: unresolved | open: 1 gone, left unconfirmed; 4 gone, left unconfirmed
+  rack 1 shot011: unresolved | open: 6 went in; left unresolved (not seen; table not settled); 1 gone, left unconfirmed; 4 gone, left unconfirmed
+  rack 1 shot012: unresolved | open: 1 gone, left unconfirmed; 4 gone, left unconfirmed; 6 gone, left unconfirmed
+  rack 1 shot013: unresolved | open: 1 gone, left unconfirmed; 4 gone, left unconfirmed; 6 gone, left unconfirmed
+  rack 1 shot014: confidently wrong | wrong:  real shot not found at 13.44 s | open: 1 gone, left unconfirmed; 4 gone, left unconfirmed; 6 gone, left unconfirmed
+  rack 1 shot015: unresolved | open: 1 gone, left unconfirmed; 4 gone, left unconfirmed; 6 gone, left unconfirmed
+  rack 1 shot016: unresolved | open: 1 gone, left unconfirmed; 4 gone, left unconfirmed; 6 gone, left unconfirmed
+  rack 1 shot017: unresolved | open: 1 gone, left unconfirmed; 4 gone, left unconfirmed; 6 gone, left unconfirmed
+  rack 2 shot021: correct automatically
+  rack 2 shot022: confidently wrong | wrong:  false shot
+  rack 2 shot023: correct automatically
+  rack 2 shot024: correct automatically
+  rack 2 shot025: confidently wrong | wrong:  real shot not found at 13.54 s
+  rack 2 shot026: correct automatically
+  rack 2 shot027: unresolved | open: 5 went in; left unresolved (not seen; table not settled)
+  rack 2 shot028: unresolved | open: 5 gone, left unconfirmed
+  rack 2 shot029: unresolved | open: 5 gone, left unconfirmed
+  rack 2 shot030: unresolved | open: 5 gone, left unconfirmed
+  rack 2 shot031: confidently wrong | wrong:  real shot not found at 9.59 s | open: 5 gone, left unconfirmed
+  rack 2 shot032: confidently wrong | wrong:  real shot not found at 9.1 s | open: 5 gone, left unconfirmed
+  rack 2 shot033: unresolved | open: 5 gone, left unconfirmed
+  rack 2 shot034: unresolved | open: 8 went in; left unresolved (not seen; table not settled); 5 gone, left unconfirmed
+  rack 2 shot035: unresolved | open: 5 gone, left unconfirmed; 8 gone, left unconfirmed

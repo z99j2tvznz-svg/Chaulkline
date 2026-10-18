@@ -1,6 +1,6 @@
 # Offline baseline, first run (frozen Oct 18, 2026)
 
-This is the first and only run of the thin end-to-end baseline. It joins the old ball finder, the new tracker's shot timing, and a new step that compares the table before and after each shot. The rules were written down before any footage was run (`docs/baseline-rules.md`, commit 9e18726). Nothing was tuned after seeing these numbers. Any change from here is a new version and gets scored again from scratch.
+This is the first finalised scoring run of the thin end-to-end baseline. It joins the old ball finder, the new tracker's shot timing, and a new step that compares the table before and after each shot. The rules were written down before any footage was run (`docs/baseline-rules.md`, commit 9e18726). No rule or setting was changed after seeing results; one counting fix to the scorer was made after a first look, before this run was finalised (see Disclosures). Any change from here is a new version and gets scored again from scratch.
 
 Code: commit c7cc9a1 on branch `claude/project-thread-9vpr76`. Raw results for each session are in `baseline-2026-10-18/`, as a table (.txt) and as full traces (.json).
 
