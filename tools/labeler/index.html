@@ -176,6 +176,7 @@ function drawOverlay() {
     const lab = b.unknown ? '?' : b.num == 0 ? 'C' : b.num;
     s += `<circle cx="${b.x}" cy="${b.y}" r="${b.r}" fill="none" stroke="${isSel ? 'var(--sel)' : col}" stroke-width="${(isSel ? 3 : 2) * k}" ${b.checked ? '' : `stroke-dasharray="${4 * k} ${3 * k}"`}/>`;
     if (warnIds.has(b.id)) s += `<circle cx="${b.x}" cy="${b.y}" r="${b.r + 4 * k}" fill="none" stroke="var(--warn)" stroke-width="${1.5 * k}"/>`;
+    if (b.inPocket) s += `<circle cx="${b.x}" cy="${b.y}" r="${b.r * 0.35}" fill="${col}"/>`;
     if (b.partial) s += `<line x1="${b.x - b.r}" y1="${b.y + b.r}" x2="${b.x + b.r}" y2="${b.y - b.r}" stroke="${col}" stroke-width="${1.5 * k}"/>`;
     const fs = 13 * k, tx = b.x + b.r + 2 * k, ty = b.y - b.r;
     s += `<rect x="${tx}" y="${ty - fs}" width="${(String(lab).length * 0.65 + 0.5) * fs}" height="${fs * 1.2}" rx="${3 * k}" fill="${isSel ? 'var(--sel)' : col}"/>`;
@@ -208,7 +209,7 @@ function render() {
     h += `<div class="pad">${BALLS.map(B => `<button type="button" data-num="${B.n}" class="${!b.unknown && b.num === B.n ? 'on' : ''}" aria-label="${B.label || 'Ball ' + B.n}">${ballChip({ n: B.n })}</button>`).join('')}
       <button type="button" data-num="unknown" class="${b.unknown ? 'on' : ''}" aria-label="Can't tell the number">?</button>
       <button type="button" data-act="ok" ${b.checked ? 'disabled' : ''} aria-label="Correct as shown">✓</button></div>`;
-    h += `<div class="tools"><button type="button" data-act="partial" class="${b.partial ? 'on' : ''}">Partly hidden</button>
+    h += `<div class="tools"><button type="button" data-act="partial" class="${b.partial ? 'on' : ''}">Partly hidden</button><button type="button" data-act="pocket" class="${b.inPocket ? 'on' : ''}">In a pocket</button>
       <button type="button" data-act="smaller" aria-label="Smaller circle">Smaller</button><button type="button" data-act="bigger" aria-label="Bigger circle">Bigger</button>
       <button type="button" data-act="delete" class="danger">Not a ball</button><button type="button" data-act="deselect">Done with this ball</button></div>`;
   } else {
@@ -248,6 +249,7 @@ $('tray').addEventListener('click', e => {
   switch (act) {
     case 'ok': if (b) { b.checked = true; changed(); } break;
     case 'partial': if (b) { b.partial = !b.partial; b.checked = true; changed(); } break;
+    case 'pocket': if (b) { b.inPocket = !b.inPocket; b.checked = true; changed(); } break;
     case 'smaller': case 'bigger': if (b) { b.r = Math.max(2, +(b.r * (act === 'bigger' ? 1.12 : 1 / 1.12)).toFixed(1)); b.resized = true; b.checked = true; changed(); } break;
     case 'delete': if (b) { doc.balls = doc.balls.filter(x => x !== b); if (b.src === 'proposed') doc.removed.push({ x: b.x, y: b.y, r: b.r, proposedNum: b.proposedNum }); sel = null; changed(); } break;
     case 'deselect': sel = null; render(); break;
