@@ -51,7 +51,7 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 // short clip per step (video, sound, motion sensor, camera settings) and the player's tap answers, and saves them as
 // zip files that each stay under the 30 MB upload limit. It does no tracking. Section contents and the reasons behind
 // them: chalkline-data/plans/test-recorder-sections.md in the project files.
-const VERSION = 'R0.2';
+const VERSION = 'R0.3';
 const MB = 1048576, PART_LIMIT = 25 * MB, CLIP_MAX = 29 * MB;
 const $ = s => document.querySelector(s);
 const panel = $('#panel'), view = $('#view');
@@ -211,6 +211,8 @@ async function openCamera(mode) {
   try { const c = tr.getCapabilities ? tr.getCapabilities() : {}; if (c.zoom && c.zoom.min <= 1 && c.zoom.max >= 1) await tr.applyConstraints({ advanced: [{ zoom: 1 }] }); } catch (e) { }
   S.mode = mode; return st;
 }
+// the mic can be taken away between clips (Siri, a call, another app using sound), and Safari doesn't give it back
+function micState() { const a = S.stream && S.stream.getAudioTracks()[0]; return !a ? 'none' : a.readyState === 'ended' ? 'ended' : a.muted || !a.enabled ? 'muted' : 'ok'; }
 function trackInfo() {
   const tr = S.stream && S.stream.getVideoTracks()[0]; if (!tr) return null;
   let settings = {}; try { settings = tr.getSettings(); } catch (e) { }
@@ -242,11 +244,11 @@ function recordClip(dur, mode) {
     const mime = recMime(); let r;
     try { r = new MediaRecorder(S.stream, { mimeType: mime, videoBitsPerSecond: mode.bps, audioBitsPerSecond: 64000 }); }
     catch (e) { return done({ blob: null, err: String(e && (e.name || e.message) || e) }); }
-    const chunks = [], o = { t0: performance.now(), epoch: Date.now(), interrupted: false }; S.rec = o; S.motion = [];
+    const chunks = [], o = { t0: performance.now(), epoch: Date.now(), interrupted: false, micStart: micState() }; S.rec = o; S.motion = [];
     r.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
     r.onstop = () => {
       S.rec = null; const blob = new Blob(chunks, { type: mime || 'video/mp4' });
-      done({ blob, mime, meta: { epoch: o.epoch, secs: r3((performance.now() - o.t0) / 1000), interrupted: o.interrupted, bytes: blob.size, mode: mode.id, camera: trackInfo(), motion: S.motion.length } , motion: S.motion });
+      done({ blob, mime, meta: { epoch: o.epoch, secs: r3((performance.now() - o.t0) / 1000), interrupted: o.interrupted, mic: [o.micStart, micState()], bytes: blob.size, mode: mode.id, camera: trackInfo(), motion: S.motion.length } , motion: S.motion });
     };
     r.start(1000); o.stop = () => { if (r.state !== 'inactive') r.stop(); };
     o.timer = setTimeout(o.stop, dur * 1000 * SPEED);
@@ -311,7 +313,7 @@ async function packPart() {
   }
   const meta = { app: 'chalkline-recorder', version: VERSION, session: S.sessId, part: S.part, saved: new Date().toISOString(), setup: S.setup, camera: S.caps, clips };
   files.unshift({ name: 'meta.json', data: enc.encode(JSON.stringify(meta, null, 1)) });
-  const blob = makeZip(files), name = 'chalkline-rec-' + S.sessId + '-part' + S.part + '.zip';
+  const blob = makeZip(files), name = 'chalkline-' + VERSION + '-' + S.sessId + '-part' + String(S.part).padStart(2, '0') + '.zip';
   let file = null; try { file = new File([blob], name, { type: 'application/zip' }); } catch (e) { }
   return { blob, file, name, mb: blob.size / MB, clips: clips.length };
 }
@@ -427,6 +429,7 @@ async function runStep(step, sec) {
     if (step.kind === 'camtest') { panel.innerHTML = '<h2>Camera check</h2><p>Testing. Don\'t touch the phone. This takes about a minute.</p>'; await cameraCheck(); S.busy = false; return showCamResult(); }
     if (partFull(step.dur)) { S.busy = false; return showSavePart(() => runStep(step, sec)); }
     panel.innerHTML = '<h2>' + esc(sec.title) + '</h2><p>' + esc(step.text) + '</p>'; panel.classList.add('hidden');
+    if (micState() !== 'ok') { try { await openCamera(S.mode || DEFAULT); } catch (e) { } }
     await countdown(step.cd);
     const recEl = $('#rec'); recEl.classList.remove('hidden');
     const t0 = performance.now(), tick = setInterval(() => { $('#recLeft').textContent = Math.max(0, Math.ceil(step.dur - (performance.now() - t0) / 1000 / SPEED)) + ' s'; }, 250);
@@ -438,6 +441,7 @@ async function runStep(step, sec) {
     const meta = await keepClip(c, info);
     S.busy = false;
     if (meta.interrupted) { panel.innerHTML = '<h2>Recording was interrupted</h2><p>The phone left the recorder while recording. It\'s kept, but please record this step again.</p><div class="row"><button class="primary" id="again">Again</button></div>'; $('#again').onclick = showStep; return; }
+    if (meta.mic && meta.mic.some(m => m !== 'ok')) { panel.innerHTML = '<h2>No sound on that clip</h2><p>The phone took the microphone away, often because of Siri, a call, or another app using sound. It will reconnect when you record again, so please record this step again.</p><div class="row"><button class="primary" id="again">Again</button><button id="keepGoing">Keep it and carry on</button></div>'; $('#again').onclick = showStep; $('#keepGoing').onclick = () => step.ask ? askShot(meta, step) : afterClip(step); return; }
     if (step.ask) return askShot(meta, step);
     afterClip(step);
   } catch (e) { S.busy = false; panel.classList.remove('hidden'); panel.innerHTML = '<h2>Something went wrong</h2><p class="muted">' + esc(String(e && (e.message || e.name) || e)) + '</p><div class="row"><button class="primary" id="again">Back</button></div>'; $('#again').onclick = showStep; }

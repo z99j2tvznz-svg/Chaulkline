@@ -37,6 +37,7 @@ test('recorder records clips, asks the shot question, and saves a valid zip unde
     await page.click('#resume');
     await page.waitForSelector('#recBtn');
     assert.match(await page.textContent('#panel'), /Straight in/);
+    await page.evaluate(() => window.__rec.S.stream.getAudioTracks()[0].stop()); // the phone takes the mic away between clips
     await page.click('#recBtn');
     await page.waitForSelector('.balls', { timeout: 15000 });
     await page.click('[data-b="1"]');
@@ -44,6 +45,7 @@ test('recorder records clips, asks the shot question, and saves a valid zip unde
     await page.click('#done');
     await page.waitForSelector('#saveNow:not([disabled])');
     const [dl] = await Promise.all([page.waitForEvent('download'), (async () => { await page.click('#saveNow'); await page.click('#share'); })()]);
+    assert.match(dl.suggestedFilename(), /^chalkline-R\d+\.\d+-\d{8}-\d{4}-part01\.zip$/);
     const zipPath = path.join(os.tmpdir(), 'rec-test.zip'); await dl.saveAs(zipPath);
     const listing = JSON.parse(execFileSync('python3', ['-c', 'import zipfile,json,sys; z=zipfile.ZipFile(sys.argv[1]); z.testzip(); print(json.dumps({"names": z.namelist(), "meta": json.loads(z.read("meta.json"))}))', zipPath]).toString());
     assert.ok(fs.statSync(zipPath).size < 30 * 1048576, 'zip under 30 MB');
@@ -51,6 +53,7 @@ test('recorder records clips, asks the shot question, and saves a valid zip unde
     const shot = listing.meta.clips.find(c => c.step === 'straightA');
     assert.ok(shot, 'the shot clip is in the file');
     assert.deepStrictEqual(shot.answers, { in: [1], offTable: false });
+    assert.deepStrictEqual(shot.mic, ['ok', 'ok'], 'the mic was reconnected before the shot');
     assert.ok(listing.names.includes(shot.name + '-motion.json'));
     assert.ok(listing.meta.clips.some(c => c.step === 'empty'));
     assert.ok(listing.meta.camera && listing.meta.camera.locks, 'camera check results are in the file');
