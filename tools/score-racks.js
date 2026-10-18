@@ -117,7 +117,8 @@ function runRack(rack, mode) {
   return { rack: rack.name, mode, clips,
     completion: real.length > 0 && real.every(c => c.result === 'correct automatically') && scored.every(c => !c.falseShots),
     integrity: scored.every(c => c.result !== 'confidently wrong'),
-    corrections: scored.reduce((a, c) => a + c.unresolved.length, 0) };
+    // each open item counts once, when it first becomes open (an item carried from clip to clip is one correction)
+    corrections: scored.reduce((a, c, i) => { const prev = new Set(i ? scored[i - 1].unresolved.map(u => u.fact + u.ball) : []); return a + c.unresolved.filter(u => !prev.has(u.fact + u.ball) && !prev.has('state' + u.ball) && !prev.has('made' + u.ball)).length; }, 0) };
 }
 
 function totals(results) {
@@ -143,7 +144,7 @@ function totals(results) {
 }
 
 const hash = f => crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex').slice(0, 12);
-let commit = null; try { commit = execSync('git rev-parse --short HEAD', { cwd: __dirname }).toString().trim() + (execSync('git status --porcelain', { cwd: __dirname }).toString().trim() ? '+uncommitted' : ''); } catch (e) { }
+let commit = null; try { commit = execSync('git rev-parse --short HEAD', { cwd: __dirname }).toString().trim() + (execSync('git status --porcelain --untracked-files=no', { cwd: __dirname }).toString().trim() ? '+uncommitted' : ''); } catch (e) { }
 const report = { truth: path.basename(TRUTH), truthHash: hash(TRUTH), code: commit, detections: Object.fromEntries(fs.readdirSync(DET).filter(f => f.endsWith('.json')).sort().map(f => [f, hash(path.join(DET, f))])) };
 for (const mode of ['continuous', 'checkpoint']) {
   const res = racks.map(r => runRack(r, mode));
