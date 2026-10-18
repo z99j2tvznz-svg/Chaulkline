@@ -285,7 +285,8 @@ function makeTracker(table, opts = {}) {
     return { shots, events, cueId: cue && cue.id, tracks: tracks.filter(tr => tr.real).map(tr => ({ id: tr.id, ball: ident(tr), state: tr.state, x: +tr.x.toFixed(1), y: +tr.y.toFixed(1) })) };
   }
 
-  return { step: stepLogged, finish, get tracks() { return tracks; } };
+  // moving(): is any trusted ball moving right now (read-only; used by the baseline's settled-table check)
+  return { step: stepLogged, finish, moving: () => tracks.some(tr => isBall(tr) && tr.state === 'moving'), get tracks() { return tracks; } };
 }
 
 if (typeof module !== 'undefined') module.exports = { makeTracker, TRACK_DEFAULTS };

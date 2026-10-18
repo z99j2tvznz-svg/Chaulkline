@@ -33,7 +33,12 @@
   "shot001": {
    "shot": false,
    "made": [],
-   "note": "setting up; the app's shot is not real"
+   "note": "setting up; the app's shot is not real",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "no: balls are being placed, the rack is not set yet"
+   }
   },
   "shot002": {
    "shot": true,
@@ -42,7 +47,12 @@
    ],
    "first": 1,
    "scratch": false,
-   "at": 8.45
+   "at": 8.45,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot003": {
    "shot": true,
@@ -50,7 +60,12 @@
    "first": 2,
    "scratch": false,
    "at": 9.15,
-   "note": "the 2 stays up near the right side; the app's made '?' is a phantom"
+   "note": "the 2 stays up near the right side; the app's made '?' is a phantom",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot004": {
    "shot": true,
@@ -60,7 +75,15 @@
    "first": 3,
    "scratch": false,
    "at": 5.8,
-   "note": "the 3 goes in the top-left corner about 6.2 s and stays visible in the mouth; the app put the shot at 16.7 s"
+   "note": "the 3 goes in the top-left corner about 6.2 s and stays visible in the mouth; the app put the shot at 16.7 s",
+   "offCameraBefore": [
+    2
+   ],
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot006": {
    "shot": true,
@@ -70,7 +93,12 @@
    "first": 4,
    "scratch": false,
    "at": 5.1,
-   "note": "4 in the top-right corner"
+   "note": "4 in the top-right corner",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot007": {
    "shot": true,
@@ -78,7 +106,12 @@
    "first": 5,
    "scratch": false,
    "at": 7.8,
-   "note": "the 5 stops in the mouth of the top side pocket"
+   "note": "the 5 stops in the mouth of the top side pocket",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot008": {
    "shot": true,
@@ -88,24 +121,44 @@
    "first": 5,
    "scratch": false,
    "at": 4.5,
-   "note": "5 in the top side pocket, cue then moves the 6"
+   "note": "5 in the top side pocket, cue then moves the 6",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot010": {
    "shot": false,
    "made": [],
-   "note": "end of a shot that started before the clip; cue ball rolls to a stop"
+   "note": "end of a shot that started before the clip; cue ball rolls to a stop",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot011": {
    "shot": true,
    "made": [],
    "first": 6,
    "scratch": false,
-   "at": 3.3
+   "at": 3.3,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot012": {
    "shot": false,
    "made": [],
-   "note": "0.8 s, nothing starts"
+   "note": "0.8 s, nothing starts",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot013": {
    "shot": true,
@@ -115,12 +168,28 @@
    "first": 7,
    "scratch": false,
    "at": 5.2,
-   "note": "7 in the top-left corner"
+   "note": "7 in the top-left corner",
+   "offCameraBefore": [
+    6
+   ],
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot014": {
    "shot": false,
    "made": [],
-   "note": "only the 9 and cue left; end of a shot (the 8 already gone), the 9 rolls to a stop"
+   "note": "only the 9 and cue left; end of a shot (the 8 already gone), the 9 rolls to a stop",
+   "offCameraBefore": [
+    8
+   ],
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot015": {
    "shot": true,
@@ -130,7 +199,45 @@
    "first": 9,
    "scratch": false,
    "at": 3.8,
-   "note": "9 in the top-right corner; afterwards the cue ball is picked up and moved by hand"
+   "note": "9 in the top-right corner; afterwards the cue ball is picked up and moved by hand",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   }
- }
+ },
+ "verifyAbout": "Added Oct 18 for the rack scorer (docs/baseline-rules.md). racks = which clips belong to which rack and the balls at its start. Per clip: offCameraBefore = balls that left the table between the previous clip and this one, off camera; madeAfterClip = balls this clip's shot pocketed after the clip ended; unsureBalls = balls whose fate in this clip the truth cannot tell; settleEnd = seconds into the clip where the after-look must end (the next rack starts inside the clip); verify = per fact, 'yes' or why not. trackerOpts.pockets are fitted to where balls went in and are NOT used by the baseline.",
+ "racks": [
+  {
+   "name": "rack 1",
+   "clips": [
+    "shot001",
+    "shot002",
+    "shot003",
+    "shot004",
+    "shot006",
+    "shot007",
+    "shot008",
+    "shot010",
+    "shot011",
+    "shot012",
+    "shot013",
+    "shot014",
+    "shot015"
+   ],
+   "start": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  }
+ ]
 }

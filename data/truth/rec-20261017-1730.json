@@ -1,0 +1,574 @@
+{
+ "about": "Truth for the test recorder's first run (rec-20261017-1730, R0.1, iPhone 16 Pro Max, home 7 ft, low side). Shots: made = Nackers's own tap answers after each shot (the only truth not written by Claude); one shot per clip, at = unknown. rest/hands: no shot was asked for (scripted, not checked by eye). layout = the balls the recorder asked him to place (scripted). The breaks and play sections are held back and not listed here.",
+ "clips": {
+  "clip008": {
+   "shot": false,
+   "made": [],
+   "step": "spread",
+   "layout": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip009": {
+   "shot": false,
+   "made": [],
+   "step": "cluster",
+   "layout": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip010": {
+   "shot": false,
+   "made": [],
+   "step": "frozen",
+   "layout": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip011": {
+   "shot": false,
+   "made": [],
+   "step": "jaws",
+   "layout": [
+    0,
+    1
+   ],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip012": {
+   "shot": false,
+   "made": [],
+   "step": "light1",
+   "layout": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip013": {
+   "shot": false,
+   "made": [],
+   "step": "light2",
+   "layout": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip014": {
+   "shot": false,
+   "made": [],
+   "step": "light3",
+   "layout": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip015": {
+   "shot": false,
+   "made": [],
+   "step": "pickpocket",
+   "layout": [],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip016": {
+   "shot": false,
+   "made": [],
+   "step": "fromPocket",
+   "layout": [],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip017": {
+   "shot": false,
+   "made": [],
+   "step": "rollHand",
+   "layout": [],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip018": {
+   "shot": false,
+   "made": [],
+   "step": "pushCue",
+   "layout": [],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip019": {
+   "shot": false,
+   "made": [],
+   "step": "ballInHand",
+   "layout": [],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip020": {
+   "shot": false,
+   "made": [],
+   "step": "cueOnTable",
+   "layout": [],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip021": {
+   "shot": false,
+   "made": [],
+   "step": "chalk",
+   "layout": [],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip022": {
+   "shot": false,
+   "made": [],
+   "step": "lean",
+   "layout": [],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip023": {
+   "shot": false,
+   "made": [],
+   "step": "practice",
+   "layout": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "verify": {
+    "shot": "scripted: no shot was asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip024": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "straightA",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip025": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "straightB",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip026": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "straightC",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip027": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "straightD",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip028": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "straightE",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip029": {
+   "shot": true,
+   "made": [
+    0,
+    1
+   ],
+   "offTable": false,
+   "scratch": true,
+   "step": "straightF",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip030": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "stop",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip032": {
+   "shot": true,
+   "made": [
+    0,
+    1
+   ],
+   "offTable": false,
+   "scratch": true,
+   "step": "follow",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip033": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "draw",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip035": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "cut2",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip037": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "bank",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip038": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "kick",
+   "layout": [
+    1,
+    2,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip039": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "lateRoll",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip041": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "rattle",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip042": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "kiss",
+   "layout": [
+    1,
+    2,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip046": {
+   "shot": true,
+   "made": [
+    0,
+    1
+   ],
+   "offTable": false,
+   "scratch": true,
+   "step": "scratch",
+   "layout": [
+    1,
+    0
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip047": {
+   "shot": true,
+   "made": [
+    0
+   ],
+   "offTable": false,
+   "scratch": true,
+   "step": "mightyX1",
+   "layout": [
+    0,
+    4
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  },
+  "clip048": {
+   "shot": true,
+   "made": [
+    0
+   ],
+   "offTable": false,
+   "scratch": true,
+   "step": "mightyX2",
+   "layout": [
+    0,
+    4
+   ],
+   "verify": {
+    "shot": "yes (one shot was asked for; not checked by eye)",
+    "made": "yes (owner tap answer)",
+    "state": "no: layout is scripted, not checked"
+   }
+  }
+ }
+}

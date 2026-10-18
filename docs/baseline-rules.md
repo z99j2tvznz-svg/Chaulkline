@@ -54,7 +54,8 @@ Unnamed balls seen on the table are counted, not given a number.
   is unresolved.
 - **R6 Unnamed balls:** when unnamed balls are seen, a missing number may be one of them, so it stays present,
   unconfirmed (unresolved), never removed.
-- **R7 Appearing balls:** at the start of a rack every seen ball is present. Later, the cue ball reappearing after a
+- **R7 Appearing balls:** at the start of a rack every seen ball is present, and every ball of the rack that is not
+  seen (cue ball and 1 to 9 for 9-ball, since the player started a 9-ball rack) is present, unconfirmed. Later, the cue ball reappearing after a
   scratch is present (ball in hand). A numbered ball reappearing after a confirmed pocketing is R1 (a reversal).
 - **R8 Left the table another way / removed by hand** cannot be confirmed in this baseline (no off-table or hand
   evidence yet). Such balls end up unresolved under R4.

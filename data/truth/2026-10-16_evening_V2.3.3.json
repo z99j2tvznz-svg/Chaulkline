@@ -32,7 +32,12 @@
   "shot004": {
    "shot": false,
    "made": [],
-   "note": "nothing moves"
+   "note": "nothing moves",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot005": {
    "shot": true,
@@ -41,7 +46,12 @@
    ],
    "first": 1,
    "scratch": false,
-   "at": 3.75
+   "at": 3.75,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot006": {
    "shot": true,
@@ -50,7 +60,12 @@
    ],
    "first": 2,
    "scratch": false,
-   "at": 6.71
+   "at": 6.71,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot007": {
    "shot": true,
@@ -59,12 +74,22 @@
    ],
    "first": 3,
    "scratch": false,
-   "at": 8.5
+   "at": 8.5,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot008": {
    "shot": false,
    "made": [],
-   "note": "starts with the 4 still rolling from a shot the clips missed; then the player walks past"
+   "note": "starts with the 4 still rolling from a shot the clips missed; then the player walks past",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes (the missed shot on the 4 before this clip pocketed nothing)"
+   }
   },
   "shot009": {
    "shot": true,
@@ -72,7 +97,12 @@
     4
    ],
    "first": 4,
-   "scratch": false
+   "scratch": false,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot010": {
    "shot": true,
@@ -81,7 +111,12 @@
    ],
    "first": 5,
    "scratch": false,
-   "at": 7.81
+   "at": 7.81,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot011": {
    "shot": true,
@@ -90,14 +125,24 @@
    ],
    "first": 6,
    "scratch": false,
-   "at": 11.59
+   "at": 11.59,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot012": {
    "shot": true,
    "made": [],
    "first": 7,
    "scratch": false,
-   "at": 9.42
+   "at": 9.42,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot013": {
    "shot": true,
@@ -105,7 +150,12 @@
    "first": 7,
    "scratch": false,
    "note": "first ball likely, not certain",
-   "at": 4.8
+   "at": 4.8,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot014": {
    "shot": true,
@@ -114,7 +164,12 @@
    ],
    "first": 7,
    "scratch": false,
-   "at": 13.44
+   "at": 13.44,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot015": {
    "shot": true,
@@ -123,12 +178,22 @@
    ],
    "first": 8,
    "scratch": false,
-   "at": 15.06
+   "at": 15.06,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot016": {
    "shot": false,
    "made": [],
-   "note": "player moves the cue ball by hand"
+   "note": "player moves the cue ball by hand",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot017": {
    "shot": true,
@@ -137,7 +202,12 @@
    ],
    "first": 9,
    "scratch": false,
-   "at": 7.82
+   "at": 7.82,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot021": {
    "shot": true,
@@ -146,14 +216,24 @@
    ],
    "first": 1,
    "scratch": false,
-   "at": 3.87
+   "at": 3.87,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot022": {
    "shot": true,
    "made": [],
    "first": 2,
    "scratch": false,
-   "at": 14.17
+   "at": 14.17,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot023": {
    "shot": true,
@@ -162,7 +242,12 @@
    ],
    "first": 2,
    "scratch": false,
-   "at": 3.14
+   "at": 3.14,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot024": {
    "shot": true,
@@ -171,7 +256,12 @@
    ],
    "first": 3,
    "scratch": false,
-   "at": 4.46
+   "at": 4.46,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot025": {
    "shot": true,
@@ -180,12 +270,22 @@
    ],
    "first": 4,
    "scratch": false,
-   "at": 13.54
+   "at": 13.54,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot026": {
    "shot": false,
    "made": [],
-   "note": "nothing moves"
+   "note": "nothing moves",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot027": {
    "shot": true,
@@ -193,18 +293,33 @@
     5
    ],
    "first": 5,
-   "scratch": false
+   "scratch": false,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot028": {
    "shot": false,
    "made": [],
-   "note": "tail of shot 27, cue ball still rolling"
+   "note": "tail of shot 27, cue ball still rolling",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot029": {
    "shot": true,
    "made": [],
    "first": null,
-   "scratch": false
+   "scratch": false,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot030": {
    "shot": true,
@@ -212,14 +327,24 @@
    "first": 6,
    "scratch": false,
    "note": "player blocks the view after the shot",
-   "at": 9.1
+   "at": 9.1,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot031": {
    "shot": true,
    "made": [],
    "first": null,
    "scratch": false,
-   "at": 9.59
+   "at": 9.59,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot032": {
    "shot": true,
@@ -228,7 +353,12 @@
    ],
    "first": 6,
    "scratch": false,
-   "at": 9.1
+   "at": 9.1,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot033": {
    "shot": true,
@@ -236,7 +366,15 @@
    "first": 7,
    "scratch": false,
    "note": "the 7 drops after the clip ends",
-   "at": 6.94
+   "at": 6.94,
+   "madeAfterClip": [
+    7
+   ],
+   "verify": {
+    "shot": "yes",
+    "made": "yes, includes [7] dropping after the clip ended",
+    "state": "yes"
+   }
   },
   "shot034": {
    "shot": true,
@@ -245,7 +383,12 @@
    ],
    "first": 8,
    "scratch": false,
-   "note": "player's body blocks the view during the shot"
+   "note": "player's body blocks the view during the shot",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   },
   "shot035": {
    "shot": true,
@@ -254,8 +397,79 @@
    ],
    "first": 9,
    "scratch": false,
-   "at": 15.6
+   "at": 15.6,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
   }
  },
- "trackerOptsWhy": "The outline the app had for this session puts the cloth at roughly x 2-75, y 3-35.5 (balls frozen to the far rail come out at y~34.3), so the pocket mouths are taken from where balls were seen going in, not from the table size."
+ "trackerOptsWhy": "The outline the app had for this session puts the cloth at roughly x 2-75, y 3-35.5 (balls frozen to the far rail come out at y~34.3), so the pocket mouths are taken from where balls were seen going in, not from the table size.",
+ "verifyAbout": "Added Oct 18 for the rack scorer (docs/baseline-rules.md). racks = which clips belong to which rack and the balls at its start. Per clip: offCameraBefore = balls that left the table between the previous clip and this one, off camera; madeAfterClip = balls this clip's shot pocketed after the clip ended; unsureBalls = balls whose fate in this clip the truth cannot tell; settleEnd = seconds into the clip where the after-look must end (the next rack starts inside the clip); verify = per fact, 'yes' or why not. trackerOpts.pockets are fitted to where balls went in and are NOT used by the baseline.",
+ "racks": [
+  {
+   "name": "rack 1",
+   "clips": [
+    "shot004",
+    "shot005",
+    "shot006",
+    "shot007",
+    "shot008",
+    "shot009",
+    "shot010",
+    "shot011",
+    "shot012",
+    "shot013",
+    "shot014",
+    "shot015",
+    "shot016",
+    "shot017"
+   ],
+   "start": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  },
+  {
+   "name": "rack 2",
+   "clips": [
+    "shot021",
+    "shot022",
+    "shot023",
+    "shot024",
+    "shot025",
+    "shot026",
+    "shot027",
+    "shot028",
+    "shot029",
+    "shot030",
+    "shot031",
+    "shot032",
+    "shot033",
+    "shot034",
+    "shot035"
+   ],
+   "start": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  }
+ ]
 }
