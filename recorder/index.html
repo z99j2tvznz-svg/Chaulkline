@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Chalkline Test Recorder</title>
+<style>
+:root { --bg: #0d1117; --panel: rgba(16, 20, 27, 0.92); --text: #e8edf3; --muted: #9aa6b2; --accent: #3fb68b; --warn: #e5a83b; --bad: #e5534b; --line: #2b3440; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font: 16px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+body { overflow: hidden; }
+#view { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+#top { position: fixed; left: 0; right: 0; top: 0; padding: calc(env(safe-area-inset-top) + 6px) 12px 6px; display: flex; gap: 12px; align-items: center; background: linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,0)); font-size: 14px; z-index: 3; }
+#top .grow { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#meter { width: 120px; height: 8px; border-radius: 4px; background: #333; overflow: hidden; }
+#meter i { display: block; height: 100%; width: 0; background: var(--accent); }
+#panel { position: fixed; z-index: 2; background: var(--panel); border-top: 1px solid var(--line); padding: 14px 16px calc(env(safe-area-inset-bottom) + 14px); left: 0; right: 0; bottom: 0; max-height: 62%; overflow-y: auto; }
+@media (orientation: landscape) { #panel { left: auto; top: 0; width: min(46%, 440px); max-height: none; border-top: 0; border-left: 1px solid var(--line); padding-top: calc(env(safe-area-inset-top) + 40px); } }
+h2 { font-size: 18px; margin: 0 0 6px; }
+p { margin: 6px 0; }
+.muted { color: var(--muted); font-size: 14px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+button, select, input { font: inherit; color: var(--text); }
+button { background: #26303b; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #06130d; font-weight: 600; }
+button.big { padding: 14px 20px; font-size: 18px; }
+button.on { outline: 3px solid var(--accent); }
+button:disabled { opacity: .45; }
+select, input { background: #1b222b; border: 1px solid var(--line); border-radius: 8px; padding: 8px; width: 100%; }
+label { display: block; margin-top: 8px; font-size: 14px; color: var(--muted); }
+svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
+.balls { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 5px; margin-top: 8px; }
+.balls button { width: 100%; min-width: 0; padding: 0; border-radius: 50%; aspect-ratio: 1; font-weight: 700; font-size: 15px; }
+#big { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 120px; font-weight: 800; color: #fff; text-shadow: 0 0 20px #000; pointer-events: none; z-index: 4; }
+#rec { position: fixed; z-index: 4; top: calc(env(safe-area-inset-top) + 40px); left: 12px; background: rgba(0,0,0,.6); border-radius: 8px; padding: 6px 10px; font-weight: 700; }
+#rec b { color: var(--bad); }
+.hidden { display: none !important; }
+.warn { color: var(--warn); }
+</style>
+</head>
+<body>
+<video id="view" playsinline muted autoplay></video>
+<div id="top"><span id="ver"></span><span class="grow" id="where"></span><span id="sizeTxt" class="muted"></span><span id="meter"><i></i></span></div>
+<div id="rec" class="hidden"><b>●</b> REC <span id="recLeft"></span></div>
+<div id="big" class="hidden"></div>
+<div id="panel"></div>
+<script>
+'use strict';
+// Chalkline test recorder. It only records: it walks the player through the test sections in ladder order, records a
+// short clip per step (video, sound, motion sensor, camera settings) and the player's tap answers, and saves them as
+// zip files that each stay under the 30 MB upload limit. It does no tracking. Section contents and the reasons behind
+// them: chalkline-data/plans/test-recorder-sections.md in the project files.
+const VERSION = 'R0.1';
+const MB = 1048576, PART_LIMIT = 25 * MB, CLIP_MAX = 29 * MB;
+const $ = s => document.querySelector(s);
+const panel = $('#panel'), view = $('#view');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const r3 = v => Math.round(v * 1000) / 1000;
+let SPEED = 1; // tests shorten every wait with this
+
+// ---------- table geometry for the layout pictures ----------
+// Table coordinates in diamonds: x 0..8 along the length, y 0..4 across, y = 0 the rail nearest a side camera.
+const PK = { A: [0, 0], B: [4, 0], C: [8, 0], D: [0, 4], E: [4, 4], F: [8, 4] };
+const INTO = { A: [1, 1], B: [0, 1], C: [-1, 1], D: [1, -1], E: [0, -1], F: [-1, -1] };
+function along(pk, d) { const [px, py] = PK[pk], [dx, dy] = INTO[pk], k = Math.hypot(dx, dy); return [r3(px + dx / k * d), r3(py + dy / k * d)]; }
+// a straight-in shot: the object ball ob diamonds out of the pocket, the striker cb diamonds out, on one line
+function straight(pk, ob = 1.3, cb = 3, obBall = 1, striker = 0) { return { pocket: pk, balls: [{ b: obBall, at: along(pk, ob) }, { b: striker, at: along(pk, cb) }], aim: [striker, obBall] }; }
+const SPREAD16 = [[1, 1], [2.2, 3], [3, 1.6], [4.6, 2.4], [5.6, 1], [6.8, 3], [7, 1.8], [1.6, 2.2], [2.8, 0.6], [3.6, 3.4], [5, 3.2], [6, 2.2], [7.4, 0.8], [0.8, 3.2], [4.2, 1.2], [5.4, 1.9]];
+const LAYOUT = {
+  spread16: { balls: SPREAD16.map((at, i) => ({ b: i, at })) },
+  cluster5: { balls: [{ b: 0, at: [2, 2] }, { b: 1, at: [5.5, 2] }, { b: 2, at: [5.7, 2] }, { b: 3, at: [5.6, 2.17] }, { b: 4, at: [5.6, 1.83] }, { b: 5, at: [5.9, 2] }] },
+  frozen3: { balls: [{ b: 0, at: [2, 2] }, { b: 1, at: [2.5, 0.1] }, { b: 2, at: [6, 3.9] }, { b: 3, at: [7.9, 2] }] },
+  jaws: { balls: [{ b: 0, at: [4, 2] }, { b: 1, at: [7.82, 3.82] }], pocket: 'F' },
+};
+
+// ---------- the sections (see test-recorder-sections.md) ----------
+// kind: camtest | clip | measure | play. ask: 'shot' asks which balls went in and whether any left the table.
+// short: part of the short version for other camera spots. cd: countdown before recording, dur: seconds recorded.
+const STILL = { cd: 6, dur: 10 }, HAND = { cd: 5, dur: 14 }, SHOT = { cd: 8, dur: 16, ask: 'shot' };
+const LIGHTS = ['Normal lights', 'Table light off, room light on', 'One lamp off to one side', 'Warm lights mixed with daylight'];
+const SECTIONS = [
+  { id: 'camera', title: 'Camera check', intro: 'The recorder tests what it can control on this phone, and records short samples at each picture setting. Leave the phone on the tripod, pointed at the table, and don\'t touch it until it says it\'s done.', steps: [
+    { id: 'camtest', kind: 'camtest', short: true, text: 'Testing the camera. Don\'t touch the phone.' }] },
+  { id: 'table', title: 'Empty table', steps: [
+    { id: 'empty', ...STILL, short: true, text: 'Take every ball off the table. Step away from the table.' },
+    { id: 'sway', ...STILL, short: true, text: 'When it starts recording, tap the tripod lightly once, then step away.' },
+    { id: 'bump', ...STILL, cd: 8, short: true, text: 'When it starts recording, nudge the tripod so the view shifts a little, and leave it there. Then step away.' },
+    { id: 'measure', kind: 'measure', text: 'Optional, once per table: tape measurements, in inches. Leave any you don\'t have blank.' }] },
+  { id: 'rest', title: 'Balls at rest', steps: [
+    { id: 'spread', ...STILL, short: true, layout: 'spread16', text: 'Place all 16 balls roughly like the picture, none touching. Step away.' },
+    { id: 'cluster', ...STILL, layout: 'cluster5', text: 'Make a cluster of five balls all touching, like the picture. Step away.' },
+    { id: 'frozen', ...STILL, layout: 'frozen3', text: 'Put three balls right against the rails (frozen), like the picture. Step away.' },
+    { id: 'jaws', ...STILL, layout: 'jaws', text: 'Set one ball in a pocket\'s jaws, sitting on the edge without dropping. Step away.' },
+    ...LIGHTS.slice(1).map((l, i) => ({ id: 'light' + (i + 1), ...STILL, cd: 10, layout: 'spread16', light: l, text: 'Same spread of 16 balls. Change the lighting to: ' + l + '. Step away.' }))] },
+  { id: 'hands', title: 'Hands and things', intro: 'These aren\'t shots. The recorder knows what you did, so there are no questions.', steps: [
+    { id: 'pickpocket', ...HAND, text: 'Pick up a ball by hand and drop it in a pocket.' },
+    { id: 'fromPocket', ...HAND, text: 'Take a ball out of a pocket and set it on the table.' },
+    { id: 'rollHand', ...HAND, text: 'Roll a ball down the table by hand.' },
+    { id: 'pushCue', ...HAND, text: 'Push a ball slowly with the cue tip, without striking it.' },
+    { id: 'ballInHand', ...HAND, text: 'Place the white ball by hand, like ball in hand.' },
+    { id: 'cueOnTable', ...HAND, text: 'Lay a cue across the table, then pick it up again.' },
+    { id: 'chalk', ...HAND, dur: 18, text: 'Put chalk on the rail, then on the cloth, then take it away.' },
+    { id: 'lean', ...HAND, text: 'Lean over the table for a few seconds without touching any ball.' },
+    { id: 'practice', ...HAND, layout: 'spread16', text: 'Take 5 practice strokes at the white ball without hitting it.' }] },
+  { id: 'shots', title: 'Simple shots', intro: 'Set up each shot like the picture (close is fine). After each one, tap which balls went in.', steps: [
+    ...['A', 'B', 'C', 'D', 'E', 'F'].map(pk => ({ id: 'straight' + pk, ...SHOT, short: true, layout: straight(pk), text: 'Straight in: shoot the 1 into the marked pocket.' })),
+    { id: 'stop', ...SHOT, layout: straight('F', 1.5, 3.5), text: 'Stop shot: the white should stop where the 1 was.' },
+    { id: 'follow', ...SHOT, layout: straight('C', 1.5, 3.5), text: 'Follow shot: the white follows after the 1.' },
+    { id: 'draw', ...SHOT, short: true, layout: straight('D', 1.5, 3.5), text: 'Draw shot: the white comes back toward you.' },
+    { id: 'cut2', ...SHOT, layout: { pocket: 'F', balls: [{ b: 1, at: [7.2, 3.5] }, { b: 0, at: [4, 1] }], aim: [0, 1] }, text: 'Cut the 1 into the marked pocket, and let the white go two rails.' },
+    { id: 'bank', ...SHOT, layout: { pocket: 'E', balls: [{ b: 1, at: [4, 0.5] }, { b: 0, at: [2.5, 1.8] }], aim: [0, 1] }, text: 'Bank the 1 off the near rail into the marked side pocket.' },
+    { id: 'kick', ...SHOT, layout: { pocket: 'F', balls: [{ b: 1, at: [6.8, 3.4] }, { b: 2, at: [4.4, 2.2] }, { b: 0, at: [2, 1] }], aim: [0, 1] }, text: 'Kick: the white hits a rail first, then the 1. The 2 is in the way.' },
+    { id: 'lateRoll', ...SHOT, dur: 20, layout: straight('F', 2, 4), text: 'Hit it so softly that the 1 only just reaches the pocket.' },
+    { id: 'rattle', ...SHOT, layout: straight('C', 2.5, 4.5), text: 'Hit it firmly and slightly off, so it may rattle in the jaws. Answer what really happened.' },
+    { id: 'kiss', ...SHOT, layout: { balls: [{ b: 1, at: [5, 2] }, { b: 2, at: [5.6, 2.6] }, { b: 0, at: [3, 1] }], aim: [0, 1] }, text: 'Roll the white softly into the 1, so the 1 barely touches the 2.' },
+    { id: 'scratch', ...SHOT, layout: straight('F', 1.2, 2.5), text: 'Scratch on purpose: follow the white into the pocket after the 1.' },
+    { id: 'mightyX1', ...SHOT, layout: { pocket: 'A', balls: [{ b: 0, at: [2, 1] }, { b: 4, at: [6, 3] }], aim: [4, 0] }, text: 'Mighty X style: strike the 4 and shoot the white into the marked pocket.' },
+    { id: 'mightyX2', ...SHOT, layout: { pocket: 'D', balls: [{ b: 0, at: [2, 3] }, { b: 4, at: [6, 1] }], aim: [4, 0] }, text: 'Mighty X style, the other way: strike the 4 and shoot the white into the marked pocket.' }] },
+  { id: 'unusual', title: 'Unusual shots', intro: 'Skip anything you can\'t or don\'t want to do.', steps: [
+    { id: 'jump', ...SHOT, layout: { balls: [{ b: 0, at: [2.5, 2] }, { b: 2, at: [3.2, 2] }, { b: 1, at: [5.5, 2] }], aim: [0, 1] }, text: 'Jump the white over the 2 and hit the 1.' },
+    { id: 'miscue', ...SHOT, layout: straight('F'), text: 'A deliberate miscue, gently: let the tip slide off the white.' },
+    { id: 'masse', ...SHOT, text: 'A massé or curve shot, any setup.' },
+    { id: 'combo', ...SHOT, layout: { pocket: 'F', balls: [{ b: 1, at: [6.5, 3.3] }, { b: 2, at: [6.68, 3.38] }, { b: 0, at: [4, 1.5] }], aim: [0, 1] }, text: 'Combination with two frozen balls: the 1 and 2 touching, pointing at the marked pocket.' },
+    { id: 'hardDraw', ...SHOT, layout: straight('E', 1.5, 3.5), text: 'A hard draw shot.' },
+    { id: 'doubleHit', ...SHOT, layout: { balls: [{ b: 0, at: [5, 2] }, { b: 1, at: [5.22, 2] }], aim: [0, 1] }, text: 'Only if you can do it safely: the white a finger\'s width from the 1, and shoot through it (double hit or push).' }] },
+  { id: 'people', title: 'People and bumps', steps: [
+    { id: 'walkFront', ...HAND, text: 'Walk between the camera and the table, then step away.' },
+    { id: 'standFront', ...HAND, text: 'Stand right in front of the phone for 5 seconds, then step away.' },
+    { id: 'rollTap', ...HAND, cd: 6, text: 'Roll a ball by hand, then tap the tripod while it\'s still rolling.' },
+    { id: 'coverPocket', ...SHOT, layout: straight('F'), text: 'Shoot the 1 at the far pocket while leaning so your body covers that pocket.' },
+    { id: 'helperWalk', ...SHOT, opt: true, text: 'Only if someone else is there: they walk past behind the table while you shoot.' },
+    { id: 'helperLean', ...SHOT, opt: true, text: 'Only if someone else is there: they lean on the rail while you shoot.' }] },
+  { id: 'breaks', title: 'Breaks', intro: 'After each break, tap which balls went in.', steps: [
+    { id: 'break9soft', ...SHOT, dur: 18, text: 'Rack 9-ball. Break softly.' },
+    { id: 'break9med', ...SHOT, dur: 18, short: true, text: 'Rack 9-ball. Break at medium speed.' },
+    { id: 'break9hard', ...SHOT, dur: 18, text: 'Rack 9-ball. Break hard.' },
+    { id: 'break10', ...SHOT, dur: 18, text: 'Rack 10-ball. Break.' },
+    { id: 'break15a', ...SHOT, dur: 20, text: 'Rack all 15 balls. Break.' },
+    { id: 'break15b', ...SHOT, dur: 20, text: 'Rack all 15 balls again. Break.' }] },
+  { id: 'play', title: 'Play', intro: 'Play one or two racks of 9-ball under pro rules, normally. Tap Record before each shot.', steps: [
+    { id: 'play', kind: 'play', cd: 6, dur: 20, ask: 'shot', text: 'Tap Record, then take your shot.' }] },
+];
+
+// ---------- state (kept in this phone's storage, so a reload loses nothing) ----------
+const S = { setup: null, sec: 0, step: 0, playN: 0, part: 1, clipN: 0, partBytes: 0, rate: 0, caps: null, cam: null, stream: null, rec: null, motion: [], motionOn: false, pending: [], busy: false, sessId: null };
+function save() { try { localStorage.setItem('chalkRec', JSON.stringify({ setup: S.setup, sec: S.sec, step: S.step, playN: S.playN, part: S.part, clipN: S.clipN, partBytes: S.partBytes, rate: S.rate, caps: S.caps, sessId: S.sessId, pending: S.pending })); } catch (e) { } }
+function load() { try { const v = JSON.parse(localStorage.getItem('chalkRec') || 'null'); if (v) Object.assign(S, v); } catch (e) { } }
+
+// ---------- clip storage (IndexedDB, memory if that fails) ----------
+const MEM = new Map(); let DB = null;
+function db() { return DB || (DB = new Promise((res, rej) => { try { const q = indexedDB.open('chalkRec', 1); q.onupgradeneeded = () => q.result.createObjectStore('clips'); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); } catch (e) { rej(e); } })); }
+async function idb(mode, fn) { const d = await db(); return new Promise((res, rej) => { const t = d.transaction('clips', mode), st = t.objectStore('clips'), q = fn(st); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); }); }
+async function putClip(key, val) { try { await idb('readwrite', st => st.put(val, key)); } catch (e) { MEM.set(key, val); } }
+async function getClip(key) { if (MEM.has(key)) return MEM.get(key); try { return await idb('readonly', st => st.get(key)); } catch (e) { return null; } }
+async function delClip(key) { MEM.delete(key); try { await idb('readwrite', st => st.delete(key)); } catch (e) { } }
+async function allKeys() { const k = [...MEM.keys()]; try { k.push(...await idb('readonly', st => st.getAllKeys())); } catch (e) { } return [...new Set(k.map(String))]; }
+
+// ---------- zip (stored, not compressed: video is already compressed) ----------
+const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8) { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function makeZip(files) {
+  const enc = new TextEncoder(), parts = [], central = []; let off = 0;
+  const d = new Date(), dt = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xFFFF, dd = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF;
+  for (const f of files) {
+    const name = enc.encode(f.name), data = f.data, crc = crc32(data), h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(10, dt, true); h.setUint16(12, dd, true);
+    h.setUint32(14, crc, true); h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, name.length, true);
+    parts.push(h.buffer, name, data);
+    const c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(12, dt, true); c.setUint16(14, dd, true);
+    c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true); c.setUint16(28, name.length, true); c.setUint32(42, off, true);
+    central.push(c.buffer, name); off += 30 + name.length + data.length;
+  }
+  const cdSize = central.reduce((a, b) => a + (b.byteLength || b.length), 0), e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, cdSize, true); e.setUint32(16, off, true);
+  return new Blob(parts.concat(central, [e.buffer]), { type: 'application/zip' });
+}
+
+// ---------- camera, sound and motion ----------
+const MODES = [ // picture settings sampled in the camera check; DEFAULT is used for everything else
+  { id: '720p30', w: 1280, h: 720, fps: 30, bps: 2000000 },
+  { id: '720p60', w: 1280, h: 720, fps: 60, bps: 2500000 },
+  { id: '1080p30', w: 1920, h: 1080, fps: 30, bps: 4000000 },
+  { id: '1080p60', w: 1920, h: 1080, fps: 60, bps: 6000000 },
+];
+const DEFAULT = { id: 'default', w: 1280, h: 720, fps: 60, bps: 2000000 };
+const AUDIO = { echoCancellation: false, noiseSuppression: false, autoGainControl: false }; // keep the clicks as they are
+let deviceId = null;
+async function pickMainLens() {
+  // the plain "Back Camera" is the 1x lens; the virtual dual/triple cameras switch lenses on their own
+  try {
+    const devs = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput');
+    S.devices = devs.map(d => d.label);
+    const main = devs.find(d => /^back camera$/i.test(d.label.trim())) || devs.find(d => /back/i.test(d.label) && !/ultra|dual|triple|telephoto/i.test(d.label));
+    deviceId = main ? main.deviceId : null;
+  } catch (e) { }
+}
+async function openCamera(mode) {
+  if (S.stream) S.stream.getTracks().forEach(t => t.stop());
+  const video = { width: { ideal: mode.w }, height: { ideal: mode.h }, frameRate: { ideal: mode.fps } };
+  if (deviceId) video.deviceId = { exact: deviceId }; else video.facingMode = { ideal: 'environment' };
+  let st;
+  try { st = await navigator.mediaDevices.getUserMedia({ video, audio: AUDIO }); }
+  catch (e) { if (e && e.name === 'OverconstrainedError') { delete video.deviceId; video.facingMode = { ideal: 'environment' }; st = await navigator.mediaDevices.getUserMedia({ video, audio: AUDIO }); } else throw e; }
+  S.stream = st; view.srcObject = st; try { await view.play(); } catch (e) { }
+  for (let i = 0; i < 60 && !view.videoWidth; i++) await sleep(50);
+  const tr = st.getVideoTracks()[0];
+  try { const c = tr.getCapabilities ? tr.getCapabilities() : {}; if (c.zoom && c.zoom.min <= 1 && c.zoom.max >= 1) await tr.applyConstraints({ advanced: [{ zoom: 1 }] }); } catch (e) { }
+  S.mode = mode; return st;
+}
+function trackInfo() {
+  const tr = S.stream && S.stream.getVideoTracks()[0]; if (!tr) return null;
+  let settings = {}; try { settings = tr.getSettings(); } catch (e) { }
+  delete settings.deviceId; delete settings.groupId;
+  return { label: tr.label, settings, video: [view.videoWidth, view.videoHeight] };
+}
+function onMotion(e) {
+  if (!S.rec) return; const a = e.accelerationIncludingGravity || {}, g = e.rotationRate || {};
+  S.motion.push([Math.round(performance.now() - S.rec.t0), r3(a.x || 0), r3(a.y || 0), r3(a.z || 0), r3(g.alpha || 0), r3(g.beta || 0), r3(g.gamma || 0)]);
+}
+async function startMotion() { // iPhone asks once, and only from a tap
+  try {
+    if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') { const r = await DeviceMotionEvent.requestPermission(); if (r !== 'granted') return; }
+    if (window.DeviceMotionEvent) { window.addEventListener('devicemotion', onMotion); S.motionOn = true; }
+  } catch (e) { }
+}
+let wake = null;
+async function keepAwake() { try { if (navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); } catch (e) { } }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { keepAwake(); if (S.started && !S.stream?.active) openCamera(S.mode || DEFAULT).catch(() => { }); } else if (S.rec) S.rec.interrupted = true; });
+
+// beeps before and after recording only, never during, so they don't end up in the sound being tested
+let AC = null;
+function beep(f = 880, ms = 120) { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); const o = AC.createOscillator(), g = AC.createGain(); o.frequency.value = f; g.gain.value = 0.15; o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime + ms / 1000); } catch (e) { } }
+
+function recMime() { for (const m of ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp8', 'video/webm']) { try { if (MediaRecorder.isTypeSupported(m)) return m; } catch (e) { } } return ''; }
+// record one clip of dur seconds; resolves to { blob, meta } (blob null if it failed)
+function recordClip(dur, mode) {
+  return new Promise(done => {
+    const mime = recMime(); let r;
+    try { r = new MediaRecorder(S.stream, { mimeType: mime, videoBitsPerSecond: mode.bps, audioBitsPerSecond: 64000 }); }
+    catch (e) { return done({ blob: null, err: String(e && (e.name || e.message) || e) }); }
+    const chunks = [], o = { t0: performance.now(), epoch: Date.now(), interrupted: false }; S.rec = o; S.motion = [];
+    r.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+    r.onstop = () => {
+      S.rec = null; const blob = new Blob(chunks, { type: mime || 'video/mp4' });
+      done({ blob, mime, meta: { epoch: o.epoch, secs: r3((performance.now() - o.t0) / 1000), interrupted: o.interrupted, bytes: blob.size, mode: mode.id, camera: trackInfo(), motion: S.motion.length } , motion: S.motion });
+    };
+    r.start(1000); o.stop = () => { if (r.state !== 'inactive') r.stop(); };
+    o.timer = setTimeout(o.stop, dur * 1000 * SPEED);
+  });
+}
+
+// ---------- the camera check (section 0) ----------
+async function cameraCheck() {
+  const out = { ua: navigator.userAgent, screen: [screen.width, screen.height, devicePixelRatio], devices: S.devices || [], mime: recMime(), motion: S.motionOn, locks: {}, samples: [] };
+  const tr = S.stream.getVideoTracks()[0];
+  let caps = {}; try { caps = tr.getCapabilities ? tr.getCapabilities() : {}; } catch (e) { }
+  out.caps = JSON.parse(JSON.stringify(caps)); delete out.caps.deviceId; delete out.caps.groupId;
+  // can each automatic setting be locked? try every non-automatic value the camera lists, read it back, then set it back
+  for (const k of ['exposureMode', 'whiteBalanceMode', 'focusMode']) {
+    const vals = Array.isArray(caps[k]) ? caps[k] : [];
+    const res = { offered: vals, worked: [] };
+    for (const v of vals.filter(v => v !== 'continuous')) {
+      try { await tr.applyConstraints({ advanced: [{ [k]: v }] }); if (tr.getSettings()[k] === v) res.worked.push(v); } catch (e) { res.err = String(e && (e.name || e.message) || e).slice(0, 80); }
+    }
+    if (vals.includes('continuous')) { try { await tr.applyConstraints({ advanced: [{ [k]: 'continuous' }] }); } catch (e) { } }
+    out.locks[k] = res;
+  }
+  out.locks.zoom = caps.zoom ? { min: caps.zoom.min, max: caps.zoom.max, now: tr.getSettings().zoom } : null;
+  out.locks.frameRateMax = caps.frameRate ? caps.frameRate.max : null;
+  out.locks.sizeMax = caps.width && caps.height ? [caps.width.max, caps.height.max] : null;
+  S.caps = out; save();
+  // samples: 8 seconds at each picture setting, so we can see detail against file size
+  for (const m of MODES) {
+    setWhere('Camera check: sample ' + m.id);
+    if (partFull(8)) await new Promise(res => showSavePart(res));
+    try { await openCamera(m); } catch (e) { out.samples.push({ mode: m.id, err: String(e && e.name || e) }); continue; }
+    await sleep(1500 * SPEED);
+    const c = await recordClip(8, m);
+    if (c.blob && c.blob.size) { await keepClip(c, { sec: 'camera', step: 'sample-' + m.id, text: 'Camera sample ' + m.id }); out.samples.push({ mode: m.id, bytes: c.blob.size, secs: c.meta.secs, got: c.meta.camera && c.meta.camera.settings }); }
+    else out.samples.push({ mode: m.id, err: c.err || 'empty' });
+  }
+  await openCamera(DEFAULT);
+  S.caps = out; save();
+}
+
+// ---------- keeping clips and filling parts ----------
+async function keepClip(c, info) {
+  S.clipN++; const n = S.clipN, name = 'clip' + String(n).padStart(3, '0');
+  const meta = { n, name, part: S.part, ...info, setup: { spot: S.setup.spot, light: info.light || S.setup.light }, ...c.meta };
+  await putClip('c' + n, { blob: c.blob, mime: c.mime, meta, motion: c.motion });
+  S.partBytes += c.blob.size; S.pending.push(n);
+  if (c.meta.secs > 1) S.rate = Math.max(S.rate * 0.8, c.blob.size / c.meta.secs); // bytes a second, leaning high
+  save(); meterUpd(); return meta;
+}
+async function setAnswers(n, answers) { const v = await getClip('c' + n); if (!v) return; v.meta.answers = answers; await putClip('c' + n, v); }
+// would the next clip push this part over the limit? then the part is saved first
+function partFull(dur) { const est = (S.rate || 400000) * dur * 1.25; return S.pending.length > 0 && S.partBytes + est > PART_LIMIT; }
+
+function extOf(mime) { return /webm/.test(mime || '') ? '.webm' : '.mp4'; }
+async function packPart() {
+  const files = [], clips = [], enc = new TextEncoder();
+  for (const n of S.pending) {
+    const v = await getClip('c' + n); if (!v) continue;
+    files.push({ name: v.meta.name + extOf(v.mime), data: new Uint8Array(await v.blob.arrayBuffer()) });
+    files.push({ name: v.meta.name + '-motion.json', data: enc.encode(JSON.stringify({ cols: ['ms', 'ax', 'ay', 'az', 'rotA', 'rotB', 'rotG'], rows: v.motion || [] })) });
+    clips.push(v.meta);
+  }
+  const meta = { app: 'chalkline-recorder', version: VERSION, session: S.sessId, part: S.part, saved: new Date().toISOString(), setup: S.setup, camera: S.caps, clips };
+  files.unshift({ name: 'meta.json', data: enc.encode(JSON.stringify(meta, null, 1)) });
+  const blob = makeZip(files), name = 'chalkline-rec-' + S.sessId + '-part' + S.part + '.zip';
+  let file = null; try { file = new File([blob], name, { type: 'application/zip' }); } catch (e) { }
+  return { blob, file, name, mb: blob.size / MB, clips: clips.length };
+}
+async function partSaved() {
+  for (const n of S.pending) await delClip('c' + n);
+  S.pending = []; S.partBytes = 0; S.part++; save(); meterUpd();
+}
+
+// ---------- screens ----------
+function meterUpd() {
+  $('#sizeTxt').textContent = 'File ' + S.part + ': ' + (S.partBytes / MB).toFixed(1) + ' of 25 MB';
+  $('#meter i').style.width = Math.min(100, S.partBytes / PART_LIMIT * 100) + '%';
+}
+function setWhere(t) { $('#where').textContent = t; }
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function steps() { return S.setup && S.setup.short ? SECTIONS.map(s => ({ ...s, steps: s.steps.filter(x => x.short) })).filter(s => s.steps.length) : SECTIONS; }
+function cur() { const secs = steps(), sec = secs[S.sec]; return sec ? { sec, step: sec.steps[S.step], secs } : null; }
+
+const BALL_COL = ['#f4f4f0', '#f2c230', '#2456c9', '#d23a2c', '#6d3aa8', '#f07f23', '#1f8a4c', '#8a1f2a', '#111'];
+function ballSvg(b, x, y, r) {
+  const col = BALL_COL[b > 8 ? b - 8 : b], stripe = b > 8, txt = b === 0 ? '' : '<text x="' + x + '" y="' + (y + r * 0.42) + '" font-size="' + (r * 1.15) + '" text-anchor="middle" font-weight="700" fill="' + (b === 8 || (!stripe && [2, 4, 7].includes(b)) ? '#fff' : '#000') + '">' + b + '</text>';
+  if (!stripe) return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + col + '" stroke="#000" stroke-width="0.2"/>' + txt;
+  const id = 'cl' + b + Math.round(x * 10) + Math.round(y * 10);
+  return '<clipPath id="' + id + '"><circle cx="' + x + '" cy="' + y + '" r="' + r + '"/></clipPath><circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="#f4f4f0"/><rect x="' + (x - r) + '" y="' + (y - r * 0.55) + '" width="' + (2 * r) + '" height="' + (1.1 * r) + '" fill="' + col + '" clip-path="url(#' + id + ')"/><circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="none" stroke="#000" stroke-width="0.2"/>' + txt;
+}
+// a top view of the table, with the phone drawn where the player said it is
+function layoutSvg(lay) {
+  if (typeof lay === 'string') lay = LAYOUT[lay];
+  const X = x => 6 + x * 10, Y = y => 46 - y * 10;
+  let s = '<svg class="lay" viewBox="0 0 92 58" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="92" height="52" rx="3" fill="#5b3a22"/><rect x="6" y="6" width="80" height="40" fill="#1f6e4a"/>';
+  for (let i = 1; i < 8; i++) if (i !== 4) { s += '<circle cx="' + X(i) + '" cy="3" r="0.6" fill="#ddd"/><circle cx="' + X(i) + '" cy="49" r="0.6" fill="#ddd"/>'; }
+  for (let j = 1; j < 4; j++) s += '<circle cx="3" cy="' + Y(j) + '" r="0.6" fill="#ddd"/><circle cx="89" cy="' + Y(j) + '" r="0.6" fill="#ddd"/>';
+  for (const [k, [px, py]] of Object.entries(PK)) s += '<circle cx="' + X(px) + '" cy="' + Y(py) + '" r="2.4" fill="#000"' + (lay && lay.pocket === k ? ' stroke="#f2c230" stroke-width="0.9"' : '') + '/>';
+  if (lay && lay.aim) {
+    const at = b => lay.balls.find(o => o.b === b).at, a = at(lay.aim[0]), o = at(lay.aim[1]);
+    s += '<line x1="' + X(a[0]) + '" y1="' + Y(a[1]) + '" x2="' + X(o[0]) + '" y2="' + Y(o[1]) + '" stroke="#fff" stroke-width="0.4" stroke-dasharray="1 1"/>';
+    if (lay.pocket) { const p = PK[lay.pocket]; s += '<line x1="' + X(o[0]) + '" y1="' + Y(o[1]) + '" x2="' + X(p[0]) + '" y2="' + Y(p[1]) + '" stroke="#f2c230" stroke-width="0.4" stroke-dasharray="1 1"/>'; }
+  }
+  if (lay) for (const o of lay.balls) s += ballSvg(o.b, X(o.at[0]), Y(o.at[1]), 1.8);
+  const spot = S.setup ? S.setup.spot : 'low side';
+  const ph = spot === 'end rail' ? [-4, 26] : spot === 'corner' ? [2, 55] : [46, 56];
+  s += '<text x="' + Math.max(4, ph[0]) + '" y="' + Math.min(57.5, ph[1]) + '" font-size="3.6" text-anchor="' + (spot === 'end rail' ? 'start' : 'middle') + '" fill="#9aa6b2">' + (spot === 'end rail' ? '◀ phone' : '▼ phone') + '</text>';
+  return s + '</svg>';
+}
+
+function showSetup() {
+  setWhere('Set up');
+  const st = S.setup || {};
+  const opt = (arr, v) => arr.map(a => '<option' + (a === v ? ' selected' : '') + '>' + a + '</option>').join('');
+  panel.innerHTML = '<h2>Chalkline test recorder</h2><p class="muted">This only records. Put the phone on the tripod where you\'d normally have it, pointed at the table.</p>' +
+    '<label>Phone model</label><input id="fPhone" placeholder="for example iPhone 15" value="' + esc(st.phone || '') + '">' +
+    '<label>Table size</label><select id="fTable">' + opt(['7 ft', '8 ft', '9 ft', 'Bar box (other)'], st.table) + '</select>' +
+    '<label>Where is the phone?</label><select id="fSpot">' + opt(['low side', 'high side', 'corner', 'end rail'], st.spot) + '</select>' +
+    '<label>Lighting right now</label><select id="fLight">' + opt(LIGHTS, st.light) + '</select>' +
+    '<label>Place</label><select id="fPlace">' + opt(['home', 'pool hall'], st.place) + '</select>' +
+    '<label>Session</label><select id="fShort"><option value="0">Full session (about an hour)</option><option value="1"' + (st.short ? ' selected' : '') + '>Short version for another spot (about 20 minutes)</option></select>' +
+    '<div class="row"><button class="primary big" id="go">Start</button></div><p class="muted">It will ask for the camera, the microphone and the motion sensor. Please allow all three.</p>';
+  $('#go').onclick = async () => {
+    S.setup = { phone: $('#fPhone').value.trim(), table: $('#fTable').value, spot: $('#fSpot').value, light: $('#fLight').value, place: $('#fPlace').value, short: $('#fShort').value === '1' };
+    const d = new Date(), p = n => String(n).padStart(2, '0');
+    S.sessId = d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
+    Object.assign(S, { sec: 0, step: 0, playN: 0, part: 1, clipN: 0, partBytes: 0, pending: [] }); save();
+    await begin();
+  };
+}
+async function begin() {
+  panel.innerHTML = '<p>Starting the camera…</p>';
+  await startMotion(); keepAwake();
+  try { await openCamera(DEFAULT); await pickMainLens(); if (deviceId) await openCamera(DEFAULT); }
+  catch (e) { panel.innerHTML = '<h2>The camera didn\'t start</h2><p>' + (e && e.name === 'NotAllowedError' ? 'Camera or microphone access was blocked. In Safari tap aA, then Website Settings, and allow the Camera and Microphone. Then reload.' : esc((e && (e.message || e.name)) || 'unknown error')) + '</p>'; return; }
+  S.started = true; meterUpd(); showStep();
+}
+
+function showStep() {
+  const c = cur(); if (!c) return showDone();
+  const { sec, step, secs } = c; setWhere((S.sec + 1) + ' of ' + secs.length + ': ' + sec.title);
+  let h = '<h2>' + esc(sec.title) + '</h2>';
+  if (S.step === 0 && sec.intro) h += '<p class="muted">' + esc(sec.intro) + '</p>';
+  if (step.kind === 'measure') return showMeasure(h, step);
+  h += '<p>' + (step.kind === 'play' ? 'Shot ' + (S.playN + 1) + '. ' : 'Step ' + (S.step + 1) + ' of ' + sec.steps.length + '. ') + esc(step.text) + '</p>';
+  if (step.opt) h += '<p class="muted">Optional.</p>';
+  if (step.layout) h += layoutSvg(step.layout);
+  if (step.kind !== 'camtest') h += '<p class="muted">After you tap Record you get ' + step.cd + ' seconds to get in place. It then records for ' + step.dur + ' seconds.</p>';
+  h += '<div class="row"><button class="primary big" id="recBtn">' + (step.kind === 'camtest' ? 'Start the camera check' : 'Record') + '</button><button id="skipBtn">Skip</button>' + (step.kind === 'play' && S.playN > 0 ? '<button id="endPlay">Finish playing</button>' : '') + '</div>';
+  h += '<div class="row"><button id="saveNow"' + (S.pending.length ? '' : ' disabled') + '>Save what\'s recorded now</button></div>';
+  panel.innerHTML = h;
+  $('#recBtn').onclick = () => runStep(step, sec);
+  $('#skipBtn').onclick = () => next();
+  if ($('#endPlay')) $('#endPlay').onclick = () => { S.playN = 0; nextSection(); };
+  $('#saveNow').onclick = () => showSavePart(showStep);
+}
+function showMeasure(h, step) {
+  h += '<p>' + esc(step.text) + '</p>';
+  const f = [['mLen', 'Playing surface length, cushion nose to cushion nose'], ['mWid', 'Playing surface width, cushion nose to cushion nose'], ['mCorner', 'Corner pocket mouth (between the cushion points)'], ['mSide', 'Side pocket mouth (between the cushion points)']];
+  h += f.map(([id, l]) => '<label>' + l + '</label><input id="' + id + '" inputmode="decimal" placeholder="inches">').join('');
+  h += '<div class="row"><button class="primary" id="mSave">Save</button><button id="skipBtn">Skip</button></div>';
+  panel.innerHTML = h;
+  $('#mSave').onclick = () => { S.setup.measure = Object.fromEntries(f.map(([id]) => [id, parseFloat($('#' + id).value) || null])); save(); next(); };
+  $('#skipBtn').onclick = () => next();
+}
+function next() { const c = cur(); if (!c) return showDone(); S.step++; if (S.step >= c.sec.steps.length) return nextSection(); save(); showStep(); }
+function nextSection() { S.sec++; S.step = 0; save(); showStep(); }
+
+async function countdown(n) {
+  const big = $('#big'); big.classList.remove('hidden');
+  for (let i = n; i > 0; i--) { big.textContent = i; if (i <= 3) beep(660, 90); await sleep(1000 * SPEED); }
+  big.classList.add('hidden'); beep(990, 220); await sleep(250 * SPEED);
+}
+async function runStep(step, sec) {
+  if (S.busy) return; S.busy = true;
+  try {
+    if (step.kind === 'camtest') { panel.innerHTML = '<h2>Camera check</h2><p>Testing. Don\'t touch the phone. This takes about a minute.</p>'; await cameraCheck(); S.busy = false; return showCamResult(); }
+    if (partFull(step.dur)) { S.busy = false; return showSavePart(() => runStep(step, sec)); }
+    panel.innerHTML = '<h2>' + esc(sec.title) + '</h2><p>' + esc(step.text) + '</p>'; panel.classList.add('hidden');
+    await countdown(step.cd);
+    const recEl = $('#rec'); recEl.classList.remove('hidden');
+    const t0 = performance.now(), tick = setInterval(() => { $('#recLeft').textContent = Math.max(0, Math.ceil(step.dur - (performance.now() - t0) / 1000 / SPEED)) + ' s'; }, 250);
+    const c = await recordClip(step.dur, DEFAULT);
+    clearInterval(tick); recEl.classList.add('hidden'); panel.classList.remove('hidden'); beep(520, 250);
+    if (!c.blob || !c.blob.size) { S.busy = false; panel.innerHTML = '<h2>That clip didn\'t record</h2><p class="muted">' + esc(c.err || 'empty recording') + '</p><div class="row"><button class="primary" id="again">Try again</button></div>'; $('#again').onclick = showStep; return; }
+    if (c.blob.size > CLIP_MAX) { S.busy = false; panel.innerHTML = '<h2>That clip was too big to send</h2><p>Please record it again.</p><div class="row"><button class="primary" id="again">Again</button></div>'; $('#again').onclick = showStep; return; }
+    const info = { sec: sec.id, step: step.kind === 'play' ? 'play' + (S.playN + 1) : step.id, text: step.text, light: step.light || null, layout: typeof step.layout === 'string' ? LAYOUT[step.layout] : step.layout || null, countdown: step.cd, planned: step.dur };
+    const meta = await keepClip(c, info);
+    S.busy = false;
+    if (meta.interrupted) { panel.innerHTML = '<h2>Recording was interrupted</h2><p>The phone left the recorder while recording. It\'s kept, but please record this step again.</p><div class="row"><button class="primary" id="again">Again</button></div>'; $('#again').onclick = showStep; return; }
+    if (step.ask) return askShot(meta, step);
+    afterClip(step);
+  } catch (e) { S.busy = false; panel.classList.remove('hidden'); panel.innerHTML = '<h2>Something went wrong</h2><p class="muted">' + esc(String(e && (e.message || e.name) || e)) + '</p><div class="row"><button class="primary" id="again">Back</button></div>'; $('#again').onclick = showStep; }
+}
+function afterClip(step) {
+  if (step.kind === 'play') { S.playN++; save(); return showStep(); }
+  next();
+}
+function askShot(meta, step) {
+  const picked = new Set(); let off = null;
+  const balls = Array.from({ length: 16 }, (_, b) => '<button data-b="' + b + '" style="background:' + BALL_COL[b > 8 ? b - 8 : b] + ';color:' + ([0, 1, 5, 9, 13].includes(b) ? '#000' : '#fff') + (b > 8 ? ';border:3px solid #f4f4f0' : '') + '">' + (b === 0 ? 'W' : b) + '</button>').join('');
+  panel.innerHTML = '<h2>Which balls went in?</h2><p class="muted">Tap every ball that went in (W is the white ball). If none went in, tap None.</p><div class="balls">' + balls + '</div>' +
+    '<div class="row"><button id="none">None</button></div><p>Did any ball leave the table?</p><div class="row"><button id="offN">No</button><button id="offY">Yes</button></div>' +
+    '<div class="row"><button class="primary big" id="done" disabled>Next</button><button id="redo">Record this one again</button></div>';
+  const ready = () => { $('#done').disabled = !(off !== null && (picked.size || $('#none').classList.contains('on'))); };
+  panel.querySelectorAll('[data-b]').forEach(btn => btn.onclick = () => { const b = +btn.dataset.b; if (picked.has(b)) picked.delete(b); else picked.add(b); btn.classList.toggle('on'); $('#none').classList.remove('on'); ready(); });
+  $('#none').onclick = () => { picked.clear(); panel.querySelectorAll('[data-b]').forEach(b => b.classList.remove('on')); $('#none').classList.add('on'); ready(); };
+  $('#offN').onclick = () => { off = false; $('#offN').classList.add('on'); $('#offY').classList.remove('on'); ready(); };
+  $('#offY').onclick = () => { off = true; $('#offY').classList.add('on'); $('#offN').classList.remove('on'); ready(); };
+  $('#done').onclick = async () => { await setAnswers(meta.n, { in: [...picked].sort((a, b) => a - b), offTable: off }); afterClip(step); };
+  $('#redo').onclick = async () => { await setAnswers(meta.n, { redo: true }); showStep(); };
+}
+function showCamResult() {
+  const c = S.caps || {}, L = c.locks || {}, yes = k => L[k] && L[k].worked && L[k].worked.length ? 'yes' : 'no';
+  panel.innerHTML = '<h2>Camera check done</h2><p>What this phone let the recorder lock:</p><p class="muted">Brightness: ' + yes('exposureMode') + '. Colour: ' + yes('whiteBalanceMode') + '. Focus: ' + yes('focusMode') + '. Zoom: ' + (L.zoom ? 'yes' : 'no') + '. Fastest frame rate offered: ' + (L.frameRateMax || 'unknown') + '.</p>' +
+    '<p class="muted">Samples recorded: ' + (c.samples || []).filter(s => s.bytes).length + ' of ' + MODES.length + '. These are all in the file.</p><div class="row"><button class="primary big" id="cont">Continue</button></div>';
+  $('#cont').onclick = next;
+}
+// saving a part takes two taps: the first packs it, the second shares it (the phone only allows sharing straight from a tap)
+async function showSavePart(then) {
+  if (!S.pending.length) return then();
+  panel.classList.remove('hidden');
+  panel.innerHTML = '<h2>Packing file ' + S.part + '…</h2>';
+  const z = await packPart();
+  panel.innerHTML = '<h2>File ' + S.part + ' is ready</h2><p>' + z.clips + ' clips, ' + z.mb.toFixed(1) + ' MB. Save it to Files, then send it to Claude in the project chat.</p>' +
+    '<div class="row"><button class="primary big" id="share">Save file ' + S.part + '</button></div><div class="row"><button id="savedIt" class="hidden">I saved it, carry on</button></div><p class="muted">Clips are only removed from this phone once you\'ve saved the file.</p>';
+  $('#share').onclick = async () => {
+    let ok = false;
+    if (z.file && navigator.canShare && navigator.canShare({ files: [z.file] })) {
+      try { await navigator.share({ files: [z.file] }); ok = true; } catch (e) { if (e && e.name === 'AbortError') { $('#savedIt').classList.remove('hidden'); return; } }
+    }
+    if (!ok) { try { const a = document.createElement('a'); a.href = URL.createObjectURL(z.blob); a.download = z.name; document.body.appendChild(a); a.click(); setTimeout(() => a.remove(), 1000); } catch (e) { } $('#savedIt').classList.remove('hidden'); return; }
+    await partSaved(); then();
+  };
+  $('#savedIt').onclick = async () => { await partSaved(); then(); };
+}
+function showDone() {
+  setWhere('Done');
+  panel.innerHTML = '<h2>All sections done</h2><p>Thank you. ' + (S.pending.length ? 'Save the last file, then you\'re finished.' : 'Everything is saved.') + '</p><div class="row">' + (S.pending.length ? '<button class="primary big" id="last">Save the last file</button>' : '') + '<button id="newSess">Start a new session</button></div>';
+  if ($('#last')) $('#last').onclick = () => showSavePart(showDone);
+  $('#newSess').onclick = () => { S.setup = null; save(); showSetup(); };
+}
+function showResume() {
+  setWhere('Welcome back');
+  const c = cur();
+  panel.innerHTML = '<h2>Carry on where you left off?</h2><p class="muted">Session ' + esc(S.sessId) + (c ? ', at ' + esc(c.sec.title) : '') + '. ' + S.pending.length + ' clips not saved to a file yet.</p><div class="row"><button class="primary big" id="resume">Carry on</button><button id="fresh">Start a new session</button></div>';
+  $('#resume').onclick = begin;
+  $('#fresh').onclick = async () => {
+    if (S.pending.length && !confirm('There are clips that haven\'t been saved to a file yet. Start over and delete them?')) return;
+    for (const k of await allKeys()) await delClip(k);
+    S.setup = null; S.pending = []; S.partBytes = 0; save(); showSetup();
+  };
+}
+
+$('#ver').textContent = VERSION;
+load(); meterUpd();
+if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder)) panel.innerHTML = '<h2>This browser can\'t record</h2><p>Open this page in Safari on the iPhone, from its https address.</p>';
+else if (S.setup && S.sessId) showResume(); else showSetup();
+window.__rec = { S, SECTIONS, save, LAYOUT, steps, packPart, partSaved, setSpeed: v => { SPEED = v; }, layoutSvg, makeZip };
+</script>
+</body>
+</html>
