@@ -1,0 +1,6 @@
+{ "name": "2. Two pockets for the 1 with different routes to the 2",
+  "ft": 9,
+  "balls": [[0, 63.9, 8.8], [1, 56.9, 5.5], [2, 13.3, 19.3], [9, 83.5, 19.4]],
+  "expected": { "type": "pocket", "ball": 1, "pocket": 1,
+    "why": "Both pockets are makeable: bottom-left corner 27 degree cut (model make 12/12), bottom side 19 degree cut (11/12). Plain strokes into the corner never leave a green or amber shot on the 2 (best grade 0); 2 plain strokes into the side leave the 2 green. Expected: the bottom side pocket (pocket 1)." },
+  "found": "tools/runout-eval/find-layouts.js route seed 32 (planner-free)" }

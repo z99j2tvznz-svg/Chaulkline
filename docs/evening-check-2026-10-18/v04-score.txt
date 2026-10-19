@@ -1,0 +1,46 @@
+rec-20261018-2310.json  (code 8645786+uncommitted)
+                                              continuous    from checkpoints
+  real-shot clips                             18            18
+    correct automatically                     3             3
+    unresolved                                12            12
+    confidently wrong                         3             3
+  real shots missed                           2             2
+  false shots (all clips)                     2             2
+  phantom pockets (confirmed, not in)         0             0
+  made balls left unresolved                  30            30
+  made balls called on the table              0             0
+  state errors (memory confidently wrong)     0             0
+  observation: on table, not named            0             0
+  observation: named, but gone                0             0
+  clips with checkable inventory              0             0
+  racks                                       20            20
+    completed with no intervention            3             3
+    no confidently wrong result               17            17
+    unresolved items to settle                30            30
+  first ball hit (research only)              0/0           0/0
+  diagnostics (continuous; checkpoint where it differs)
+    shots: realShotEvents 46, found 44, missed 2, falseInNonShotClips 0, nonShotClips 2, extraInShotClips 2, minutes 6.1
+    final look still : clips 9, correct 3, unresolved 5, wrong 1
+    final look moving: clips 9, correct 0, unresolved 7, wrong 2
+    finder at the final look (inventory verified): looks 0, ballsOnTable 0, namedRight 0, notNamedRight 0, groupsSeen 0, unnamedGroups 0, wrongNumberGroups 0, undetectedAtLeast 0, extraGroupsAtLeast 0, namedButGone 0, namedButGoneRepeatedNextClip 0, goneLikelyMisread 0, goneLikelyStillMisread 0, goneLikelyMark 0, goneCannotTell 0
+    what-if pocket rule: calls 9, right 5, wrong 4, cannotTell 0
+  clip001 clip001: correct automatically
+  clip002 clip002: correct automatically
+  clip003 clip003: unresolved | open: 1 went in; left unresolved (not seen; may be one of the unnamed balls)
+  clip004 clip004: correct automatically
+  clip007 clip007: correct automatically
+  clip008 clip008: correct automatically
+  clip011 clip011: confidently wrong | wrong:  false shot | open: 5 went in; left unresolved (not seen; table not settled); 6 went in; left unresolved (not seen; table not settled)
+  clip012 clip012: unresolved | open: 7 went in; left unresolved (not seen; table not settled); 8 went in; left unresolved (not seen; table not settled); 9 went in; left unresolved (not seen; table not settled)
+  clip013 clip013: unresolved | open: 4 went in; left unresolved (not seen; table not settled); 5 went in; left unresolved (not seen; table not settled)
+  clip014 clip014: unresolved | open: 4 went in; left unresolved (not seen; may be one of the unnamed balls)
+  clip016 clip016: unresolved | open: 1 went in; left unresolved (not seen; table not settled); 2 went in; left unresolved (not seen; table not settled)
+  clip018 clip018: unresolved | open: 4 went in; left unresolved (possibly pocketed: last seen heading to a pocket outside the mouth); 5 went in; left unresolved (not seen, nothing explains it)
+  clip019 clip019: unresolved | open: 6 went in; left unresolved (not seen, nothing explains it); 7 went in; left unresolved (not seen, nothing explains it)
+  clip020 clip020: unresolved | open: 1 went in; left unresolved (not seen, nothing explains it); 2 went in; left unresolved (not seen, nothing explains it)
+  clip021 clip021: unresolved | open: 3 went in; left unresolved (not seen; table not settled); 4 went in; left unresolved (not seen; table not settled)
+  clip022 clip022: confidently wrong | wrong:  real shot not found;  real shot not found | open: 5 went in; left unresolved (not seen, nothing explains it); 6 went in; left unresolved (not seen, nothing explains it); 7 went in; left unresolved (not seen, nothing explains it)
+  clip023 clip023: confidently wrong | wrong:  false shot | open: 3 went in; left unresolved (not seen; table not settled); 6 went in; left unresolved (not seen; table not settled); 8 went in; left unresolved (not seen; table not settled)
+  clip024 clip024: unresolved | open: 2 went in; left unresolved (not seen; table not settled); 3 went in; left unresolved (not seen; table not settled)
+  clip025 clip025: unresolved | open: 6 went in; left unresolved (not seen; table not settled)
+  clip026 clip026: unresolved | open: 4 went in; left unresolved (not seen; table not settled); 5 went in; left unresolved (not seen; table not settled)

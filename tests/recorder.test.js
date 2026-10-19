@@ -88,6 +88,7 @@ test('evening check: still clip, a missed shot answered None, consecutive play s
     await page.click('#skipBtn'); await page.click('#skipBtn'); // near-pocket, several balls
     for (let i = 0; i < 2; i++) {
       await page.waitForSelector('#recBtn'); await page.click('#recBtn');
+      if (i === 0) { await page.waitForSelector('#shotDone:not([disabled])', { timeout: 15000 }); await page.click('#shotDone'); } // ends the clip early
       await page.waitForSelector('.balls', { timeout: 15000 });
       await page.click('[data-b="' + (3 + i) + '"]'); await page.click('#offN'); await page.click('#done');
     }
@@ -100,6 +101,8 @@ test('evening check: still clip, a missed shot answered None, consecutive play s
     assert.deepStrictEqual(meta.clips.map(c => [c.sec, c.step]), [['evening', 'eRest'], ['evening', 'eMiss'], ['evening', 'play1'], ['evening', 'play2']]);
     assert.deepStrictEqual(meta.clips[1].answers, { in: [], offTable: false });
     assert.deepStrictEqual(meta.clips[3].answers, { in: [4], offTable: false });
+    assert.strictEqual(meta.clips[2].stoppedEarly, true); assert.strictEqual(meta.clips[3].stoppedEarly, false);
+    assert.ok(meta.clips[2].tapAt > 0 && meta.clips[2].secs < meta.clips[3].secs, 'Shot done ended the clip early, after a still tail');
     assert.deepStrictEqual(errors, []);
   } finally { await browser.close(); srv.close(); }
 });

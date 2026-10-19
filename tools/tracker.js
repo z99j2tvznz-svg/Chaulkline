@@ -29,6 +29,19 @@ const TRACK_DEFAULTS = {
   pockets: null,      // pocket mouths in table inches, when the outline is known to be off
   inJaws: 1.5,        // in: a ball that stops this close to a pocket mouth is in the pocket (seen sitting in it)
   railBand: null,     // [ymin, ymax]: spots outside this band are on the rails (hands, legs, cushion), except at a pocket mouth
+  // experiment (off by default, so the frozen baselines are unchanged): a ball lost while rolling is looked for along
+  // its predicted path for coastTime s, and keeps its identity if a spot turns up there. 'line': straight on, slowing
+  // by coastDecel; 'cushion': the same, bouncing off the cushions (restitution coastBounce)
+  coast: null,
+  coastTime: 0.5,     // s a lost rolling ball is followed along its predicted path
+  coastGate: 3.0,     // in around the predicted spot, plus coastGateK per in/s of speed
+  coastGateK: 0.05,
+  coastDecel: 5,      // in/s^2 rolling slow-down
+  coastBounce: 0.7,   // share of the speed into a cushion that comes back out
+  // trace (off by default): also return what every decision rested on (finish().trace) - per frame and track the
+  // matched detection or none, identity votes over time, the evidence behind pocket calls. Read-only: it never
+  // changes a decision (tests/record.test.js checks that on every session).
+  trace: false,
 };
 
 function makeTracker(table, opts = {}) {
@@ -37,6 +50,9 @@ function makeTracker(table, opts = {}) {
   const nearPocket = (x, y) => pockets.some(p => Math.hypot(x - p[0], y - p[1]) < O.pocketDist);
   let nextId = 1, tracks = [], t = 0, stillSince = 0, shot = null;
   const shots = [], events = [];
+  const TR = O.trace ? { frames: 0, tracks: new Map(), pocketEvidence: [], undone: [], now: null } : null;
+  const trk = tr => { let e = TR.tracks.get(tr.id); if (!e) TR.tracks.set(tr.id, e = { tr, id: null, idChanges: [], samples: [] }); return e; };
+  const mark = (tr, j, how) => { if (TR) TR.now.set(tr.id, [j, how]); };
 
   function ident(tr) {
     // the number this ball has been recognised as most, counting only confident looks
@@ -69,6 +85,7 @@ function makeTracker(table, opts = {}) {
     const dt = Math.max(1e-3, frame.t - t); t = frame.t;
     const onCloth = b => !O.railBand || (b.y >= O.railBand[0] && b.y <= O.railBand[1]) || b.x < 4.5 || b.x > L - 4.5 || Math.abs(b.x - L / 2) < 3;
     const dets = frame.balls.filter(onCloth).map(b => ({ ...b, used: false }));
+    if (TR) { TR.frames++; TR.now = new Map(); TR.idx = frame.balls.filter(onCloth).map(b => frame.balls.indexOf(b)); }
     // match live tracks first (closest pairs first), then hidden ones
     const live = tracks.filter(tr => tr.state === 'resting' || tr.state === 'moving');
     const pairs = [];
@@ -79,7 +96,7 @@ function makeTracker(table, opts = {}) {
     }
     pairs.sort((a, b) => a[0] - b[0]);
     const matched = new Set();
-    for (const [, tr, j] of pairs) { if (matched.has(tr) || dets[j].used) continue; matched.add(tr); dets[j].used = true; see(tr, dets[j]); }
+    for (const [, tr, j] of pairs) { if (matched.has(tr) || dets[j].used) continue; matched.add(tr); dets[j].used = true; mark(tr, j, 'near'); see(tr, dets[j]); }
     // a ball that is suddenly struck can jump several inches between frames (the clips drop frames): give live balls
     // that found nothing a second, wider look, closest pairs first
     const far = [];
@@ -88,21 +105,36 @@ function makeTracker(table, opts = {}) {
       if (dd < O.launchGate && (d.rec == null || ident(tr) == null || d.rec === ident(tr) || d.nb > 0.5 || d.p < 0.6)) far.push([dd, tr, j]);
     });
     far.sort((a, b) => a[0] - b[0]);
-    for (const [, tr, j] of far) { if (matched.has(tr) || dets[j].used) continue; matched.add(tr); dets[j].used = true; see(tr, dets[j]); }
+    for (const [, tr, j] of far) { if (matched.has(tr) || dets[j].used) continue; matched.add(tr); dets[j].used = true; mark(tr, j, 'launch'); see(tr, dets[j]); }
+    // experiment: balls lost while rolling, looked for where they should be now
+    if (O.coast) for (const tr of tracks) if (tr.coast && (tr.state === 'hidden' || tr.state === 'lostAtPocket')) {
+      const c = tr.coast, dtc = t - c.t0;
+      if (dtc > O.coastTime) { tr.coast = null; continue; }
+      const [qx, qy, qs] = predict(c, dtc), g = O.coastGate + O.coastGateK * qs, id = ident(tr);
+      let bj = -1, bd = g;
+      dets.forEach((d, j) => {
+        if (d.used) return;
+        // never take a spot the reader is sure is another ball
+        if (id != null && d.rec != null && d.rec !== id && d.nb != null && d.nb < 0.5 && d.p >= 0.8) return;
+        const dd = Math.hypot(d.x - qx, d.y - qy); if (dd < bd) { bd = dd; bj = j; } });
+      if (bj >= 0) { dets[bj].used = true; matched.add(tr); tr.coast = null; tr.vx = c.vx; tr.vy = c.vy; tr.state = 'moving'; tr.coasted = (tr.coasted || 0) + 1; mark(tr, bj, 'coast'); see(tr, dets[bj]); }
+    }
     for (const tr of tracks) if (tr.state === 'hidden' || tr.state === 'lostAtPocket') {
       let bj = -1, bd = O.hiddenGate;
       dets.forEach((d, j) => { if (!d.used) { const dd = Math.hypot(d.x - tr.x, d.y - tr.y); if (dd < bd) { bd = dd; bj = j; } } });
-      if (bj >= 0) { dets[bj].used = true; matched.add(tr); see(tr, dets[bj]); }
+      if (bj >= 0) { dets[bj].used = true; matched.add(tr); mark(tr, bj, 'refound'); see(tr, dets[bj]); }
     }
     for (const tr of live) if (!matched.has(tr)) lose(tr);
     for (const d of dets) if (!d.used) {
       const tr = { id: nextId++, x: d.x, y: d.y, vx: 0, vy: 0, t, born: t, hits: 0, votes: new Array(10).fill(0), state: 'resting', real: false, path: [], lostAt: null, movedAt: null };
-      tracks.push(tr); see(tr, d);
+      tracks.push(tr); if (TR) mark(tr, dets.indexOf(d), 'new'); see(tr, d);
     }
     // a ball that rolled into a pocket and stopped where the camera still sees it, sitting in the pocket
     for (const tr of tracks) if (tr.state === 'resting' && isBall(tr) && tr.movedAt != null && t - tr.movedAt < 3
       && pockets.some(p => Math.hypot(tr.x - p[0], tr.y - p[1]) < O.inJaws) && travelled(tr, tr.movedAt - 0.3) >= 6) {
       tr.state = 'pocketed';
+      if (TR) { const p = pockets.reduce((a, q) => Math.hypot(tr.x - q[0], tr.y - q[1]) < Math.hypot(tr.x - a[0], tr.y - a[1]) ? q : a);
+        TR.pocketEvidence.push({ track: tr.id, t, rule: 'stopped in the jaws', at: [tr.x, tr.y], pocket: pockets.indexOf(p), dist: Math.hypot(tr.x - p[0], tr.y - p[1]), frames: tr.path.filter(q => q[0] >= tr.movedAt - 0.3).map(q => q[0]) }); }
       const ev = { k: 'pocket', t, track: tr.id, ball: ident(tr), jaws: true };
       events.push(ev); if (shot) shot.made.push(ev);
     }
@@ -112,6 +144,7 @@ function makeTracker(table, opts = {}) {
       const ev = { k: 'pocket', t: tr.lostAt, track: tr.id, ball: ident(tr) };
       events.push(ev); if (shot) shot.made.push(ev);
     }
+    if (TR) for (const tr of tracks) { const m = TR.now.get(tr.id); trk(tr).samples.push([t, m ? TR.idx[m[0]] : -1, m ? m[1] : null, tr.state, tr.x, tr.y]); }
     // forget spots that never became balls
     tracks = tracks.filter(tr => tr.real || t - tr.t < 0.5);
     updateShot();
@@ -129,6 +162,7 @@ function makeTracker(table, opts = {}) {
     const sp = speed(tr);
     // only trust the number on a ball that is standing still (moving balls are blurred)
     if (sp === 0 && d.rec != null && d.nb != null && d.nb < 0.5 && d.p >= 0.6) tr.votes[d.rec] += d.p;
+    if (TR) { const e = trk(tr), id = ident(tr); if (id !== e.id) { e.idChanges.push({ t, from: e.id, to: id, votes: tr.votes.map(v => +v.toFixed(2)) }); e.id = id; } }
     if (sp === 0) { tr.still = (tr.still || 0) + 1; if (d.nb != null && d.nb < 0.3) tr.good = (tr.good || 0) + 1; }
     if (sp > O.moveSpeed) { if (tr.state !== 'moving') { tr.movedAt = t; tr.peak = 0; } tr.state = 'moving'; tr.lastMoving = t; tr.peak = Math.max(tr.peak || 0, sp); }
     else { tr.state = 'resting'; tr.vx *= 0.5; tr.vy *= 0.5; }
@@ -147,10 +181,32 @@ function makeTracker(table, opts = {}) {
       return (d < O.pocketDist && (d < 1.5 || cos > 0.4)) || (d < O.pocketReach && cos > 0.95 && sp > 10 && ident(tr) !== 0);
     });
   }
+  // where a ball lost while rolling should be dt s later (straight on, slowing; with 'cushion' also bouncing)
+  function predict(c, dt) {
+    let x = c.x, y = c.y, vx = c.vx, vy = c.vy; const R = O.ballR, n = Math.max(1, Math.ceil(dt / 0.01)), h = dt / n;
+    for (let i = 0; i < n; i++) {
+      const sp = Math.hypot(vx, vy); if (sp < 0.5) break;
+      const k = Math.max(0, sp - O.coastDecel * h) / sp; vx *= k; vy *= k; x += vx * h; y += vy * h;
+      if (O.coast === 'cushion') {
+        if (x < R) { x = 2 * R - x; vx = -vx * O.coastBounce; } else if (x > L - R) { x = 2 * (L - R) - x; vx = -vx * O.coastBounce; }
+        if (y < R) { y = 2 * R - y; vy = -vy * O.coastBounce; } else if (y > W - R) { y = 2 * (W - R) - y; vy = -vy * O.coastBounce; }
+      }
+    }
+    return [x, y, Math.hypot(vx, vy)];
+  }
+  // trace only: what a "lost heading into a pocket" call rested on (the same quantities headingIn() looks at)
+  function lostEvidence(tr) {
+    const h = tr.path, b = h[h.length - 1], a = h.filter(p => p[0] <= b[0] - 0.3).pop(), vx = b[1] - a[1], vy = b[2] - a[2], v = Math.hypot(vx, vy);
+    const ps = pockets.map((p, i) => { const dx = p[0] - b[1], dy = p[1] - b[2], d = Math.hypot(dx, dy); return { pocket: i, dist: d, cos: (vx * dx + vy * dy) / (v * d) }; });
+    const best = ps.sort((u, w) => u.dist - w.dist)[0];
+    return { track: tr.id, t, rule: best.dist < O.pocketDist ? 'lost inside the pocket mouth zone' : 'lost running fast straight at a pocket', lastSeen: [b[0], b[1], b[2]],
+      speed: v / (b[0] - a[0]), heading: Math.atan2(vy, vx) * 180 / Math.PI, pocket: best.pocket, dist: best.dist, cos: best.cos, frames: h.filter(p => p[0] >= a[0]).map(p => p[0]) };
+  }
   function lose(tr) {
     if (!tr.real) { tr.state = 'gone'; return; }
+    if (O.coast && tr.state === 'moving' && Math.hypot(tr.vx, tr.vy) > O.moveSpeed) tr.coast = { t0: tr.t, x: tr.x, y: tr.y, vx: tr.vx, vy: tr.vy };
     const px = tr.x + tr.vx * 0.05, py = tr.y + tr.vy * 0.05;
-    if (ballness(tr) >= O.minVotes && tr.lastMoving != null && t - tr.lastMoving < 0.6 && travelled(tr, tr.movedAt - 0.3) >= 1.5 && headingIn(tr)) { tr.state = 'lostAtPocket'; tr.lostAt = t; }
+    if (ballness(tr) >= O.minVotes && tr.lastMoving != null && t - tr.lastMoving < 0.6 && travelled(tr, tr.movedAt - 0.3) >= 1.5 && headingIn(tr)) { tr.state = 'lostAtPocket'; tr.lostAt = t; if (TR) TR.pocketEvidence.push(lostEvidence(tr)); }
     else tr.state = 'hidden';
     tr.vx = tr.vy = 0;
   }
@@ -275,6 +331,7 @@ function makeTracker(table, opts = {}) {
       const tr = tracks.find(x => x.id === ev.track), b = tr ? ident(tr) : ev.ball; if (b == null) continue;
       if (tracks.some(x => x !== tr && x.born > ev.t && x.state !== 'pocketed' && isBall(x) && ident(x) === b && x.votes[b] >= 5)) ev.undone = true;
     }
+    if (TR) for (const e of events) if (e.undone) TR.undone.push({ ...e, why: 'the same number was seen on the table again later' });
     for (let i = events.length - 1; i >= 0; i--) if (events[i].undone) events.splice(i, 1);
     for (const s of shots) s.made = s.made.filter(e => !e.undone);
     const cue = cueTrack();
@@ -282,7 +339,12 @@ function makeTracker(table, opts = {}) {
       s.made = s.made.map(e => ({ ...e, ball: tracks.find(tr => tr.id === e.track) ? ident(tracks.find(tr => tr.id === e.track)) : e.ball }));
       s.scratch = s.made.some(e => e.track === s.cue);
     }
-    return { shots, events, cueId: cue && cue.id, tracks: tracks.filter(tr => tr.real).map(tr => ({ id: tr.id, ball: ident(tr), state: tr.state, x: +tr.x.toFixed(1), y: +tr.y.toFixed(1) })) };
+    const out = { shots, events, cueId: cue && cue.id, tracks: tracks.filter(tr => tr.real).map(tr => ({ id: tr.id, ball: ident(tr), state: tr.state, x: +tr.x.toFixed(1), y: +tr.y.toFixed(1) })) };
+    if (TR) out.trace = { frames: TR.frames, pocketEvidence: TR.pocketEvidence, undone: TR.undone,
+      spotsNeverBalls: [...TR.tracks.values()].filter(e => !e.tr.real).length,
+      tracks: [...TR.tracks.values()].filter(e => e.tr.real).map(e => ({ id: e.tr.id, born: e.tr.born, ball: ident(e.tr), state: e.tr.state, votes: e.tr.votes.map(v => +v.toFixed(2)),
+        isBall: isBall(e.tr), idChanges: e.idChanges, samples: e.samples })) };
+    return out;
   }
 
   // moving(): is any trusted ball moving right now (read-only; used by the baseline's settled-table check)

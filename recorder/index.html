@@ -35,6 +35,7 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 #big { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 120px; font-weight: 800; color: #fff; text-shadow: 0 0 20px #000; pointer-events: none; z-index: 4; }
 #rec { position: fixed; z-index: 4; top: calc(env(safe-area-inset-top) + 40px); left: 12px; background: rgba(0,0,0,.6); border-radius: 8px; padding: 6px 10px; font-weight: 700; }
 #rec b { color: var(--bad); }
+#shotDone { position: fixed; z-index: 5; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom) + 18px); padding: 18px 34px; font-size: 20px; border-radius: 14px; }
 .hidden { display: none !important; }
 .warn { color: var(--warn); }
 </style>
@@ -43,6 +44,7 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 <video id="view" playsinline muted autoplay></video>
 <div id="top"><span id="ver"></span><span class="grow" id="where"></span><span id="sizeTxt" class="muted"></span><span id="meter"><i></i></span></div>
 <div id="rec" class="hidden"><b>●</b> REC <span id="recLeft"></span></div>
+<button id="shotDone" class="primary hidden">Shot done</button>
 <div id="big" class="hidden"></div>
 <div id="panel"></div>
 <script>
@@ -51,13 +53,14 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 // short clip per step (video, sound, motion sensor, camera settings) and the player's tap answers, and saves them as
 // zip files that each stay under the 30 MB upload limit. It does no tracking. Section contents and the reasons behind
 // them: chalkline-data/plans/test-recorder-sections.md in the project files.
-const VERSION = 'R0.5';
+const VERSION = 'R0.6';
 const MB = 1048576, PART_LIMIT = 25 * MB, CLIP_MAX = 29 * MB;
 const $ = s => document.querySelector(s);
 const panel = $('#panel'), view = $('#view');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const r3 = v => Math.round(v * 1000) / 1000;
 let SPEED = 1; // tests shorten every wait with this
+const TAIL = 2.5;  // s still recorded after "Shot done", so the clip ends on a still table
 
 // ---------- table geometry for the layout pictures ----------
 // Table coordinates in diamonds: x 0..8 along the length, y 0..4 across, y = 0 the rail nearest a side camera.
@@ -142,7 +145,7 @@ const SECTIONS = [
     { id: 'break15a', ...SHOT, dur: 20, text: 'Rack all 15 balls. Break.' },
     { id: 'break15b', ...SHOT, dur: 20, text: 'Rack all 15 balls again. Break.' }] },
   { id: 'play', title: 'Play', intro: 'Play one or two racks of 9-ball under pro rules, normally. Tap Record before each shot.', steps: [
-    { id: 'play', kind: 'play', cd: 6, dur: 20, ask: 'shot', text: 'Tap Record, then take your shot.' }] },
+    { id: 'play', kind: 'play', cd: 6, dur: 20, ask: 'shot', text: 'Tap Record, then take your shot. When every ball has stopped, tap Shot done and keep still for 2 more seconds.' }] },
 ];
 // The evening check: a short session to repeat most evenings (about 10 to 15 minutes). The balls are set up once; each
 // shot is played from wherever they lie, so nothing has to be set up exactly.
@@ -154,7 +157,7 @@ const EVENING = [
     { id: 'eMiss', ...SHOT, text: 'Shoot the 2 at a pocket and miss on purpose: hit it, but make sure it stays out.' },
     { id: 'eNear', ...SHOT, text: 'Hit the 3 softly toward a pocket so it stops just short of the pocket without going in.' },
     { id: 'eMulti', ...SHOT, text: 'Hit the white firmly into a group, so at least three balls move.' },
-    { id: 'play', kind: 'play', cd: 6, dur: 20, ask: 'shot', text: 'One shot per recording. Shoot the lowest ball from wherever the balls lie, then answer. Do this 3 times without resetting the balls (re-rack only if the table is empty), then tap Finish playing.' }] },
+    { id: 'play', kind: 'play', cd: 6, dur: 20, ask: 'shot', text: 'One shot per recording. Shoot the lowest ball from wherever the balls lie, then answer. When every ball has stopped, tap Shot done and keep still for 2 more seconds. Do this 3 times without resetting the balls (re-rack only if the table is empty), then tap Finish playing.' }] },
 ];
 
 // ---------- state (kept in this phone's storage, so a reload loses nothing) ----------
@@ -261,7 +264,7 @@ function recordClip(dur, mode) {
     r.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
     r.onstop = () => {
       S.rec = null; const blob = new Blob(chunks, { type: mime || 'video/mp4' });
-      done({ blob, mime, meta: { epoch: o.epoch, secs: r3((performance.now() - o.t0) / 1000), interrupted: o.interrupted, mic: [o.micStart, micState()], bytes: blob.size, mode: mode.id, camera: trackInfo(), motion: S.motion.length } , motion: S.motion });
+      done({ blob, mime, meta: { epoch: o.epoch, secs: r3((performance.now() - o.t0) / 1000), stoppedEarly: !!o.tapAt, tapAt: o.tapAt || null, interrupted: o.interrupted, mic: [o.micStart, micState()], bytes: blob.size, mode: mode.id, camera: trackInfo(), motion: S.motion.length } , motion: S.motion });
     };
     r.start(1000); o.stop = () => { if (r.state !== 'inactive') r.stop(); };
     o.timer = setTimeout(o.stop, dur * 1000 * SPEED);
@@ -445,9 +448,18 @@ async function runStep(step, sec) {
     if (micState() !== 'ok') { try { await openCamera(S.mode || DEFAULT); } catch (e) { } }
     await countdown(step.cd);
     const recEl = $('#rec'); recEl.classList.remove('hidden');
-    const t0 = performance.now(), tick = setInterval(() => { $('#recLeft').textContent = Math.max(0, Math.ceil(step.dur - (performance.now() - t0) / 1000 / SPEED)) + ' s'; }, 250);
+    const t0 = performance.now(), tick = setInterval(() => { if (!(S.rec && S.rec.tapAt)) $('#recLeft').textContent = Math.max(0, Math.ceil(step.dur - (performance.now() - t0) / 1000 / SPEED)) + ' s'; }, 250);
+    // shot steps: "Shot done" ends the clip early once the balls stop. It keeps recording TAIL more seconds of the still
+    // table (the tracker needs a still look at the end), then stops. Without a tap the clip runs its full length.
+    const sd = $('#shotDone');
+    if (step.ask) {
+      sd.textContent = 'Shot done'; sd.disabled = true; sd.classList.remove('hidden');
+      setTimeout(() => { sd.disabled = false; }, 2000 * SPEED);
+      sd.onclick = () => { const o = S.rec; if (!o || o.tapAt) return; o.tapAt = r3((performance.now() - o.t0) / 1000 / SPEED); sd.disabled = true; sd.textContent = 'Hold still…'; $('#recLeft').textContent = 'hold still';
+        clearTimeout(o.timer); setTimeout(o.stop, TAIL * 1000 * SPEED); };
+    }
     const c = await recordClip(step.dur, DEFAULT);
-    clearInterval(tick); recEl.classList.add('hidden'); panel.classList.remove('hidden'); beep(520, 250);
+    clearInterval(tick); recEl.classList.add('hidden'); sd.classList.add('hidden'); sd.onclick = null; panel.classList.remove('hidden'); beep(520, 250);
     if (!c.blob || !c.blob.size) { S.busy = false; panel.innerHTML = '<h2>That clip didn\'t record</h2><p class="muted">' + esc(c.err || 'empty recording') + '</p><div class="row"><button class="primary" id="again">Try again</button></div>'; $('#again').onclick = showStep; return; }
     if (c.blob.size > CLIP_MAX) { S.busy = false; panel.innerHTML = '<h2>That clip was too big to send</h2><p>Please record it again.</p><div class="row"><button class="primary" id="again">Again</button></div>'; $('#again').onclick = showStep; return; }
     const info = { sec: sec.id, step: step.kind === 'play' ? 'play' + (S.playN + 1) : step.id, text: step.text, light: step.light || null, layout: typeof step.layout === 'string' ? LAYOUT[step.layout] : step.layout || null, countdown: step.cd, planned: step.dur };

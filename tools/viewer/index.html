@@ -1,0 +1,283 @@
+<title>Chalkline Shot Viewer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column on a phone (video, replay, then the evidence panels); two columns on wide screens with the
+   video and replay pinned on the left. Colors: a cloth-green neutral, chalk-blue accent, semantic chips for status. */
+:root {
+  --bg: #f3f5f2; --panel: #ffffff; --ink: #18211c; --muted: #5c6a61; --line: #d9e0da;
+  --accent: #2f6fa8; --felt: #1f5a43; --felt-line: #3f7d63; --rail: #5a3b22;
+  --ok: #1f7a46; --ok-bg: #e2f2e8; --warn: #9a6400; --warn-bg: #fbf0d6; --bad: #b3261e; --bad-bg: #f9e1df; --na: #5c6a61; --na-bg: #e8ece9;
+  --display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif; --body: "Barlow", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121815; --panel: #1a221e; --ink: #e4ebe6; --muted: #98a69d; --line: #2c3832;
+  --accent: #7fb3e3; --felt: #1d4d3a; --felt-line: #3a6f58; --rail: #4a301c;
+  --ok: #6fd39a; --ok-bg: #173826; --warn: #f0c062; --warn-bg: #3a2e12; --bad: #f28b82; --bad-bg: #401c1a; --na: #98a69d; --na-bg: #26302b; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #121815; --panel: #1a221e; --ink: #e4ebe6; --muted: #98a69d; --line: #2c3832;
+  --accent: #7fb3e3; --felt: #1d4d3a; --felt-line: #3a6f58; --rail: #4a301c;
+  --ok: #6fd39a; --ok-bg: #173826; --warn: #f0c062; --warn-bg: #3a2e12; --bad: #f28b82; --bad-bg: #401c1a; --na: #98a69d; --na-bg: #26302b; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 15px/1.45 var(--body); }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 14px 40px; max-width: 1280px; margin: 0 auto; display: grid; gap: 14px; }
+header { display: grid; gap: 8px; }
+h1 { font: 600 1.6rem/1.1 var(--display); letter-spacing: .01em; margin: 0; text-wrap: balance; }
+h2 { font: 600 1.05rem/1.2 var(--display); text-transform: uppercase; letter-spacing: .06em; margin: 0 0 8px; color: var(--muted); }
+.sub { color: var(--muted); font-size: .9rem; }
+select, button { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
+button { cursor: pointer; } button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+button:focus-visible, select:focus-visible, .ev:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+select { width: 100%; }
+.grid { display: grid; gap: 14px; }
+@media (min-width: 960px) { .grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; } .left { position: sticky; top: env(safe-area-inset-top, 0px); } }
+.left, .right { display: grid; gap: 14px; min-width: 0; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; min-width: 0; }
+.stage { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 8px; overflow: hidden; max-width: 100%; }
+.stage video, .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; }
+.controls input[type=range] { flex: 1 1 100%; accent-color: var(--accent); }
+.clock { font: 500 .85rem var(--mono); font-variant-numeric: tabular-nums; color: var(--muted); margin-left: auto; }
+#top { width: 100%; max-width: 100%; aspect-ratio: 86 / 47; display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .8rem; color: var(--muted); margin-top: 6px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; background: var(--muted); }
+.dot.hollow { background: none; border: 2px dashed var(--muted); }
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+.kv { display: grid; gap: 2px; } .kv b { font: 500 1.05rem var(--mono); font-variant-numeric: tabular-nums; } .kv span { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.chip { display: inline-block; font: 500 .72rem/1 var(--body); text-transform: uppercase; letter-spacing: .05em; padding: 4px 7px; border-radius: 999px; white-space: nowrap; }
+.supported { color: var(--ok); background: var(--ok-bg); } .uncertain { color: var(--warn); background: var(--warn-bg); }
+.unsupported { color: var(--bad); background: var(--bad-bg); } .na { color: var(--na); background: var(--na-bg); }
+.events { display: grid; gap: 6px; }
+.ev { display: grid; grid-template-columns: 3.6em minmax(0, 1fr) auto; gap: 8px; align-items: start; padding: 8px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; background: var(--panel); text-align: left; width: 100%; }
+.ev.now { border-color: var(--accent); }
+.ev .t { font: 500 .85rem var(--mono); font-variant-numeric: tabular-nums; color: var(--muted); padding-top: 2px; }
+.ev .what { min-width: 0; } .ev .what b { font-weight: 600; } .ev .why { display: block; font-size: .82rem; color: var(--muted); }
+.dis { display: grid; gap: 8px; }
+.dis .row { border-left: 3px solid var(--warn); padding: 4px 0 4px 10px; }
+.dis .hint { font-size: .82rem; color: var(--muted); }
+.states { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.balls { display: flex; flex-wrap: wrap; gap: 5px; }
+.b { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font: 600 .78rem var(--mono); border: 2px solid transparent; }
+.b.unknown { background: none !important; border: 2px dashed var(--muted); color: var(--muted) !important; }
+.b.pocketed { opacity: .35; }
+.tbl { overflow-x: auto; } table { border-collapse: collapse; width: 100%; font-size: .85rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; } th { font-weight: 600; color: var(--muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+.mono { font-family: var(--mono); font-size: .8rem; word-break: break-all; }
+dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 12px; margin: 0; font-size: .88rem; } dt { color: var(--muted); } dd { margin: 0; min-width: 0; }
+.note { font-size: .82rem; color: var(--muted); margin: 6px 0 0; }
+.err { color: var(--bad); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Chalkline Shot Viewer</h1>
+    <div class="sub" id="sessionLine">Loading the session…</div>
+    <label for="clip" class="sub">Clip</label>
+    <select id="clip"></select>
+  </header>
+
+  <div class="panel summary" id="summary"></div>
+
+  <div class="grid">
+    <div class="left">
+      <div class="panel">
+        <h2>Video</h2>
+        <div class="stage"><video id="vid" playsinline muted preload="auto"></video><canvas id="ov"></canvas></div>
+        <div class="controls">
+          <input type="range" id="scrub" min="0" max="600" value="0" step="1" aria-label="Frame">
+          <button id="play">Play</button>
+          <button id="back" aria-label="One frame back">−1 frame</button>
+          <button id="fwd" aria-label="One frame forward">+1 frame</button>
+          <button id="speed">Speed 1×</button>
+          <button id="ovBtn" aria-pressed="true">Overlay</button>
+          <span class="clock" id="clock">f 0 · 0.00 s</span>
+        </div>
+        <div class="legend">
+          <span><i class="dot" style="background:#f2c12e"></i>detection, colour = name the tracker gave</span>
+          <span><i class="dot"></i>grey = unnamed</span>
+          <span><i class="dot" style="background:var(--bad)"></i>red ring = reader says "not a ball"</span>
+          <span><i class="dot hollow" style="border-style:dashed"></i>dashed = not trusted as a ball yet</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Top-down replay</h2>
+        <canvas id="top"></canvas>
+        <div class="legend">
+          <span><i class="dot" style="background:#f2c12e"></i>seen this frame</span>
+          <span><i class="dot hollow"></i>not seen: last seen spot, nothing guessed</span>
+          <span><i class="dot" style="opacity:.45"></i>faded, dotted ring = not trusted as a ball yet</span>
+          <span><i class="dot hollow" style="border-style:solid;border-color:var(--warn)"></i>in a pocket = pocket call (amber uncertain, green supported)</span>
+          <span>near rail = camera side</span>
+          <button id="steadyBtn" aria-pressed="true">Steady still balls</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="panel"><h2>Player's report and Chalkline</h2><div class="dis" id="dis"></div></div>
+      <div class="panel"><h2>Events</h2><div class="events" id="events"></div><p class="note">Tap an event to jump the video there. Collisions are not analysed in this version.</p></div>
+      <div class="panel"><h2>Table before and after</h2><div class="states" id="states"></div></div>
+      <div class="panel"><h2>Tracks</h2><div class="tbl" id="tracks"></div><p class="note">Votes = how consistently the number reader voted for the final number. It is not accuracy: a ball misread the same way every time (the 9 read as the cue ball) still shows 100%. Two tracks named cue means at least one is misread. Gaps = spans not seen. Jumps = seen again far from where it was (possible swap or merge).</p></div>
+      <div class="panel"><h2>Capture and evidence</h2><dl id="capture"></dl></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+const COL = { 0: '#f4f1e8', 1: '#f2c12e', 2: '#1f4fb4', 3: '#d2302a', 4: '#5b2d8c', 5: '#ee7a1f', 6: '#1e7a3c', 7: '#7a2324', 8: '#1a1a1a', 9: '#f2c12e' };
+const TXT = n => (n === 0 || n === 1 || n === 9 || n === 5) ? '#18211c' : '#ffffff';
+const $ = id => document.getElementById(id), css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const vid = $('vid'), ov = $('ov'), top = $('top'), scrub = $('scrub');
+const KIND = { 'shot start': 'Shot starts', 'first hit': 'First ball hit', 'pocket': 'Pocket call', 'vanished': 'Ball vanished', 'pocket call withdrawn': 'Pocket call withdrawn', 'not a shot': 'Not a shot' };
+let IX = null, D = null, REC = null, FPS = 30, NF = 0, F = 0, showOv = true, steady = true, speeds = [1, 0.5, 0.25], si = 0, nameAt = null;
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const chip = s => `<span class="chip ${s === 'not analysed' ? 'na' : s}">${esc(s)}</span>`;
+const ballName = n => n == null ? 'unnamed' : n === 0 ? 'cue ball' : 'the ' + n;
+
+async function load() {
+  try { IX = await (await fetch('data/index.json')).json(); } catch (e) { $('sessionLine').innerHTML = '<span class="err">Could not load data/index.json.</span>'; return; }
+  const c = IX.session.capture;
+  $('sessionLine').textContent = `Session ${IX.session.id} · ${c.cameraSpot} camera · ${c.light} · ${IX.session.table.ft} ft table · ${IX.clips.length} clips`;
+  $('clip').innerHTML = IX.clips.map(k => `<option value="${k.clip}">${k.clip} · ${k.step} · ${k.disagreements ? k.disagreements + ' disagreement' + (k.disagreements > 1 ? 's' : '') : 'agrees'}</option>`).join('');
+  let pick = IX.clips[0].clip; try { const s = localStorage.getItem('chalkline.viewer.clip'); if (s && IX.clips.some(k => k.clip === s)) pick = s; } catch (e) {}
+  const h = location.hash.slice(1); if (IX.clips.some(k => k.clip === h)) pick = h;
+  $('clip').value = pick; openClip(pick);
+}
+$('clip').addEventListener('change', e => openClip(e.target.value));
+
+async function openClip(clip) {
+  try { localStorage.setItem('chalkline.viewer.clip', clip); } catch (e) {}
+  D = await (await fetch('data/' + clip + '.json')).json(); REC = D.record; FPS = REC.clock.fps; NF = REC.clock.frames;
+  const k = IX.clips.find(x => x.clip === clip);
+  vid.src = k.video ? k.video.file : ''; scrub.max = NF - 1; F = 0;
+  // the name each track carries at a frame: the last identity change at or before it
+  nameAt = (tr, f) => { let n = null; for (const c of tr.identity.changes) if (c.f <= f) n = c.to; return n; };
+  renderSummary(k); renderDis(); renderEvents(); renderStates(); renderTracks(); renderCapture(k); draw();
+}
+
+function renderSummary(k) {
+  const rep = REC.reported ? REC.reported.answers.in : [];
+  const items = [['Step', REC.step], ['Reported in', rep.length ? rep.join(', ') : 'none'], ['Shots found', REC.observed.shots.length],
+    ['Disagreements', k.disagreements], ['Moving balls seen', k.coverage == null ? 'no motion' : Math.round(k.coverage * 100) + '%'], ['Length', k.seconds + ' s']];
+  $('summary').innerHTML = items.map(([a, b]) => `<div class="kv"><span>${a}</span><b>${esc(b)}</b></div>`).join('');
+}
+function renderDis() {
+  const d = REC.analyses[0].disagreements, rep = REC.reported;
+  let h = rep ? `<div class="sub">The player said: ${rep.answers.in.length ? 'balls in: ' + rep.answers.in.join(', ') : 'no balls in'}${rep.answers.offTable ? ', a ball left the table' : ''}.</div>` : '<div class="sub">No player report for this clip.</div>';
+  h += d.length ? d.map(x => `<div class="row"><b>${esc(ballName(x.ball))}</b>: ${esc(x.reported)}. Chalkline: ${esc(x.chalkline)}.<div class="hint">Hint, where it first goes wrong: <b>${esc(x.stage.hint)}</b> (${esc(x.stage.why)})</div></div>`).join('')
+    : '<div>Chalkline agrees with the report.</div>';
+  $('dis').innerHTML = h;
+}
+function renderEvents() {
+  const ev = REC.observed.events;
+  $('events').innerHTML = ev.length ? ev.map((e, i) => {
+    const m = e.measured, extra = e.kind === 'pocket' && m ? ` Last seen ${m.distToPocket} in from the pocket${m.speed != null ? ', ' + m.speed + ' in/s' : ''}. Still table: ${e.stillTable}.` : e.kind === 'vanished' && m ? ` Last seen at (${m.at.join(', ')})${m.wasMoving ? ' while moving' : ' at rest'}.` : '';
+    return `<button class="ev" data-i="${i}" data-t="${e.t ?? 0}"><span class="t">${e.t == null ? '–' : e.t.toFixed(2)}</span><span class="what"><b>${esc(KIND[e.kind] || e.kind)}</b>${e.ball !== undefined ? ' · ' + esc(ballName(e.ball)) : ''}<span class="why">${esc(e.rule)}.${esc(extra)} ${e.evidence.length ? e.evidence.length + ' evidence frame' + (e.evidence.length > 1 ? 's' : '') : ''}</span></span>${chip(e.status)}</button>`;
+  }).join('') : '<div class="sub">No events.</div>';
+  for (const b of $('events').querySelectorAll('.ev')) b.addEventListener('click', () => seek(Math.max(0, Math.round((+b.dataset.t - 0.5) * FPS))));
+}
+function stateBalls(s) {
+  return `<div class="balls">${s.balls.map(b => `<span class="b ${b.status}" title="${esc(b.ball)}: ${esc(b.status)}, ${esc(b.source)}${b.why ? ' (' + esc(b.why) + ')' : ''}" style="background:${COL[b.ball]};color:${TXT(b.ball)}">${b.ball === 0 ? 'C' : b.ball}</span>`).join('')}</div>`;
+}
+function renderStates() {
+  const one = (s, label) => `<div><div class="sub">${label}${s.window ? ' · ' + s.window[0].toFixed(1) + '–' + s.window[1].toFixed(1) + ' s' : ''}</div>${stateBalls(s)}<div class="note">${s.complete ? 'Complete' : 'Incomplete: dashed = unknown'}${s.settled === false ? ' · table still moving' : ''}${s.unnamedSpots.length ? ' · ' + s.unnamedSpots.length + ' unnamed spot' + (s.unnamedSpots.length > 1 ? 's' : '') : ''}</div></div>`;
+  $('states').innerHTML = one(REC.before, 'Before') + one(REC.after, 'After') + '<p class="note" style="grid-column:1/-1">Faded = pocketed. Tap and hold a ball for why.</p>';
+}
+function renderTracks() {
+  const rows = REC.observed.tracks.map(t => `<tr><td>${t.id}</td><td>${t.ball == null ? '?' : t.ball === 0 ? 'cue' : t.ball}${t.isBall ? '' : ' (not a ball)'}</td><td>${t.identity.share == null ? '–' : Math.round(t.identity.share * 100) + '%'}</td><td>${t.identity.changes.length > 1 ? t.identity.changes.length - 1 : 0}</td><td>${t.gaps.length}</td><td>${t.jumps.length}</td><td>${esc(t.final)}</td><td>${t.resolution ? t.resolution.minInPerPx + '–' + t.resolution.maxInPerPx : '–'}</td></tr>`).join('');
+  $('tracks').innerHTML = `<table><thead><tr><th>Track</th><th>Name</th><th>Votes</th><th>Renamed</th><th>Gaps</th><th>Jumps</th><th>Final</th><th>in/px</th></tr></thead><tbody>${rows}</tbody></table><p class="note">${REC.observed.spotsNeverBalls} short-lived spots never became balls (hands, cue, legs).</p>`;
+}
+function renderCapture(k) {
+  const s = IX.session, c = REC.capture;
+  const rows = [['Camera', `${s.capture.cameraSpot}, ${s.capture.device}`], ['Original video', `${s.capture.video.size.join('×')}, ${s.capture.video.fps} fps, kept in ${REC.ref.video.file} (${REC.ref.video.member})`],
+    ['Original sha256', `<span class="mono">${REC.ref.video.sha256}</span>`], ['Analysed frames', `${s.capture.analysedFps} per second, ${REC.ref.detections.frames} frames, ${REC.ref.detections.spots} detections`],
+    ['Detections sha256', `<span class="mono">${REC.ref.detections.sha256}</span>`], ['Position resolution', c.resolution ? `${c.resolution.minInPerPx}–${c.resolution.maxInPerPx} inches per pixel (near to far)` : '–'],
+    ['Table-to-camera map', c.camera ? `fitted to ${c.camera.spots} spots, median ${c.camera.medianErrPx} px (consistency only, not calibration accuracy)` : '–'],
+    ['Viewer video', 'a small re-encoded copy for viewing only, frame for frame with the analysis'], ['Versions', `detector ${s.versions.detector.name} (${s.versions.detector.sha256.slice(0, 12)}), tracker ${s.versions.tracker.blob.slice(0, 7)}, record ${s.versions.record.format}`]];
+  $('capture').innerHTML = rows.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('');
+}
+
+// drawing
+function fit(cv) { const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1; if (cv.width !== Math.round(r.width * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); } return [cv.getContext('2d'), cv.width, cv.height, d]; }
+function ballDot(g, x, y, r, n, seen, d) {
+  g.save();
+  if (seen) { g.fillStyle = n == null ? '#9aa59e' : COL[n]; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); if (n === 9) { g.strokeStyle = '#ffffff'; g.lineWidth = r * 0.35; g.beginPath(); g.arc(x, y, r * 0.8, 0, 7); g.stroke(); } }
+  else { g.setLineDash([3 * d, 3 * d]); g.strokeStyle = n == null ? '#c9d2cc' : COL[n] === '#1a1a1a' ? '#c9d2cc' : COL[n]; g.lineWidth = 2 * d; g.beginPath(); g.arc(x, y, r, 0, 7); g.stroke(); }
+  g.setLineDash([]); g.font = `600 ${Math.round(r * 1.05)}px ui-monospace, monospace`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillStyle = seen ? (n == null ? '#18211c' : TXT(n)) : '#e4ebe6'; g.fillText(n == null ? '?' : n === 0 ? '' : n, x, y + 0.5); g.restore();
+}
+function drawTop() {
+  const [g, w, h, d] = fit(top), L = IX.session.table.size[0], W = IX.session.table.size[1], m = w * 0.04, s = (w - 2 * m) / L;
+  const X = x => m + x * s, Y = y => h - m - y * s;
+  g.clearRect(0, 0, w, h); g.fillStyle = css('--rail'); g.fillRect(0, 0, w, h); g.fillStyle = css('--felt'); g.fillRect(m, h - m - W * s, L * s, W * s);
+  g.strokeStyle = css('--felt-line'); g.lineWidth = d; g.beginPath(); g.moveTo(X(L / 4), Y(0)); g.lineTo(X(L / 4), Y(W)); g.stroke();
+  g.fillStyle = '#0b0f0d'; for (const [px, py] of [[0, 0], [L / 2, -0.6], [L, 0], [0, W], [L / 2, W + 0.6], [L, W]]) { g.beginPath(); g.arc(X(px), Y(py), 2.3 * s, 0, 7); g.fill(); }
+  const R = 1.125 * s, PK = [[0, 0], [L / 2, -0.6], [L, 0], [0, W], [L / 2, W + 0.6], [L, W]], inPk = {};
+  for (const e of REC.observed.events) if (e.kind === 'pocket' && e.t != null && e.t <= F / FPS + 1e-6 && e.pocket != null) {
+    const k = inPk[e.pocket] = (inPk[e.pocket] || 0) + 1, [qx, qy] = PK[e.pocket], ox = (k - 1) * 1.6 * R * (qx > L / 2 ? -1 : 1);
+    const cx = X(qx) + ox, cy = Y(qy);
+    g.save(); g.lineWidth = 3 * d; g.strokeStyle = css(e.status === 'supported' ? '--ok' : '--warn'); g.beginPath(); g.arc(cx, cy, R + 3 * d, 0, 7); g.stroke(); g.restore();
+    ballDot(g, cx, cy, R, e.ball, true, d);
+  }
+  for (const t of REC.observed.tracks) {
+    if (t.firstF > F) continue;
+    let cur = null; for (const x of t.samples) { if (x[0] <= F) cur = x; else break; }
+    if (!cur) continue;
+    const st = REC.observed.states[cur[5]]; if (st === 'pocketed' || st === 'gone') continue;
+    const n = nameAt(t, F);
+    // trail: seen samples in the last 0.7 s, as dots (never joined across a gap)
+    g.fillStyle = 'rgba(255,255,255,0.35)';
+    for (const x of t.samples) if (x[1] === 1 && x[0] < F && x[0] > F - 0.7 * FPS) { g.beginPath(); g.arc(X(x[2]), Y(x[3]), R * 0.25, 0, 7); g.fill(); }
+    if (!t.isBall) {   // a track the tracker never trusted as a ball: same name as on the video, drawn faded with a dotted ring
+      g.save(); g.globalAlpha = 0.45; ballDot(g, X(cur[2]), Y(cur[3]), R, n, true, d); g.restore();
+      g.save(); g.setLineDash([2 * d, 2 * d]); g.strokeStyle = '#ffffff'; g.lineWidth = 1.5 * d; g.beginPath(); g.arc(X(cur[2]), Y(cur[3]), R + 2 * d, 0, 7); g.stroke(); g.restore(); continue;
+    }
+    // steady view (display only): a resting ball is drawn at the middle of its seen spots since it came to rest, so
+    // the camera's small frame-to-frame wobble does not make still balls bob. The record keeps every raw spot.
+    let px = cur[2], py = cur[3];
+    if (steady && REC.observed.states[cur[5]] === 'resting') {
+      const run = []; for (let i = t.samples.indexOf(cur); i >= 0 && REC.observed.states[t.samples[i][5]] === 'resting' && run.length < 30; i--) if (t.samples[i][1] === 1) run.push(t.samples[i]);
+      if (run.length) { const med = a => a.slice().sort((u, v) => u - v)[a.length >> 1]; px = med(run.map(x => x[2])); py = med(run.map(x => x[3])); }
+    }
+    ballDot(g, X(px), Y(py), R, n, cur[1] === 1, d);
+  }
+}
+function drawOv() {
+  const [g, w, h, d] = fit(ov); g.clearRect(0, 0, w, h); if (!showOv) return;
+  const fr = D.overlay.frames[F] || [], sx = w / D.overlay.size[0], sy = h / D.overlay.size[1];
+  const byId = new Map(REC.observed.tracks.map(t => [t.id, t]));
+  for (const [px, py, rec, nb, tid] of fr) {
+    const t = byId.get(tid), n = t ? nameAt(t, F) : null, x = px * sx, y = py * sy, r = 9 * sx;
+    g.lineWidth = 2 * d; g.strokeStyle = t && n != null ? COL[n] === '#1a1a1a' ? '#ffffff' : COL[n] : '#9aa59e';
+    if (t && !t.isBall) g.setLineDash([3 * d, 3 * d]);
+    g.beginPath(); g.arc(x, y, r, 0, 7); g.stroke(); g.setLineDash([]);
+    if (nb >= 0.5) { g.strokeStyle = '#ff4d40'; g.beginPath(); g.arc(x, y, r + 3 * d, 0, 7); g.stroke(); }
+    if (t && n != null) { g.font = `600 ${Math.round(11 * d)}px ui-monospace, monospace`; g.fillStyle = '#ffffff'; g.fillText(n === 0 ? 'C' : n, x + r + 2 * d, y - r); }
+  }
+}
+function draw() {
+  if (!REC) return;
+  drawTop(); drawOv(); scrub.value = F;
+  $('clock').textContent = `f ${F} · ${(F / FPS).toFixed(2)} s`;
+  let cur = -1; REC.observed.events.forEach((e, i) => { if (e.t != null && e.t <= F / FPS + 1e-6) cur = i; });
+  for (const b of $('events').querySelectorAll('.ev')) b.classList.toggle('now', +b.dataset.i === cur);
+}
+function seek(f) { F = Math.max(0, Math.min(NF - 1, f)); if (vid.src) vid.currentTime = (F + 0.5) / FPS; draw(); }
+function tick() { if (REC && !vid.paused) { F = Math.min(NF - 1, Math.floor(vid.currentTime * FPS)); draw(); } requestAnimationFrame(tick); }
+requestAnimationFrame(tick);
+vid.addEventListener('seeked', () => { F = Math.min(NF - 1, Math.floor(vid.currentTime * FPS)); draw(); });
+vid.addEventListener('pause', () => $('play').textContent = 'Play'); vid.addEventListener('play', () => $('play').textContent = 'Pause');
+scrub.addEventListener('input', () => { if (!vid.paused) vid.pause(); seek(+scrub.value); });
+$('play').addEventListener('click', () => vid.paused ? vid.play().catch(() => {}) : vid.pause());
+$('back').addEventListener('click', () => { vid.pause(); seek(F - 1); }); $('fwd').addEventListener('click', () => { vid.pause(); seek(F + 1); });
+$('speed').addEventListener('click', () => { si = (si + 1) % speeds.length; vid.playbackRate = speeds[si]; $('speed').textContent = 'Speed ' + speeds[si] + '×'; });
+$('steadyBtn').addEventListener('click', () => { steady = !steady; $('steadyBtn').setAttribute('aria-pressed', steady); draw(); });
+$('ovBtn').addEventListener('click', () => { showOv = !showOv; $('ovBtn').setAttribute('aria-pressed', showOv); draw(); });
+addEventListener('resize', draw);
+load();
+})();
+</script>

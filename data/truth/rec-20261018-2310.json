@@ -1,0 +1,388 @@
+{
+ "about": "Truth for the R0.4 evening check (rec-20261018-2310, home 7 ft, low side). made = Nackers's tap answers per clip. Play clips (play1..14) may hold 2 or 3 shots each (the step wording was misread): shot counts there are unknown, so missed/false shot counts on those clips are not meaningful. Redone clips are left out. Not checked by eye.",
+ "clips": {
+  "clip001": {
+   "shot": false,
+   "made": [],
+   "step": "eRest",
+   "layout": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "verify": {
+    "shot": "scripted: no shot asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip002": {
+   "shot": false,
+   "made": [],
+   "step": "eHide",
+   "layout": [],
+   "verify": {
+    "shot": "scripted: no shot asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip003": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "ePocket",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye)",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip004": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "eMiss",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye)",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip007": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "eNear",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye)",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip008": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "eMulti",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye)",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip011": {
+   "shot": true,
+   "made": [
+    5,
+    6
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play1",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  },
+  "clip012": {
+   "shot": true,
+   "made": [
+    7,
+    8,
+    9
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play2",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  },
+  "clip013": {
+   "shot": true,
+   "made": [
+    4,
+    5
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play3",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  },
+  "clip014": {
+   "shot": true,
+   "made": [
+    4,
+    5
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play4",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  },
+  "clip016": {
+   "shot": true,
+   "made": [
+    1,
+    2
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play5",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  },
+  "clip018": {
+   "shot": true,
+   "made": [
+    4,
+    5
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play6",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  },
+  "clip019": {
+   "shot": true,
+   "made": [
+    6,
+    7
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play7",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  },
+  "clip020": {
+   "shot": true,
+   "made": [
+    1,
+    2
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play8",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  },
+  "clip021": {
+   "shot": true,
+   "made": [
+    3,
+    4
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play9",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  },
+  "clip022": {
+   "shot": true,
+   "made": [
+    5,
+    6,
+    7
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play10",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  },
+  "clip023": {
+   "shot": true,
+   "made": [
+    3,
+    6,
+    8
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play11",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  },
+  "clip024": {
+   "shot": true,
+   "made": [
+    2,
+    3
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play12",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  },
+  "clip025": {
+   "shot": true,
+   "made": [
+    6
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play13",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  },
+  "clip026": {
+   "shot": true,
+   "made": [
+    4,
+    5
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play14",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); play clips may hold 2 or 3 shots, count unknown",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   },
+   "more": [
+    null,
+    null
+   ],
+   "shotCountUnknown": true
+  }
+ }
+}

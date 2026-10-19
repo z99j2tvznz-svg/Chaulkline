@@ -1,0 +1,6 @@
+{ "name": "3. 7-8-9 endgame: the wrong side of the 8 makes the 9 hard",
+  "ft": 9,
+  "balls": [[0, 47.1, 24.9], [7, 45.7, 13.1], [8, 38.5, 35.7], [9, 72.4, 33.2]],
+  "expected": { "type": "endgame", "ball": 7,
+    "why": "Several shots on the 7 (bottom side pocket) leave the 8 green. Some of those leave the cue ball where the 8 is easy (model make 9/12) but no plain stroke on the 8 then leaves the 9 better than red (trap: strength 2 with draw). Others (strength 5, center) leave the 8 green and a plain stroke on the 8 that leaves the 9 green. Expected: the recommended shot on the 7 ends where some plain makeable (>= 60%) shot on the 8 leaves the 9 green." },
+  "found": "tools/runout-eval/find-layouts.js endgame seed 11 (planner-free)" }

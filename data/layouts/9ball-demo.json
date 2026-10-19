@@ -1,0 +1,67 @@
+{
+ "name": "spread rack, 9 ft table",
+ "ft": 9,
+ "balls": [
+  [
+   0,
+   25,
+   20
+  ],
+  [
+   1,
+   40,
+   30
+  ],
+  [
+   2,
+   70,
+   12
+  ],
+  [
+   3,
+   85,
+   40
+  ],
+  [
+   4,
+   55,
+   44
+  ],
+  [
+   5,
+   20,
+   8
+  ],
+  [
+   6,
+   90,
+   15
+  ],
+  [
+   7,
+   60,
+   25
+  ],
+  [
+   8,
+   15,
+   42
+  ],
+  [
+   9,
+   75,
+   32
+  ]
+ ],
+ "change": {
+  "afterStep": 2,
+  "why": "the cue ball came back up the table instead of stopping near the bottom rail",
+  "move": [
+   [
+    0,
+    35,
+    25
+   ]
+  ]
+ }
+}
