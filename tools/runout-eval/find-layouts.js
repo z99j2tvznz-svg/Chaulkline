@@ -6,6 +6,7 @@ const core = require('../../src/core.js'), RO = require('../../src/runout.js'), 
 const P = core.makeP(9), D2R = Math.PI / 180, MPH = core.MPH;
 const [kind, seed0, tries] = [process.argv[2], +process.argv[3] || 1, +process.argv[4] || 3000];
 const r = S.rng(seed0), U = (a, b) => a + (b - a) * r();
+const MAIN = require.main === module;
 const B = L => L.map(([id, x, y]) => ({ id, x, y }));
 // Plain ghost-ball shots (4 strengths x draw/center/follow) into one pocket: per shot whether it is made and the
 // V1 grade (0-3) of the cue ball for the next ball. Model make share from 12 noisy repeats of the surest one.
@@ -34,7 +35,7 @@ const ok = L => L.every((a, i) => L.every((b, j) => i >= j || Math.hypot(a[1] - 
 const rnd = () => [+U(3, 97).toFixed(1), +U(3, 47).toFixed(1)];
 const near = (p, d) => [+(p[0] + U(-d, d)).toFixed(1), +(p[1] + U(-d, d)).toFixed(1)];
 let found = 0; const cnt = {};
-for (let t = 0; t < tries && found < 3; t++) {
+for (let t = 0; MAIN && t < tries && found < 3; t++) {
   let L;
   if (kind === 'shape') {   // easy pot with poor shape vs a somewhat harder pot with natural shape (cue, 1, 9)
     const pk = P.pockets[Math.floor(r() * 6)], one = near([Math.min(90, Math.max(10, pk.x)), Math.min(40, Math.max(10, pk.y))], 10);
@@ -62,4 +63,5 @@ for (let t = 0; t < tries && found < 3; t++) {
   }
 }
 
-console.error(JSON.stringify(cnt));
+if (MAIN) console.error(JSON.stringify(cnt));
+module.exports = { plain, pockets };
