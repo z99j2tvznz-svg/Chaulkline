@@ -57,6 +57,47 @@ Status key:
 | | Per-shot records kept, not just totals | P | |
 | Platform | Remote coach view and annotations; projector on the cloth; broadcast and pro analysis; TV mode | F | all of these reuse the twin in table coordinates |
 
+## History in one paragraph
+
+Oct 8: the original vision (simulator-centred trainer: planner, physics, tip diagram, landing zones, stats, drills). Oct 12: perception-first pivot, because unreliable ball finding and naming made automatic judging and coaching untrustworthy; the planner and training views were hidden behind Watch & Learn (V2.x up to V2.3.3). Oct 17: rebuild layer by layer with frozen, scored baselines. Oct 18–19: labels-v1, detector-v1, v0.4 baseline (held-out 53 clips: 5 correct, 28 unresolved, 20 confidently wrong; 0 real racks complete). Lesson: the pivot was right for automatic judging, but hiding all coaching until perception is near-perfect was too strict. **Practice modes that use a layout the player confirms by hand do not need automatic recognition. Automatic rules judgments and player statistics do.**
+
+## Planner audit (Oct 19)
+
+| Component | Verdict | Note |
+|---|---|---|
+| `planGen` (pots, safeties, combos, grading) | Reusable now | runs headless from a hand-entered layout in table inches; same layout gives the same plan; 0.5–1.3 s on a server CPU; no unit test yet |
+| `simulate` physics, `mcGen` spread, `positionZone` | Reusable now, unvalidated | never compared with real shots |
+| Aim/ghost ball, cue path, tip diagram, strength 1–10, landing zone (`drawPlan`, `drawTip`, `drawLanding`) | Reusable now | drawn in table inches, so they work on the top-down map |
+| Tap to add/name a ball, drag to move it, Plan button | Reusable after a small fix | exist in the app, but only while the camera runs in 9-/8-ball mode; Watch & Learn hides the Plan button |
+| Strength scale (`speedOfLevel`) and table fit (`fitTableGen`) | Reusable after a fix | default scale is a guess until calibrated; no speed drill |
+| Rules (`legalTargets`, `evalResult`, `judgeShot`) | Planner use only | do not trust for automatic judging until rules are a separate, tested layer |
+| Whole-rack planning, banks/kicks | Missing | |
+
+**Manual-layout planning is a small, isolated change:** a "Plan a layout" entry that opens the top-down map without the camera, lets the player place and name balls, and runs the existing planner. Suggestion-only and labelled experimental until predictions are checked on real shots.
+
+## Training order (after or alongside the tracking milestone)
+
+1. Shot planning on a hand-confirmed layout.
+2. Strength calibration and a basic speed drill.
+3. Shot-video review with motion estimates marked as estimates.
+4. Assisted game tracking with correction.
+5. Shot classification and player skill profiles.
+6. Personal recommendations and adaptive drills.
+7. Whole-rack planning and more games.
+8. Remote coaching, projection, broadcast.
+
+Keep raw shot-level evidence, confidence, corrections and table coordinates so analytics can be recomputed later.
+
+## Milestones (targets, not current capability)
+
+- **Foundation:** hand-confirmed layouts give repeatable, geometrically plausible plans.
+- **Tracking:** at least 95% shot detection and 95% correct made-ball naming on a frozen representative test set; no confidently false pocket; five complete real 9-ball racks with no uncorrected game-state error.
+- **First coaching mode:** a full guided practice session works on hand-confirmed layouts, and predicted outcomes are compared with real footage.
+- **Player analytics:** every skill number shows its evidence, sample size and uncertainty.
+- **Strategic coaching:** advice weighs execution chance and the next position, not only whether the current ball can go.
+
+Primary camera: side-mounted iPhone. Overhead is a diagnostic comparison only.
+
 ## Order of work
 
 The current milestone is reliable tracking of a complete real 9-ball rack:
@@ -66,7 +107,7 @@ The current milestone is reliable tracking of a complete real 9-ball rack:
 4. Table memory.
 5. Rules.
 
-Planning, coaching and the player model already exist in the app, but they are only as good as the state they read. They come back into scope after the milestone, in this order:
+Planning, coaching and the player model already exist in the app, but they are only as good as the state they read. Hand-confirmed practice modes may run alongside the milestone (see Training order). Automatic judging comes back after it, in this order:
 1. Rules as a separate layer.
 2. Per-shot records.
 3. The player model.
