@@ -69,17 +69,18 @@ function makeTracker(table, opts = {}) {
     const id = rawIdent(tr);
     if (!O.oneCue || id !== 0 || tr.state === 'pocketed') return id;
     // one cue ball: one track holds the name. It keeps it while it is still on the table; another track that reads as
-    // the cue ball takes it over only with clearly more evidence: it started a shot as the struck ball and the holder
-    // never did, or it has half as many cue-ball votes again (so two balls read alike do not swap the name every frame)
+    // the cue ball takes it over only with clearly more reader evidence: half as many cue-ball votes again (so two balls
+    // read alike do not swap the name every frame). Being struck is not evidence: in a game, striking an object ball is
+    // a foul for the rules layer, not a reason to rename it
     const ok = o => o && o.real && o.state !== 'pocketed' && o.state !== 'gone' && rawIdent(o) === 0;
-    const struck = o => shots.some(s => s.cue === o.id), h = tracks.find(o => o.id === cueHolder);
+    const h = tracks.find(o => o.id === cueHolder);
     if (!ok(h)) {
       // the holder left the table. After a scratch (pocketed, or lost at a pocket) no ball already on the table takes
       // the name, only one put down after it (ball in hand): until then there is no cue ball rather than a wrong one
       if (h && cueLostAt == null) cueLostAt = h.state === 'pocketed' ? Math.min(h.lostAt ?? h.t, h.t) : -1;   // when it was last seen
       if (cueLostAt != null && cueLostAt >= 0 && tr.born <= cueLostAt) return null;
       cueHolder = tr.id; cueLostAt = null;
-    } else if (h !== tr && ((struck(tr) && !struck(h)) || (struck(tr) === struck(h) && tr.votes[0] > 1.5 * h.votes[0] + 5))) cueHolder = tr.id;
+    } else if (h !== tr && tr.votes[0] > 1.5 * h.votes[0] + 5) cueHolder = tr.id;
     return cueHolder === tr.id ? 0 : null;
   }
   function cueTrack() {
