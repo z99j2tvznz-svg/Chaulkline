@@ -111,7 +111,7 @@ function buildClip(id, clip, man, d, meta, cam) {
     const startFrames = cueT ? cueT.samples.filter(x => x[0] >= s.t && x[0] <= s.t + 0.5 && x[1] >= 0).map(x => x[0]) : [];
     ev.push({ id: sid, kind: 'shot start', t: r2(s.t), track: s.cue, status: 'supported', rule: 'the table was still, then one ball started rolling fast on its own (taken as the cue ball)',
       evidence: frameEv(s.cue, startFrames) });
-    if (s.first !== undefined) ev.push({ id: sid + '-first', kind: 'first hit', shot: sid, ball: s.first, track: s.firstTrack, status: 'uncertain',
+    if (s.first !== undefined) ev.push({ id: sid + '-first', kind: 'first hit', t: +s.t.toFixed(2), shot: sid, ball: s.first, track: s.firstTrack, status: 'uncertain',
       rule: 'first other ball to start moving after the cue ball came near it (collisions are not analysed)', evidence: [] });
     return { id: sid, t: +s.t.toFixed(2), end: s.end != null ? r2(s.end) : null, cueTrack: s.cue, from: s.from ? s.from.map(r2) : null,
       firstHit: s.first !== undefined ? { ball: s.first, track: s.firstTrack, status: 'uncertain' } : { status: 'not seen' }, scratch: !!s.scratch };
