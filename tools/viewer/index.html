@@ -99,6 +99,7 @@ dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 
           <span><i class="dot" style="background:#f2c12e"></i>detection, colour = name the tracker gave</span>
           <span><i class="dot"></i>grey = unnamed</span>
           <span><i class="dot" style="background:var(--bad)"></i>red ring = reader says "not a ball"</span>
+          <span><i class="dot hollow" style="border-style:dashed"></i>dashed = not trusted as a ball yet</span>
         </div>
       </div>
       <div class="panel">
@@ -107,6 +108,8 @@ dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 
         <div class="legend">
           <span><i class="dot" style="background:#f2c12e"></i>seen this frame</span>
           <span><i class="dot hollow"></i>not seen: last seen spot, nothing guessed</span>
+          <span><i class="dot" style="opacity:.45"></i>faded, dotted ring = not trusted as a ball yet</span>
+          <span><i class="dot hollow" style="border-style:solid;border-color:var(--warn)"></i>in a pocket = pocket call (amber uncertain, green supported)</span>
           <span>near rail = camera side</span>
           <button id="steadyBtn" aria-pressed="true">Steady still balls</button>
         </div>
@@ -213,7 +216,13 @@ function drawTop() {
   g.clearRect(0, 0, w, h); g.fillStyle = css('--rail'); g.fillRect(0, 0, w, h); g.fillStyle = css('--felt'); g.fillRect(m, h - m - W * s, L * s, W * s);
   g.strokeStyle = css('--felt-line'); g.lineWidth = d; g.beginPath(); g.moveTo(X(L / 4), Y(0)); g.lineTo(X(L / 4), Y(W)); g.stroke();
   g.fillStyle = '#0b0f0d'; for (const [px, py] of [[0, 0], [L / 2, -0.6], [L, 0], [0, W], [L / 2, W + 0.6], [L, W]]) { g.beginPath(); g.arc(X(px), Y(py), 2.3 * s, 0, 7); g.fill(); }
-  const R = 1.125 * s;
+  const R = 1.125 * s, PK = [[0, 0], [L / 2, -0.6], [L, 0], [0, W], [L / 2, W + 0.6], [L, W]], inPk = {};
+  for (const e of REC.observed.events) if (e.kind === 'pocket' && e.t != null && e.t <= F / FPS + 1e-6 && e.pocket != null) {
+    const k = inPk[e.pocket] = (inPk[e.pocket] || 0) + 1, [qx, qy] = PK[e.pocket], ox = (k - 1) * 1.6 * R * (qx > L / 2 ? -1 : 1);
+    const cx = X(qx) + ox, cy = Y(qy);
+    g.save(); g.lineWidth = 3 * d; g.strokeStyle = css(e.status === 'supported' ? '--ok' : '--warn'); g.beginPath(); g.arc(cx, cy, R + 3 * d, 0, 7); g.stroke(); g.restore();
+    ballDot(g, cx, cy, R, e.ball, true, d);
+  }
   for (const t of REC.observed.tracks) {
     if (t.firstF > F) continue;
     let cur = null; for (const x of t.samples) { if (x[0] <= F) cur = x; else break; }
@@ -223,7 +232,10 @@ function drawTop() {
     // trail: seen samples in the last 0.7 s, as dots (never joined across a gap)
     g.fillStyle = 'rgba(255,255,255,0.35)';
     for (const x of t.samples) if (x[1] === 1 && x[0] < F && x[0] > F - 0.7 * FPS) { g.beginPath(); g.arc(X(x[2]), Y(x[3]), R * 0.25, 0, 7); g.fill(); }
-    if (!t.isBall) { g.fillStyle = 'rgba(200,210,204,0.5)'; g.beginPath(); g.arc(X(cur[2]), Y(cur[3]), R * 0.45, 0, 7); g.fill(); continue; }
+    if (!t.isBall) {   // a track the tracker never trusted as a ball: same name as on the video, drawn faded with a dotted ring
+      g.save(); g.globalAlpha = 0.45; ballDot(g, X(cur[2]), Y(cur[3]), R, n, true, d); g.restore();
+      g.save(); g.setLineDash([2 * d, 2 * d]); g.strokeStyle = '#ffffff'; g.lineWidth = 1.5 * d; g.beginPath(); g.arc(X(cur[2]), Y(cur[3]), R + 2 * d, 0, 7); g.stroke(); g.restore(); continue;
+    }
     // steady view (display only): a resting ball is drawn at the middle of its seen spots since it came to rest, so
     // the camera's small frame-to-frame wobble does not make still balls bob. The record keeps every raw spot.
     let px = cur[2], py = cur[3];
@@ -241,7 +253,8 @@ function drawOv() {
   for (const [px, py, rec, nb, tid] of fr) {
     const t = byId.get(tid), n = t ? nameAt(t, F) : null, x = px * sx, y = py * sy, r = 9 * sx;
     g.lineWidth = 2 * d; g.strokeStyle = t && n != null ? COL[n] === '#1a1a1a' ? '#ffffff' : COL[n] : '#9aa59e';
-    g.beginPath(); g.arc(x, y, r, 0, 7); g.stroke();
+    if (t && !t.isBall) g.setLineDash([3 * d, 3 * d]);
+    g.beginPath(); g.arc(x, y, r, 0, 7); g.stroke(); g.setLineDash([]);
     if (nb >= 0.5) { g.strokeStyle = '#ff4d40'; g.beginPath(); g.arc(x, y, r + 3 * d, 0, 7); g.stroke(); }
     if (t && n != null) { g.font = `600 ${Math.round(11 * d)}px ui-monospace, monospace`; g.fillStyle = '#ffffff'; g.fillText(n === 0 ? 'C' : n, x + r + 2 * d, y - r); }
   }

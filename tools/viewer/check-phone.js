@@ -12,8 +12,8 @@ const fs = require('fs'), path = require('path');
   for (const [w, h, scheme] of [[390, 844, 'light'], [390, 844, 'dark'], [1280, 900, 'light']]) {
     const p = await b.newPage({ viewport: { width: w, height: h }, colorScheme: scheme, deviceScaleFactor: 2 }); const errs = [];
     p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); }); p.on('pageerror', e => errs.push(e.message));
-    await p.goto(srv.url + '/check.html#clip016'); await p.waitForSelector('.ev'); 
-    await p.evaluate(() => { const s = document.getElementById('scrub'); s.value = 260; s.dispatchEvent(new Event('input')); });
+    await p.goto(srv.url + '/check.html#clip026'); await p.waitForSelector('.ev'); 
+    await p.evaluate(() => { const s = document.getElementById('scrub'); s.value = 330; s.dispatchEvent(new Event('input')); });
     await p.waitForTimeout(500);
     const over = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     await p.screenshot({ path: `${out}/v-${w}-${scheme}.png`, fullPage: w > 400 ? false : false });
