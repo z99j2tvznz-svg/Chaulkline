@@ -1,0 +1,6 @@
+{ "name": "1. Easy pot with poor shape vs harder pot with natural shape",
+  "ft": 9,
+  "balls": [[0, 63.9, 35.4], [1, 54.9, 44], [9, 28.2, 3.7]],
+  "expected": { "type": "pocket", "ball": 1, "pocket": 3,
+    "why": "The 1 goes in the top side pocket with a 9 degree cut (model make 12/12 on a plain stroke), but none of 12 plain strokes into the side leaves a green or amber shot on the 9 (best grade 0). Into the top-left corner it is a 45 degree cut (model make 11/12) and 2 plain strokes leave the 9 green. Expected: the top-left corner (pocket 3)." },
+  "found": "tools/runout-eval/find-layouts.js shape seed 32 (planner-free: plain ghost-ball strokes, V1 shotGrade, 12 seeded noisy repeats)" }

@@ -1,0 +1,6 @@
+{ "name": "4. Low-percentage pot vs safety",
+  "ft": 9,
+  "balls": [[0, 90, 10], [1, 2.5, 30], [9, 60, 45]],
+  "expected": { "type": "safety",
+    "why": "The 1 is frozen-ish on the left end rail; the only pocket (top-left corner) needs a 71 degree cut from 89 inches away. A competent player plays safe here; the planner should report the offensive option as low-percentage and recommend the safety." },
+  "found": "hand-made; checked with tools/runout-eval/probe.js (only pocket: top-left, cut 71, distance 89)" }
