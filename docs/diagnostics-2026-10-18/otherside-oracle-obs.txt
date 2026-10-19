@@ -1,0 +1,39 @@
+2026-10-17_1500_V2.3.3_otherside.json  (code 63e2ce6)  ORACLE-ASSISTED DIAGNOSTIC: obs
+                                              continuous    from checkpoints
+  real-shot clips                             9             9
+    correct automatically                     0             3
+    unresolved                                7             4
+    confidently wrong                         2             2
+  real shots missed                           1             1
+  false shots (all clips)                     1             1
+  phantom pockets (confirmed, not in)         0             0
+  made balls left unresolved                  6             6
+  made balls called on the table              0             0
+  state errors (memory confidently wrong)     0             0
+  observation: on table, not named            0             0
+  observation: named, but gone                0             0
+  clips with checkable inventory              12            12
+  racks                                       1             1
+    completed with no intervention            0             0
+    no confidently wrong result               0             0
+    unresolved items to settle                9             6
+  first ball hit (research only)              2/8           2/8
+  diagnostics (continuous; checkpoint where it differs)
+    shots: realShotEvents 9, found 8, missed 1, falseInNonShotClips 0, nonShotClips 4, extraInShotClips 1, minutes 2.2
+    final look still : clips 4, correct 0, unresolved 4, wrong 0  | checkpoint: clips 4, correct 2, unresolved 2, wrong 0
+    final look moving: clips 5, correct 0, unresolved 3, wrong 2  | checkpoint: clips 5, correct 1, unresolved 2, wrong 2
+    finder at the final look (inventory verified): looks 12, ballsOnTable 63, namedRight 37, notNamedRight 26, groupsSeen 50, unnamedGroups 3, wrongNumberGroups 10, undetectedAtLeast 13, extraGroupsAtLeast 0, namedButGone 0, namedButGoneRepeatedNextClip 0, goneLikelyMisread 0, goneLikelyStillMisread 0, goneLikelyMark 0, goneCannotTell 0
+    what-if pocket rule: calls 2, right 2, wrong 0, cannotTell 0
+  rack 1 shot001: correct automatically
+  rack 1 shot002: unresolved | open: 1 went in; left unresolved (not seen, nothing explains it)
+  rack 1 shot003: unresolved | open: 1 gone, left unconfirmed
+  rack 1 shot004: confidently wrong | wrong:  false shot | open: 3 went in; left unresolved (not seen; table not settled); 1 gone, left unconfirmed; 2 gone, left unconfirmed
+  rack 1 shot006: confidently wrong | wrong:  real shot not found at 5.1 s | open: 4 went in; left unresolved (not seen; table not settled); 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed
+  rack 1 shot007: unresolved | open: 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed
+  rack 1 shot008: unresolved | open: 5 went in; left unresolved (not seen; table not settled); 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed
+  rack 1 shot010: unresolved | open: 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed
+  rack 1 shot011: unresolved | open: 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed
+  rack 1 shot012: unresolved | open: 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed
+  rack 1 shot013: unresolved | open: 7 went in; left unresolved (not seen; table not settled); 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed; 6 gone, left unconfirmed
+  rack 1 shot014: unresolved | open: 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed; 6 gone, left unconfirmed; 7 gone, left unconfirmed; 8 gone, left unconfirmed
+  rack 1 shot015: unresolved | open: 9 went in; left unresolved (possibly pocketed: last seen heading to a pocket outside the mouth); 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed; 6 gone, left unconfirmed; 7 gone, left unconfirmed; 8 gone, left unconfirmed

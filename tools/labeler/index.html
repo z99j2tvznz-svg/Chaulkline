@@ -1,0 +1,380 @@
+<title>Chalkline Ball Labels</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one screen. Slim status strip, the picture stage (zoom and pan), then the tool tray for the picked ball. */
+:root {
+  --bg: #eef1ef; --panel: #ffffff; --ink: #17201c; --muted: #5b6862; --line: #d3dbd6;
+  --felt: #0f6b4f; --felt-ink: #ffffff; --guess: #e2a400; --checked: #12a36a; --warn: #c2410c; --sel: #2563eb;
+  --display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1513; --panel: #18211d; --ink: #e7eeea; --muted: #9aa8a1; --line: #2b3732;
+  --felt: #1c8a66; --felt-ink: #ffffff; --guess: #f5c02e; --checked: #34d399; --warn: #fb923c; --sel: #60a5fa; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1513; --panel: #18211d; --ink: #e7eeea; --muted: #9aa8a1; --line: #2b3732;
+  --felt: #1c8a66; --felt-ink: #ffffff; --guess: #f5c02e; --checked: #34d399; --warn: #fb923c; --sel: #60a5fa; color-scheme: dark }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; display: flex; flex-direction: column; overflow: hidden;
+  padding-left: max(0px, env(safe-area-inset-left, 0px)); padding-right: max(0px, env(safe-area-inset-right, 0px)); }
+.gut { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+button, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: 1px solid var(--line); background: var(--panel); border-radius: 8px; min-height: 40px; padding: 0 12px; touch-action: manipulation; }
+button:focus-visible, select:focus-visible { outline: 2px solid var(--sel); outline-offset: 2px; }
+button:disabled { opacity: .45; cursor: default; }
+header { background: var(--felt); color: var(--felt-ink); padding-block: 8px; display: flex; flex-direction: column; gap: 6px; }
+.row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
+.brand { font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: .04em; text-transform: uppercase; }
+.count { font-family: var(--mono); font-size: 13px; font-variant-numeric: tabular-nums; margin-left: auto; }
+.bar { height: 4px; background: rgba(255,255,255,.25); border-radius: 2px; overflow: hidden; }
+.bar > i { display: block; height: 100%; background: #fff; width: 0; }
+header button, header select { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.3); color: #fff; }
+header select { min-height: 40px; border-radius: 8px; border: 1px solid rgba(255,255,255,.3); padding: 0 8px; flex: 1 1 180px; min-width: 0; max-width: 100%; }
+header select option { color: #111; }
+.note { font-size: 13px; padding-block: 6px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.note.bad { color: var(--warn); }
+#stage { flex: 1 1 auto; position: relative; overflow: hidden; touch-action: none; background: #0b0f0d; min-height: 120px; }
+#world { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+#world img { display: block; max-width: none; user-select: none; -webkit-user-drag: none; pointer-events: none; }
+#world svg { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+.zoom { position: absolute; right: max(10px, env(safe-area-inset-right, 0px)); top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.zoom button { width: 40px; padding: 0; background: rgba(20,28,24,.75); color: #fff; border-color: rgba(255,255,255,.25); font-family: var(--mono); }
+.legend { position: absolute; left: max(10px, env(safe-area-inset-left, 0px)); top: 10px; font-size: 12px; color: #fff; background: rgba(20,28,24,.7); border-radius: 6px; padding: 4px 8px; display: flex; gap: 10px; }
+.legend b { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 2px solid; vertical-align: -1px; margin-right: 4px; }
+#tray { background: var(--panel); border-top: 1px solid var(--line); padding-block: 8px; display: flex; flex-direction: column; gap: 8px; max-height: 42vh; overflow-y: auto; }
+.hint { color: var(--muted); font-size: 14px; }
+.pad { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.pad button { padding: 0; min-height: 44px; font-family: var(--display); font-weight: 700; font-size: 20px; display: grid; place-items: center; }
+.ball { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; font-family: var(--display); font-weight: 700; position: relative; overflow: hidden; }
+.ball span { width: 17px; height: 17px; border-radius: 50%; background: #fff; color: #111; display: grid; place-items: center; font-size: 12px; line-height: 1; position: relative; z-index: 1; }
+.ball.stripe { background: #fff !important; }
+.ball.stripe::before { content: ""; position: absolute; inset: 7px 0; background: var(--c); }
+.pad button.on { outline: 3px solid var(--sel); outline-offset: -3px; }
+.tools { display: flex; flex-wrap: wrap; gap: 6px; }
+.tools button.on { background: var(--sel); color: #fff; border-color: var(--sel); }
+.primary { background: var(--felt); color: #fff; border-color: var(--felt); font-weight: 600; }
+.danger { color: var(--warn); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 13px; border-radius: 999px; padding: 3px 10px; border: 1px solid var(--line); color: var(--muted); }
+.chip.warn { border-color: var(--warn); color: var(--warn); }
+.chip.ok { border-color: var(--checked); color: var(--checked); }
+.confirm { border: 1px solid var(--warn); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.meta { font-family: var(--mono); font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.nav { display: flex; gap: 6px; }
+.nav button { flex: 1; }
+input[type=file] { display: none; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header class="gut">
+  <div class="row"><span class="brand">Ball labels</span><span class="count" id="count">loading…</span></div>
+  <div class="bar"><i id="bar"></i></div>
+  <div class="row">
+    <select id="pick" aria-label="Choose a picture"></select>
+    <button id="nextTodo" type="button">Next unfinished</button>
+  </div>
+</header>
+<div class="note gut" id="saveNote">Connecting to the project store…</div>
+<div id="stage" aria-label="Picture. Tap a circle to pick it; tap empty cloth to add a ball; drag to move around; pinch to zoom.">
+  <div id="world"><img id="img" alt=""><svg id="ov"></svg></div>
+  <div class="zoom"><button id="zin" type="button" aria-label="Zoom in">+</button><button id="zout" type="button" aria-label="Zoom out">−</button><button id="zfit" type="button" aria-label="Fit picture">fit</button></div>
+  <div class="legend"><span><b style="border-color:var(--guess)"></b>my guess</span><span><b style="border-color:var(--checked)"></b>checked by you</span></div>
+</div>
+<section id="tray" class="gut" aria-live="polite"></section>
+<input type="file" id="importFile" accept="application/json,.json">
+
+<script>
+// Ball colours for the number pad (standard set). 9 to 15 never appear in 9-ball.
+const BALLS = [
+  { n: 0, label: 'Cue', c: '#f4f1e6' }, { n: 1, c: '#f2c200' }, { n: 2, c: '#1d4ed8' }, { n: 3, c: '#d62828' }, { n: 4, c: '#6b2fa3' },
+  { n: 5, c: '#f2780c' }, { n: 6, c: '#11823b' }, { n: 7, c: '#7a1f1f' }, { n: 8, c: '#111111' }, { n: 9, c: '#f2c200', stripe: true },
+];
+const $ = id => document.getElementById(id);
+const store = { local: k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, put: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } } };
+
+let ITEMS = [], LABELS = {}, cur = -1, doc = null, sel = null, db = null, downloads = null, confirmAsk = null, dirty = false;
+let view = { s: 1, x: 0, y: 0 };
+
+// ---------- data ----------
+function freshDoc(it) {
+  return { image: it.img, session: it.session, file: it.file, w: it.w, h: it.h, status: 'not started', checkedBy: 'person',
+    balls: it.pre.map((p, i) => ({ id: 'p' + i, x: p.x, y: p.y, r: p.r, num: p.n ?? null, unknown: p.n == null, partial: false,
+      src: 'proposed', proposedNum: p.n ?? null, checked: false, moved: false, resized: false, renumbered: false })),
+    removed: [], updated: null };
+}
+function docFor(it) { return LABELS[it.id] ? JSON.parse(JSON.stringify(LABELS[it.id])) : freshDoc(it); }
+const statusOf = it => (LABELS[it.id] && LABELS[it.id].status) || 'not started';
+
+let writing = {}, queued = {};
+async function save(final) {
+  const it = ITEMS[cur]; if (!it || !doc) return;
+  if (doc.status !== 'done' || final) doc.status = final ? 'done' : 'in progress';
+  doc.updated = new Date().toISOString();
+  LABELS[it.id] = JSON.parse(JSON.stringify(doc)); store.put('label:' + it.id, LABELS[it.id]); dirty = false;
+  renderHead();
+  if (!db) { note('Saved on this phone only (the project store is not reachable). Use Export to keep a copy.', true); return; }
+  if (writing[it.id]) { queued[it.id] = LABELS[it.id]; return; }
+  writing[it.id] = true;
+  let data = LABELS[it.id];
+  try {
+    while (data) { await db.doc('labels/' + it.id).set(data); data = queued[it.id]; delete queued[it.id]; }
+    note('Saved to the project.');
+  } catch (e) { note('Could not save to the project (' + (e && e.code || 'error') + '). Your work is kept on this phone; try again or use Export.', true); }
+  writing[it.id] = false;
+}
+let saveTimer = null;
+function changed() { dirty = true; clearTimeout(saveTimer); saveTimer = setTimeout(() => save(false), 700); render(); }
+function note(t, bad) { const n = $('saveNote'); n.textContent = t; n.classList.toggle('bad', !!bad); }
+
+// ---------- checks (warnings, never blockers) ----------
+function warnings(d) {
+  const w = [], live = d.balls;
+  const byNum = {};
+  for (const b of live) if (!b.unknown && b.num != null) (byNum[b.num] = byNum[b.num] || []).push(b);
+  for (const [n, a] of Object.entries(byNum)) if (a.length > 1) w.push({ k: 'dup', ids: a.map(b => b.id), t: `${n == 0 ? 'Cue ball' : 'The ' + n} is marked ${a.length} times` });
+  for (let i = 0; i < live.length; i++) for (let j = i + 1; j < live.length; j++) {
+    const a = live[i], b = live[j]; if (Math.hypot(a.x - b.x, a.y - b.y) < 0.8 * Math.min(a.r, b.r)) w.push({ k: 'near', ids: [a.id, b.id], t: 'Two circles almost on top of each other' });
+  }
+  const rs = live.map(b => b.r).sort((a, b) => a - b), med = rs.length ? rs[Math.floor(rs.length / 2)] : 0;
+  if (live.length >= 3) for (const b of live) if (b.r > 1.6 * med || b.r < 0.6 * med) w.push({ k: 'size', ids: [b.id], t: `A circle is much ${b.r > med ? 'bigger' : 'smaller'} than the others` });
+  for (const b of live) if (b.x < 0 || b.y < 0 || b.x > d.w || b.y > d.h) w.push({ k: 'out', ids: [b.id], t: 'A circle is outside the picture' });
+  return w;
+}
+const unchecked = d => d.balls.filter(b => !b.checked);
+
+// ---------- view ----------
+function fit(mode) {
+  const st = $('stage').getBoundingClientRect(), it = ITEMS[cur]; if (!it) return;
+  const sw = st.width / it.w, sh = st.height / it.h;
+  // wide table crops: fill the height so balls are big enough to tap; full frames: show it all
+  view.s = mode === 'all' ? Math.min(sw, sh) : it.kind === 'crop' ? Math.max(Math.min(sh, sw * 3), Math.min(sw, sh)) : Math.min(sw, sh);
+  view.x = (st.width - it.w * view.s) / 2; view.y = (st.height - it.h * view.s) / 2;
+  clampView(); applyView();
+}
+function clampView() {
+  const st = $('stage').getBoundingClientRect(), it = ITEMS[cur], W = it.w * view.s, H = it.h * view.s;
+  view.x = W <= st.width ? (st.width - W) / 2 : Math.min(40, Math.max(st.width - W - 40, view.x));
+  view.y = H <= st.height ? (st.height - H) / 2 : Math.min(40, Math.max(st.height - H - 40, view.y));
+}
+function applyView() { $('world').style.transform = `translate(${view.x}px,${view.y}px) scale(${view.s})`; drawOverlay(); }
+function zoomAt(f, cx, cy) {
+  const st = $('stage').getBoundingClientRect(); cx = cx ?? st.width / 2; cy = cy ?? st.height / 2;
+  const ns = Math.min(12, Math.max(0.1, view.s * f)); view.x = cx - (cx - view.x) * ns / view.s; view.y = cy - (cy - view.y) * ns / view.s; view.s = ns; clampView(); applyView();
+}
+
+// ---------- drawing ----------
+function drawOverlay() {
+  const it = ITEMS[cur], ov = $('ov'); if (!it || !doc) { ov.innerHTML = ''; return; }
+  ov.setAttribute('width', it.w); ov.setAttribute('height', it.h); ov.setAttribute('viewBox', `0 0 ${it.w} ${it.h}`);
+  const k = 1 / view.s, warnIds = new Set(warnings(doc).flatMap(w => w.ids));
+  let s = '';
+  for (const b of doc.balls) {
+    const col = b.checked ? 'var(--checked)' : 'var(--guess)', isSel = sel === b.id;
+    const lab = b.unknown ? '?' : b.num == 0 ? 'C' : b.num;
+    s += `<circle cx="${b.x}" cy="${b.y}" r="${b.r}" fill="none" stroke="${isSel ? 'var(--sel)' : col}" stroke-width="${(isSel ? 3 : 2) * k}" ${b.checked ? '' : `stroke-dasharray="${4 * k} ${3 * k}"`}/>`;
+    if (warnIds.has(b.id)) s += `<circle cx="${b.x}" cy="${b.y}" r="${b.r + 4 * k}" fill="none" stroke="var(--warn)" stroke-width="${1.5 * k}"/>`;
+    if (b.inPocket) s += `<circle cx="${b.x}" cy="${b.y}" r="${b.r * 0.35}" fill="${col}"/>`;
+    if (b.partial) s += `<line x1="${b.x - b.r}" y1="${b.y + b.r}" x2="${b.x + b.r}" y2="${b.y - b.r}" stroke="${col}" stroke-width="${1.5 * k}"/>`;
+    const fs = 13 * k, tx = b.x + b.r + 2 * k, ty = b.y - b.r;
+    s += `<rect x="${tx}" y="${ty - fs}" width="${(String(lab).length * 0.65 + 0.5) * fs}" height="${fs * 1.2}" rx="${3 * k}" fill="${isSel ? 'var(--sel)' : col}"/>`;
+    s += `<text x="${tx + 0.25 * fs}" y="${ty}" font-size="${fs}" font-family="JetBrains Mono, monospace" fill="#111">${lab}</text>`;
+  }
+  ov.innerHTML = s;
+}
+
+function ballChip(b) {
+  const B = BALLS.find(x => x.n === b.n);
+  return `<span class="ball ${B.stripe ? 'stripe' : ''}" style="background:${B.c};--c:${B.c}"><span>${B.label ? 'C' : B.n}</span></span>`;
+}
+
+function renderHead() {
+  const done = ITEMS.filter(it => statusOf(it) === 'done').length;
+  $('count').textContent = `${done} of ${ITEMS.length} done`;
+  $('bar').style.width = (100 * done / Math.max(1, ITEMS.length)) + '%';
+  const p = $('pick'), mark = st => st === 'done' ? '✓' : st === 'in progress' ? '…' : '·';
+  p.innerHTML = ITEMS.map((it, i) => `<option value="${i}">${mark(statusOf(it))} ${i + 1}. ${it.session.slice(5, 10)} ${it.file.replace(/\.(jpg|mp4)$/, '')}${it.kind === 'frame' ? ' (full frame)' : ''}</option>`).join('');
+  p.value = String(cur);
+}
+
+function render() {
+  drawOverlay();
+  const t = $('tray'); if (!doc) { t.innerHTML = ''; return; }
+  const it = ITEMS[cur], ws = warnings(doc), un = unchecked(doc), b = doc.balls.find(x => x.id === sel);
+  let h = '';
+  if (b) {
+    h += `<div class="row"><strong>${b.src === 'added' ? 'Ball you added' : b.checked ? 'Checked ball' : 'My guess: ' + (b.proposedNum == null ? 'no number' : b.proposedNum == 0 ? 'cue ball' : 'the ' + b.proposedNum)}</strong><span class="hint">Tap its number. Drag the circle to move it.</span></div>`;
+    h += `<div class="pad">${BALLS.map(B => `<button type="button" data-num="${B.n}" class="${!b.unknown && b.num === B.n ? 'on' : ''}" aria-label="${B.label || 'Ball ' + B.n}">${ballChip({ n: B.n })}</button>`).join('')}
+      <button type="button" data-num="unknown" class="${b.unknown ? 'on' : ''}" aria-label="Can't tell the number">?</button>
+      <button type="button" data-act="ok" ${b.checked ? 'disabled' : ''} aria-label="Correct as shown">✓</button></div>`;
+    h += `<div class="tools"><button type="button" data-act="partial" class="${b.partial ? 'on' : ''}">Partly hidden</button><button type="button" data-act="pocket" class="${b.inPocket ? 'on' : ''}">In a pocket</button>
+      <button type="button" data-act="smaller" aria-label="Smaller circle">Smaller</button><button type="button" data-act="bigger" aria-label="Bigger circle">Bigger</button>
+      <button type="button" data-act="delete" class="danger">Not a ball</button><button type="button" data-act="deselect">Done with this ball</button></div>`;
+  } else {
+    h += `<div class="hint">${doc.balls.length ? 'Tap a circle to check it. Tap empty cloth to add a ball I missed.' : (it.kind === 'frame' ? 'No guesses on this full frame. Tap the centre of every ball on the table.' : 'No guesses here. Tap the centre of every ball.')} Pinch or use + and − to zoom.</div>`;
+  }
+  h += `<div class="chips"><span class="chip">${doc.balls.length} ball${doc.balls.length === 1 ? '' : 's'}</span><span class="chip ${un.length ? '' : 'ok'}">${un.length ? un.length + ' not checked yet' : 'all checked'}</span>${doc.removed.length ? `<span class="chip">${doc.removed.length} removed</span>` : ''}${ws.map(w => `<span class="chip warn">${w.t}</span>`).join('')}<span class="chip ${doc.status === 'done' ? 'ok' : ''}">${doc.status}</span></div>`;
+  if (confirmAsk) {
+    h += `<div class="confirm" role="group" aria-label="Finish this picture">${confirmAsk.map(x => `<div>${x}</div>`).join('')}
+      <div class="row"><button type="button" class="primary" data-act="finishYes">Yes, the whole picture is checked</button><button type="button" data-act="finishNo">Go back</button></div></div>`;
+  } else {
+    h += `<div class="nav"><button type="button" data-act="prev" ${cur === 0 ? 'disabled' : ''}>Previous</button><button type="button" class="primary" data-act="finish">${doc.status === 'done' ? 'Finished ✓ (next)' : 'Picture finished'}</button><button type="button" data-act="next" ${cur === ITEMS.length - 1 ? 'disabled' : ''}>Skip</button></div>`;
+  }
+  h += `<div class="row"><button type="button" data-act="export">Export all labels</button><button type="button" data-act="import">Import</button><button type="button" data-act="reset" class="danger">Start this picture over</button></div>`;
+  h += `<div class="meta">${it.session} · ${it.file}${it.kind === 'crop' ? ' · table crop' : ' · full frame'}${it.table ? ' · ' + it.table : ''} · ${it.w}×${it.h}px</div>`;
+  t.innerHTML = h;
+}
+
+// ---------- picture switching ----------
+function open(i) {
+  if (dirty) save(false);
+  cur = Math.max(0, Math.min(ITEMS.length - 1, i)); sel = null; confirmAsk = null;
+  const it = ITEMS[cur]; doc = docFor(it);
+  const img = $('img'); img.onload = () => fit(); img.src = it.img; img.width = it.w; img.height = it.h;
+  renderHead(); render(); fit();
+  store.put('labeler:cur', cur);
+}
+const nextTodo = from => { for (let k = 1; k <= ITEMS.length; k++) { const i = (from + k) % ITEMS.length; if (statusOf(ITEMS[i]) !== 'done') return i; } return -1; };
+
+// ---------- tray actions ----------
+$('tray').addEventListener('click', e => {
+  const btn = e.target.closest('button'); if (!btn) return;
+  const b = doc && doc.balls.find(x => x.id === sel), act = btn.dataset.act, num = btn.dataset.num;
+  if (num != null && b) {
+    if (num === 'unknown') { b.unknown = true; b.num = null; } else { b.unknown = false; b.num = +num; }
+    b.renumbered = b.src === 'proposed' && (b.unknown || b.num !== b.proposedNum); b.checked = true; changed(); return;
+  }
+  switch (act) {
+    case 'ok': if (b) { b.checked = true; changed(); } break;
+    case 'partial': if (b) { b.partial = !b.partial; b.checked = true; changed(); } break;
+    case 'pocket': if (b) { b.inPocket = !b.inPocket; b.checked = true; changed(); } break;
+    case 'smaller': case 'bigger': if (b) { b.r = Math.max(2, +(b.r * (act === 'bigger' ? 1.12 : 1 / 1.12)).toFixed(1)); b.resized = true; b.checked = true; changed(); } break;
+    case 'delete': if (b) { doc.balls = doc.balls.filter(x => x !== b); if (b.src === 'proposed') doc.removed.push({ x: b.x, y: b.y, r: b.r, proposedNum: b.proposedNum }); sel = null; changed(); } break;
+    case 'deselect': sel = null; render(); break;
+    case 'prev': open(cur - 1); break;
+    case 'next': open(cur + 1); break;
+    case 'finish': {
+      if (doc.status === 'done' && !dirty) { const n = nextTodo(cur); open(n < 0 ? cur : n); break; }
+      const un = unchecked(doc), ws = warnings(doc), ask = [];
+      if (un.length) ask.push(`${un.length} of my guesses ${un.length === 1 ? 'was' : 'were'} not checked one by one (dashed yellow). Finishing marks them correct as shown.`);
+      for (const w of ws) ask.push('Check: ' + w.t + '.');
+      if (doc.balls.length < 2) ask.push(`Only ${doc.balls.length} ball${doc.balls.length === 1 ? '' : 's'} marked. Is that everything on the table?`);
+      ask.push('Have you looked over the whole picture, including far balls and balls near pockets?');
+      confirmAsk = ask; sel = null; render(); break;
+    }
+    case 'finishNo': confirmAsk = null; render(); break;
+    case 'finishYes': {
+      for (const x of unchecked(doc)) { x.checked = true; x.bulk = true; }
+      doc.warningsSeen = warnings(doc).map(w => w.t); confirmAsk = null;
+      save(true).then(() => { const n = nextTodo(cur); if (n >= 0) open(n); else { render(); note('All pictures are finished. Thank you!'); } });
+      break;
+    }
+    case 'reset': doc = freshDoc(ITEMS[cur]); sel = null; confirmAsk = null; changed(); break;
+    case 'export': exportAll(); break;
+    case 'import': $('importFile').click(); break;
+  }
+});
+
+// ---------- stage gestures: tap to pick or add, drag to pan or move, pinch to zoom ----------
+const pts = new Map(); let gest = null;
+const toImg = (cx, cy) => { const r = $('stage').getBoundingClientRect(); return { x: (cx - r.left - view.x) / view.s, y: (cy - r.top - view.y) / view.s }; };
+function hit(p) {
+  let best = null, bd = Infinity;
+  for (const b of doc.balls) { const d = Math.hypot(b.x - p.x, b.y - p.y); if (d < Math.max(b.r * 1.35, 16 / view.s) && d < bd) { bd = d; best = b; } }
+  return best;
+}
+$('stage').addEventListener('pointerdown', e => {
+  if (e.target.closest('.zoom')) return;
+  $('stage').setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pts.size === 2) { const [a, b] = [...pts.values()]; gest = { kind: 'pinch', d: Math.hypot(a.x - b.x, a.y - b.y), s: view.s, vx: view.x, vy: view.y, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2 }; return; }
+  if (!doc) return;
+  const p = toImg(e.clientX, e.clientY), h = hit(p);
+  gest = { kind: h && h.id === sel ? 'move' : 'pan', sx: e.clientX, sy: e.clientY, vx: view.x, vy: view.y, ball: h, moved: false, bx: h && h.x, by: h && h.y };
+});
+$('stage').addEventListener('pointermove', e => {
+  if (!pts.has(e.pointerId)) return; pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (!gest) return;
+  if (gest.kind === 'pinch' && pts.size >= 2) {
+    const [a, b] = [...pts.values()], d = Math.hypot(a.x - b.x, a.y - b.y), r = $('stage').getBoundingClientRect();
+    const ns = Math.min(12, Math.max(0.1, gest.s * d / gest.d)), mx = gest.mx - r.left, my = gest.my - r.top;
+    view.x = mx - (mx - gest.vx) * ns / gest.s + ((a.x + b.x) / 2 - gest.mx); view.y = my - (my - gest.vy) * ns / gest.s + ((a.y + b.y) / 2 - gest.my); view.s = ns; clampView(); applyView(); return;
+  }
+  const dx = e.clientX - gest.sx, dy = e.clientY - gest.sy;
+  if (!gest.moved && Math.hypot(dx, dy) < 7) return; gest.moved = true;
+  if (gest.kind === 'move') { const b = gest.ball; b.x = +(gest.bx + dx / view.s).toFixed(1); b.y = +(gest.by + dy / view.s).toFixed(1); drawOverlay(); }
+  else if (gest.kind === 'pan') { view.x = gest.vx + dx; view.y = gest.vy + dy; clampView(); applyView(); }
+});
+function endPointer(e) {
+  if (!pts.has(e.pointerId)) return; pts.delete(e.pointerId);
+  if (!gest) return;
+  if (gest.kind === 'pinch') { if (pts.size === 0) gest = null; return; }
+  const g = gest; gest = null;
+  if (g.kind === 'move' && g.moved) { g.ball.moved = true; g.ball.checked = true; changed(); return; }
+  if (g.moved || e.type === 'pointercancel') return;
+  // a tap
+  const p = toImg(e.clientX, e.clientY), h = hit(p);
+  confirmAsk = null;
+  if (h) { sel = h.id; render(); return; }
+  if (sel) { sel = null; render(); return; }
+  const rs = doc.balls.map(b => b.r).sort((a, b) => a - b);
+  const r = rs.length ? rs[Math.floor(rs.length / 2)] : ITEMS[cur].kind === 'frame' ? 9 : Math.max(6, ITEMS[cur].h / 24);
+  const nb = { id: 'a' + Date.now().toString(36), x: +p.x.toFixed(1), y: +p.y.toFixed(1), r, num: null, unknown: true, partial: false, src: 'added', proposedNum: null, checked: true, moved: false, resized: false, renumbered: false };
+  doc.balls.push(nb); sel = nb.id; changed();
+}
+$('stage').addEventListener('pointerup', endPointer); $('stage').addEventListener('pointercancel', endPointer);
+$('stage').addEventListener('wheel', e => { e.preventDefault(); const r = $('stage').getBoundingClientRect(); zoomAt(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX - r.left, e.clientY - r.top); }, { passive: false });
+$('zin').onclick = () => zoomAt(1.4); $('zout').onclick = () => zoomAt(1 / 1.4); $('zfit').onclick = () => fit('all');
+$('pick').onchange = e => open(+e.target.value);
+$('nextTodo').onclick = () => { const n = nextTodo(cur); if (n >= 0) open(n); else note('Every picture is finished.'); };
+document.addEventListener('visibilitychange', () => { if (document.hidden && dirty) save(false); });
+addEventListener('resize', () => { if (ITEMS[cur]) { clampView(); applyView(); } });
+
+// ---------- export / import ----------
+function exportData() {
+  return { set: 'label-set-v1', exported: new Date().toISOString(), about: 'Ball labels. x, y, r in picture pixels; box = [left, top, width, height]. num: 0 = cue ball, 1 to 9; unknown = number not readable. src: proposed (the app guessed it) or added (the reviewer added it); checked: the reviewer checked it (bulk = accepted when finishing the picture). removed = app guesses the reviewer deleted.',
+    pictures: ITEMS.map(it => { const d = LABELS[it.id]; return { id: it.id, image: it.img, session: it.session, file: it.file, side: it.side, kind: it.kind, w: it.w, h: it.h, status: d ? d.status : 'not started',
+      balls: d ? d.balls.map(b => ({ ...b, box: [+(b.x - b.r).toFixed(1), +(b.y - b.r).toFixed(1), +(2 * b.r).toFixed(1), +(2 * b.r).toFixed(1)] })) : [], removed: d ? d.removed : [], updated: d ? d.updated : null }; }) };
+}
+async function exportAll() {
+  const text = JSON.stringify(exportData(), null, 1), name = `ball-labels-${new Date().toISOString().slice(0, 10)}.json`;
+  if (!downloads) { note('This viewer cannot save files. Your labels are still saved to the project.', true); return; }
+  try { await downloads.save({ filename: name, data: text }); note('Exported ' + name + '.'); } catch (e) { note('Export did not finish (' + (e && e.code || 'cancelled') + ').', true); }
+}
+$('importFile').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try {
+    const j = JSON.parse(await f.text()); let n = 0;
+    for (const p of j.pictures || []) {
+      const it = ITEMS.find(x => x.id === p.id); if (!it || p.status === 'not started') continue;
+      const mine = LABELS[it.id]; if (mine && mine.updated && p.updated && mine.updated > p.updated) continue; // keep newer work
+      LABELS[it.id] = { image: it.img, session: it.session, file: it.file, w: it.w, h: it.h, status: p.status, checkedBy: 'person', balls: p.balls.map(({ box, ...b }) => b), removed: p.removed || [], updated: p.updated };
+      store.put('label:' + it.id, LABELS[it.id]); if (db) await db.doc('labels/' + it.id).set(LABELS[it.id]); n++;
+    }
+    note(`Imported ${n} picture${n === 1 ? '' : 's'} (newer work already here was kept).`); open(cur);
+  } catch (err) { note('That file could not be read as an export from this page.', true); }
+};
+
+// ---------- start ----------
+(async () => {
+  const r = await fetch('data.json'); ITEMS = (await r.json()).items;
+  for (const it of ITEMS) { const l = store.local('label:' + it.id); if (l) LABELS[it.id] = l; }
+  const last = store.local('labeler:cur'); open(Number.isInteger(last) ? last : Math.max(0, nextTodo(-1)));
+  if (window.claude && window.claude.use) {
+    window.claude.use('downloads').then(d => { downloads = d; });
+    db = await window.claude.use('db');
+  }
+  if (!db) { note('Saving on this phone only right now. Use Export to keep a copy.', true); return; }
+  note('Connected. Each change saves to the project.');
+  db.collection('labels').onSnapshot(snap => {
+    for (const d of snap.docs) {
+      const v = d.data(), mine = LABELS[d.id];
+      if (!mine || !mine.updated || (v.updated && v.updated >= mine.updated)) { LABELS[d.id] = v; store.put('label:' + d.id, v); }
+      else if (mine.updated > (v.updated || '')) db.doc('labels/' + d.id).set(mine).catch(() => { }); // phone has newer work: push it up
+    }
+    renderHead();
+    const it = ITEMS[cur]; if (it && !dirty && !sel && LABELS[it.id]) { doc = docFor(it); render(); }
+  }, err => note('Lost the connection to the project store (' + (err && err.code) + '). Work is kept on this phone.', true));
+})();
+</script>
