@@ -27,6 +27,10 @@ const argv = process.argv.slice(2), fpsIx = argv.indexOf('--fps'), FPS = fpsIx >
 const qIx = argv.indexOf('--quad'), START_QUAD = qIx >= 0 ? argv.splice(qIx, 2)[1] : null;
 const dIx = argv.indexOf('--detector'), DETECTOR = dIx >= 0 ? argv.splice(dIx, 2)[1] : null;
 const REJECTED = argv.includes('--rejected'); if (REJECTED) argv.splice(argv.indexOf('--rejected'), 1);
+// --outline-check (experiment, off by default): when the table finder is unsure on a clip's first frame, try it on
+// later frames and on the last confident outline, check each against the clip's own detector boxes, and say in the
+// output how sure the outline is (see pickOutline below)
+const OUTLINE_CHECK = argv.includes('--outline-check'); if (OUTLINE_CHECK) argv.splice(argv.indexOf('--outline-check'), 1);
 const sIx = argv.indexOf('--sections'), SECTIONS = sIx >= 0 ? argv.splice(sIx, 2)[1].split(',') : null;
 const [SESSION, OUT, ...only] = argv;
 if (!SESSION || !OUT) { console.error('usage: node tools/clip-detect.js <session folder> <out folder> [--fps 30] [shotNNN ...]'); process.exit(2); }
@@ -52,7 +56,7 @@ async function main() {
       for (const b of f.balls) PTS.push({ x: b.x, y: b.y, fx: b.px / sc + f.crop[0], fy: b.py / sc + f.crop[1] });
     }
   }
-  let QN = START_QUAD ? JSON.parse(START_QUAD) : log.quadN, QN_FIT = null;
+  let QN = START_QUAD ? JSON.parse(START_QUAD) : log.quadN, QN_FIT = null, QN_SURE = null;
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'clipframes-'));
   const srv = await serve(ROOT, tmp);
   const browser = await chromium.launch();
@@ -71,7 +75,7 @@ async function main() {
       BOXES = JSON.parse(fs.readFileSync(path.join(tmp, clip + '-boxes.json'), 'utf8'));
       if (BOXES.length !== n) throw new Error('detector gave ' + BOXES.length + ' frames for ' + n);
     }
-    const frames = await page.evaluate(async ({ clip, n, FPS, QN, FT, PTS, AUTO, BOXES, REJECTED }) => {
+    const frames = await page.evaluate(async ({ clip, n, FPS, QN, FT, PTS, AUTO, BOXES, REJECTED, OUTLINE_CHECK, QN_SURE }) => {
       const C = __chalk, S = C.S, res = [];
       const full = document.createElement('canvas'); full.width = 1280; full.height = 720;
       const g = full.getContext('2d', { willReadFrequently: true });
@@ -119,16 +123,57 @@ async function main() {
         console.log('fitted outline', JSON.stringify(q.map(p => p.map(v => +v.toFixed(4)))), 'median error px', best.toFixed(1));
         window.__fit = { q, err: best };
       }
-      for (let i = 1; i <= n; i++) {
+      async function draw(i) {
         const img = new Image(); img.src = `/data/${clip}/${String(i).padStart(5, '0')}.jpg`;
         await img.decode();
         g.drawImage(img, 0, 0); wg.drawImage(full, 0, 0, 800, 450);
+      }
+      // --outline-check: a confident first-frame outline (4 of 4 corner pockets, conf 0.95+) is used as is. Otherwise
+      // the finder also looks at 5 later frames (a player may hide part of the table at the start), and the last
+      // confident outline of an earlier clip is a candidate too (the phone may not have moved). Each candidate is
+      // checked against the clip's own detector boxes: how many map onto the cloth and how many map well off it. A
+      // confident candidate wins; else the one that puts the most boxes on the cloth without letting in more boxes from
+      // far off the table, and the outline is marked uncertain. Never silently accepted: the choice is in the output.
+      async function pickOutline(a0, i0) {
+        const vn = q => q.map(C.vnFromSrc), sure = a => a.quad && a.conf >= 0.95 && a.corners === 4;
+        const cands = [{ from: 'finder frame 1', a: a0 }];
+        if (!sure(a0)) {
+          for (const f of [0.2, 0.4, 0.6, 0.8, 1].map(x => Math.max(2, Math.round(x * n)))) { await draw(f); cands.push({ from: 'finder frame ' + f, a: autoCalibrate(imgData(), FT) }); }
+          await draw(i0);
+          if (QN_SURE) cands.push({ from: 'last confident outline', a: { quad: QN_SURE.map(q => C.srcFromVn(q, S.vr)), conf: null, corners: null } });
+        }
+        const sample = BOXES ? BOXES.filter((_, k) => k % 10 === 0) : [];
+        const check = c => {
+          if (!c.a.quad || (c.a.conf != null && c.a.conf < 0.6)) return null;
+          setQuad(c.a.quad, c.a.rot); const cam = S.cam, P = S.P, R = P.R, k = 1280 / 800; let on = 0, off = 0;
+          for (const list of sample) for (const [cx, cy, , conf] of list) {
+            if (conf < 0.5) continue;
+            const t = cam.unproj(cx / k, cy / k, R), out = Math.max(-t[0], t[0] - P.L, -t[1], t[1] - P.W);
+            if (out <= 0) on++; else if (out > 10) off++;
+          }
+          return { on, off };
+        };
+        for (const c of cands) c.score = check(c);
+        const ok = cands.filter(c => c.score), conf = ok.filter(c => sure(c.a));
+        let pick, status;
+        if (conf.length) { pick = conf.sort((x, y) => y.a.conf - x.a.conf || y.score.on - x.score.on)[0]; status = 'confident'; }
+        else if (ok.length) {
+          const minOff = Math.min(...ok.map(c => c.score.off));
+          pick = ok.filter(c => c.score.off <= minOff + 2).sort((x, y) => y.score.on - x.score.on)[0]; status = 'uncertain';
+        } else throw new Error('table not found in ' + clip);
+        setQuad(pick.a.quad, pick.a.rot);
+        window.__auto.outline = { status, from: pick.from, conf: pick.a.conf, corners: pick.a.corners, boxesOnCloth: pick.score.on, boxesFarOff: pick.score.off,
+          candidates: cands.map(c => ({ from: c.from, conf: c.a.conf != null ? +c.a.conf.toFixed(2) : null, corners: c.a.corners, ...(c.score || { rejected: true }), q: c.a.quad ? vn(c.a.quad).map(p => p.map(v => +v.toFixed(3))) : null })) };
+      }
+      for (let i = 1; i <= n; i++) {
+        await draw(i);
         if (!cloth) {
           if (AUTO) {
             // recorder clip: the app's own automatic table finder on the first frame; keep the last good outline when unsure
             const a = autoCalibrate(imgData(), FT);
             window.__auto = { conf: a.conf, corners: a.corners, tips: a.tips };
-            if (a.quad && a.conf >= 0.6) { setQuad(a.quad, a.rot); window.__auto.q = S.quad.map(C.vnFromSrc); }
+            if (OUTLINE_CHECK) { await pickOutline(a, i); window.__auto.q = S.quad.map(C.vnFromSrc); }
+            else if (a.quad && a.conf >= 0.6) { setQuad(a.quad, a.rot); window.__auto.q = S.quad.map(C.vnFromSrc); }
             else if (QN) setQuad(QN.map(q => C.srcFromVn(q, S.vr)));
             else throw new Error('table not found on the first frame of ' + clip + ' (conf ' + a.conf.toFixed(2) + ')');
           } else {
@@ -153,16 +198,22 @@ async function main() {
       }
       window.__rejOut = rejOut;
       return res;
-    }, { clip, n, FPS, QN, FT: log.ft, PTS, AUTO: REC && !START_QUAD, BOXES, REJECTED });
+    }, { clip, n, FPS, QN, FT: log.ft, PTS, AUTO: REC && !START_QUAD, BOXES, REJECTED, OUTLINE_CHECK, QN_SURE });
     if (REJECTED) fs.writeFileSync(path.join(OUT, clip + '-rejected.json'), JSON.stringify(await page.evaluate(() => window.__rejOut)));
     const det = BOXES ? await page.evaluate(() => window.__det) : null;
+    let OUTLINE = null;
     if (REC && !START_QUAD) {
       const a = await page.evaluate(() => window.__auto);
       if (a.q) QN = a.q;
       console.log(`${clip}: table finder conf ${a.conf.toFixed(2)}, ${a.corners} of 4 corner pockets${a.q ? '' : ', kept the previous outline'}`);
+      if (OUTLINE_CHECK) {
+        OUTLINE = a.outline; if (a.outline.status === 'confident') QN_SURE = a.q;
+        console.log(`${clip}: outline ${a.outline.status}, from ${a.outline.from}, ${a.outline.boxesOnCloth} boxes on the cloth, ${a.outline.boxesFarOff} far off`);
+      }
     }
     if (!QN_FIT) { QN_FIT = await page.evaluate(() => window.__fit && window.__fit.q); if (QN_FIT) { QN = QN_FIT; PTS = []; console.log('outline', JSON.stringify(QN), 'error px', (await page.evaluate(() => window.__fit.err)).toFixed(1)); } }
-    fs.writeFileSync(path.join(OUT, clip + '.json'), JSON.stringify(det ? { fps: FPS, table: [78, 39], quadN: QN, finder: 'detector-v1', det, frames } : { fps: FPS, table: [78, 39], quadN: QN, frames }));
+    const extra = OUTLINE ? { outline: OUTLINE } : {};
+    fs.writeFileSync(path.join(OUT, clip + '.json'), JSON.stringify(det ? { fps: FPS, table: [78, 39], quadN: QN, finder: 'detector-v1', det, ...extra, frames } : { fps: FPS, table: [78, 39], quadN: QN, ...extra, frames }));
     fs.rmSync(dir, { recursive: true });
     console.log(`${clip}: ${n} frames, ${((Date.now() - t0) / n).toFixed(0)} ms/frame`);
   }

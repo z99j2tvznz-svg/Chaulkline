@@ -32,6 +32,8 @@ function score(dir, truth, opts) {
   return { correct: t.correctAutomatically, unresolved: t.unresolved, confidentlyWrong: t.confidentlyWrong, madeLeftUnresolved: t.madeLeftUnresolved,
     phantomPockets: t.phantomPockets, madeCalledOnTable: t.madeCalledOnTable, stateErrors: t.stateErrors, falseShots: t.falseShots, realShotsMissed: t.realShotsMissed, correctionsNeeded: t.correctionsNeeded };
 }
+module.exports = { trackMeasures, score };
+if (require.main === module) {
 const argv = process.argv.slice(2), oi = argv.indexOf('--out'), OUT = oi >= 0 ? argv.splice(oi, 2)[1] : null;
 const opts = JSON.parse(argv[0]), res = [];
 for (const pair of argv.slice(1)) {
@@ -42,3 +44,4 @@ for (const pair of argv.slice(1)) {
   console.log(name + ': ' + (keys.length ? keys.map(k => `${k} ${row.baseline[k]} -> ${row.experiment[k]}`).join(', ') : 'no change'));
 }
 if (OUT) fs.writeFileSync(OUT, JSON.stringify({ options: opts, sessions: res }, null, 1));
+}
