@@ -108,6 +108,7 @@ dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 
           <span><i class="dot" style="background:#f2c12e"></i>seen this frame</span>
           <span><i class="dot hollow"></i>not seen: last seen spot, nothing guessed</span>
           <span>near rail = camera side</span>
+          <button id="steadyBtn" aria-pressed="true">Steady still balls</button>
         </div>
       </div>
     </div>
@@ -129,7 +130,7 @@ const TXT = n => (n === 0 || n === 1 || n === 9 || n === 5) ? '#18211c' : '#ffff
 const $ = id => document.getElementById(id), css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const vid = $('vid'), ov = $('ov'), top = $('top'), scrub = $('scrub');
 const KIND = { 'shot start': 'Shot starts', 'first hit': 'First ball hit', 'pocket': 'Pocket call', 'vanished': 'Ball vanished', 'pocket call withdrawn': 'Pocket call withdrawn', 'not a shot': 'Not a shot' };
-let IX = null, D = null, REC = null, FPS = 30, NF = 0, F = 0, showOv = true, speeds = [1, 0.5, 0.25], si = 0, nameAt = null;
+let IX = null, D = null, REC = null, FPS = 30, NF = 0, F = 0, showOv = true, steady = true, speeds = [1, 0.5, 0.25], si = 0, nameAt = null;
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const chip = s => `<span class="chip ${s === 'not analysed' ? 'na' : s}">${esc(s)}</span>`;
 const ballName = n => n == null ? 'unnamed' : n === 0 ? 'cue ball' : 'the ' + n;
@@ -223,7 +224,14 @@ function drawTop() {
     g.fillStyle = 'rgba(255,255,255,0.35)';
     for (const x of t.samples) if (x[1] === 1 && x[0] < F && x[0] > F - 0.7 * FPS) { g.beginPath(); g.arc(X(x[2]), Y(x[3]), R * 0.25, 0, 7); g.fill(); }
     if (!t.isBall) { g.fillStyle = 'rgba(200,210,204,0.5)'; g.beginPath(); g.arc(X(cur[2]), Y(cur[3]), R * 0.45, 0, 7); g.fill(); continue; }
-    ballDot(g, X(cur[2]), Y(cur[3]), R, n, cur[1] === 1, d);
+    // steady view (display only): a resting ball is drawn at the middle of its seen spots since it came to rest, so
+    // the camera's small frame-to-frame wobble does not make still balls bob. The record keeps every raw spot.
+    let px = cur[2], py = cur[3];
+    if (steady && REC.observed.states[cur[5]] === 'resting') {
+      const run = []; for (let i = t.samples.indexOf(cur); i >= 0 && REC.observed.states[t.samples[i][5]] === 'resting' && run.length < 30; i--) if (t.samples[i][1] === 1) run.push(t.samples[i]);
+      if (run.length) { const med = a => a.slice().sort((u, v) => u - v)[a.length >> 1]; px = med(run.map(x => x[2])); py = med(run.map(x => x[3])); }
+    }
+    ballDot(g, X(px), Y(py), R, n, cur[1] === 1, d);
   }
 }
 function drawOv() {
@@ -254,6 +262,7 @@ scrub.addEventListener('input', () => { if (!vid.paused) vid.pause(); seek(+scru
 $('play').addEventListener('click', () => vid.paused ? vid.play().catch(() => {}) : vid.pause());
 $('back').addEventListener('click', () => { vid.pause(); seek(F - 1); }); $('fwd').addEventListener('click', () => { vid.pause(); seek(F + 1); });
 $('speed').addEventListener('click', () => { si = (si + 1) % speeds.length; vid.playbackRate = speeds[si]; $('speed').textContent = 'Speed ' + speeds[si] + '×'; });
+$('steadyBtn').addEventListener('click', () => { steady = !steady; $('steadyBtn').setAttribute('aria-pressed', steady); draw(); });
 $('ovBtn').addEventListener('click', () => { showOv = !showOv; $('ovBtn').setAttribute('aria-pressed', showOv); draw(); });
 addEventListener('resize', draw);
 load();
