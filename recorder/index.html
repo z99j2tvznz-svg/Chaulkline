@@ -51,7 +51,7 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 // short clip per step (video, sound, motion sensor, camera settings) and the player's tap answers, and saves them as
 // zip files that each stay under the 30 MB upload limit. It does no tracking. Section contents and the reasons behind
 // them: chalkline-data/plans/test-recorder-sections.md in the project files.
-const VERSION = 'R0.4';
+const VERSION = 'R0.5';
 const MB = 1048576, PART_LIMIT = 25 * MB, CLIP_MAX = 29 * MB;
 const $ = s => document.querySelector(s);
 const panel = $('#panel'), view = $('#view');
@@ -154,7 +154,7 @@ const EVENING = [
     { id: 'eMiss', ...SHOT, text: 'Shoot the 2 at a pocket and miss on purpose: hit it, but make sure it stays out.' },
     { id: 'eNear', ...SHOT, text: 'Hit the 3 softly toward a pocket so it stops just short of the pocket without going in.' },
     { id: 'eMulti', ...SHOT, text: 'Hit the white firmly into a group, so at least three balls move.' },
-    { id: 'play', kind: 'play', cd: 6, dur: 20, ask: 'shot', text: 'Don\'t reset anything. Tap Record, then shoot the lowest ball. Do at least 3 shots in a row, then tap Finish playing.' }] },
+    { id: 'play', kind: 'play', cd: 6, dur: 20, ask: 'shot', text: 'One shot per recording. Shoot the lowest ball from wherever the balls lie, then answer. Do this 3 times without resetting the balls (re-rack only if the table is empty), then tap Finish playing.' }] },
 ];
 
 // ---------- state (kept in this phone's storage, so a reload loses nothing) ----------
