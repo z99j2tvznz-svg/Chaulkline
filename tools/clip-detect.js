@@ -12,6 +12,12 @@
 // no table outline, so the outline comes from --quad '<4 corners, 0..1 of the frame>' if given, otherwise the app's
 // own automatic table finder on each clip's first frame (falling back to the last good outline when it is unsure).
 // --sections rest,hands,shots picks which recorder sections to run. Redone clips are skipped.
+//
+// --detector <detector-v1 best.pt> (the v0.4 baseline): the balls come from the trained one-class detector
+// (tools/detector/detect-frames.py, frozen settings) instead of the app's ball finder. Everything after finding is the
+// same: the same outline, the same number reader on each spot, the same output. Only the table-coordinate rules the
+// old finder applies to every spot it reports are kept (not in a pocket opening, centre not on a cushion line); see
+// docs/baseline-v0.4.md.
 const fs = require('node:fs'), path = require('node:path'), os = require('node:os'), { execFileSync } = require('node:child_process');
 const { chromium } = require('playwright');
 const { serve } = require('../tests/lib/serve.js');
@@ -19,6 +25,7 @@ const { serve } = require('../tests/lib/serve.js');
 const ROOT = path.join(__dirname, '..');
 const argv = process.argv.slice(2), fpsIx = argv.indexOf('--fps'), FPS = fpsIx >= 0 ? +argv.splice(fpsIx, 2)[1] : 30;
 const qIx = argv.indexOf('--quad'), START_QUAD = qIx >= 0 ? argv.splice(qIx, 2)[1] : null;
+const dIx = argv.indexOf('--detector'), DETECTOR = dIx >= 0 ? argv.splice(dIx, 2)[1] : null;
 const sIx = argv.indexOf('--sections'), SECTIONS = sIx >= 0 ? argv.splice(sIx, 2)[1].split(',') : null;
 const [SESSION, OUT, ...only] = argv;
 if (!SESSION || !OUT) { console.error('usage: node tools/clip-detect.js <session folder> <out folder> [--fps 30] [shotNNN ...]'); process.exit(2); }
@@ -57,7 +64,13 @@ async function main() {
     const dir = path.join(tmp, clip); fs.mkdirSync(dir);
     execFileSync('ffmpeg', ['-v', 'error', '-i', path.join(SESSION, clip + '.mp4'), '-vf', `fps=${FPS},scale=1280:720`, '-q:v', '3', path.join(dir, '%05d.jpg')]);
     const n = fs.readdirSync(dir).length, t0 = Date.now();
-    const frames = await page.evaluate(async ({ clip, n, FPS, QN, FT, PTS, AUTO }) => {
+    let BOXES = null;
+    if (DETECTOR) {
+      execFileSync('python3', [path.join(__dirname, 'detector', 'detect-frames.py'), DETECTOR, dir, path.join(tmp, clip + '-boxes.json')], { stdio: ['ignore', 'ignore', 'inherit'] });
+      BOXES = JSON.parse(fs.readFileSync(path.join(tmp, clip + '-boxes.json'), 'utf8'));
+      if (BOXES.length !== n) throw new Error('detector gave ' + BOXES.length + ' frames for ' + n);
+    }
+    const frames = await page.evaluate(async ({ clip, n, FPS, QN, FT, PTS, AUTO, BOXES }) => {
       const C = __chalk, S = C.S, res = [];
       const full = document.createElement('canvas'); full.width = 1280; full.height = 720;
       const g = full.getContext('2d', { willReadFrequently: true });
@@ -66,6 +79,21 @@ async function main() {
       S.live = false; S.src = work; S.W = 800; S.H = 450; S.vr = { x: 0, y: 0, w: 1280, h: 720, vw: 1280, vh: 720, z: 1 };
       S.ft = FT; S.P = C.mkP(); S.lens = 0.86; S.camZoom = 1; S.recSrc = { c: full, k: 1280 / 800 };
       let cloth = null;
+      window.__det = { boxes: 0, kept: 0, pocket: 0, cushion: 0 };
+      // v0.4: detector boxes (1280x720 frame pixels) as finder spots, through the same camera model as detectBalls
+      function fromBoxes(list) {
+        const cam = S.cam, P = S.P, R = P.R, k = 1280 / 800, out = [], D = window.__det;
+        for (const [cx, cy, , conf] of list) {
+          D.boxes++;
+          const px = cx / k, py = cy / k, t = cam.unproj(px, py, R), rpx = cam.ballRad(t[0], t[1], R, R);
+          const dpk = Math.min(...P.pockets.map(pk => Math.hypot(t[0] - pk.x, t[1] - pk.y) / pk.r));
+          if (dpk < 0.75) { D.pocket++; continue; }
+          if (t[0] < 0.6 * R || t[0] > P.L - 0.6 * R || t[1] < 0.6 * R || t[1] > P.W - 0.6 * R) { D.cushion++; continue; }
+          D.kept++;
+          out.push({ px, py, rpx, conf, x: Math.min(P.L - R, Math.max(R, t[0])), y: Math.min(P.W - R, Math.max(R, t[1])) });
+        }
+        return out;
+      }
       // The saved outline can be in another orientation than the clips (the phone was turned when the log was
       // written). The app's own saved ball spots know where the table is, so move the outline corners until the
       // camera model puts those spots back where they were seen.
@@ -108,22 +136,25 @@ async function main() {
           }
           cloth = sampleCloth(imgData(), S.quad) || S.cloth; S.cloth = cloth;
         }
-        const found = detectBalls(imgData(), S.cam, S.P, cloth, {});
+        const found = BOXES ? fromBoxes(BOXES[i - 1]) : detectBalls(imgData(), S.cam, S.P, cloth, {});
         C.recogFound(found);
         res.push({ t: +((i - 1) / FPS).toFixed(3), balls: found.map(b => {
           const top = b.rec ? recogTop(b.rec) : null;
-          return { x: +b.x.toFixed(2), y: +b.y.toFixed(2), rec: top, p: top != null ? +b.rec[top].toFixed(2) : null, nb: b.rec ? +b.rec[RECOG_NB].toFixed(2) : null };
+          const o = { x: +b.x.toFixed(2), y: +b.y.toFixed(2), rec: top, p: top != null ? +b.rec[top].toFixed(2) : null, nb: b.rec ? +b.rec[RECOG_NB].toFixed(2) : null };
+          if (BOXES) { o.c = b.conf; o.px = +(b.px * 1.6).toFixed(1); o.py = +(b.py * 1.6).toFixed(1); }
+          return o;
         }) });
       }
       return res;
-    }, { clip, n, FPS, QN, FT: log.ft, PTS, AUTO: REC && !START_QUAD });
+    }, { clip, n, FPS, QN, FT: log.ft, PTS, AUTO: REC && !START_QUAD, BOXES });
+    const det = BOXES ? await page.evaluate(() => window.__det) : null;
     if (REC && !START_QUAD) {
       const a = await page.evaluate(() => window.__auto);
       if (a.q) QN = a.q;
       console.log(`${clip}: table finder conf ${a.conf.toFixed(2)}, ${a.corners} of 4 corner pockets${a.q ? '' : ', kept the previous outline'}`);
     }
     if (!QN_FIT) { QN_FIT = await page.evaluate(() => window.__fit && window.__fit.q); if (QN_FIT) { QN = QN_FIT; PTS = []; console.log('outline', JSON.stringify(QN), 'error px', (await page.evaluate(() => window.__fit.err)).toFixed(1)); } }
-    fs.writeFileSync(path.join(OUT, clip + '.json'), JSON.stringify({ fps: FPS, table: [78, 39], quadN: QN, frames }));
+    fs.writeFileSync(path.join(OUT, clip + '.json'), JSON.stringify(det ? { fps: FPS, table: [78, 39], quadN: QN, finder: 'detector-v1', det, frames } : { fps: FPS, table: [78, 39], quadN: QN, frames }));
     fs.rmSync(dir, { recursive: true });
     console.log(`${clip}: ${n} frames, ${((Date.now() - t0) / n).toFixed(0)} ms/frame`);
   }
