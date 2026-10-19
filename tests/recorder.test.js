@@ -62,3 +62,44 @@ test('recorder records clips, asks the shot question, and saves a valid zip unde
     assert.deepStrictEqual(errors, []);
   } finally { await browser.close(); srv.close(); }
 });
+
+test('evening check: still clip, a missed shot answered None, consecutive play shots, all tagged with the session kind', async () => {
+  const srv = await serve(ROOT);
+  const browser = await chromium.launch({ args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--autoplay-policy=no-user-gesture-required'] });
+  try {
+    const ctx = await browser.newContext({ viewport: { width: 956, height: 440 }, permissions: ['camera', 'microphone'], acceptDownloads: true });
+    const page = await ctx.newPage(), errors = [];
+    page.on('pageerror', e => errors.push(String(e)));
+    await page.goto(srv.url + '/recorder/index.html');
+    await page.waitForFunction(() => window.__rec);
+    await page.evaluate(() => window.__rec.setSpeed(0.05));
+    assert.strictEqual(await page.inputValue('#fShort'), '2', 'the evening check is the default');
+    await page.click('#go');
+    await page.waitForSelector('#recBtn');
+    assert.match(await page.textContent('#panel'), /Evening check/);
+    assert.strictEqual(await page.evaluate(() => window.__rec.steps()[0].steps.length), 7);
+    await page.click('#recBtn'); // balls at rest
+    await page.waitForFunction(() => window.__rec.S.step === 1, null, { timeout: 15000 });
+    await page.click('#skipBtn'); // hand over a ball
+    await page.click('#skipBtn'); // easy pocket
+    await page.click('#recBtn'); // missed shot
+    await page.waitForSelector('.balls', { timeout: 15000 });
+    await page.click('#none'); await page.click('#offN'); await page.click('#done');
+    await page.click('#skipBtn'); await page.click('#skipBtn'); // near-pocket, several balls
+    for (let i = 0; i < 2; i++) {
+      await page.waitForSelector('#recBtn'); await page.click('#recBtn');
+      await page.waitForSelector('.balls', { timeout: 15000 });
+      await page.click('[data-b="' + (3 + i) + '"]'); await page.click('#offN'); await page.click('#done');
+    }
+    await page.click('#endPlay');
+    await page.waitForSelector('#last');
+    const [dl] = await Promise.all([page.waitForEvent('download'), (async () => { await page.click('#last'); await page.click('#share'); })()]);
+    const zipPath = path.join(os.tmpdir(), 'rec-evening.zip'); await dl.saveAs(zipPath);
+    const meta = JSON.parse(execFileSync('python3', ['-c', 'import zipfile,sys; print(zipfile.ZipFile(sys.argv[1]).read("meta.json").decode())', zipPath]).toString());
+    assert.strictEqual(meta.setup.evening, true);
+    assert.deepStrictEqual(meta.clips.map(c => [c.sec, c.step]), [['evening', 'eRest'], ['evening', 'eMiss'], ['evening', 'play1'], ['evening', 'play2']]);
+    assert.deepStrictEqual(meta.clips[1].answers, { in: [], offTable: false });
+    assert.deepStrictEqual(meta.clips[3].answers, { in: [4], offTable: false });
+    assert.deepStrictEqual(errors, []);
+  } finally { await browser.close(); srv.close(); }
+});

@@ -51,7 +51,7 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 // short clip per step (video, sound, motion sensor, camera settings) and the player's tap answers, and saves them as
 // zip files that each stay under the 30 MB upload limit. It does no tracking. Section contents and the reasons behind
 // them: chalkline-data/plans/test-recorder-sections.md in the project files.
-const VERSION = 'R0.3';
+const VERSION = 'R0.4';
 const MB = 1048576, PART_LIMIT = 25 * MB, CLIP_MAX = 29 * MB;
 const $ = s => document.querySelector(s);
 const panel = $('#panel'), view = $('#view');
@@ -73,7 +73,8 @@ function moved(base, moves, extra = {}) { return { ...extra, balls: base.balls.m
 const SPREAD = { balls: SPREAD16.map((at, i) => ({ b: i, at })) };
 const CLUSTER = moved(SPREAD, { 1: [3.6, 2.3], 2: [3.8, 2.3], 3: [3.7, 2.47], 4: [3.7, 2.13], 5: [4, 2.3] });
 const FROZEN = moved(CLUSTER, { 6: [2.5, 0.1], 7: [6, 3.9], 8: [7.9, 2] });
-const LAYOUT = { spread16: SPREAD, cluster5: CLUSTER, frozen3: FROZEN, jaws: moved(FROZEN, { 9: [7.82, 3.82] }, { pocket: 'F' }) };
+const EVE = { balls: SPREAD16.slice(0, 10).map((at, i) => ({ b: i, at })) };
+const LAYOUT = { spread10: EVE, spread16: SPREAD, cluster5: CLUSTER, frozen3: FROZEN, jaws: moved(FROZEN, { 9: [7.82, 3.82] }, { pocket: 'F' }) };
 
 // ---------- the sections (see test-recorder-sections.md) ----------
 // kind: camtest | clip | measure | play | note. ask: 'shot' asks which balls went in and whether any left the table.
@@ -142,6 +143,18 @@ const SECTIONS = [
     { id: 'break15b', ...SHOT, dur: 20, text: 'Rack all 15 balls again. Break.' }] },
   { id: 'play', title: 'Play', intro: 'Play one or two racks of 9-ball under pro rules, normally. Tap Record before each shot.', steps: [
     { id: 'play', kind: 'play', cd: 6, dur: 20, ask: 'shot', text: 'Tap Record, then take your shot.' }] },
+];
+// The evening check: a short session to repeat most evenings (about 10 to 15 minutes). The balls are set up once; each
+// shot is played from wherever they lie, so nothing has to be set up exactly.
+const EVENING = [
+  { id: 'evening', title: 'Evening check', intro: 'About 10 to 15 minutes. Set the balls up once, then play each step from wherever they lie. After each shot, tap which balls went in.', steps: [
+    { id: 'eRest', ...STILL, layout: 'spread10', text: 'Place the white and the 1 to 9 roughly like the picture, none touching. Step away.' },
+    { id: 'eHide', ...HAND, text: 'Hold your hand flat over the 5 for about 3 seconds without touching it, then take it away and step back.' },
+    { id: 'ePocket', ...SHOT, text: 'An easy shot: pocket the 1 in any pocket.' },
+    { id: 'eMiss', ...SHOT, text: 'Shoot the 2 at a pocket and miss on purpose: hit it, but make sure it stays out.' },
+    { id: 'eNear', ...SHOT, text: 'Hit the 3 softly toward a pocket so it stops just short of the pocket without going in.' },
+    { id: 'eMulti', ...SHOT, text: 'Hit the white firmly into a group, so at least three balls move.' },
+    { id: 'play', kind: 'play', cd: 6, dur: 20, ask: 'shot', text: 'Don\'t reset anything. Tap Record, then shoot the lowest ball. Do at least 3 shots in a row, then tap Finish playing.' }] },
 ];
 
 // ---------- state (kept in this phone's storage, so a reload loses nothing) ----------
@@ -329,7 +342,7 @@ function meterUpd() {
 }
 function setWhere(t) { $('#where').textContent = t; }
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-function steps() { return S.setup && S.setup.short ? SECTIONS.map(s => ({ ...s, steps: s.steps.filter(x => x.short) })).filter(s => s.steps.length) : SECTIONS; }
+function steps() { if (S.setup && S.setup.evening) return EVENING; return S.setup && S.setup.short ? SECTIONS.map(s => ({ ...s, steps: s.steps.filter(x => x.short) })).filter(s => s.steps.length) : SECTIONS; }
 function cur() { const secs = steps(), sec = secs[S.sec]; return sec ? { sec, step: sec.steps[S.step], secs } : null; }
 
 const BALL_COL = ['#f4f4f0', '#f2c230', '#2456c9', '#d23a2c', '#6d3aa8', '#f07f23', '#1f8a4c', '#8a1f2a', '#111'];
@@ -369,10 +382,10 @@ function showSetup() {
     '<label>Where is the phone?</label><select id="fSpot">' + opt(['low side', 'high side', 'corner', 'end rail'], st.spot) + '</select>' +
     '<label>Lighting right now</label><select id="fLight">' + opt(LIGHTS, st.light) + '</select>' +
     '<label>Place</label><select id="fPlace">' + opt(['home', 'pool hall'], st.place) + '</select>' +
-    '<label>Session</label><select id="fShort"><option value="0">Full session (about an hour)</option><option value="1"' + (st.short ? ' selected' : '') + '>Short version for another spot (about 20 minutes)</option></select>' +
+    '<label>Session</label><select id="fShort"><option value="2"' + (st.evening || !st.phone ? ' selected' : '') + '>Evening check (10 to 15 minutes)</option><option value="0"' + (st.phone && !st.short && !st.evening ? ' selected' : '') + '>Full session (about an hour)</option><option value="1"' + (st.short ? ' selected' : '') + '>Short version for another spot (about 20 minutes)</option></select>' +
     '<div class="row"><button class="primary big" id="go">Start</button></div><p class="muted">It will ask for the camera, the microphone and the motion sensor. Please allow all three.</p>';
   $('#go').onclick = async () => {
-    S.setup = { phone: $('#fPhone').value.trim(), table: $('#fTable').value, spot: $('#fSpot').value, light: $('#fLight').value, place: $('#fPlace').value, short: $('#fShort').value === '1' };
+    S.setup = { phone: $('#fPhone').value.trim(), table: $('#fTable').value, spot: $('#fSpot').value, light: $('#fLight').value, place: $('#fPlace').value, short: $('#fShort').value === '1', evening: $('#fShort').value === '2' };
     const d = new Date(), p = n => String(n).padStart(2, '0');
     S.sessId = d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
     Object.assign(S, { sec: 0, step: 0, playN: 0, part: 1, clipN: 0, partBytes: 0, pending: [] }); save();
@@ -510,7 +523,7 @@ $('#ver').textContent = VERSION;
 load(); meterUpd();
 if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder)) panel.innerHTML = '<h2>This browser can\'t record</h2><p>Open this page in Safari on the iPhone, from its https address.</p>';
 else if (S.setup && S.sessId) showResume(); else showSetup();
-window.__rec = { S, SECTIONS, save, LAYOUT, steps, packPart, partSaved, setSpeed: v => { SPEED = v; }, layoutSvg, makeZip };
+window.__rec = { S, SECTIONS, EVENING, save, LAYOUT, steps, packPart, partSaved, setSpeed: v => { SPEED = v; }, layoutSvg, makeZip };
 </script>
 </body>
 </html>
