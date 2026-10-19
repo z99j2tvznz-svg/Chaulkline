@@ -1,6 +1,6 @@
 # Chalkline product specification (permanent; written Oct 19, 2026)
 
-Read this before any design decision. It records the whole product, so that narrowing work to tracking for a while never loses the rest. The original vision and decisions are in `DESIGN NOTES.md` (top half); the rebuild order is in `chalkline-data/plans/rebuild-decisions.md`.
+Read this before any design decision. Interfaces, physics audit and the runout planner: `ARCHITECTURE.md`. It records the whole product, so that narrowing work to tracking for a while never loses the rest. The original vision and decisions are in `DESIGN NOTES.md` (top half); the rebuild order is in `chalkline-data/plans/rebuild-decisions.md`.
 
 ## What Chalkline is
 
