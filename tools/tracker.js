@@ -29,6 +29,15 @@ const TRACK_DEFAULTS = {
   pockets: null,      // pocket mouths in table inches, when the outline is known to be off
   inJaws: 1.5,        // in: a ball that stops this close to a pocket mouth is in the pocket (seen sitting in it)
   railBand: null,     // [ymin, ymax]: spots outside this band are on the rails (hands, legs, cushion), except at a pocket mouth
+  // experiment (off by default, so the frozen baselines are unchanged): a ball lost while rolling is looked for along
+  // its predicted path for coastTime s, and keeps its identity if a spot turns up there. 'line': straight on, slowing
+  // by coastDecel; 'cushion': the same, bouncing off the cushions (restitution coastBounce)
+  coast: null,
+  coastTime: 0.5,     // s a lost rolling ball is followed along its predicted path
+  coastGate: 3.0,     // in around the predicted spot, plus coastGateK per in/s of speed
+  coastGateK: 0.05,
+  coastDecel: 5,      // in/s^2 rolling slow-down
+  coastBounce: 0.7,   // share of the speed into a cushion that comes back out
 };
 
 function makeTracker(table, opts = {}) {
@@ -89,6 +98,19 @@ function makeTracker(table, opts = {}) {
     });
     far.sort((a, b) => a[0] - b[0]);
     for (const [, tr, j] of far) { if (matched.has(tr) || dets[j].used) continue; matched.add(tr); dets[j].used = true; see(tr, dets[j]); }
+    // experiment: balls lost while rolling, looked for where they should be now
+    if (O.coast) for (const tr of tracks) if (tr.coast && (tr.state === 'hidden' || tr.state === 'lostAtPocket')) {
+      const c = tr.coast, dtc = t - c.t0;
+      if (dtc > O.coastTime) { tr.coast = null; continue; }
+      const [qx, qy, qs] = predict(c, dtc), g = O.coastGate + O.coastGateK * qs, id = ident(tr);
+      let bj = -1, bd = g;
+      dets.forEach((d, j) => {
+        if (d.used) return;
+        // never take a spot the reader is sure is another ball
+        if (id != null && d.rec != null && d.rec !== id && d.nb != null && d.nb < 0.5 && d.p >= 0.8) return;
+        const dd = Math.hypot(d.x - qx, d.y - qy); if (dd < bd) { bd = dd; bj = j; } });
+      if (bj >= 0) { dets[bj].used = true; matched.add(tr); tr.coast = null; tr.vx = c.vx; tr.vy = c.vy; tr.state = 'moving'; tr.coasted = (tr.coasted || 0) + 1; see(tr, dets[bj]); }
+    }
     for (const tr of tracks) if (tr.state === 'hidden' || tr.state === 'lostAtPocket') {
       let bj = -1, bd = O.hiddenGate;
       dets.forEach((d, j) => { if (!d.used) { const dd = Math.hypot(d.x - tr.x, d.y - tr.y); if (dd < bd) { bd = dd; bj = j; } } });
@@ -147,8 +169,22 @@ function makeTracker(table, opts = {}) {
       return (d < O.pocketDist && (d < 1.5 || cos > 0.4)) || (d < O.pocketReach && cos > 0.95 && sp > 10 && ident(tr) !== 0);
     });
   }
+  // where a ball lost while rolling should be dt s later (straight on, slowing; with 'cushion' also bouncing)
+  function predict(c, dt) {
+    let x = c.x, y = c.y, vx = c.vx, vy = c.vy; const R = O.ballR, n = Math.max(1, Math.ceil(dt / 0.01)), h = dt / n;
+    for (let i = 0; i < n; i++) {
+      const sp = Math.hypot(vx, vy); if (sp < 0.5) break;
+      const k = Math.max(0, sp - O.coastDecel * h) / sp; vx *= k; vy *= k; x += vx * h; y += vy * h;
+      if (O.coast === 'cushion') {
+        if (x < R) { x = 2 * R - x; vx = -vx * O.coastBounce; } else if (x > L - R) { x = 2 * (L - R) - x; vx = -vx * O.coastBounce; }
+        if (y < R) { y = 2 * R - y; vy = -vy * O.coastBounce; } else if (y > W - R) { y = 2 * (W - R) - y; vy = -vy * O.coastBounce; }
+      }
+    }
+    return [x, y, Math.hypot(vx, vy)];
+  }
   function lose(tr) {
     if (!tr.real) { tr.state = 'gone'; return; }
+    if (O.coast && tr.state === 'moving' && Math.hypot(tr.vx, tr.vy) > O.moveSpeed) tr.coast = { t0: tr.t, x: tr.x, y: tr.y, vx: tr.vx, vy: tr.vy };
     const px = tr.x + tr.vx * 0.05, py = tr.y + tr.vy * 0.05;
     if (ballness(tr) >= O.minVotes && tr.lastMoving != null && t - tr.lastMoving < 0.6 && travelled(tr, tr.movedAt - 0.3) >= 1.5 && headingIn(tr)) { tr.state = 'lostAtPocket'; tr.lostAt = t; }
     else tr.state = 'hidden';

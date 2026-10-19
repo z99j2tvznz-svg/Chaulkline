@@ -18,6 +18,7 @@ const { observe, reconcile, newMemory, BALLS } = require('./reconcile.js');
 
 const argv = process.argv.slice(2), VERBOSE = argv.includes('--v');
 const oIx = argv.indexOf('--out'), OUT = oIx >= 0 ? argv.splice(oIx, 2)[1] : null;
+const kIx = argv.indexOf('--track'), TRACK_OPTS = kIx >= 0 ? JSON.parse(argv.splice(kIx, 2)[1]) : {}; // tracker experiment options
 const qIx = argv.indexOf('--oracle'), ORACLE = qIx >= 0 ? argv.splice(qIx, 2)[1] : null, DIAG = argv.includes('--diag');
 if (ORACLE && !['obs', 'pockets', 'both'].includes(ORACLE)) throw new Error('--oracle obs|pockets|both');
 const O_OBS = ORACLE === 'obs' || ORACLE === 'both', O_POCK = ORACLE === 'pockets' || ORACLE === 'both';
@@ -34,7 +35,7 @@ function runClip(clip, T) {
   const f = path.join(DET, clip + '.json'); if (!fs.existsSync(f)) return null;
   const d = JSON.parse(fs.readFileSync(f, 'utf8'));
   const frames = T.settleEnd != null ? d.frames.filter(fr => fr.t <= T.settleEnd) : d.frames;
-  const tr = makeTracker(d.table), movingAt = [];
+  const tr = makeTracker(d.table, TRACK_OPTS), movingAt = [];
   for (const fr of frames) { tr.step(fr); movingAt.push(tr.moving()); }
   const r = tr.finish(), end = frames[frames.length - 1].t;
   const shotT = r.shots.length ? r.shots[0].t : null;
