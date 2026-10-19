@@ -42,23 +42,45 @@ const TRACK_DEFAULTS = {
   // matched detection or none, identity votes over time, the evidence behind pocket calls. Read-only: it never
   // changes a decision (tests/record.test.js checks that on every session).
   trace: false,
+  // experiment (off by default, so the frozen baselines are unchanged): only one ball on the table can be the cue ball,
+  // for game play (drills may use another ball as the cue ball: the scorer turns it on per clip with oneCue: 'play').
+  // When several tracks read as the cue ball, one keeps the name and the others are left unnamed: never renamed to
+  // another number on weak evidence. After a scratch, only a ball placed afterwards can become the cue ball.
+  oneCue: false,
 };
 
 function makeTracker(table, opts = {}) {
   const O = { ...TRACK_DEFAULTS, ...opts }, [L, W] = table;
   const pockets = O.pockets || [[0, 0], [L / 2, -0.6], [L, 0], [0, W], [L / 2, W + 0.6], [L, W]];
   const nearPocket = (x, y) => pockets.some(p => Math.hypot(x - p[0], y - p[1]) < O.pocketDist);
-  let nextId = 1, tracks = [], t = 0, stillSince = 0, shot = null;
+  let nextId = 1, tracks = [], t = 0, stillSince = 0, shot = null, cueHolder = null, cueLostAt = null;
   const shots = [], events = [];
   const TR = O.trace ? { frames: 0, tracks: new Map(), pocketEvidence: [], undone: [], now: null } : null;
   const trk = tr => { let e = TR.tracks.get(tr.id); if (!e) TR.tracks.set(tr.id, e = { tr, id: null, idChanges: [], samples: [] }); return e; };
   const mark = (tr, j, how) => { if (TR) TR.now.set(tr.id, [j, how]); };
 
-  function ident(tr) {
+  function rawIdent(tr) {
     // the number this ball has been recognised as most, counting only confident looks
     let best = null, bv = 0;
     tr.votes.forEach((v, i) => { if (v > bv) { bv = v; best = i; } });
     return bv >= 2 ? best : null;
+  }
+  function ident(tr) {
+    const id = rawIdent(tr);
+    if (!O.oneCue || id !== 0 || tr.state === 'pocketed') return id;
+    // one cue ball: one track holds the name. It keeps it while it is still on the table; another track that reads as
+    // the cue ball takes it over only with clearly more evidence: it started a shot as the struck ball and the holder
+    // never did, or it has half as many cue-ball votes again (so two balls read alike do not swap the name every frame)
+    const ok = o => o && o.real && o.state !== 'pocketed' && o.state !== 'gone' && rawIdent(o) === 0;
+    const struck = o => shots.some(s => s.cue === o.id), h = tracks.find(o => o.id === cueHolder);
+    if (!ok(h)) {
+      // the holder left the table. After a scratch (pocketed, or lost at a pocket) no ball already on the table takes
+      // the name, only one put down after it (ball in hand): until then there is no cue ball rather than a wrong one
+      if (h && cueLostAt == null) cueLostAt = h.state === 'pocketed' ? Math.min(h.lostAt ?? h.t, h.t) : -1;   // when it was last seen
+      if (cueLostAt != null && cueLostAt >= 0 && tr.born <= cueLostAt) return null;
+      cueHolder = tr.id; cueLostAt = null;
+    } else if (h !== tr && ((struck(tr) && !struck(h)) || (struck(tr) === struck(h) && tr.votes[0] > 1.5 * h.votes[0] + 5))) cueHolder = tr.id;
+    return cueHolder === tr.id ? 0 : null;
   }
   function cueTrack() {
     let best = null, bv = 1.5;

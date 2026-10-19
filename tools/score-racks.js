@@ -35,7 +35,9 @@ function runClip(clip, T) {
   const f = path.join(DET, clip + '.json'); if (!fs.existsSync(f)) return null;
   const d = JSON.parse(fs.readFileSync(f, 'utf8'));
   const frames = T.settleEnd != null ? d.frames.filter(fr => fr.t <= T.settleEnd) : d.frames;
-  const tr = makeTracker(d.table, TRACK_OPTS), movingAt = [];
+  // experiment option oneCue: 'play' applies the one-cue-ball rule only to game play: rack sessions (no step) and play steps
+  const opts = TRACK_OPTS.oneCue === 'play' ? { ...TRACK_OPTS, oneCue: !T.step || /^play/.test(T.step) } : TRACK_OPTS;
+  const tr = makeTracker(d.table, opts), movingAt = [];
   for (const fr of frames) { tr.step(fr); movingAt.push(tr.moving()); }
   const r = tr.finish(), end = frames[frames.length - 1].t;
   const shotT = r.shots.length ? r.shots[0].t : null;

@@ -26,6 +26,7 @@ const ROOT = path.join(__dirname, '..');
 const argv = process.argv.slice(2), fpsIx = argv.indexOf('--fps'), FPS = fpsIx >= 0 ? +argv.splice(fpsIx, 2)[1] : 30;
 const qIx = argv.indexOf('--quad'), START_QUAD = qIx >= 0 ? argv.splice(qIx, 2)[1] : null;
 const dIx = argv.indexOf('--detector'), DETECTOR = dIx >= 0 ? argv.splice(dIx, 2)[1] : null;
+const REJECTED = argv.includes('--rejected'); if (REJECTED) argv.splice(argv.indexOf('--rejected'), 1);
 const sIx = argv.indexOf('--sections'), SECTIONS = sIx >= 0 ? argv.splice(sIx, 2)[1].split(',') : null;
 const [SESSION, OUT, ...only] = argv;
 if (!SESSION || !OUT) { console.error('usage: node tools/clip-detect.js <session folder> <out folder> [--fps 30] [shotNNN ...]'); process.exit(2); }
@@ -70,7 +71,7 @@ async function main() {
       BOXES = JSON.parse(fs.readFileSync(path.join(tmp, clip + '-boxes.json'), 'utf8'));
       if (BOXES.length !== n) throw new Error('detector gave ' + BOXES.length + ' frames for ' + n);
     }
-    const frames = await page.evaluate(async ({ clip, n, FPS, QN, FT, PTS, AUTO, BOXES }) => {
+    const frames = await page.evaluate(async ({ clip, n, FPS, QN, FT, PTS, AUTO, BOXES, REJECTED }) => {
       const C = __chalk, S = C.S, res = [];
       const full = document.createElement('canvas'); full.width = 1280; full.height = 720;
       const g = full.getContext('2d', { willReadFrequently: true });
@@ -78,7 +79,7 @@ async function main() {
       const wg = work.getContext('2d', { willReadFrequently: true });
       S.live = false; S.src = work; S.W = 800; S.H = 450; S.vr = { x: 0, y: 0, w: 1280, h: 720, vw: 1280, vh: 720, z: 1 };
       S.ft = FT; S.P = C.mkP(); S.lens = 0.86; S.camZoom = 1; S.recSrc = { c: full, k: 1280 / 800 };
-      let cloth = null;
+      let cloth = null, REJ = null; const rejOut = [];
       window.__det = { boxes: 0, kept: 0, pocket: 0, cushion: 0 };
       // v0.4: detector boxes (1280x720 frame pixels) as finder spots, through the same camera model as detectBalls
       function fromBoxes(list) {
@@ -87,8 +88,8 @@ async function main() {
           D.boxes++;
           const px = cx / k, py = cy / k, t = cam.unproj(px, py, R), rpx = cam.ballRad(t[0], t[1], R, R);
           const dpk = Math.min(...P.pockets.map(pk => Math.hypot(t[0] - pk.x, t[1] - pk.y) / pk.r));
-          if (dpk < 0.75) { D.pocket++; continue; }
-          if (t[0] < 0.6 * R || t[0] > P.L - 0.6 * R || t[1] < 0.6 * R || t[1] > P.W - 0.6 * R) { D.cushion++; continue; }
+          if (dpk < 0.75) { D.pocket++; if (REJ) REJ.push({ why: 'pocket', px, py, rpx, conf, x: t[0], y: t[1] }); continue; }
+          if (t[0] < 0.6 * R || t[0] > P.L - 0.6 * R || t[1] < 0.6 * R || t[1] > P.W - 0.6 * R) { D.cushion++; if (REJ) REJ.push({ why: 'cushion', px, py, rpx, conf, x: t[0], y: t[1] }); continue; }
           D.kept++;
           out.push({ px, py, rpx, conf, x: Math.min(P.L - R, Math.max(R, t[0])), y: Math.min(P.W - R, Math.max(R, t[1])) });
         }
@@ -136,8 +137,13 @@ async function main() {
           }
           cloth = sampleCloth(imgData(), S.quad) || S.cloth; S.cloth = cloth;
         }
+        if (REJECTED) REJ = [];
         const found = BOXES ? fromBoxes(BOXES[i - 1]) : detectBalls(imgData(), S.cam, S.P, cloth, {});
         C.recogFound(found);
+        // --rejected (diagnostic only): the boxes the pocket and cushion rules threw away, read by the same number
+        // reader after the kept spots, saved to a separate file; the kept output is unchanged
+        if (REJECTED) { if (REJ.length) C.recogFound(REJ); rejOut.push(REJ.map(b => { const top = b.rec ? recogTop(b.rec) : null;
+          return { why: b.why, x: +b.x.toFixed(2), y: +b.y.toFixed(2), px: +(b.px * 1.6).toFixed(1), py: +(b.py * 1.6).toFixed(1), c: b.conf, rec: top, p: top != null ? +b.rec[top].toFixed(2) : null, nb: b.rec ? +b.rec[RECOG_NB].toFixed(2) : null }; })); }
         res.push({ t: +((i - 1) / FPS).toFixed(3), balls: found.map(b => {
           const top = b.rec ? recogTop(b.rec) : null;
           const o = { x: +b.x.toFixed(2), y: +b.y.toFixed(2), rec: top, p: top != null ? +b.rec[top].toFixed(2) : null, nb: b.rec ? +b.rec[RECOG_NB].toFixed(2) : null };
@@ -145,8 +151,10 @@ async function main() {
           return o;
         }) });
       }
+      window.__rejOut = rejOut;
       return res;
-    }, { clip, n, FPS, QN, FT: log.ft, PTS, AUTO: REC && !START_QUAD, BOXES });
+    }, { clip, n, FPS, QN, FT: log.ft, PTS, AUTO: REC && !START_QUAD, BOXES, REJECTED });
+    if (REJECTED) fs.writeFileSync(path.join(OUT, clip + '-rejected.json'), JSON.stringify(await page.evaluate(() => window.__rejOut)));
     const det = BOXES ? await page.evaluate(() => window.__det) : null;
     if (REC && !START_QUAD) {
       const a = await page.evaluate(() => window.__auto);
