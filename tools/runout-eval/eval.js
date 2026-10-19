@@ -27,24 +27,27 @@ function settle(balls, R) {
 
 function playTrial(layout, li, plannerName, vname, t, budget) {
   const V = VARIANTS[vname], ft = layout.ft || 9, Pv = core.makeP(ft, V.phys);
-  let balls = layout.balls.map(([id, x, y]) => ({ id, x, y })), shots = 0, made = 0, ms = 0, sims = 0;
+  let balls = layout.balls.map(([id, x, y]) => ({ id, x, y })), shots = 0, made = 0, ms = 0, sims = 0, wouldSafety = 0;
   for (let k = 0; k < 12; k++) {
     const s = ST.manualState(balls.map(b => [b.id, b.x, b.y]), { ft });
-    const t0 = Date.now(), rec = plannerName === 'old' ? S.recommendBaseline(s) : S.recommend(s, { budget });
+    const t0 = Date.now(); let rec = plannerName === 'old' ? S.recommendBaseline(s) : S.recommend(s, { budget });
+    // 'newoff': the new planner's best offensive shot every time (its safety advice is counted, not played), to compare
+    // run-out quality with the old planner, which never plays safe
+    if (plannerName === 'newoff' && rec.pick === 'safety' && rec.offense) { wouldSafety++; rec = { ...rec, pick: 'offense', shot: rec.offense.shot }; }
     ms += Date.now() - t0; sims += rec.sims || 0; shots++;
-    if (rec.error) return { out: 'error', error: rec.error, shots, made, ms, sims };
-    if (rec.pick === 'none') return { out: 'no shot', shots, made, ms, sims };
+    if (rec.error) return { out: 'error', error: rec.error, shots, made, ms, sims, wouldSafety };
+    if (rec.pick === 'none') return { out: 'no shot', shots, made, ms, sims, wouldSafety };
     const r = S.rng(hash(li, vname, t, k)), shot = S.noisy(rec.shot, r, V.noise);
     const res = core.simulate(balls, shot, Pv), low = Math.min(...balls.filter(b => b.id > 0).map(b => b.id));
     const pots = res.pocketed.map(p => p.id), foul = pots.includes(0) || res.firstHit !== low || (!pots.length && !res.railAfter);
-    if (rec.pick === 'safety') return { out: foul ? 'safety foul' : 'safety', shots, made, ms, sims };
-    if (foul) return { out: 'foul', shots, made, ms, sims, why: pots.includes(0) ? 'scratch' : res.firstHit !== low ? 'wrong ball first' : 'no rail' };
-    if (!pots.length) return { out: 'missed', shots, made, ms, sims };
+    if (rec.pick === 'safety') return { out: foul ? 'safety foul' : 'safety', shots, made, ms, sims, wouldSafety };
+    if (foul) return { out: 'foul', shots, made, ms, sims, wouldSafety, why: pots.includes(0) ? 'scratch' : res.firstHit !== low ? 'wrong ball first' : 'no rail' };
+    if (!pots.length) return { out: 'missed', shots, made, ms, sims, wouldSafety };
     made += pots.length;
-    if (pots.includes(9)) return { out: 'completed', shots, made, ms, sims };
+    if (pots.includes(9)) return { out: 'completed', shots, made, ms, sims, wouldSafety };
     balls = settle(res.final.filter(b => !pots.includes(b.id)).map(b => ({ id: b.id, x: Math.min(Pv.L - Pv.R, Math.max(Pv.R, b.x)), y: Math.min(Pv.W - Pv.R, Math.max(Pv.R, b.y)) })), Pv.R);
   }
-  return { out: 'step limit', shots, made, ms, sims };
+  return { out: 'step limit', shots, made, ms, sims, wouldSafety };
 }
 
 if (process.argv[2] === '--worker') {   // child: run the jobs it is sent
