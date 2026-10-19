@@ -170,6 +170,10 @@ function renderDis() {
   let h = rep ? `<div class="sub">The player said: ${rep.answers.in.length ? 'balls in: ' + rep.answers.in.join(', ') : 'no balls in'}${rep.answers.offTable ? ', a ball left the table' : ''}.</div>` : '<div class="sub">No player report for this clip.</div>';
   h += d.length ? d.map(x => `<div class="row"><b>${esc(ballName(x.ball))}</b>: ${esc(x.reported)}. Chalkline: ${esc(x.chalkline)}.<div class="hint">Hint, where it first goes wrong: <b>${esc(x.stage.hint)}</b> (${esc(x.stage.why)})</div></div>`).join('')
     : '<div>Chalkline agrees with the report.</div>';
+  // player corrections, kept in their own log and carried into every rebuild; the tracker output above is unchanged
+  const tgt = t => t.type === 'ball' ? `${ballName(t.ball)} (${t.section})` : t.type === 'event' ? `${t.kind} ${t.ball != null ? ballName(t.ball) + ' ' : ''}at ${t.t} s` : t.type === 'track' ? `track ${t.id}` : `missed ${t.kind} at ${t.t} s`;
+  const val = v => typeof v === 'object' && v ? Object.entries(v).map(([a, b]) => a + ' ' + b).join(', ') : v;
+  if (REC.corrections.length) h += `<div class="sub">Player corrections:</div>` + REC.corrections.map(c => `<div class="row"><b>${esc(tgt(c.target))}</b>: ${esc(val(c.old))} → ${esc(val(c.new))}. ${esc(c.why)}<div class="hint">${esc(c.who)}, ${esc(c.when.slice(0, 16).replace('T', ' '))}${c.shot ? ', shot ' + esc(c.shot.id) : ''}${c.inThisBuild.replaced ? ', replaced by a later correction' : ''}${c.inThisBuild.status === 'unmatched' ? ', its target is not in this rebuild' : c.inThisBuild.status === 'now observed' ? ', now observed' : ''}</div></div>`).join('');
   $('dis').innerHTML = h;
 }
 function renderEvents() {

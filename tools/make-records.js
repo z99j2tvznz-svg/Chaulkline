@@ -12,6 +12,7 @@ const { makeTracker, TRACK_DEFAULTS } = require('./tracker.js');
 const { observe, reconcile, newMemory, BALLS } = require('./reconcile.js');
 const { verify, fileSha, sha256 } = require('./make-evidence.js');
 const REC = require('../src/record.js');
+const CORR = require('./corrections.js');
 
 const ROOT = path.join(__dirname, '..');
 const r2 = v => Math.round(v * 100) / 100;
@@ -202,6 +203,8 @@ function build(root, id, out) {
     const f = path.join(root, man.clips[clip].detections.file), buf = fs.readFileSync(f);
     if (sha256(buf) !== man.clips[clip].detections.sha256) throw new Error(clip + ': detections sha256 changed');
     const d = JSON.parse(buf), cam = fitCamera(d.frames), rec = buildClip(id, clip, man, d, meta, cam);
+    // player corrections come from their own log (tools/corrections.js), never from an earlier record
+    rec.corrections = CORR.forClip(root, id, clip, rec);
     const mc = meta.clips.find(x => x.name === clip); rec.clock.start = mc && mc.epoch ? r2((mc.epoch - origin) / 1000) : null;
     outlines.push({ clip, outline: d.quadN, medianErrPx: cam && cam.medianErrPx });
     const s = JSON.stringify(rec); fs.writeFileSync(path.join(out, clip + '.json'), s); written[clip] = sha256(Buffer.from(s));
@@ -225,6 +228,7 @@ function build(root, id, out) {
     table: { ft: parseInt(setup.table, 10) || null, size: [78, 39], units: 'inches, x along the long rail, y across', pockets: { model: 'mouth points at the corners and side centres (tracker default)', measured: null } },
     evidence: { manifest: path.relative(root, path.join(ev, 'manifest.json')), sha256: fileSha(path.join(ev, 'manifest.json')) },
     clock: { origin: new Date(origin).toISOString(), source: 'recorder clip start times (phone clock); each clip record gives its start in seconds from the origin' },
+    corrections: { log: path.relative(root, CORR.logFile(root, id)), count: CORR.readLog(root, id).entries.length },
     clips: written,
   };
   fs.writeFileSync(path.join(out, 'session.json'), JSON.stringify(session, null, 1));
@@ -235,7 +239,8 @@ module.exports = { build, fitCamera, runClip };
 
 if (require.main === module) (async () => {
   const argv = process.argv.slice(2), oi = argv.indexOf('--out'), outArg = oi >= 0 ? argv.splice(oi, 2)[1] : null, [root, id] = argv;
-  const { problems } = await verify(root, id);
+  const { problems } = await verify(root, id), cbad = CORR.verify(root, id);
+  if (cbad.length) { console.error('correction log check failed:\n  ' + cbad.join('\n  ')); process.exit(1); }
   if (problems.length) { console.error('evidence check failed:\n  ' + problems.join('\n  ')); process.exit(1); }
   const out = outArg || path.join(root, 'records', id), { clips } = build(root, id, out);
   let commit = 'unknown'; try { commit = execFileSync('git', ['-C', ROOT, 'describe', '--always', '--dirty'], { encoding: 'utf8' }).trim(); } catch {}

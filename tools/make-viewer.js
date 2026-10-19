@@ -38,7 +38,7 @@ function build(root, id, out, video = true) {
     }
     const a = rec.analyses;
     index.clips.push({ clip, step: rec.step, start: rec.clock.start, seconds: +(rec.clock.frames / rec.clock.fps).toFixed(1), shots: rec.observed.shots.length,
-      reportedIn: rec.reported && rec.reported.answers.in || [], disagreements: a[0].disagreements.length, coverage: a[1].share, video: v });
+      reportedIn: rec.reported && rec.reported.answers.in || [], disagreements: a[0].disagreements.length, coverage: a[1].share, corrections: rec.corrections.length, video: v });
   }
   fs.rmSync(tmp, { recursive: true, force: true });
   fs.writeFileSync(path.join(out, 'data', 'index.json'), JSON.stringify(index));
