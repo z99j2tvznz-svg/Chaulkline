@@ -116,7 +116,7 @@ dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 
       <div class="panel"><h2>Player's report and Chalkline</h2><div class="dis" id="dis"></div></div>
       <div class="panel"><h2>Events</h2><div class="events" id="events"></div><p class="note">Tap an event to jump the video there. Collisions are not analysed in this version.</p></div>
       <div class="panel"><h2>Table before and after</h2><div class="states" id="states"></div></div>
-      <div class="panel"><h2>Tracks</h2><div class="tbl" id="tracks"></div><p class="note">Identity = share of the number reader's votes for the final number. Gaps = spans not seen. Jumps = seen again far from where it was (possible swap or merge).</p></div>
+      <div class="panel"><h2>Tracks</h2><div class="tbl" id="tracks"></div><p class="note">Votes = how consistently the number reader voted for the final number. It is not accuracy: a ball misread the same way every time (the 9 read as the cue ball) still shows 100%. Two tracks named cue means at least one is misread. Gaps = spans not seen. Jumps = seen again far from where it was (possible swap or merge).</p></div>
       <div class="panel"><h2>Capture and evidence</h2><dl id="capture"></dl></div>
     </div>
   </div>
@@ -185,7 +185,7 @@ function renderStates() {
 }
 function renderTracks() {
   const rows = REC.observed.tracks.map(t => `<tr><td>${t.id}</td><td>${t.ball == null ? '?' : t.ball === 0 ? 'cue' : t.ball}${t.isBall ? '' : ' (not a ball)'}</td><td>${t.identity.share == null ? '–' : Math.round(t.identity.share * 100) + '%'}</td><td>${t.identity.changes.length > 1 ? t.identity.changes.length - 1 : 0}</td><td>${t.gaps.length}</td><td>${t.jumps.length}</td><td>${esc(t.final)}</td><td>${t.resolution ? t.resolution.minInPerPx + '–' + t.resolution.maxInPerPx : '–'}</td></tr>`).join('');
-  $('tracks').innerHTML = `<table><thead><tr><th>Track</th><th>Name</th><th>Identity</th><th>Renamed</th><th>Gaps</th><th>Jumps</th><th>Final</th><th>in/px</th></tr></thead><tbody>${rows}</tbody></table><p class="note">${REC.observed.spotsNeverBalls} short-lived spots never became balls (hands, cue, legs).</p>`;
+  $('tracks').innerHTML = `<table><thead><tr><th>Track</th><th>Name</th><th>Votes</th><th>Renamed</th><th>Gaps</th><th>Jumps</th><th>Final</th><th>in/px</th></tr></thead><tbody>${rows}</tbody></table><p class="note">${REC.observed.spotsNeverBalls} short-lived spots never became balls (hands, cue, legs).</p>`;
 }
 function renderCapture(k) {
   const s = IX.session, c = REC.capture;
