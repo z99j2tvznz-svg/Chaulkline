@@ -58,7 +58,7 @@ def anchors(cfg, clips, every=5):
     return rows[:, 13:], rows[:, 2:13]
 
 
-def fit(X, P, Y, lam, anc=None, mu=1.0, iters=400):
+def fit(X, P, Y, lam, anc=None, mu=1.0, iters=400, mask=None):
     n = len(Y)
     L = np.log(np.clip(P, 1e-6, 1))
     if anc is not None:
@@ -74,6 +74,8 @@ def fit(X, P, Y, lam, anc=None, mu=1.0, iters=400):
         if anc is not None:
             za = LA + XA @ A.T + c; za -= za.max(1, keepdims=True); qa = np.exp(za); qa /= qa.sum(1, keepdims=True)
             ga = mu * (qa - PA) / len(PA); gA += ga.T @ XA; gc += ga.sum(0)
+        if mask is not None:
+            gA *= mask[:, None]; gc *= mask
         for k, (p, gr) in enumerate(((A, gA), (c, gc))):
             m[k] = 0.9 * m[k] + 0.1 * gr; v[k] = 0.999 * v[k] + 0.001 * gr * gr
             p -= 0.05 * (m[k] / (1 - 0.9 ** t)) / (np.sqrt(v[k] / (1 - 0.999 ** t)) + 1e-8)
@@ -97,6 +99,8 @@ def main():
     X = np.concatenate([e[0] for e in per]); P = np.concatenate([e[1] for e in per]); Y = np.concatenate([e[2] for e in per])
     lams = cfg.get('lams', [0.001, 0.01, 0.1, 1.0])
     mu = cfg.get('mu', 1.0)
+    # mode 'gate': only the "not a ball" score is corrected; the ranking of the numbers stays the frozen reader's
+    mask = np.eye(11)[NB] if cfg.get('mode') == 'gate' else None
     anc = anchors(cfg, sorted({l['clip'] for l in cfg['labels']})) if mu > 0 else None
     cv = {}
     for lam in lams:
@@ -105,27 +109,29 @@ def main():
         loss = []
         for i in range(len(per)):
             Xt = np.concatenate([e[0] for k, e in enumerate(per) if k != i]); Pt = np.concatenate([e[1] for k, e in enumerate(per) if k != i]); Yt = np.concatenate([e[2] for k, e in enumerate(per) if k != i])
-            A, c = fit(Xt, Pt, Yt, lam, anc, mu)
+            A, c = fit(Xt, Pt, Yt, lam, anc, mu, mask=mask)
             loss.append(ce(apply(per[i][1], per[i][0], A, c), per[i][2]))
         cv[lam] = float(np.mean(loss))
     lam = min(cv, key=cv.get) if cv else cfg.get('lam', 0.1)
-    A, c = fit(X, P, Y, lam, anc, mu)
+    A, c = fit(X, P, Y, lam, anc, mu, mask=mask)
     Q = apply(P, X, A, c)
     base = float(np.mean([ce(e[1], e[2]) for e in per]))
     acc = lambda PP: float(np.mean(PP.argmax(1) == Y))
     info = {'pictures': len(per), 'examples': int(len(Y)), 'perClass': np.bincount(Y, minlength=11).tolist(), 'lam': lam, 'cv': cv,
-            'lossNoCalibration': base, 'mu': mu, 'anchors': 0 if anc is None else int(len(anc[1])), 'trainTop1Before': acc(P), 'trainTop1After': acc(Q)}
-    os.makedirs(cfg['out'], exist_ok=True)
-    for clip in cfg['test']:
-        det = json.load(open(os.path.join(cfg['dets'], clip + '.json')))
-        rows = load_dump(os.path.join(cfg['dump'], clip + '.bin'))
-        Qc = apply(rows[:, 2:13], rows[:, 13:], A, c)
-        for r, q in zip(rows, Qc):
-            b = det['frames'][int(r[0])]['balls'][int(r[1])]
-            top = int(np.argmax(q[:10]))
-            b['rec'], b['p'], b['nb'] = top, round(float(q[top]), 2), round(float(q[NB]), 2)
-        det['recal'] = {'lam': lam, 'examples': int(len(Y))}
-        json.dump(det, open(os.path.join(cfg['out'], clip + '.json'), 'w'))
+            'lossNoCalibration': base, 'mode': cfg.get('mode', 'full'), 'mu': mu, 'anchors': 0 if anc is None else int(len(anc[1])), 'trainTop1Before': acc(P), 'trainTop1After': acc(Q)}
+    # the same correction on the frozen detections and, if given, on an alternate frame pick of the same clips
+    for dets, dump, out in [(cfg['dets'], cfg['dump'], cfg['out'])] + ([(cfg['alt']['dets'], cfg['alt']['dump'], cfg['alt']['out'])] if cfg.get('alt') else []):
+        os.makedirs(out, exist_ok=True)
+        for clip in cfg['test']:
+            det = json.load(open(os.path.join(dets, clip + '.json')))
+            rows = load_dump(os.path.join(dump, clip + '.bin'))
+            Qc = apply(rows[:, 2:13], rows[:, 13:], A, c)
+            for r, q in zip(rows, Qc):
+                b = det['frames'][int(r[0])]['balls'][int(r[1])]
+                top = int(np.argmax(q[:10]))
+                b['rec'], b['p'], b['nb'] = top, round(float(q[top]), 2), round(float(q[NB]), 2)
+            det['recal'] = {'lam': lam, 'examples': int(len(Y))}
+            json.dump(det, open(os.path.join(out, clip + '.json'), 'w'))
     json.dump(info, open(os.path.join(cfg['out'], 'calibration.json'), 'w'), indent=1)
     print(json.dumps(info))
 
