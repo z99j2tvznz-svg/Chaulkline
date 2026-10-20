@@ -74,7 +74,10 @@ const TRACK_DEFAULTS = {
 
 // tracker versions: v0.4 is the frozen baseline (the defaults above); v0.5 adds the collision-identity options (relink and
 // contact, approved 2026-10-20). Pick one with { version: 'v0.5' }; options given beside it still win.
-const TRACK_VERSIONS = { 'v0.4': {}, 'v0.5': { relink: true, contact: true } };
+// v0.6 (approved 2026-10-20) is v0.5 plus the absence rule, which only the settled-table check reads (score-racks.js,
+// reconcile.js): the tracker itself runs exactly as v0.5. v0.6 is scored on detections made with
+// clip-detect.js --outline-check keep-first (the outline correction).
+const TRACK_VERSIONS = { 'v0.4': {}, 'v0.5': { relink: true, contact: true }, 'v0.6': { relink: true, contact: true, absence: true } };
 
 function makeTracker(table, opts = {}) {
   if (opts.version && !TRACK_VERSIONS[opts.version]) throw new Error('unknown tracker version ' + opts.version);

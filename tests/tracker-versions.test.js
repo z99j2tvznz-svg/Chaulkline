@@ -12,6 +12,7 @@ const run = (d, opts) => { const tr = makeTracker(d.table, opts); for (const fr 
 test('tracker versions: v0.5 is v0.4 plus relink and contact; unknown versions are refused', () => {
   assert.deepStrictEqual(TRACK_VERSIONS['v0.4'], {});
   assert.deepStrictEqual(TRACK_VERSIONS['v0.5'], { relink: true, contact: true });
+  assert.deepStrictEqual(TRACK_VERSIONS['v0.6'], { relink: true, contact: true, absence: true });
   assert.throws(() => makeTracker([78, 39], { version: 'v9' }), /unknown tracker version/);
 });
 
@@ -20,5 +21,6 @@ test('tracker versions on real clips: v0.4 is byte-identical to the defaults, v0
     const d = JSON.parse(fs.readFileSync(path.join(DETS, f)));
     assert.strictEqual(run(d, { version: 'v0.4' }), run(d, {}), f);
     assert.strictEqual(run(d, { version: 'v0.5' }), run(d, { relink: true, contact: true }), f);
+    assert.strictEqual(run(d, { version: 'v0.6' }), run(d, { version: 'v0.5' }), f); // absence is not a tracker option
   }
 });

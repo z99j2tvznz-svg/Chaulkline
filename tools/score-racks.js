@@ -13,7 +13,7 @@
 // Two runs per session, reported apart: "continuous" (memory carried clip to clip, as a player would get it) and
 // "checkpoint" (memory set from truth before each clip, for finding which part fails; the tracker never sees truth).
 const fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto'), { execSync } = require('node:child_process');
-const { makeTracker, TRACK_DEFAULTS } = require('./tracker.js');
+const { makeTracker, TRACK_DEFAULTS, TRACK_VERSIONS } = require('./tracker.js');
 const { observe, reconcile, newMemory, BALLS } = require('./reconcile.js');
 
 const argv = process.argv.slice(2), VERBOSE = argv.includes('--v');
@@ -21,7 +21,8 @@ const oIx = argv.indexOf('--out'), OUT = oIx >= 0 ? argv.splice(oIx, 2)[1] : nul
 const kIx = argv.indexOf('--track'), TRACK_OPTS = kIx >= 0 ? JSON.parse(argv.splice(kIx, 2)[1]) : {}; // tracker experiment options
 // experiment option absence (off by default, not part of any tracker version): the settled-table check may also confirm a
 // pocket from absence plus the ball count (reconcile.js, ABSENCE). It is a settled-table option, so the tracker never sees it.
-const ABS = !!TRACK_OPTS.absence; delete TRACK_OPTS.absence;
+// Tracker version v0.6 turns it on.
+const ABS = !!(TRACK_OPTS.absence ?? (TRACK_VERSIONS[TRACK_OPTS.version] || {}).absence); delete TRACK_OPTS.absence;
 const qIx = argv.indexOf('--oracle'), ORACLE = qIx >= 0 ? argv.splice(qIx, 2)[1] : null, DIAG = argv.includes('--diag');
 if (ORACLE && !['obs', 'pockets', 'both'].includes(ORACLE)) throw new Error('--oracle obs|pockets|both');
 const O_OBS = ORACLE === 'obs' || ORACLE === 'both', O_POCK = ORACLE === 'pockets' || ORACLE === 'both';
