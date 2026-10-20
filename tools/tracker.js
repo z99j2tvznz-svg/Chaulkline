@@ -263,8 +263,11 @@ function makeTracker(table, opts = {}) {
     for (const m of live) {
       const sp = Math.hypot(m.vx, m.vy); if (!m.real || m.state !== 'moving' || sp <= O.moveSpeed) continue;
       const dtm = t - m.t, mx = m.x + m.vx * dtm, my = m.y + m.vy * dtm;
-      for (const r of live) {
-        if (r === m || !r.real || r.state !== 'resting' || matched.has(r) || matched.has(m)) continue;
+      // only the first resting ball in its path can be the one it hits: the nearest one it reaches, and no other
+      let tried = false;
+      for (const r of live.slice().sort((a, b) => Math.hypot(a.x - m.x, a.y - m.y) - Math.hypot(b.x - m.x, b.y - m.y))) {
+        if (matched.has(m)) break;
+        if (r === m || !r.real || r.state !== 'resting' || matched.has(r)) continue;
         if (r.struckAt != null && t - r.struckAt < 0.5) continue;  // already struck: ordinary matching follows it now
         // where the resting ball sits: its average spot over the last half second (one spot can be off by an inch)
         const rp = r.path.filter(p => p[0] >= t - 0.5), rx = rp.length ? rp.reduce((a, p) => a + p[1], 0) / rp.length : r.x, ry = rp.length ? rp.reduce((a, p) => a + p[2], 0) / rp.length : r.y;
@@ -272,6 +275,7 @@ function makeTracker(table, opts = {}) {
         const ux = mx - m.x, uy = my - m.y, uu = ux * ux + uy * uy, k = uu ? Math.max(0, Math.min(1, ((rx - m.x) * ux + (ry - m.y) * uy) / uu)) : 0;
         const qx = m.x + k * ux, qy = m.y + k * uy, dq = Math.hypot(rx - qx, ry - qy);
         if (dq > O.touchDist) continue;
+        if (tried) break; tried = true;
         // line of centres at contact (straight on: the hitter's heading)
         let nx = rx - qx, ny = ry - qy; const nn = Math.hypot(nx, ny);
         if (nn < 0.5) { nx = m.vx / sp; ny = m.vy / sp; } else { nx /= nn; ny /= nn; }
