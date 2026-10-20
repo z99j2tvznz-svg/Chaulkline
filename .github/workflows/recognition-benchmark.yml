@@ -1,0 +1,12 @@
+name: recognition-benchmark
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/project-thread-vl1o4a]
+    paths: ['benchmark/recognition-2026-10-20/**', '.github/workflows/recognition-benchmark.yml']
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "actions ok"; nproc; free -g; python3 --version
