@@ -38,6 +38,29 @@ const TRACK_DEFAULTS = {
   coastGateK: 0.05,
   coastDecel: 5,      // in/s^2 rolling slow-down
   coastBounce: 0.7,   // share of the speed into a cushion that comes back out
+  // experiment (off by default): a struck ball that misses one match goes hidden at its old spot, and a fast ball
+  // is already further than hiddenGate from it when it is seen again, so it came back as a new, unnamed track.
+  // With relink, a ball hidden for at most relinkTime s takes a new spot up to relinkGate in away, but only when
+  // nothing else could explain it: one candidate spot, no other ball that is unaccounted for (recently hidden, or
+  // missing its spot this frame) within reach of that spot, and
+  // the spot not sitting where another hidden ball was, the spot looking like a ball, and (for a ball that was rolling)
+  // ahead of it and within reach. The number on the spot is ignored (moving balls are blurred).
+  relink: false,
+  relinkTime: 0.25,
+  relinkGate: 12,
+  // experiment (off by default): when a rolling ball reaches a resting one, nearest-first matching can hand the
+  // resting ball's track the hitter's spot and the other way round (a swap). With contact, the two spots are shared
+  // out by collision physics instead: the struck ball can only leave forward along the line of centres (its spot
+  // within contactLat in of that line and not more than contactBack in behind where it sat), and the hitter's spot
+  // must be further back along that line than the struck ball's. Of the pairs that fit, the one closest to where each
+  // ball should be wins, and the struck ball takes the hitter's speed along that line. When the struck ball has no spot
+  // of its own but one sits just behind it, the two are merged in the picture: it is held where it sat. When the two
+  // spots are less than contactSure in apart along that line, the call is kept but both balls' names become uncertain
+  // until each is read again while resting.
+  contact: false,
+  contactLat: 1.5,
+  contactSure: 1.0,
+  contactBack: 0.6,
   // trace (off by default): also return what every decision rested on (finish().trace) - per frame and track the
   // matched detection or none, identity votes over time, the evidence behind pocket calls. Read-only: it never
   // changes a decision (tests/record.test.js checks that on every session).
@@ -55,9 +78,11 @@ function makeTracker(table, opts = {}) {
   const mark = (tr, j, how) => { if (TR) TR.now.set(tr.id, [j, how]); };
 
   function ident(tr) {
-    // the number this ball has been recognised as most, counting only confident looks
+    // the number this ball has been recognised as most, counting only confident looks (after an unsure contact,
+    // only the looks since then)
     let best = null, bv = 0;
-    tr.votes.forEach((v, i) => { if (v > bv) { bv = v; best = i; } });
+    const base = tr.unsure ? tr.unsure.votes : null;
+    tr.votes.forEach((v, i) => { const w = base ? v - base[i] : v; if (w > bv) { bv = w; best = i; } });
     return bv >= 2 ? best : null;
   }
   function cueTrack() {
@@ -96,6 +121,7 @@ function makeTracker(table, opts = {}) {
     }
     pairs.sort((a, b) => a[0] - b[0]);
     const matched = new Set();
+    if (O.contact) contacts(live, dets, matched);
     for (const [, tr, j] of pairs) { if (matched.has(tr) || dets[j].used) continue; matched.add(tr); dets[j].used = true; mark(tr, j, 'near'); see(tr, dets[j]); }
     // a ball that is suddenly struck can jump several inches between frames (the clips drop frames): give live balls
     // that found nothing a second, wider look, closest pairs first
@@ -123,6 +149,20 @@ function makeTracker(table, opts = {}) {
       let bj = -1, bd = O.hiddenGate;
       dets.forEach((d, j) => { if (!d.used) { const dd = Math.hypot(d.x - tr.x, d.y - tr.y); if (dd < bd) { bd = dd; bj = j; } } });
       if (bj >= 0) { dets[bj].used = true; matched.add(tr); mark(tr, bj, 'refound'); see(tr, dets[bj]); }
+    }
+    if (O.relink) {
+      const recent = tracks.filter(tr => tr.state === 'hidden' && tr.real && !matched.has(tr) && tr.hiddenAt != null && t - tr.hiddenAt <= O.relinkTime);
+      const hiddenAll = tracks.filter(tr => tr.state === 'hidden' && !matched.has(tr));
+      for (const tr of recent) {
+        const cand = dets.map((d, j) => [Math.hypot(d.x - tr.x, d.y - tr.y), j]).filter(([dd, j]) => !dets[j].used && dd < O.relinkGate && relinkFits(tr, dets[j], dd));
+        if (cand.length !== 1) { relinkSkip(tr, cand.length ? 'several spots' : null); continue; }
+        const d = dets[cand[0][1]];
+        // another ball that lost its spot this frame or recently could be it just as well: keep both uncertain
+        if (recent.some(o => o !== tr && Math.hypot(d.x - o.x, d.y - o.y) < O.relinkGate)
+          || live.some(o => o.real && !matched.has(o) && Math.hypot(d.x - o.x, d.y - o.y) < O.relinkGate)) { relinkSkip(tr, 'another ball could be it'); continue; }
+        if (hiddenAll.some(o => o !== tr && Math.hypot(d.x - o.x, d.y - o.y) < O.hiddenGate)) { relinkSkip(tr, 'spot is where another hidden ball sat'); continue; }
+        d.used = true; matched.add(tr); tr.relinked = (tr.relinked || 0) + 1; mark(tr, cand[0][1], 'relink'); see(tr, d);
+      }
     }
     for (const tr of live) if (!matched.has(tr)) lose(tr);
     for (const d of dets) if (!d.used) {
@@ -207,9 +247,72 @@ function makeTracker(table, opts = {}) {
     if (O.coast && tr.state === 'moving' && Math.hypot(tr.vx, tr.vy) > O.moveSpeed) tr.coast = { t0: tr.t, x: tr.x, y: tr.y, vx: tr.vx, vy: tr.vy };
     const px = tr.x + tr.vx * 0.05, py = tr.y + tr.vy * 0.05;
     if (ballness(tr) >= O.minVotes && tr.lastMoving != null && t - tr.lastMoving < 0.6 && travelled(tr, tr.movedAt - 0.3) >= 1.5 && headingIn(tr)) { tr.state = 'lostAtPocket'; tr.lostAt = t; if (TR) TR.pocketEvidence.push(lostEvidence(tr)); }
-    else tr.state = 'hidden';
+    else { tr.state = 'hidden'; tr.hiddenAt = t; tr.hiddenV = [tr.vx, tr.vy]; }
     tr.vx = tr.vy = 0;
   }
+  // a spot a recently hidden ball could have got to: it looks like a ball, and a ball that was rolling when it was lost
+  // went on ahead (within 60 degrees of its heading) and no further than its speed allows; a ball lost while sitting
+  // still (struck, then missed in the next frame) may have gone any way
+  function relinkFits(tr, d, dd) {
+    if (d.nb != null && d.nb >= 0.5) return false;
+    const [vx, vy] = tr.hiddenV || [0, 0], v = Math.hypot(vx, vy);
+    if (v <= O.moveSpeed) return true;
+    return (vx * (d.x - tr.x) + vy * (d.y - tr.y)) / (v * dd) > 0.5 && dd <= v * (t - tr.t) * 1.5 + O.gate;
+  }
+  function contacts(live, dets, matched) {
+    for (const m of live) {
+      const sp = Math.hypot(m.vx, m.vy); if (!m.real || m.state !== 'moving' || sp <= O.moveSpeed) continue;
+      const dtm = t - m.t, mx = m.x + m.vx * dtm, my = m.y + m.vy * dtm;
+      for (const r of live) {
+        if (r === m || !r.real || r.state !== 'resting' || matched.has(r) || matched.has(m)) continue;
+        if (r.struckAt != null && t - r.struckAt < 0.5) continue;  // already struck: ordinary matching follows it now
+        // where the resting ball sits: its average spot over the last half second (one spot can be off by an inch)
+        const rp = r.path.filter(p => p[0] >= t - 0.5), rx = rp.length ? rp.reduce((a, p) => a + p[1], 0) / rp.length : r.x, ry = rp.length ? rp.reduce((a, p) => a + p[2], 0) / rp.length : r.y;
+        // closest the hitter's centre gets to the resting ball between its last spot and where it should be now
+        const ux = mx - m.x, uy = my - m.y, uu = ux * ux + uy * uy, k = uu ? Math.max(0, Math.min(1, ((rx - m.x) * ux + (ry - m.y) * uy) / uu)) : 0;
+        const qx = m.x + k * ux, qy = m.y + k * uy, dq = Math.hypot(rx - qx, ry - qy);
+        if (dq > O.touchDist) continue;
+        // line of centres at contact (straight on: the hitter's heading)
+        let nx = rx - qx, ny = ry - qy; const nn = Math.hypot(nx, ny);
+        if (nn < 0.5) { nx = m.vx / sp; ny = m.vy / sp; } else { nx /= nn; ny /= nn; }
+        const cx = rx - nx * 2 * O.ballR, cy = ry - ny * 2 * O.ballR, reach = O.gate + sp * dtm * 1.2;
+        const ds = dets.map((d, j) => j).filter(j => !dets[j].used && Math.min(Math.hypot(dets[j].x - rx, dets[j].y - ry), Math.hypot(dets[j].x - cx, dets[j].y - cy)) < reach);
+        if (ds.length < 2) continue;
+        // the hitter takes the spot closest to either where it should be (a glancing hit or a near miss) or the contact
+        // point (a full hit stops it there); never a spot further along the line of centres than the struck ball's
+        const mfit = j => Math.min(Math.hypot(dets[j].x - mx, dets[j].y - my), Math.hypot(dets[j].x - cx, dets[j].y - cy));
+        const along = j => (dets[j].x - rx) * nx + (dets[j].y - ry) * ny, off = j => Math.abs((dets[j].x - rx) * ny - (dets[j].y - ry) * nx);
+        // the struck ball can only go forward along that line
+        const forR = ds.filter(j => off(j) <= O.contactLat && along(j) >= -O.contactBack);
+        const dr = j => Math.hypot(dets[j].x - rx, dets[j].y - ry);
+        if (!forR.length && ds.some(j => along(j) < -O.contactBack && dr(j) < 1.5 * O.ballR) && !ds.some(j => along(j) > 0 && dr(j) < O.gate)) {
+          // no spot of its own and one just behind it: the two are merged in the picture. Hold it where it sat; the
+          // hitter takes its best spot
+          const mj = ds.sort((a, b) => mfit(a) - mfit(b))[0];
+          matched.add(r); matched.add(m); dets[mj].used = true; mark(m, mj, 'contact'); see(m, dets[mj]); continue;
+        }
+        // of the pairs that fit (the hitter's spot behind the struck ball's), the one where both spots sit closest to
+        // where each ball should be
+        let rj = -1, mj = -1, best = Infinity;
+        for (const a of forR) for (const b of ds) if (b !== a && along(b) < along(a)) {
+          const c = dr(a) + mfit(b); if (c < best) { best = c; rj = a; mj = b; }
+        }
+        if (rj < 0) continue;
+        if (along(rj) - along(mj) < O.contactSure) for (const [a, b] of [[r, m], [m, r]]) { a.unsure = { with: b.id, t, votes: a.votes.slice() }; if (TR) (TR.contactUnsure = TR.contactUnsure || []).push({ t, track: a.id, with: b.id }); }
+        const vn = m.vx * nx + m.vy * ny, mvx = m.vx, mvy = m.vy;
+        matched.add(r); matched.add(m); dets[rj].used = dets[mj].used = true;
+        mark(r, rj, 'contact'); see(r, dets[rj]); mark(m, mj, 'contact'); see(m, dets[mj]);
+        if (along(rj) >= O.contactBack && vn > 0) {
+          // struck: it takes the hitter's speed along the line of centres and the hitter keeps only the rest, so the
+          // next frames' ordinary matching looks for each ball where physics sends it
+          r.struckAt = t; r.vx = nx * vn; r.vy = ny * vn; m.vx = mvx - nx * vn; m.vy = mvy - ny * vn;
+          if (r.state !== 'moving') { r.movedAt = t; r.peak = 0; } r.state = 'moving'; r.lastMoving = t;
+        }
+      }
+    }
+  }
+  // trace only: why a recently hidden ball was not re-linked
+  function relinkSkip(tr, why) { if (TR && why) (TR.relinkSkips = TR.relinkSkips || []).push({ t, track: tr.id, why }); }
 
   // a ball we trust: seen for a while and recognised as a ball. Short-lived spots (hands, legs behind the far rail,
   // cue tip) come and go and never get here.
@@ -340,7 +443,7 @@ function makeTracker(table, opts = {}) {
       s.scratch = s.made.some(e => e.track === s.cue);
     }
     const out = { shots, events, cueId: cue && cue.id, tracks: tracks.filter(tr => tr.real).map(tr => ({ id: tr.id, ball: ident(tr), state: tr.state, x: +tr.x.toFixed(1), y: +tr.y.toFixed(1) })) };
-    if (TR) out.trace = { frames: TR.frames, pocketEvidence: TR.pocketEvidence, undone: TR.undone,
+    if (TR) out.trace = { frames: TR.frames, pocketEvidence: TR.pocketEvidence, undone: TR.undone, ...(TR.relinkSkips ? { relinkSkips: TR.relinkSkips } : {}), ...(TR.contactUnsure ? { contactUnsure: TR.contactUnsure } : {}),
       spotsNeverBalls: [...TR.tracks.values()].filter(e => !e.tr.real).length,
       tracks: [...TR.tracks.values()].filter(e => e.tr.real).map(e => ({ id: e.tr.id, born: e.tr.born, ball: ident(e.tr), state: e.tr.state, votes: e.tr.votes.map(v => +v.toFixed(2)),
         isBall: isBall(e.tr), idChanges: e.idChanges, samples: e.samples })) };
