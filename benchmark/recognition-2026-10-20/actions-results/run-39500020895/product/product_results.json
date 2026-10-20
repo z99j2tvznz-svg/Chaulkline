@@ -1,0 +1,196 @@
+[
+ {
+  "tag": "frozen30.frozen-as-published",
+  "checkpoint": {
+   "correctAutomatically": 38,
+   "confidentlyWrong": 26,
+   "phantomPockets": 2,
+   "madeCalledOnTable": 4,
+   "stateErrors": 16,
+   "madeLeftUnresolved": 64,
+   "realShotsMissed": 5,
+   "falseShots": 10,
+   "correctionsNeeded": 94,
+   "realShotClips": 116
+  },
+  "continuous": {
+   "correctAutomatically": 27,
+   "confidentlyWrong": 26,
+   "phantomPockets": 2,
+   "madeCalledOnTable": 4,
+   "stateErrors": 16,
+   "madeLeftUnresolved": 71,
+   "realShotsMissed": 5,
+   "falseShots": 10,
+   "correctionsNeeded": 109,
+   "realShotClips": 116
+  },
+  "racks_complete": "0/5",
+  "per_session": [
+   {
+    "session": "2026-10-16_evening_V2.3.3",
+    "checkpoint_correctAutomatically": 12,
+    "checkpoint_confidentlyWrong": 5,
+    "checkpoint_realShotClips": 24,
+    "continuous_correctAutomatically": 2,
+    "continuous_confidentlyWrong": 5,
+    "continuous_realShotClips": 24
+   },
+   {
+    "session": "2026-10-17_2151_V2.3.3_firstspot",
+    "checkpoint_correctAutomatically": 0,
+    "checkpoint_confidentlyWrong": 12,
+    "checkpoint_realShotClips": 26,
+    "continuous_correctAutomatically": 0,
+    "continuous_confidentlyWrong": 12,
+    "continuous_realShotClips": 26
+   },
+   {
+    "session": "2026-10-17_1500_V2.3.3_otherside",
+    "checkpoint_correctAutomatically": 1,
+    "checkpoint_confidentlyWrong": 6,
+    "checkpoint_realShotClips": 9,
+    "continuous_correctAutomatically": 0,
+    "continuous_confidentlyWrong": 6,
+    "continuous_realShotClips": 9
+   },
+   {
+    "session": "rec-20261017-1730",
+    "checkpoint_correctAutomatically": 10,
+    "checkpoint_confidentlyWrong": 1,
+    "checkpoint_realShotClips": 18,
+    "continuous_correctAutomatically": 10,
+    "continuous_confidentlyWrong": 1,
+    "continuous_realShotClips": 18
+   },
+   {
+    "session": "rec-20261018-2310",
+    "checkpoint_correctAutomatically": 3,
+    "checkpoint_confidentlyWrong": 1,
+    "checkpoint_realShotClips": 18,
+    "continuous_correctAutomatically": 3,
+    "continuous_confidentlyWrong": 1,
+    "continuous_realShotClips": 18
+   },
+   {
+    "session": "rec-20261019-1710",
+    "checkpoint_correctAutomatically": 12,
+    "checkpoint_confidentlyWrong": 1,
+    "checkpoint_realShotClips": 21,
+    "continuous_correctAutomatically": 12,
+    "continuous_confidentlyWrong": 1,
+    "continuous_realShotClips": 21
+   }
+  ],
+  "pm_totals": {
+   "shots": 116,
+   "endRight": 38,
+   "confidentlyWrong": 26,
+   "phantom": 2,
+   "madeCalledOnTable": 4,
+   "madeLeftOpen": 64,
+   "shotsMissed": 5,
+   "falseShots": 10
+  },
+  "sampling": "frozen30",
+  "system": "frozen reader (stored answers)",
+  "variant": "published"
+ },
+ {
+  "tag": "d30b.frozen-as-published",
+  "checkpoint": {
+   "correctAutomatically": 36,
+   "confidentlyWrong": 30,
+   "phantomPockets": 2,
+   "madeCalledOnTable": 4,
+   "stateErrors": 15,
+   "madeLeftUnresolved": 63,
+   "realShotsMissed": 6,
+   "falseShots": 13,
+   "correctionsNeeded": 92,
+   "realShotClips": 116
+  },
+  "continuous": {
+   "correctAutomatically": 25,
+   "confidentlyWrong": 30,
+   "phantomPockets": 2,
+   "madeCalledOnTable": 4,
+   "stateErrors": 15,
+   "madeLeftUnresolved": 68,
+   "realShotsMissed": 6,
+   "falseShots": 13,
+   "correctionsNeeded": 104,
+   "realShotClips": 116
+  },
+  "racks_complete": "0/5",
+  "per_session": [
+   {
+    "session": "2026-10-16_evening_V2.3.3",
+    "checkpoint_correctAutomatically": 12,
+    "checkpoint_confidentlyWrong": 5,
+    "checkpoint_realShotClips": 24,
+    "continuous_correctAutomatically": 2,
+    "continuous_confidentlyWrong": 5,
+    "continuous_realShotClips": 24
+   },
+   {
+    "session": "2026-10-17_2151_V2.3.3_firstspot",
+    "checkpoint_correctAutomatically": 0,
+    "checkpoint_confidentlyWrong": 11,
+    "checkpoint_realShotClips": 26,
+    "continuous_correctAutomatically": 0,
+    "continuous_confidentlyWrong": 11,
+    "continuous_realShotClips": 26
+   },
+   {
+    "session": "2026-10-17_1500_V2.3.3_otherside",
+    "checkpoint_correctAutomatically": 1,
+    "checkpoint_confidentlyWrong": 6,
+    "checkpoint_realShotClips": 9,
+    "continuous_correctAutomatically": 0,
+    "continuous_confidentlyWrong": 6,
+    "continuous_realShotClips": 9
+   },
+   {
+    "session": "rec-20261017-1730",
+    "checkpoint_correctAutomatically": 8,
+    "checkpoint_confidentlyWrong": 3,
+    "checkpoint_realShotClips": 18,
+    "continuous_correctAutomatically": 8,
+    "continuous_confidentlyWrong": 3,
+    "continuous_realShotClips": 18
+   },
+   {
+    "session": "rec-20261018-2310",
+    "checkpoint_correctAutomatically": 4,
+    "checkpoint_confidentlyWrong": 3,
+    "checkpoint_realShotClips": 18,
+    "continuous_correctAutomatically": 4,
+    "continuous_confidentlyWrong": 3,
+    "continuous_realShotClips": 18
+   },
+   {
+    "session": "rec-20261019-1710",
+    "checkpoint_correctAutomatically": 11,
+    "checkpoint_confidentlyWrong": 2,
+    "checkpoint_realShotClips": 21,
+    "continuous_correctAutomatically": 11,
+    "continuous_confidentlyWrong": 2,
+    "continuous_realShotClips": 21
+   }
+  ],
+  "pm_totals": {
+   "shots": 116,
+   "endRight": 36,
+   "confidentlyWrong": 30,
+   "phantom": 2,
+   "madeCalledOnTable": 4,
+   "madeLeftOpen": 63,
+   "shotsMissed": 6,
+   "falseShots": 13
+  },
+  "sampling": "d30b",
+  "system": "frozen reader (stored answers)",
+  "variant": "published"
+ }
+]

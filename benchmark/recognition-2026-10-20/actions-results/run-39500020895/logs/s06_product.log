@@ -1,0 +1,27 @@
+{
+ "documented": {
+  "checkpoint_correct": 38,
+  "continuous_correct": 27,
+  "confidently_wrong": 26,
+  "racks_complete": "0/5",
+  "shots": 116
+ },
+ "measured": {
+  "checkpoint_correct": 38,
+  "continuous_correct": 27,
+  "confidently_wrong_checkpoint": 26,
+  "confidently_wrong_continuous": 26,
+  "racks_complete": "0/5",
+  "shots": 116
+ },
+ "product_metrics_output_identical_to_published_pm_v06": true,
+ "exact": {
+  "checkpoint_correct": true,
+  "continuous_correct": true,
+  "confidently_wrong": true,
+  "racks_complete": true,
+  "shots": true
+ }
+}
+{'sampling': 'frozen30', 'system': 'frozen reader (stored answers)', 'variant': 'published', 'ending_table_right_independent': 38, 'ending_table_right_continuous': 27, 'shots': 116, 'confidently_wrong_independent': 26, 'confidently_wrong_continuous': 26, 'made_balls_unresolved_independent': 64, 'made_balls_unresolved_continuous': 71, 'false_pockets': 2, 'made_called_on_table_missed_pockets': 4, 'real_shots_missed': 5, 'false_shots': 10, 'racks_complete': '0/5'}
+{'sampling': 'd30b', 'system': 'frozen reader (stored answers)', 'variant': 'published', 'ending_table_right_independent': 36, 'ending_table_right_continuous': 25, 'shots': 116, 'confidently_wrong_independent': 30, 'confidently_wrong_continuous': 30, 'made_balls_unresolved_independent': 63, 'made_balls_unresolved_continuous': 68, 'false_pockets': 2, 'made_called_on_table_missed_pockets': 4, 'real_shots_missed': 6, 'false_shots': 13, 'racks_complete': '0/5'}

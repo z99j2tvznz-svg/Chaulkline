@@ -1,0 +1,39 @@
+{
+ "benchmark_commit": "6c2773ccb36aae2e78b4d8919e72dd66a6736850",
+ "benchmark_branch": "claude/project-thread-vl1o4a",
+ "package": "collab/recognition-package-2026-10-20",
+ "package_commit": "9652277db458baf4981f309b830a65e61740ccd0",
+ "package_unchanged_since_package_commit": true,
+ "package_files_changed": [],
+ "package_file_count": 10382,
+ "package_tree_hash": "edadf220cc2a08dc4a76be6856a79f228c2e1457",
+ "package_code_commit": "70db07f8b3a9a0cde84d6497086abca2c76346ae\nplus tools/experiments/rest-naming.js from commit 9cf317e (branch claude/project-thread-9vpr76)",
+ "v06_reference_commit": "7e0830607bd018e9a8bc1c13a5b8855fc864bfbd",
+ "key_file_sha256": {
+  "03-reader-and-detector/reader/recog.json": "51ffade8a40a64823dc6ec93e6231e2f1a3c178a5b10ddc2cda198b41cc4b8a4",
+  "01-images/reader-inputs/index.csv": "35ee52687bd647966adeae24cd4de1f85b3071caa87567755d9d63f6f28b7339",
+  "02-ground-truth/player-verified/all-verified-ball-labels.csv": "6bd5cf9bb594f5826efef7b73929b42f436ecdf7ad117c0d36cb0a23699236a4",
+  "02-ground-truth/player-verified/label-set-v1/labels-v1.json": "37c30817051471dac32891f220f0e12a5703a0d40bbc6e9843ad6a809b703548",
+  "06-product-evaluation/baselines/tracker-v0.6-data/pm-v06.json": "603ce85b0ce2def8e7e6378624def9376a04efc9eff2719aa401f715a8f341ab",
+  "code/tools/tracker.js": "7a1dcb7b53da8eed9eed09dfc23e9f9ca037df61037879799986d12eef5b527d",
+  "code/tools/reconcile.js": "3bc113cf3ebbcb2fc3d15cd98b78b08d9b85f30cd02a30259996b23fae03fefa",
+  "code/tools/score-racks.js": "7ecfbf384dbddf445a59f240be2f9b25beccd285550bd92bd910f34cbd802feb",
+  "code/tools/experiments/product-metrics.js": "cfd333402c26711df1055b54033357a65828773615ffd439dfc2156849a4c6ee",
+  "code/COMMIT.txt": "aa38b58b8f3e180b171d64050d204d39a01e1e9a2bfc9b93e3d3f39d42143def"
+ },
+ "python": "3.12.7 (main, Oct  1 2024, 15:18:31) [GCC 13.2.0]",
+ "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+ "node": "v22.11.0",
+ "github_run": {
+  "id": "39500020895",
+  "attempt": "1",
+  "runner": "Linux",
+  "url": "https://github.com/z99j2tvznz-svg/Chaulkline/actions/runs/39500020895"
+ },
+ "scorer_files_identical_to_v06_commit": {
+  "tools/tracker.js": true,
+  "tools/reconcile.js": true,
+  "tools/score-racks.js": true,
+  "tools/experiments/product-metrics.js": true
+ }
+}

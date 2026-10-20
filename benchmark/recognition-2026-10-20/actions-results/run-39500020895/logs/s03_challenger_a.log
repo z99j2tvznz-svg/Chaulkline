@@ -1,0 +1,1 @@
+{"features": 48, "train_examples": 1277, "dev_examples": 771, "temperature": 1.059463094359295, "dev_nll": 0.1549546024709799, "train_top1": 0.9812059514487079, "dev_top1": 0.9779507133592736, "config": {"classifier": "multinomial logistic regression", "C": 1.0, "class_weight": "balanced", "max_iter": 5000, "seed": 0}}

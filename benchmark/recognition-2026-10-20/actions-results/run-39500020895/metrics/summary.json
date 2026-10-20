@@ -1,0 +1,165 @@
+{
+ "decision_rule": {
+  "note": "Same rule for every system, fixed before any run; taken from the tracker/settled-table vote thresholds (README section 4).",
+  "not_a_ball_if_nb_at_least": 0.5,
+  "confident_if_top_number_p_at_least": 0.6
+ },
+ "units": {
+  "picture": {
+   "frozen": {
+    "n": 1583,
+    "correct": 1236,
+    "confidently_wrong": 196,
+    "unsure": 76,
+    "said_not_a_ball": 75,
+    "accuracy_when_confident": 0.8631,
+    "coverage": 0.9046,
+    "correct_share_of_all": 0.7808
+   },
+   "challenger_a": {
+    "n": 1583,
+    "correct": 1152,
+    "confidently_wrong": 196,
+    "unsure": 182,
+    "said_not_a_ball": 53,
+    "accuracy_when_confident": 0.8546,
+    "coverage": 0.8515,
+    "correct_share_of_all": 0.7277
+   },
+   "challenger_b": {
+    "n": 1583,
+    "correct": 1408,
+    "confidently_wrong": 48,
+    "unsure": 77,
+    "said_not_a_ball": 50,
+    "accuracy_when_confident": 0.967,
+    "coverage": 0.9198,
+    "correct_share_of_all": 0.8895
+   }
+  },
+  "ball (frames averaged)": {
+   "frozen": {
+    "n": 106,
+    "correct": 83,
+    "confidently_wrong": 13,
+    "unsure": 5,
+    "said_not_a_ball": 5,
+    "accuracy_when_confident": 0.8646,
+    "coverage": 0.9057,
+    "correct_share_of_all": 0.783
+   },
+   "challenger_a": {
+    "n": 106,
+    "correct": 77,
+    "confidently_wrong": 13,
+    "unsure": 12,
+    "said_not_a_ball": 4,
+    "accuracy_when_confident": 0.8556,
+    "coverage": 0.8491,
+    "correct_share_of_all": 0.7264
+   },
+   "challenger_b": {
+    "n": 106,
+    "correct": 95,
+    "confidently_wrong": 3,
+    "unsure": 5,
+    "said_not_a_ball": 3,
+    "accuracy_when_confident": 0.9694,
+    "coverage": 0.9245,
+    "correct_share_of_all": 0.8962
+   }
+  }
+ },
+ "verification": {
+  "scored_test_pictures": 1583,
+  "scored_test_balls": 106,
+  "test_status_counts": {
+   "player-verified": 1583,
+   "player-verified ball, number not verified": 122,
+   "UNVERIFIED (light step, by eye only)": 720
+  },
+  "excluded_from_scoring": "verified balls whose number was not verified/unknown, and unverified light-step pictures",
+  "verified_non_balls_in_test": 0,
+  "false_positive_rejection": "NOT ESTABLISHED: the held-out sessions contain no verified non-ball examples, so rejection of false detections cannot be measured independently.",
+  "near_duplicates": "Each test ball appears in up to 15 consecutive still frames; picture counts are not independent. Use the per-ball unit and the ball-level bootstrap."
+ },
+ "systems": [
+  "frozen",
+  "challenger_a",
+  "challenger_b"
+ ],
+ "cue_vs_9": {
+  "frozen": {
+   "nine_pictures": 210,
+   "nine_confidently_called_cue": 120,
+   "nine_correct": 60,
+   "cue_pictures": 210,
+   "cue_confidently_called_9": 0,
+   "cue_correct": 210
+  },
+  "challenger_a": {
+   "nine_pictures": 210,
+   "nine_confidently_called_cue": 85,
+   "nine_correct": 108,
+   "cue_pictures": 210,
+   "cue_confidently_called_9": 0,
+   "cue_correct": 210
+  },
+  "challenger_b": {
+   "nine_pictures": 210,
+   "nine_confidently_called_cue": 0,
+   "nine_correct": 148,
+   "cue_pictures": 210,
+   "cue_confidently_called_9": 0,
+   "cue_correct": 210
+  }
+ },
+ "light_steps_unverified": {
+  "pictures": 720,
+  "note": "Identities NOT verified: no accuracy can be computed. Shows how often each system names, is unsure, or rejects.",
+  "frozen": {
+   "not_a_ball": 525,
+   "confident": 150,
+   "unsure": 45
+  },
+  "challenger_a": {
+   "confident": 257,
+   "not_a_ball": 421,
+   "unsure": 42
+  },
+  "challenger_b": {
+   "not_a_ball": 195,
+   "unsure": 152,
+   "confident": 373
+  },
+  "confident_and_same_number_a_and_b": 158
+ },
+ "bootstrap_vs_frozen_pictures": {
+  "challenger_a": {
+   "correct_diff": -84,
+   "correct_diff_95ci": [
+    -194,
+    32
+   ],
+   "confidently_wrong_diff": 0,
+   "confidently_wrong_diff_95ci": [
+    -70,
+    71
+   ]
+  },
+  "challenger_b": {
+   "correct_diff": 172,
+   "correct_diff_95ci": [
+    57,
+    294
+   ],
+   "confidently_wrong_diff": -148,
+   "confidently_wrong_diff_95ci": [
+    -252,
+    -47
+   ]
+  }
+ },
+ "strongest_candidate": "challenger_b",
+ "strongest_candidate_rule": "Fixed before any test run: on all verified held-out test pictures, the challenger with more correct confident identities among those whose confidently-wrong count is not above the frozen reader's; if neither qualifies, the one with fewer confidently-wrong identities. Both challengers are still passed through the product evaluation and reported; the rule only names the primary one."
+}

@@ -1,0 +1,3 @@
+sampling,system,variant,ending_table_right_independent,ending_table_right_continuous,shots,confidently_wrong_independent,confidently_wrong_continuous,made_balls_unresolved_independent,made_balls_unresolved_continuous,false_pockets,made_called_on_table_missed_pockets,real_shots_missed,false_shots,racks_complete
+frozen30,frozen reader (stored answers),published,38,27,116,26,26,64,71,2,4,5,10,0/5
+d30b,frozen reader (stored answers),published,36,25,116,30,30,63,68,2,4,6,13,0/5
