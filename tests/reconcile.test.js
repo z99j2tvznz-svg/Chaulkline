@@ -106,3 +106,25 @@ test('observe: a ball needs half the frames, "not a ball" spots are dropped, eac
   assert.equal(o.named[3].x, 10);
   assert.equal(o.unnamed, 1);
 });
+
+// absence experiment (off unless ev.absence is given)
+const ABS = (before, moved = true) => ({ pockets: [], absence: { before, movedFrom: () => moved } });
+const NO5 = [0, 1, 2, 3, 4, 6, 7, 8, 9];
+test('absence: off by default, a gone ball with no pocket event stays unresolved', () => {
+  assert.equal(reconcile(racked(), look(NO5)).memory.balls[5].status, 'unconfirmed');
+});
+test('absence: named before, clear still after look, count fell by one, rolled away: confirmed pocketed', () => {
+  const { memory, trace } = reconcile(racked(), look(NO5), ABS(look(ALL)));
+  assert.equal(memory.balls[5].status, 'pocketed');
+  assert.ok(trace.confirmed[0].absence);
+});
+test('absence: stays unresolved when any gate fails', () => {
+  const st = (after, ev) => reconcile(racked(), after, ev).memory.balls[5].status;
+  assert.equal(st(look(NO5), ABS(look(ALL), false)), 'unconfirmed');                           // never seen rolling away
+  assert.equal(st(look(NO5, { unnamed: 1 }), ABS(look(ALL))), 'unconfirmed');                  // an unnamed spot could be it
+  assert.equal(st(look(NO5, { settled: false }), ABS(look(ALL))), 'unconfirmed');              // still moving
+  assert.equal(st(look(NO5), ABS(look([0, 1, 2, 3, 4, 6, 7, 8, 9]))), 'unconfirmed');          // not named before
+  const extra = look(NO5); extra.balls.push({ x: 70, y: 30, num: null, score: 0 });
+  assert.equal(st(extra, ABS(look(ALL))), 'unconfirmed');                                        // count did not fall
+  assert.equal(reconcile(racked(), look([0, 1, 2, 3, 4, 8, 9]), ABS(look(ALL))).memory.balls[5].status, 'unconfirmed'); // 3 at once
+});

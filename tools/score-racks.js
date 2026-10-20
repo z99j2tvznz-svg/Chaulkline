@@ -19,6 +19,9 @@ const { observe, reconcile, newMemory, BALLS } = require('./reconcile.js');
 const argv = process.argv.slice(2), VERBOSE = argv.includes('--v');
 const oIx = argv.indexOf('--out'), OUT = oIx >= 0 ? argv.splice(oIx, 2)[1] : null;
 const kIx = argv.indexOf('--track'), TRACK_OPTS = kIx >= 0 ? JSON.parse(argv.splice(kIx, 2)[1]) : {}; // tracker experiment options
+// experiment option absence (off by default, not part of any tracker version): the settled-table check may also confirm a
+// pocket from absence plus the ball count (reconcile.js, ABSENCE). It is a settled-table option, so the tracker never sees it.
+const ABS = !!TRACK_OPTS.absence; delete TRACK_OPTS.absence;
 const qIx = argv.indexOf('--oracle'), ORACLE = qIx >= 0 ? argv.splice(qIx, 2)[1] : null, DIAG = argv.includes('--diag');
 if (ORACLE && !['obs', 'pockets', 'both'].includes(ORACLE)) throw new Error('--oracle obs|pockets|both');
 const O_OBS = ORACLE === 'obs' || ORACLE === 'both', O_POCK = ORACLE === 'pockets' || ORACLE === 'both';
@@ -52,8 +55,13 @@ function runClip(clip, T) {
     const inMouth = x != null && pockets.some(p => Math.hypot(x - p[0], y - p[1]) < TRACK_DEFAULTS.pocketDist);
     return { ball: t.ball ?? e.ball ?? null, x, y, t: +e.t.toFixed(2), jaws: !!e.jaws, inMouth };
   });
-  return { r, before, after, pev, shotT, end };
+  // absence experiment: did a ball start from this spot and roll away? (a path that passed within MOVE_FROM of the spot
+  // and later ended up at least MOVE_AWAY from it, on a track that moved). A ball that only went out of view does not.
+  const movedFrom = (x, y) => tr.tracks.some(k => k.real && k.movedAt != null && k.path.some(([, px, py]) => Math.hypot(px - x, py - y) < MOVE_FROM)
+    && Math.hypot(k.x - x, k.y - y) >= MOVE_AWAY);
+  return { r, before, after, pev, shotT, end, movedFrom };
 }
+const MOVE_FROM = 1.5, MOVE_AWAY = 3;
 
 // oracle inputs (diagnostic only): a still-table look that names exactly the verified balls, and pocket events for
 // exactly the verified made balls. Balls the truth cannot tell about are left out of both.
@@ -141,7 +149,7 @@ function runRack(rack, mode) {
     const traces = [];
     if (mode === 'checkpoint' && w.stateOk && clips.length) mem = truthMemory(w.before);
     if (run.before) { const a = reconcile(mem, run.before, { pockets: [] }, 'before'); mem = a.memory; traces.push(a.trace); }
-    const b = reconcile(mem, run.after, { pockets: run.pev }, 'after'); mem = b.memory; traces.push(b.trace);
+    const b = reconcile(mem, run.after, { pockets: run.pev, ...(ABS && run.before ? { absence: { before: run.before, movedFrom: run.movedFrom } } : {}) }, 'after'); mem = b.memory; traces.push(b.trace);
     const s = scoreClip(w, run, mem, b.trace);
     s.trace = traces; s.shotsAt = run.r.shots.map(x => +x.t.toFixed(2));
     s.settled = settled; s.seconds = run.end; s.oracleObs = oObs;

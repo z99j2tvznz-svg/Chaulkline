@@ -6,6 +6,13 @@
 
 const BALLS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const OBS = { group: 1.5, share: 0.5, nb: 0.5, p: 0.6, minScore: 2, margin: 2 };
+// absence experiment (off unless ev.absence is given; not part of the baseline rules): a missing ball with no pocket
+// event inside a mouth is confirmed pocketed only when every one of these holds, otherwise it stays unconfirmed:
+//   the look before this shot named it; the after look is settled with every spot named (none could be it);
+//   the spot count fell by exactly the number of missing balls named before (no more balls missing than gone), and by
+//   at most maxDrop (3 or more at once is a misread table, as in the old app); every missing ball was named before;
+//   and a track rolled away from its spot (a ball that was only blocked from view or not found did not move)
+const ABSENCE = { maxDrop: 2 };
 
 // frames: [{ t, balls: [{ x, y, rec, p, nb }] }] from tools/clip-detect.js
 function observe(frames) {
@@ -63,11 +70,19 @@ function reconcile(memory, obs, ev = { pockets: [] }, label = '') {
   // R7: at rack start the rack's balls that were not seen are expected but unconfirmed
   if (mem.rack) for (const n of mem.set || BALLS) if (!mem.balls[n]) { mem.balls[n] = { status: 'unconfirmed', why: 'in the rack, not seen at rack start' }; trace.unresolved.push({ ball: n, why: 'not seen at rack start' }); }
   // missing balls: R2 to R6
+  const A = ev.absence, absOk = A && A.before && obs.settled !== false && obs.unnamed === 0 && (() => {
+    const drop = A.before.balls.length - obs.balls.length;
+    return missing.every(n => A.before.named[n]) && drop === missing.length && drop >= 1 && drop <= ABSENCE.maxDrop;
+  })();
   for (const n of missing) {
     const r = mem.balls[n], p = evFor[n];
     if (p) trace.proposed.push({ ball: n, change: 'pocketed', evidence: p.jaws ? 'seen in the jaws' : p.inMouth ? 'lost inside the pocket mouth' : 'lost heading toward a pocket, outside the mouth' });
     if (obs.settled === false) { r.status = 'unconfirmed'; r.why = 'not seen; table not settled'; trace.unresolved.push({ ball: n, why: 'not seen and the table was still moving', possiblyPocketed: !!p }); continue; }
     if (p && (p.jaws || p.inMouth)) { r.status = 'pocketed'; r.why = 'pocket event inside the mouth and gone from the still table'; trace.confirmed.push({ ball: n, change: 'pocketed', why: r.why }); continue; }
+    if (absOk && A.movedFrom(A.before.named[n].x, A.before.named[n].y)) {
+      r.status = 'pocketed'; r.why = 'gone from a clear still table: named before, count fell by the missing balls, it rolled away';
+      trace.confirmed.push({ ball: n, change: 'pocketed', why: r.why, absence: true }); continue;
+    }
     r.status = 'unconfirmed';
     r.why = p ? 'possibly pocketed: last seen heading to a pocket outside the mouth' : obs.unnamed ? 'not seen; may be one of the unnamed balls' : 'not seen, nothing explains it';
     trace.unresolved.push({ ball: n, why: r.why, possiblyPocketed: !!p });
@@ -88,4 +103,4 @@ function game(mem) {
     rackOver: mem.balls[9] && mem.balls[9].status === 'pocketed' };
 }
 
-if (typeof module !== 'undefined') module.exports = { observe, reconcile, newMemory, game, onTable, BALLS, OBS };
+if (typeof module !== 'undefined') module.exports = { observe, reconcile, newMemory, game, onTable, BALLS, OBS, ABSENCE };
