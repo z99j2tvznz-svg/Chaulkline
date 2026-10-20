@@ -1,13 +1,19 @@
 name: recognition-benchmark
 # Isolated ball-recognition benchmark (benchmark/recognition-2026-10-20). Reads the recognition package and the frozen
-# v0.6 scorer; writes only to $BENCH_OUT and uploads it as artifacts. Never pushes, never changes the package or the app.
+# v0.6 scorer; writes only to $BENCH_OUT and uploads it as artifacts. It never changes the package or the app; the optional
+# publish step (manual runs only) commits the small results to this dev branch under actions-results/run-<id>/
 on:
   workflow_dispatch:
+    inputs:
+      publish_to_branch:
+        description: 'Also commit the small results (models, metrics, predictions, logs) to this dev branch under actions-results/run-<id>/'
+        type: boolean
+        default: false
   push:
     branches: [claude/project-thread-vl1o4a]
     paths: ['benchmark/recognition-2026-10-20/**', '.github/workflows/recognition-benchmark.yml']
 permissions:
-  contents: read
+  contents: write   # used only by the optional publish step, which commits to this dev branch under benchmark/.../actions-results/
 jobs:
   benchmark:
     runs-on: ubuntu-24.04
@@ -76,3 +82,12 @@ jobs:
           name: recognition-benchmark-example-arrays
           path: bench-out/data/*.npz
           retention-days: 90
+      - name: Publish small results to the dev branch (optional)
+        if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.publish_to_branch }}
+        run: |
+          D=benchmark/recognition-2026-10-20/actions-results/run-${GITHUB_RUN_ID}
+          mkdir -p "$D"
+          (cd "$BENCH_OUT" && tar cf - --exclude='*.npz' --exclude='product/alt' --exclude='product/runs' --exclude='product/dets' .) | tar xf - -C "$D"
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$D"; git commit -qm "Benchmark results of workflow run ${GITHUB_RUN_ID} (attempt ${GITHUB_RUN_ATTEMPT}) at ${GITHUB_SHA}"
+          git push origin HEAD:${GITHUB_REF_NAME}
