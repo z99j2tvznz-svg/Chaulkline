@@ -8,8 +8,7 @@ import numpy as np
 import torch, torch.nn as nn, torch.nn.functional as F
 from common import CFG, CLASSES, out, write_csv, decide, softmax, fit_temperature, read_csv
 
-cfg = CFG['challenger_b']
-random.seed(cfg['seed']); np.random.seed(cfg['seed']); torch.manual_seed(cfg['seed'])
+cfg = dict(CFG['challenger_b'])
 torch.set_num_threads(cfg['torch_threads']); torch.use_deterministic_algorithms(True)
 
 
@@ -52,7 +51,9 @@ def logits(net, X):
     with torch.no_grad(): return torch.cat([net(X[i:i + 512]) for i in range(0, len(X), 512)]).numpy()
 
 
-def main():
+def main(seed=None, tag='challenger_b'):
+    if seed is not None: cfg['seed'] = seed
+    random.seed(cfg['seed']); np.random.seed(cfg['seed']); torch.manual_seed(cfg['seed'])
     tr, dv, te = (np.load(out('data', s + '.npz')) for s in ('train', 'dev', 'test'))
     ex = {e['id']: e for e in read_csv(out('data', 'examples.csv'))}
     Xtr, ytr, Xdv, ydv = tensor(tr['X40']), torch.tensor(tr['y']), tensor(dv['X40']), dv['y']
@@ -65,7 +66,7 @@ def main():
     g = torch.Generator().manual_seed(cfg['seed'])
     net = Net(); opt = torch.optim.AdamW(net.parameters(), lr=cfg['lr'], weight_decay=cfg['weight_decay'])
     steps_per_epoch = math.ceil(len(ytr) / cfg['batch']); sched = torch.optim.lr_scheduler.OneCycleLR(opt, cfg['lr'], total_steps=cfg['epochs'] * steps_per_epoch)
-    log = dict(config=cfg, parameters=sum(p.numel() for p in net.parameters()), train_examples=len(ytr), dev_examples=len(ydv), epochs=[])
+    log = dict(config=dict(cfg), parameters=sum(p.numel() for p in net.parameters()), train_examples=len(ytr), dev_examples=len(ydv), epochs=[])
     t0 = time.time()
     for ep in range(cfg['epochs']):
         net.train(); idx = torch.multinomial(w, steps_per_epoch * cfg['batch'], replacement=True, generator=g); tot = 0
@@ -74,25 +75,25 @@ def main():
             loss = F.cross_entropy(net(augment(Xtr[b], g)), ytr[b]); opt.zero_grad(); loss.backward(); opt.step(); sched.step(); tot += loss.item()
         dl = logits(net, Xdv); dacc = float((dl.argmax(1) == ydv).mean())
         log['epochs'].append(dict(epoch=ep + 1, train_loss=round(tot / steps_per_epoch, 4), dev_top1=round(dacc, 4), seconds=round(time.time() - t0, 1)))
-        print(log['epochs'][-1], flush=True)
+        if tag == 'challenger_b': print(log['epochs'][-1], flush=True)
     # final model = last epoch (fixed in advance; the dev score is logged, not used to pick an epoch)
     T, nll = fit_temperature(logits(net, Xdv), ydv); log.update(temperature=T, dev_nll=nll,
                                                             train_top1_no_aug=float((logits(net, Xtr).argmax(1) == tr['y']).mean()))
-    torch.save(net.state_dict(), out('models', 'challenger_b.pt'))
-    net.eval(); torch.onnx.export(net, torch.zeros(1, 3, 40, 40), out('models', 'challenger_b.onnx'), input_names=['x'], output_names=['logits'],
+    torch.save(net.state_dict(), out('models', tag + '.pt'))
+    net.eval(); torch.onnx.export(net, torch.zeros(1, 3, 40, 40), out('models', tag + '.onnx'), input_names=['x'], output_names=['logits'],
                                   dynamic_axes={'x': {0: 'n'}, 'logits': {0: 'n'}}, opset_version=17)
     json.dump(dict(temperature=T, input='N x 3 x 40 x 40 RGB 0..1 (3.2-radius crop, bilinear resize)', classes=CLASSES),
-              open(out('models', 'challenger_b.json'), 'w'), indent=1)
+              open(out('models', tag + '.json'), 'w'), indent=1)
     import onnxruntime as ort
-    sess = ort.InferenceSession(out('models', 'challenger_b.onnx'), providers=['CPUExecutionProvider'])
+    sess = ort.InferenceSession(out('models', tag + '.onnx'), providers=['CPUExecutionProvider'])
     Xte = tensor(te['X40']).numpy(); L = np.concatenate([sess.run(None, {'x': Xte[i:i + 512]})[0] for i in range(0, len(Xte), 512)])
     log['onnx_vs_torch_max_logit_diff'] = float(np.abs(L - logits(net, tensor(te['X40']))).max())
     P = softmax(L, T); rows = []
     for i, p in zip(te['ids'], P):
         kind, k, pt, nb = decide(p)
         rows.append(dict(id=str(i), kind=kind, number=k, p_top=round(pt, 4), nb=round(nb, 4), **{f'p_{c}': round(float(v), 5) for c, v in zip(CLASSES, p)}))
-    write_csv(out('predictions', 'challenger_b.csv'), rows)
-    json.dump(log, open(out('logs', 'challenger_b.json'), 'w'), indent=1)
+    write_csv(out('predictions', tag + '.csv'), rows)
+    json.dump(log, open(out('logs', tag + '.json'), 'w'), indent=1)
     print(json.dumps({k: v for k, v in log.items() if k != 'epochs'}))
 
 

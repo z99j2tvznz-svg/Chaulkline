@@ -14,12 +14,17 @@ Nothing here is promoted.
 | 2 | `s02_frozen.py` - frozen reader re-run on the exact 24x24 test pictures vs stored probabilities | `predictions/frozen.csv`, `frozen-reproduction.json` |
 | 3 | `s03_challenger_a.py` - colour / appearance features + one multinomial logistic regression (11 classes) | `predictions/challenger_a.csv`, `models/challenger_a.*`, `logs/challenger_a.json` |
 | 4 | `s04_challenger_b.py` - small CNN (about 60k weights) on 40x40 crops, exported to ONNX | `predictions/challenger_b.csv`, `models/challenger_b.onnx`, `logs/challenger_b.json` |
+| 4b | `s04b_seed_spread.py` - challenger B retrained with seeds 1-4 (stability only, not used for any choice) | `metrics/challenger_b_seed_spread.json` |
 | 5 | `s05_evaluate.py` - the same test examples for all three systems | `metrics/summary.json`, `metrics/recognition_metrics.csv`, `metrics/confusion_*.csv`, `predictions/all_systems_test.csv` |
+| 5b | `s05b_product_models.py` - re-scores the exact models used at product level and checks the committed per-spot answers equal the test predictions at the labelled spots | `metrics/product_models_recognition.json` |
 | 6 | `s06_product.py` - unchanged v0.6 scorer: baseline as published, then each reader swapped in | `product/baseline-reproduction.json`, `product/product_metrics.csv`, `product/product_results.json`, `product/runs/*` |
 | 7 | `s07_checks.py` - fails the run if the package changed, the reader or the v0.6 baseline did not reproduce | `checks.json`, `manifest-sha256.json` |
 
 Logs of every step, `pip freeze` and the Node version are in `logs/`. Seeds, thresholds and hyper-parameters are in
 `config.json` (all fixed before any test-set run).
+
+Manual runs with `publish_to_branch` also commit these small results to `actions-results/run-<id>/` on this branch
+(artifact downloads were blocked from the Claude container, and the product step needs the trained models).
 
 ## Rules
 
@@ -50,6 +55,10 @@ needs the original video. The footage (about 700 MB) is not on GitHub. So:
    (model and footage hashes).
 3. The workflow merges those answers into copies of the frozen detection files (only `rec`, `p`, `nb` change; an
    assertion checks every clip's spot count) and runs the unchanged scorer.
+
+The models used are those of Actions run 39500020895 (`actions-results/run-39500020895/models`). Product totals are
+given for all 116 shots and for the 92 held-out shots alone, because Oct 16 is train/dev data for the challengers.
+`control_frozen` = the frozen reader re-run on this pipeline's own crops: it shows what re-cropping alone changes.
 
 Checked: on held-out labelled spots the local crops are byte-identical to the package's `crop-before-resize` pictures.
 

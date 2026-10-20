@@ -47,10 +47,15 @@ def score(dirs, tag):
         R = json.load(open(ro))
         for m in tot:
             for k in K: tot[m][k] += R[m]['totals'][k]
-        per.append(dict(session=t, **{f'{m}_{k}': R[m]['totals'][k] for m in tot for k in ('correctAutomatically', 'confidentlyWrong', 'realShotClips')}))
+        per.append(dict(session=t, **{f'{m}_{k}': R[m]['totals'][k] for m in tot for k in K}))
     real = [x for x in pm if 'racks' in json.load(open(os.path.join(TRUTH, x['session'] + '.json')))]
     racks = f"{sum(x['racksComplete'] for x in real)}/{sum(x['racks'] for x in real)}"
+    # held-out sessions only (Oct 17-19): Oct 16 is train/dev data for the challengers, so it is reported apart
+    held = {m: {k: sum(x[f'{m}_{k}'] for x in per if not x['session'].startswith('2026-10-16')) for k in K} for m in tot}
+    real_h = [x for x in real if not x['session'].startswith('2026-10-16')]
+    racks_h = f"{sum(x['racksComplete'] for x in real_h)}/{sum(x['racks'] for x in real_h)}"
     return dict(tag=tag, checkpoint=tot['checkpoint'], continuous=tot['continuous'], racks_complete=racks, per_session=per,
+                heldout_only=dict(checkpoint=held['checkpoint'], continuous=held['continuous'], racks_complete=racks_h),
                 pm_totals={k: sum(x[k] for x in pm) for k in ('shots', 'endRight', 'confidentlyWrong', 'phantom', 'madeCalledOnTable', 'madeLeftOpen', 'shotsMissed', 'falseShots')})
 
 
@@ -105,7 +110,14 @@ def main():
                          confidently_wrong_continuous=r['continuous']['confidentlyWrong'], made_balls_unresolved_independent=r['checkpoint']['madeLeftUnresolved'],
                          made_balls_unresolved_continuous=r['continuous']['madeLeftUnresolved'], false_pockets=r['checkpoint']['phantomPockets'],
                          made_called_on_table_missed_pockets=r['checkpoint']['madeCalledOnTable'], real_shots_missed=r['checkpoint']['realShotsMissed'],
-                         false_shots=r['checkpoint']['falseShots'], racks_complete=r['racks_complete']))
+                         false_shots=r['checkpoint']['falseShots'], racks_complete=r['racks_complete'],
+                         heldout_shots=r['heldout_only']['checkpoint']['realShotClips'],
+                         heldout_ending_table_right_independent=r['heldout_only']['checkpoint']['correctAutomatically'],
+                         heldout_ending_table_right_continuous=r['heldout_only']['continuous']['correctAutomatically'],
+                         heldout_confidently_wrong_independent=r['heldout_only']['checkpoint']['confidentlyWrong'],
+                         heldout_confidently_wrong_continuous=r['heldout_only']['continuous']['confidentlyWrong'],
+                         heldout_made_balls_unresolved_independent=r['heldout_only']['checkpoint']['madeLeftUnresolved'],
+                         heldout_racks_complete=r['heldout_only']['racks_complete']))
     write_csv(out('product', 'product_metrics.csv'), rows)
     print(json.dumps(repro, indent=1))
     for r in rows: print(r)

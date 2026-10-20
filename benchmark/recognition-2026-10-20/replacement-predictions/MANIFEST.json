@@ -1,0 +1,45 @@
+{
+ "made_by": "local/infer_footage.py (frames with ffmpeg as clip-detect.js; crops with bench/common.py crop_square; radii from local/radii.js)",
+ "benchmark_commit": "52685c3d710adb983d758516bcf15c3fdc6e55aa",
+ "source_run": "https://github.com/z99j2tvznz-svg/Chaulkline/actions/runs/39500020895",
+ "models_dir": "actions-results/run-39500020895/models",
+ "model_sha256": {
+  "challenger_a.pkl": "ea977813504fd51555aebac232468b7fec73a4845161142205988ebedcc3fb23",
+  "challenger_b.onnx": "420045ac6ed7836d05272f25e4e94b77b31d8a7c2472c82979448ab44c9e4ef0",
+  "challenger_b.json": "0f0958fd5269837f7dc0f855a9b8cfd9367f22251dddd2cad0aa16ab87d31ef8"
+ },
+ "footage_zip_sha256": {
+  "chalkline-footage-old-app-oct12-17.zip": "cdafea43f9a8ff153ce184d53a4fc99e9f31a14a90a990c3b1011e349521bf6e",
+  "chalkline-footage-recorder-oct17.zip": "b05d7f0d43f1a009515c22af2a07ec672727f67a499768f4f634264629fa6501",
+  "chalkline-footage-recorder-oct18-19.zip": "7b43929b267d1d661e7caeef917c85d576fc92e93ff11eae93fdff9467841a98"
+ },
+ "ffmpeg": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers",
+ "detection_sources": {
+  "frozen30": "collab/recognition-package-2026-10-20/04-detections/v0.6-scoring-set",
+  "d30b": "collab/recognition-package-2026-10-20/04-detections/alternate-sampling/sampling-sets-15-30.tgz (d30b)"
+ },
+ "probability_encoding": "uint16, value / 65535; arrays per <session>/<clip>/<system>, spots in file order (frames, then balls); <session>/<clip>/n = spots per frame",
+ "control_frozen": "the frozen reader run on this pipeline's own 24x24 inputs (Pillow bilinear resize of the 3.2-radius square), to measure what re-cropping alone changes",
+ "sets": {
+  "d30b.npz": {
+   "sha256": "c6cba6de81161330cd56bf66bb38525d745e855d9b41f802919f5a8045d69798",
+   "clips": 148,
+   "spots": 355103,
+   "systems": [
+    "challenger_a",
+    "challenger_b",
+    "control_frozen"
+   ]
+  },
+  "frozen30.npz": {
+   "sha256": "43ae24e4ee3608a9a8f2c45896df3c9c7bb6d12459a85dcc6b0cde0189e7306a",
+   "clips": 148,
+   "spots": 358601,
+   "systems": [
+    "challenger_a",
+    "challenger_b",
+    "control_frozen"
+   ]
+  }
+ }
+}
