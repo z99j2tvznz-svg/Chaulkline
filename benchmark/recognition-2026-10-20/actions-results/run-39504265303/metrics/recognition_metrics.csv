@@ -1,0 +1,73 @@
+system,unit,group,n,correct,confidently_wrong,unsure,said_not_a_ball,accuracy_when_confident,coverage,correct_share_of_all
+frozen,picture,9 ball (stripe),210,60,120,30,0,0.3333,0.8571,0.2857
+frozen,picture,all,1583,1236,196,76,75,0.8631,0.9046,0.7808
+frozen,picture,ball radius 12-15 px,998,801,76,76,45,0.9133,0.8788,0.8026
+frozen,picture,ball radius < 12 px,195,135,60,0,0,0.6923,1.0,0.6923
+frozen,picture,ball radius >= 15 px,390,300,60,0,30,0.8333,0.9231,0.7692
+frozen,picture,cue ball,210,210,0,0,0,1.0,1.0,1.0
+frozen,picture,no ball within 2.5 radii,1471,1189,151,71,60,0.8873,0.9109,0.8083
+frozen,picture,one frame per ball (frame used in earlier experiments),106,81,13,7,5,0.8617,0.8868,0.7642
+frozen,picture,session: Oct 17 far spot,480,283,75,47,75,0.7905,0.7458,0.5896
+frozen,picture,session: Oct 17 other side,398,323,46,29,0,0.8753,0.9271,0.8116
+frozen,picture,session: Oct 17 recorder,150,150,0,0,0,1.0,1.0,1.0
+frozen,picture,session: Oct 18 evening,285,255,30,0,0,0.8947,1.0,0.8947
+frozen,picture,session: Oct 19 low side,270,225,45,0,0,0.8333,1.0,0.8333
+frozen,picture,solids 1-8,1163,966,76,46,75,0.9271,0.896,0.8306
+frozen,picture,touching/near another ball (<2.5 radii),112,47,45,5,15,0.5109,0.8214,0.4196
+frozen,ball (frames averaged),9 ball (stripe),14,4,8,2,0,0.3333,0.8571,0.2857
+frozen,ball (frames averaged),all,106,83,13,5,5,0.8646,0.9057,0.783
+frozen,ball (frames averaged),cue ball,14,14,0,0,0,1.0,1.0,1.0
+frozen,ball (frames averaged),session: Oct 17 far spot,32,19,5,3,5,0.7917,0.75,0.5938
+frozen,ball (frames averaged),session: Oct 17 other side,27,22,3,2,0,0.88,0.9259,0.8148
+frozen,ball (frames averaged),session: Oct 17 recorder,10,10,0,0,0,1.0,1.0,1.0
+frozen,ball (frames averaged),session: Oct 18 evening,19,17,2,0,0,0.8947,1.0,0.8947
+frozen,ball (frames averaged),session: Oct 19 low side,18,15,3,0,0,0.8333,1.0,0.8333
+frozen,ball (frames averaged),solids 1-8,78,65,5,3,5,0.9286,0.8974,0.8333
+challenger_a,picture,9 ball (stripe),210,108,85,17,0,0.5596,0.919,0.5143
+challenger_a,picture,all,1583,1152,196,182,53,0.8546,0.8515,0.7277
+challenger_a,picture,ball radius 12-15 px,998,723,80,170,25,0.9004,0.8046,0.7244
+challenger_a,picture,ball radius < 12 px,195,144,41,10,0,0.7784,0.9487,0.7385
+challenger_a,picture,ball radius >= 15 px,390,285,75,2,28,0.7917,0.9231,0.7308
+challenger_a,picture,cue ball,210,210,0,0,0,1.0,1.0,1.0
+challenger_a,picture,no ball within 2.5 radii,1471,1145,151,132,43,0.8835,0.881,0.7784
+challenger_a,picture,one frame per ball (frame used in earlier experiments),106,73,14,15,4,0.8391,0.8208,0.6887
+challenger_a,picture,session: Oct 17 far spot,480,213,105,109,53,0.6698,0.6625,0.4437
+challenger_a,picture,session: Oct 17 other side,398,285,50,63,0,0.8507,0.8417,0.7161
+challenger_a,picture,session: Oct 17 recorder,150,150,0,0,0,1.0,1.0,1.0
+challenger_a,picture,session: Oct 18 evening,285,285,0,0,0,1.0,1.0,1.0
+challenger_a,picture,session: Oct 19 low side,270,219,41,10,0,0.8423,0.963,0.8111
+challenger_a,picture,solids 1-8,1163,834,111,165,53,0.8825,0.8126,0.7171
+challenger_a,picture,touching/near another ball (<2.5 radii),112,7,45,50,10,0.1346,0.4643,0.0625
+challenger_a,ball (frames averaged),9 ball (stripe),14,7,6,1,0,0.5385,0.9286,0.5
+challenger_a,ball (frames averaged),all,106,77,13,12,4,0.8556,0.8491,0.7264
+challenger_a,ball (frames averaged),cue ball,14,14,0,0,0,1.0,1.0,1.0
+challenger_a,ball (frames averaged),session: Oct 17 far spot,32,14,7,7,4,0.6667,0.6562,0.4375
+challenger_a,ball (frames averaged),session: Oct 17 other side,27,20,3,4,0,0.8696,0.8519,0.7407
+challenger_a,ball (frames averaged),session: Oct 17 recorder,10,10,0,0,0,1.0,1.0,1.0
+challenger_a,ball (frames averaged),session: Oct 18 evening,19,19,0,0,0,1.0,1.0,1.0
+challenger_a,ball (frames averaged),session: Oct 19 low side,18,14,3,1,0,0.8235,0.9444,0.7778
+challenger_a,ball (frames averaged),solids 1-8,78,56,7,11,4,0.8889,0.8077,0.7179
+challenger_b,picture,9 ball (stripe),210,137,0,63,10,1.0,0.6524,0.6524
+challenger_b,picture,all,1583,1397,47,88,51,0.9675,0.9122,0.8825
+challenger_b,picture,ball radius 12-15 px,998,840,30,77,51,0.9655,0.8717,0.8417
+challenger_b,picture,ball radius < 12 px,195,195,0,0,0,1.0,1.0,1.0
+challenger_b,picture,ball radius >= 15 px,390,362,17,11,0,0.9551,0.9718,0.9282
+challenger_b,picture,cue ball,210,210,0,0,0,1.0,1.0,1.0
+challenger_b,picture,no ball within 2.5 radii,1471,1389,47,35,0,0.9673,0.9762,0.9443
+challenger_b,picture,one frame per ball (frame used in earlier experiments),106,93,2,8,3,0.9789,0.8962,0.8774
+challenger_b,picture,session: Oct 17 far spot,480,303,42,84,51,0.8783,0.7188,0.6312
+challenger_b,picture,session: Oct 17 other side,398,389,5,4,0,0.9873,0.9899,0.9774
+challenger_b,picture,session: Oct 17 recorder,150,150,0,0,0,1.0,1.0,1.0
+challenger_b,picture,session: Oct 18 evening,285,285,0,0,0,1.0,1.0,1.0
+challenger_b,picture,session: Oct 19 low side,270,270,0,0,0,1.0,1.0,1.0
+challenger_b,picture,solids 1-8,1163,1050,47,25,41,0.9572,0.9433,0.9028
+challenger_b,picture,touching/near another ball (<2.5 radii),112,8,0,53,51,1.0,0.0714,0.0714
+challenger_b,ball (frames averaged),9 ball (stripe),14,10,0,4,0,1.0,0.7143,0.7143
+challenger_b,ball (frames averaged),all,106,95,3,5,3,0.9694,0.9245,0.8962
+challenger_b,ball (frames averaged),cue ball,14,14,0,0,0,1.0,1.0,1.0
+challenger_b,ball (frames averaged),session: Oct 17 far spot,32,21,3,5,3,0.875,0.75,0.6562
+challenger_b,ball (frames averaged),session: Oct 17 other side,27,27,0,0,0,1.0,1.0,1.0
+challenger_b,ball (frames averaged),session: Oct 17 recorder,10,10,0,0,0,1.0,1.0,1.0
+challenger_b,ball (frames averaged),session: Oct 18 evening,19,19,0,0,0,1.0,1.0,1.0
+challenger_b,ball (frames averaged),session: Oct 19 low side,18,18,0,0,0,1.0,1.0,1.0
+challenger_b,ball (frames averaged),solids 1-8,78,71,3,1,3,0.9595,0.9487,0.9103

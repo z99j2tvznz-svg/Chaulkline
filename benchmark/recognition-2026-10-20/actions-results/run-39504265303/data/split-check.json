@@ -1,0 +1,122 @@
+{
+ "sessions": {
+  "train": [
+   "2026-10-12_1819_V2.0",
+   "2026-10-12_1942_V2.1",
+   "2026-10-12_2018_V2.1",
+   "2026-10-13_1712_V2.2",
+   "2026-10-13_1735_V2.2",
+   "2026-10-13_1835_V2.2",
+   "2026-10-14_1707_V2.3",
+   "2026-10-14_1718_V2.3",
+   "2026-10-14_1729_V2.3",
+   "2026-10-16_evening_V2.3.3"
+  ],
+  "dev": [
+   "2026-10-15_1934_V2.3.1",
+   "2026-10-15_1956_V2.3.1",
+   "2026-10-15_2107_V2.3.2",
+   "2026-10-16_evening_V2.3.3"
+  ],
+  "test": [
+   "2026-10-17_1500_V2.3.3_otherside",
+   "2026-10-17_2151_V2.3.3_firstspot",
+   "rec-20261017-1730",
+   "rec-20261018-2310",
+   "rec-20261019-1710"
+  ]
+ },
+ "session_overlap_train_test": [],
+ "identical_crops_train_or_dev_in_test": 0,
+ "identical_crops_train_in_dev": 0,
+ "clips_in_both_train_and_dev": [],
+ "nearest_train_or_dev_distance_for_test": {
+  "min": 0.13622181117534637,
+  "p1": 0.1748524159193039,
+  "median": 0.3552033305168152
+ },
+ "nearest_other_test_distance_for_test": {
+  "min": 0.0,
+  "median": 0.004717245232313871
+ },
+ "test_with_train_neighbour_closer_than_median_within_test_neighbour": 0,
+ "note": "Distances: 12x12 grey thumbnails, each normalised (mean 0, sd 1), RMS difference. Test pictures of the same ball in consecutive frames are near-identical to each other (within-test distance), which is why scores are also given per ball.",
+ "skipped": {
+  "train/dev picture without verified number": 21,
+  "audit duplicate of another row": 46
+ },
+ "counts": {
+  "train": {
+   "player-verified | class 0": 215,
+   "player-verified | class 9": 195,
+   "player-verified | class 8": 170,
+   "player-verified | class 7": 144,
+   "player-verified | class 6": 126,
+   "player-verified | class 10": 122,
+   "player-verified | class 5": 93,
+   "player-verified | class 4": 81,
+   "player-verified | class 3": 66,
+   "player-verified | class 2": 40,
+   "player-verified | class 1": 25
+  },
+  "dev": {
+   "player-verified | class 9": 132,
+   "player-verified | class 0": 130,
+   "player-verified | class 8": 112,
+   "player-verified | class 7": 111,
+   "player-verified | class 6": 72,
+   "player-verified | class 5": 67,
+   "player-verified | class 10": 50,
+   "player-verified | class 4": 43,
+   "player-verified | class 3": 27,
+   "player-verified | class 2": 24,
+   "player-verified | class 1": 3
+  },
+  "test": {
+   "player-verified": 1583,
+   "player-verified ball, number not verified": 122,
+   "UNVERIFIED (light step, by eye only)": 720
+  }
+ },
+ "counts_by_class": {
+  "train": {
+   "0": 215,
+   "1": 25,
+   "2": 40,
+   "3": 66,
+   "4": 81,
+   "5": 93,
+   "6": 126,
+   "7": 144,
+   "8": 170,
+   "9": 195,
+   "10": 122
+  },
+  "dev": {
+   "0": 130,
+   "1": 3,
+   "2": 24,
+   "3": 27,
+   "4": 43,
+   "5": 67,
+   "6": 72,
+   "7": 111,
+   "8": 112,
+   "9": 132,
+   "10": 50
+  },
+  "test": {
+   "-1": 842,
+   "0": 210,
+   "1": 90,
+   "2": 128,
+   "3": 195,
+   "4": 120,
+   "5": 105,
+   "6": 210,
+   "7": 135,
+   "8": 180,
+   "9": 210
+  }
+ }
+}

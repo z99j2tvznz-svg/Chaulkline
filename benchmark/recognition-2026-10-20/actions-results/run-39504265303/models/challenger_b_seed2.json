@@ -1,0 +1,17 @@
+{
+ "temperature": 0.6391235117802153,
+ "input": "N x 3 x 40 x 40 RGB 0..1 (3.2-radius crop, bilinear resize)",
+ "classes": [
+  "cue",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "not a ball"
+ ]
+}

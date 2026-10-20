@@ -1,0 +1,7 @@
+{
+ "package_unchanged": true,
+ "scorer_identical_to_v06": true,
+ "frozen_reader_reproduces_stored_probabilities": true,
+ "v06_baseline_exact": true,
+ "product_metrics_identical_to_pm_v06": true
+}

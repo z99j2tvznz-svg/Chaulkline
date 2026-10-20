@@ -1,0 +1,45 @@
+{
+ "note": "picture-level counts on all verified held-out test pictures; seed 0 is the main run (metrics/summary.json)",
+ "seeds": {
+  "1": {
+   "n": 1583,
+   "correct": 1430,
+   "confidently_wrong": 50,
+   "unsure": 103,
+   "said_not_a_ball": 0,
+   "accuracy_when_confident": 0.9662,
+   "coverage": 0.9349,
+   "correct_share_of_all": 0.9033
+  },
+  "2": {
+   "n": 1583,
+   "correct": 1435,
+   "confidently_wrong": 55,
+   "unsure": 93,
+   "said_not_a_ball": 0,
+   "accuracy_when_confident": 0.9631,
+   "coverage": 0.9413,
+   "correct_share_of_all": 0.9065
+  },
+  "3": {
+   "n": 1583,
+   "correct": 1354,
+   "confidently_wrong": 67,
+   "unsure": 75,
+   "said_not_a_ball": 87,
+   "accuracy_when_confident": 0.9529,
+   "coverage": 0.8977,
+   "correct_share_of_all": 0.8553
+  },
+  "4": {
+   "n": 1583,
+   "correct": 1354,
+   "confidently_wrong": 35,
+   "unsure": 168,
+   "said_not_a_ball": 26,
+   "accuracy_when_confident": 0.9748,
+   "coverage": 0.8774,
+   "correct_share_of_all": 0.8553
+  }
+ }
+}

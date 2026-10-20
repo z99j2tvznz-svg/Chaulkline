@@ -1,0 +1,7 @@
+{
+ "pictures": 2425,
+ "max_abs_prob_difference_vs_stored": 5.32629013061392e-05,
+ "under_0_001": 2425,
+ "under_0_01": 2425,
+ "note": "stored values in index.csv are rounded; differences up to ~1e-4 are rounding"
+}

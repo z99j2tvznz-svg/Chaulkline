@@ -1,0 +1,141 @@
+{
+ "units": {
+  "picture": {
+   "frozen": {
+    "n": 1583,
+    "correct": 1236,
+    "confidently_wrong": 196,
+    "unsure": 76,
+    "said_not_a_ball": 75,
+    "accuracy_when_confident": 0.8631,
+    "coverage": 0.9046,
+    "correct_share_of_all": 0.7808
+   },
+   "challenger_a": {
+    "n": 1583,
+    "correct": 1152,
+    "confidently_wrong": 196,
+    "unsure": 182,
+    "said_not_a_ball": 53,
+    "accuracy_when_confident": 0.8546,
+    "coverage": 0.8515,
+    "correct_share_of_all": 0.7277
+   },
+   "challenger_b": {
+    "n": 1583,
+    "correct": 1397,
+    "confidently_wrong": 47,
+    "unsure": 88,
+    "said_not_a_ball": 51,
+    "accuracy_when_confident": 0.9675,
+    "coverage": 0.9122,
+    "correct_share_of_all": 0.8825
+   }
+  },
+  "ball (frames averaged)": {
+   "frozen": {
+    "n": 106,
+    "correct": 83,
+    "confidently_wrong": 13,
+    "unsure": 5,
+    "said_not_a_ball": 5,
+    "accuracy_when_confident": 0.8646,
+    "coverage": 0.9057,
+    "correct_share_of_all": 0.783
+   },
+   "challenger_a": {
+    "n": 106,
+    "correct": 77,
+    "confidently_wrong": 13,
+    "unsure": 12,
+    "said_not_a_ball": 4,
+    "accuracy_when_confident": 0.8556,
+    "coverage": 0.8491,
+    "correct_share_of_all": 0.7264
+   },
+   "challenger_b": {
+    "n": 106,
+    "correct": 95,
+    "confidently_wrong": 3,
+    "unsure": 5,
+    "said_not_a_ball": 3,
+    "accuracy_when_confident": 0.9694,
+    "coverage": 0.9245,
+    "correct_share_of_all": 0.8962
+   }
+  }
+ },
+ "cue_vs_9": {
+  "frozen": {
+   "nine_pictures": 210,
+   "nine_confidently_called_cue": 120,
+   "nine_correct": 60,
+   "cue_pictures": 210,
+   "cue_confidently_called_9": 0,
+   "cue_correct": 210
+  },
+  "challenger_a": {
+   "nine_pictures": 210,
+   "nine_confidently_called_cue": 85,
+   "nine_correct": 108,
+   "cue_pictures": 210,
+   "cue_confidently_called_9": 0,
+   "cue_correct": 210
+  },
+  "challenger_b": {
+   "nine_pictures": 210,
+   "nine_confidently_called_cue": 0,
+   "nine_correct": 137,
+   "cue_pictures": 210,
+   "cue_confidently_called_9": 0,
+   "cue_correct": 210
+  }
+ },
+ "bootstrap_vs_frozen_pictures": {
+  "challenger_a": {
+   "correct_diff": -84,
+   "correct_diff_95ci": [
+    -194,
+    32
+   ],
+   "confidently_wrong_diff": 0,
+   "confidently_wrong_diff_95ci": [
+    -70,
+    71
+   ]
+  },
+  "challenger_b": {
+   "correct_diff": 161,
+   "correct_diff_95ci": [
+    51,
+    277
+   ],
+   "confidently_wrong_diff": -149,
+   "confidently_wrong_diff_95ci": [
+    -253,
+    -49
+   ]
+  }
+ },
+ "strongest_candidate": "challenger_b",
+ "light_steps_unverified": {
+  "pictures": 720,
+  "note": "Identities NOT verified: no accuracy can be computed. Shows how often each system names, is unsure, or rejects.",
+  "frozen": {
+   "not_a_ball": 525,
+   "confident": 150,
+   "unsure": 45
+  },
+  "challenger_a": {
+   "confident": 257,
+   "not_a_ball": 421,
+   "unsure": 42
+  },
+  "challenger_b": {
+   "not_a_ball": 200,
+   "confident": 361,
+   "unsure": 159
+  },
+  "confident_and_same_number_a_and_b": 158
+ }
+}

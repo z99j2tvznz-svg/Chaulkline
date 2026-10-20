@@ -1,0 +1,35 @@
+{
+ "models_dir": "actions-results/run-39500020895/models",
+ "source_run": "https://github.com/z99j2tvznz-svg/Chaulkline/actions/runs/39500020895",
+ "challenger_a": {
+  "all_verified_pictures": {
+   "n": 1583,
+   "correct": 1152,
+   "confidently_wrong": 196,
+   "unsure": 182,
+   "said_not_a_ball": 53,
+   "accuracy_when_confident": 0.8546,
+   "coverage": 0.8515,
+   "correct_share_of_all": 0.7277
+  },
+  "max_prob_diff_vs_published_predictions": 4.9995847826167505e-06
+ },
+ "challenger_b": {
+  "all_verified_pictures": {
+   "n": 1583,
+   "correct": 1408,
+   "confidently_wrong": 48,
+   "unsure": 77,
+   "said_not_a_ball": 50,
+   "accuracy_when_confident": 0.967,
+   "coverage": 0.9198,
+   "correct_share_of_all": 0.8895
+  },
+  "max_prob_diff_vs_published_predictions": 4.999215991238239e-06
+ },
+ "replacement_predictions_vs_test_predictions_at_labelled_spots": {
+  "spots": 2425,
+  "max_prob_diff": 0.10439216923721062,
+  "over_0_01": 8
+ }
+}
