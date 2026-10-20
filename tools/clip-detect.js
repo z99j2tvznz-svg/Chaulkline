@@ -30,7 +30,9 @@ const REJECTED = argv.includes('--rejected'); if (REJECTED) argv.splice(argv.ind
 // --outline-check (experiment, off by default): when the table finder is unsure on a clip's first frame, try it on
 // later frames and on the last confident outline, check each against the clip's own detector boxes, and say in the
 // output how sure the outline is (see pickOutline below)
-const OUTLINE_CHECK = argv.includes('--outline-check'); if (OUTLINE_CHECK) argv.splice(argv.indexOf('--outline-check'), 1);
+// --outline-check keep-first: as above, but a valid first-frame outline that a confident one agrees with to within
+// 1 in (ball positions anywhere on the table) is kept rather than replaced
+const ocIx = argv.indexOf('--outline-check'), OUTLINE_CHECK = ocIx < 0 ? false : argv[ocIx + 1] === 'keep-first' ? argv.splice(ocIx, 2)[1] : !!argv.splice(ocIx, 1);
 const sIx = argv.indexOf('--sections'), SECTIONS = sIx >= 0 ? argv.splice(sIx, 2)[1].split(',') : null;
 const [SESSION, OUT, ...only] = argv;
 if (!SESSION || !OUT) { console.error('usage: node tools/clip-detect.js <session folder> <out folder> [--fps 30] [shotNNN ...]'); process.exit(2); }
@@ -135,6 +137,7 @@ async function main() {
       // confident candidate wins; else the one that puts the most boxes on the cloth without letting in more boxes from
       // far off the table, and the outline is marked uncertain. Never silently accepted: the choice is in the output.
       async function pickOutline(a0, i0) {
+        const KEEP_FIRST = OUTLINE_CHECK === 'keep-first', SAME_IN = 1;   // under a ball radius (1.125 in)
         const vn = q => q.map(C.vnFromSrc), sure = a => a.quad && a.conf >= 0.95 && a.corners === 4;
         const cands = [{ from: 'finder frame 1', a: a0 }];
         if (!sure(a0)) {
@@ -156,14 +159,26 @@ async function main() {
         for (const c of cands) c.score = check(c);
         const ok = cands.filter(c => c.score), conf = ok.filter(c => sure(c.a));
         let pick, status;
-        if (conf.length) { pick = conf.sort((x, y) => y.a.conf - x.a.conf || y.score.on - x.score.on)[0]; status = 'confident'; }
+        // how far (inches) a ball anywhere on the table would move between two outlines: map a grid of ball spots to
+        // pixels with one and back to the table with the other
+        const shift = (qa, qb) => {
+          setQuad(qa.a.quad, qa.a.rot); const P = S.P, R = P.R, px = [];
+          for (let i = 0; i <= 4; i++) for (let j = 0; j <= 2; j++) px.push([i * P.L / 4, j * P.W / 2, S.cam.proj(i * P.L / 4, j * P.W / 2, R)]);
+          setQuad(qb.a.quad, qb.a.rot);
+          return Math.max(...px.map(([x, y, q]) => { const t = S.cam.unproj(q[0], q[1], R); return Math.hypot(t[0] - x, t[1] - y); }));
+        };
+        if (conf.length) {
+          pick = conf.sort((x, y) => y.a.conf - x.a.conf || y.score.on - x.score.on)[0]; status = 'confident';
+          // a valid first-frame outline that a confident one agrees with to within SAME_IN inches is kept as it is
+          if (KEEP_FIRST && pick !== cands[0] && cands[0].score) { cands[0].shiftIn = +shift(cands[0], pick).toFixed(2); if (cands[0].shiftIn <= SAME_IN) { status = `confident (first frame kept: within ${cands[0].shiftIn} in of ${pick.from})`; pick = cands[0]; } }
+        }
         else if (ok.length) {
           const minOff = Math.min(...ok.map(c => c.score.off));
           pick = ok.filter(c => c.score.off <= minOff + 2).sort((x, y) => y.score.on - x.score.on)[0]; status = 'uncertain';
         } else throw new Error('table not found in ' + clip);
         setQuad(pick.a.quad, pick.a.rot);
         window.__auto.outline = { status, from: pick.from, conf: pick.a.conf, corners: pick.a.corners, boxesOnCloth: pick.score.on, boxesFarOff: pick.score.off,
-          candidates: cands.map(c => ({ from: c.from, conf: c.a.conf != null ? +c.a.conf.toFixed(2) : null, corners: c.a.corners, ...(c.score || { rejected: true }), q: c.a.quad ? vn(c.a.quad).map(p => p.map(v => +v.toFixed(3))) : null })) };
+          candidates: cands.map(c => ({ from: c.from, shiftIn: c.shiftIn, conf: c.a.conf != null ? +c.a.conf.toFixed(2) : null, corners: c.a.corners, ...(c.score || { rejected: true }), q: c.a.quad ? vn(c.a.quad).map(p => p.map(v => +v.toFixed(3))) : null })) };
       }
       for (let i = 1; i <= n; i++) {
         await draw(i);
@@ -207,7 +222,7 @@ async function main() {
       if (a.q) QN = a.q;
       console.log(`${clip}: table finder conf ${a.conf.toFixed(2)}, ${a.corners} of 4 corner pockets${a.q ? '' : ', kept the previous outline'}`);
       if (OUTLINE_CHECK) {
-        OUTLINE = a.outline; if (a.outline.status === 'confident') QN_SURE = a.q;
+        OUTLINE = a.outline; if (a.outline.status.startsWith('confident')) QN_SURE = a.q;
         console.log(`${clip}: outline ${a.outline.status}, from ${a.outline.from}, ${a.outline.boxesOnCloth} boxes on the cloth, ${a.outline.boxesFarOff} far off`);
       }
     }
