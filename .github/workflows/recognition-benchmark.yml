@@ -1,12 +1,78 @@
 name: recognition-benchmark
+# Isolated ball-recognition benchmark (benchmark/recognition-2026-10-20). Reads the recognition package and the frozen
+# v0.6 scorer; writes only to $BENCH_OUT and uploads it as artifacts. Never pushes, never changes the package or the app.
 on:
   workflow_dispatch:
   push:
     branches: [claude/project-thread-vl1o4a]
     paths: ['benchmark/recognition-2026-10-20/**', '.github/workflows/recognition-benchmark.yml']
+permissions:
+  contents: read
 jobs:
-  probe:
+  benchmark:
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      BENCH_OUT: ${{ github.workspace }}/bench-out
+      PYTHONHASHSEED: '0'
+      OMP_NUM_THREADS: '2'
     steps:
       - uses: actions/checkout@v4
-      - run: echo "actions ok"; nproc; free -g; python3 --version
+        with:
+          fetch-depth: 0   # needed to diff the package against its published commit and to read the v0.6 commit
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.7'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.11.0'
+      - name: Install pinned dependencies
+        run: |
+          python -m pip install --upgrade pip==24.2
+          pip install -r benchmark/recognition-2026-10-20/requirements.txt
+          pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+          mkdir -p "$BENCH_OUT/logs"
+          pip freeze > "$BENCH_OUT/logs/pip-freeze.txt"; node --version > "$BENCH_OUT/logs/node-version.txt"
+      - name: 0 provenance (package unchanged, commits, hashes)
+        working-directory: benchmark/recognition-2026-10-20/bench
+        run: python s00_verify.py 2>&1 | tee "$BENCH_OUT/logs/s00_verify.log"
+      - name: 1 data split + leak check
+        working-directory: benchmark/recognition-2026-10-20/bench
+        run: python s01_data.py 2>&1 | tee "$BENCH_OUT/logs/s01_data.log"
+      - name: 2 frozen reader re-run vs stored probabilities
+        working-directory: benchmark/recognition-2026-10-20/bench
+        run: python s02_frozen.py 2>&1 | tee "$BENCH_OUT/logs/s02_frozen.log"
+      - name: 3 challenger A (colour / appearance)
+        working-directory: benchmark/recognition-2026-10-20/bench
+        run: python s03_challenger_a.py 2>&1 | tee "$BENCH_OUT/logs/s03_challenger_a.log"
+      - name: 4 challenger B (small CNN)
+        working-directory: benchmark/recognition-2026-10-20/bench
+        run: python s04_challenger_b.py 2>&1 | tee "$BENCH_OUT/logs/s04_challenger_b.log"
+      - name: 5 recognition metrics (same test examples for all three)
+        working-directory: benchmark/recognition-2026-10-20/bench
+        run: python s05_evaluate.py 2>&1 | tee "$BENCH_OUT/logs/s05_evaluate.log"
+      - name: 6 product level (unchanged v0.6 scorer)
+        working-directory: benchmark/recognition-2026-10-20/bench
+        run: python s06_product.py 2>&1 | tee "$BENCH_OUT/logs/s06_product.log"
+      - name: 7 checks (fails the run if the baseline did not reproduce or the package changed)
+        working-directory: benchmark/recognition-2026-10-20/bench
+        run: python s07_checks.py 2>&1 | tee "$BENCH_OUT/logs/s07_checks.log"
+      - name: Package must be untouched
+        run: git status --porcelain -- collab/ | tee "$BENCH_OUT/logs/git-status-package.txt"; test -z "$(git status --porcelain -- collab/)"
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: recognition-benchmark-results
+          path: |
+            bench-out
+            !bench-out/data/*.npz
+            !bench-out/product/alt
+          retention-days: 90
+      - name: Upload model inputs (npz example arrays)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: recognition-benchmark-example-arrays
+          path: bench-out/data/*.npz
+          retention-days: 90

@@ -1,0 +1,53 @@
+{
+  "package": "collab/recognition-package-2026-10-20",
+  "package_commit": "9652277",
+  "v06_code_commit": "7e08306",
+  "classes": [
+    "cue",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "not a ball"
+  ],
+  "decision_rule": {
+    "note": "Same rule for every system, fixed before any run; taken from the tracker/settled-table vote thresholds (README section 4).",
+    "not_a_ball_if_nb_at_least": 0.5,
+    "confident_if_top_number_p_at_least": 0.6
+  },
+  "splits": {
+    "train_sessions": "every 2026-10-12 .. 2026-10-16 session except the dev part",
+    "dev": "the three 2026-10-15 sessions + 2026-10-16 clips with an odd shot number (used only for temperature scaling and the training-curve log; no threshold or hyper-parameter search)",
+    "test": "every 2026-10-17 .. 2026-10-19 session (held out; scored once)"
+  },
+  "crop": {
+    "side_radii": 3.2,
+    "model_input_px": 40
+  },
+  "challenger_a": {
+    "classifier": "multinomial logistic regression",
+    "C": 1.0,
+    "class_weight": "balanced",
+    "max_iter": 5000,
+    "seed": 0
+  },
+  "challenger_b": {
+    "epochs": 40,
+    "batch": 128,
+    "lr": 0.002,
+    "weight_decay": 0.0005,
+    "seed": 0,
+    "torch_threads": 2
+  },
+  "bootstrap": {
+    "resamples": 2000,
+    "seed": 0,
+    "unit": "ball"
+  },
+  "strongest_candidate_rule": "Fixed before any test run: on all verified held-out test pictures, the challenger with more correct confident identities among those whose confidently-wrong count is not above the frozen reader's; if neither qualifies, the one with fewer confidently-wrong identities. Both challengers are still passed through the product evaluation and reported; the rule only names the primary one."
+}

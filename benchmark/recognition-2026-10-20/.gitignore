@@ -1,0 +1,4 @@
+out/
+local/node_modules/
+local/package-lock.json
+__pycache__/
