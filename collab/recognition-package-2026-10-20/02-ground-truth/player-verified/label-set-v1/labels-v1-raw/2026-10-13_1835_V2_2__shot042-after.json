@@ -1,0 +1,29 @@
+{
+  "balls": [
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p0",
+      "moved": true,
+      "num": 0,
+      "partial": false,
+      "proposedNum": 0,
+      "r": 10.8,
+      "renumbered": false,
+      "resized": false,
+      "src": "proposed",
+      "unknown": false,
+      "x": 783.1,
+      "y": 85.8
+    }
+  ],
+  "checkedBy": "person",
+  "file": "shot042-after.jpg",
+  "h": 251,
+  "image": "images/2026-10-13_1835_V2.2__shot042-after.jpg",
+  "removed": [],
+  "session": "2026-10-13_1835_V2.2",
+  "status": "done",
+  "updated": "2026-10-18T20:43:11.413Z",
+  "w": 1262
+}

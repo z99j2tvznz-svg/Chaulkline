@@ -1,0 +1,7833 @@
+{
+ "about": "First picture set to label for a ball detector. Development footage only (before 2026-10-17); Oct 17 sessions and the recorder run are kept for testing. prefill = the app's own guesses in picture pixels, to check and correct, never truth. For each picture a reviewer marks every ball (centre and radius), its number where readable, and leaves the number blank where it is not.",
+ "made": "2026-10-18",
+ "count": 185,
+ "items": [
+  {
+   "image": "images/2026-10-12_1819_V2.0__shot002-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1819_V2.0",
+   "file": "shot002-before.jpg",
+   "side": "before",
+   "shot": 2,
+   "rack": 1,
+   "appBalls": 9,
+   "prefill": [
+    {
+     "px": 306,
+     "py": 25,
+     "r": 9.5,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 484,
+     "py": 27,
+     "r": 9.5,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 219,
+     "py": 41,
+     "r": 10,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 694,
+     "py": 55,
+     "r": 10.2,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 317,
+     "py": 67,
+     "r": 10.7,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 442,
+     "py": 83,
+     "r": 11.1,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 190,
+     "py": 91,
+     "r": 11.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 616,
+     "py": 105,
+     "r": 11.7,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 800,
+     "py": 108,
+     "r": 11.7,
+     "appNumber": 2,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-12_1819_V2.0__shot006-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1819_V2.0",
+   "file": "shot006-before.jpg",
+   "side": "before",
+   "shot": 6,
+   "rack": 2,
+   "appBalls": 9,
+   "prefill": [
+    {
+     "px": 306,
+     "py": 24,
+     "r": 9.5,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 484,
+     "py": 27,
+     "r": 9.5,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 650,
+     "py": 45,
+     "r": 9.9,
+     "appNumber": 0,
+     "appConf": 0.96
+    },
+    {
+     "px": 801,
+     "py": 73,
+     "r": 10.7,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 774,
+     "py": 70,
+     "r": 10.6,
+     "appNumber": 9,
+     "appConf": 0.74
+    },
+    {
+     "px": 787,
+     "py": 58,
+     "r": 10.2,
+     "appNumber": 1,
+     "appConf": 0.41
+    },
+    {
+     "px": 317,
+     "py": 67,
+     "r": 10.7,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 442,
+     "py": 83,
+     "r": 11.1,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 190,
+     "py": 91,
+     "r": 11.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-12_1819_V2.0__shot016-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1819_V2.0",
+   "file": "shot016-before.jpg",
+   "side": "before",
+   "shot": 16,
+   "rack": 3,
+   "appBalls": 10,
+   "prefill": [
+    {
+     "px": 337,
+     "py": 24,
+     "r": 9.5,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 311,
+     "py": 83,
+     "r": 11.2,
+     "appNumber": 0,
+     "appConf": 0.96
+    },
+    {
+     "px": 368,
+     "py": 62,
+     "r": 10.6,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 582,
+     "py": 69,
+     "r": 10.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 804,
+     "py": 97,
+     "r": 11.3,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 662,
+     "py": 50,
+     "r": 10.1,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 214,
+     "py": 24,
+     "r": 9.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 596,
+     "py": 22,
+     "r": 9.3,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 164,
+     "py": 110,
+     "r": 12,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 130,
+     "py": 111,
+     "r": 12.1,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-12_1819_V2.0__shot027-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1819_V2.0",
+   "file": "shot027-after.jpg",
+   "side": "after",
+   "shot": 27,
+   "rack": 5,
+   "appBalls": 8,
+   "prefill": [
+    {
+     "px": 287,
+     "py": 25,
+     "r": 9.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 563,
+     "py": 27,
+     "r": 9.4,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 510,
+     "py": 41,
+     "r": 9.8,
+     "appNumber": 0,
+     "appConf": 0.13
+    },
+    {
+     "px": 578,
+     "py": 50,
+     "r": 10,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 257,
+     "py": 84,
+     "r": 11.1,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 560,
+     "py": 95,
+     "r": 11.3,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 461,
+     "py": 102,
+     "r": 11.5,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 769,
+     "py": 114,
+     "r": 11.7,
+     "appNumber": 4,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-12_1819_V2.0__shot007-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1819_V2.0",
+   "file": "shot007-before.jpg",
+   "side": "before",
+   "shot": 7,
+   "rack": 2,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 306,
+     "py": 24,
+     "r": 9.5,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 529,
+     "py": 26,
+     "r": 9.5,
+     "appNumber": 0,
+     "appConf": 0.96
+    },
+    {
+     "px": 317,
+     "py": 67,
+     "r": 10.7,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 442,
+     "py": 83,
+     "r": 11.1,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 189,
+     "py": 91,
+     "r": 11.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-12_1819_V2.0__shot017-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1819_V2.0",
+   "file": "shot017-after.jpg",
+   "side": "after",
+   "shot": 17,
+   "rack": 3,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 214,
+     "py": 23,
+     "r": 9.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 337,
+     "py": 24,
+     "r": 9.5,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 662,
+     "py": 50,
+     "r": 10.1,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 368,
+     "py": 62,
+     "r": 10.6,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 582,
+     "py": 69,
+     "r": 10.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 803,
+     "py": 97,
+     "r": 11.3,
+     "appNumber": 7,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-12_1819_V2.0__shot022-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1819_V2.0",
+   "file": "shot022-before.jpg",
+   "side": "before",
+   "shot": 22,
+   "rack": 4,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 261,
+     "py": 22,
+     "r": 9.5,
+     "appNumber": 6,
+     "appConf": 0.74
+    },
+    {
+     "px": 479,
+     "py": 30,
+     "r": 9.6,
+     "appNumber": 0,
+     "appConf": 0.93
+    },
+    {
+     "px": 292,
+     "py": 35,
+     "r": 9.8,
+     "appNumber": 8,
+     "appConf": 0.78
+    },
+    {
+     "px": 369,
+     "py": 40,
+     "r": 9.9,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 548,
+     "py": 59,
+     "r": 10.4,
+     "appNumber": 9,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-12_1819_V2.0__shot031-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1819_V2.0",
+   "file": "shot031-after.jpg",
+   "side": "after",
+   "shot": 31,
+   "rack": 5,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 287,
+     "py": 25,
+     "r": 9.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 572,
+     "py": 25,
+     "r": 9.3,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 511,
+     "py": 40,
+     "r": 9.8,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 784,
+     "py": 61,
+     "r": 10.2,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 162,
+     "py": 91,
+     "r": 11.4,
+     "appNumber": 0,
+     "appConf": 0.98
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-12_1819_V2.0__shot010-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1819_V2.0",
+   "file": "shot010-before.jpg",
+   "side": "before",
+   "shot": 10,
+   "rack": 2,
+   "appBalls": 3,
+   "prefill": [
+    {
+     "px": 395,
+     "py": 37,
+     "r": 9.8,
+     "appNumber": 0,
+     "appConf": 0.97
+    },
+    {
+     "px": 323,
+     "py": 42,
+     "r": 10,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 442,
+     "py": 83,
+     "r": 11.1,
+     "appNumber": 7,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-12_1819_V2.0__shot023-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1819_V2.0",
+   "file": "shot023-after.jpg",
+   "side": "after",
+   "shot": 23,
+   "rack": 4,
+   "appBalls": 3,
+   "prefill": [
+    {
+     "px": 292,
+     "py": 35,
+     "r": 9.8,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 355,
+     "py": 43,
+     "r": 10,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 548,
+     "py": 59,
+     "r": 10.4,
+     "appNumber": 9,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-12_1819_V2.0__shot026-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1819_V2.0",
+   "file": "shot026-before.jpg",
+   "side": "before",
+   "shot": 26,
+   "rack": 4,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 675,
+     "py": 22,
+     "r": 9.3,
+     "appNumber": 0,
+     "appConf": 0.81
+    },
+    {
+     "px": 308,
+     "py": 87,
+     "r": 11.3,
+     "appNumber": 9,
+     "appConf": 0.73
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-12_1819_V2.0__shot034-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1819_V2.0",
+   "file": "shot034-after.jpg",
+   "side": "after",
+   "shot": 34,
+   "rack": 5,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 294,
+     "py": 25,
+     "r": 9.6,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 507,
+     "py": 31,
+     "r": 9.6,
+     "appNumber": 0,
+     "appConf": 0.93
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-12_1942_V2.1__shot003-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1942_V2.1",
+   "file": "shot003-before.jpg",
+   "side": "before",
+   "shot": 3,
+   "rack": 1,
+   "appBalls": 7,
+   "prefill": [
+    {
+     "px": 371,
+     "py": 31,
+     "r": 11.6,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 869,
+     "py": 48,
+     "r": 11.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 517,
+     "py": 58,
+     "r": 12.3,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 491,
+     "py": 107,
+     "r": 13.8,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 362,
+     "py": 110,
+     "r": 14,
+     "appNumber": 3,
+     "appConf": 0.73
+    },
+    {
+     "px": 830,
+     "py": 111,
+     "r": 13.6,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 822,
+     "py": 153,
+     "r": 14.8,
+     "appNumber": 4,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-12_1942_V2.1__shot021-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1942_V2.1",
+   "file": "shot021-after.jpg",
+   "side": "after",
+   "shot": 21,
+   "rack": 2,
+   "appBalls": 9,
+   "prefill": [
+    {
+     "px": 499,
+     "py": 52,
+     "r": 12.1,
+     "appNumber": 1,
+     "appConf": 0.9
+    },
+    {
+     "px": 773,
+     "py": 56,
+     "r": 12,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 272,
+     "py": 63,
+     "r": 12.7,
+     "appNumber": 2,
+     "appConf": 0.9
+    },
+    {
+     "px": 663,
+     "py": 74,
+     "r": 12.6,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 575,
+     "py": 92,
+     "r": 13.2,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 480,
+     "py": 106,
+     "r": 13.8,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 353,
+     "py": 133,
+     "r": 14.7,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 819,
+     "py": 140,
+     "r": 14.4,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 660,
+     "py": 196,
+     "r": 16.3,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-12_1942_V2.1__shot035-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1942_V2.1",
+   "file": "shot035-before.jpg",
+   "side": "before",
+   "shot": 35,
+   "rack": 4,
+   "appBalls": 9,
+   "prefill": [
+    {
+     "px": 467,
+     "py": 54,
+     "r": 12.2,
+     "appNumber": 3,
+     "appConf": 0.73
+    },
+    {
+     "px": 626,
+     "py": 50,
+     "r": 12,
+     "appNumber": 4,
+     "appConf": 0.5
+    },
+    {
+     "px": 298,
+     "py": 55,
+     "r": 12.4,
+     "appNumber": 1,
+     "appConf": 0.87
+    },
+    {
+     "px": 831,
+     "py": 65,
+     "r": 12.2,
+     "appNumber": 5,
+     "appConf": 0.76
+    },
+    {
+     "px": 934,
+     "py": 79,
+     "r": 12.6,
+     "appNumber": 9,
+     "appConf": 0.78
+    },
+    {
+     "px": 311,
+     "py": 110,
+     "r": 14,
+     "appNumber": 0,
+     "appConf": 0.91
+    },
+    {
+     "px": 448,
+     "py": 118,
+     "r": 14.1,
+     "appNumber": 2,
+     "appConf": 0.7
+    },
+    {
+     "px": 243,
+     "py": 124,
+     "r": 14.4,
+     "appNumber": 8,
+     "appConf": 0.6
+    },
+    {
+     "px": 383,
+     "py": 158,
+     "r": 15.3,
+     "appNumber": 6,
+     "appConf": 0.79
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-12_1942_V2.1__shot046-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1942_V2.1",
+   "file": "shot046-after.jpg",
+   "side": "after",
+   "shot": 46,
+   "rack": 5,
+   "appBalls": 8,
+   "prefill": [
+    {
+     "px": 365,
+     "py": 36,
+     "r": 11.7,
+     "appNumber": 0,
+     "appConf": 0.92
+    },
+    {
+     "px": 754,
+     "py": 56,
+     "r": 11.9,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 340,
+     "py": 63,
+     "r": 12.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 859,
+     "py": 74,
+     "r": 12.3,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 525,
+     "py": 101,
+     "r": 13.4,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 348,
+     "py": 135,
+     "r": 14.6,
+     "appNumber": 2,
+     "appConf": 0.9
+    },
+    {
+     "px": 480,
+     "py": 175,
+     "r": 15.6,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 841,
+     "py": 180,
+     "r": 15.4,
+     "appNumber": 7,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-12_1942_V2.1__shot006-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1942_V2.1",
+   "file": "shot006-before.jpg",
+   "side": "before",
+   "shot": 6,
+   "rack": 1,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 869,
+     "py": 47,
+     "r": 11.6,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 252,
+     "py": 56,
+     "r": 12.5,
+     "appNumber": 8,
+     "appConf": 0.44
+    },
+    {
+     "px": 517,
+     "py": 57,
+     "r": 12.2,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 491,
+     "py": 107,
+     "r": 13.8,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 662,
+     "py": 151,
+     "r": 14.9,
+     "appNumber": 0,
+     "appConf": 0.89
+    },
+    {
+     "px": 867,
+     "py": 190,
+     "r": 15.9,
+     "appNumber": 4,
+     "appConf": 0.45
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-12_1942_V2.1__shot027-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1942_V2.1",
+   "file": "shot027-after.jpg",
+   "side": "after",
+   "shot": 27,
+   "rack": 3,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 774,
+     "py": 53,
+     "r": 11.9,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 497,
+     "py": 88,
+     "r": 13.2,
+     "appNumber": 8,
+     "appConf": 0.32
+    },
+    {
+     "px": 436,
+     "py": 95,
+     "r": 13.4,
+     "appNumber": 0,
+     "appConf": 0.92
+    },
+    {
+     "px": 238,
+     "py": 115,
+     "r": 14.2,
+     "appNumber": 2,
+     "appConf": 0.9
+    },
+    {
+     "px": 819,
+     "py": 136,
+     "r": 14.3,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 661,
+     "py": 193,
+     "r": 16.1,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-12_1942_V2.1__shot042-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1942_V2.1",
+   "file": "shot042-before.jpg",
+   "side": "before",
+   "shot": 42,
+   "rack": 4,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 833,
+     "py": 65,
+     "r": 12.2,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 936,
+     "py": 80,
+     "r": 12.5,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 573,
+     "py": 94,
+     "r": 13.3,
+     "appNumber": 0,
+     "appConf": 0.87
+    },
+    {
+     "px": 246,
+     "py": 123,
+     "r": 14.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 385,
+     "py": 158,
+     "r": 15.4,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-12_1942_V2.1__shot051-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1942_V2.1",
+   "file": "shot051-after.jpg",
+   "side": "after",
+   "shot": 51,
+   "rack": 5,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 340,
+     "py": 62,
+     "r": 12.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 859,
+     "py": 74,
+     "r": 12.3,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 574,
+     "py": 119,
+     "r": 13.9,
+     "appNumber": 0,
+     "appConf": 0.94
+    },
+    {
+     "px": 841,
+     "py": 180,
+     "r": 15.4,
+     "appNumber": 7,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-12_1942_V2.1__shot009-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1942_V2.1",
+   "file": "shot009-before.jpg",
+   "side": "before",
+   "shot": 9,
+   "rack": 1,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 869,
+     "py": 49,
+     "r": 11.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 146,
+     "py": 174,
+     "r": 16,
+     "appNumber": 7,
+     "appConf": 0.18
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-12_1942_V2.1__shot020-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1942_V2.1",
+   "file": "shot020-after.jpg",
+   "side": "after",
+   "shot": 20,
+   "rack": 2,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 935,
+     "py": 82,
+     "r": 12.6,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 887,
+     "py": 192,
+     "r": 15.9,
+     "appNumber": 0,
+     "appConf": 0.91
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-12_1942_V2.1__shot033-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1942_V2.1",
+   "file": "shot033-before.jpg",
+   "side": "before",
+   "shot": 33,
+   "rack": 3,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 325,
+     "py": 38,
+     "r": 11.9,
+     "appNumber": 7,
+     "appConf": 0.91
+    },
+    {
+     "px": 697,
+     "py": 85,
+     "r": 12.9,
+     "appNumber": 0,
+     "appConf": 0.96
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-12_1942_V2.1__shot055-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_1942_V2.1",
+   "file": "shot055-after.jpg",
+   "side": "after",
+   "shot": 55,
+   "rack": 5,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 944,
+     "py": 104,
+     "r": 13.7,
+     "appNumber": 0,
+     "appConf": 0.96
+    },
+    {
+     "px": 607,
+     "py": 139,
+     "r": 15.1,
+     "appNumber": 4,
+     "appConf": 0.45
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-12_2018_V2.1__shot005-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_2018_V2.1",
+   "file": "shot005-before.jpg",
+   "side": "before",
+   "shot": 5,
+   "rack": 1,
+   "appBalls": 8,
+   "prefill": [
+    {
+     "px": 746,
+     "py": 24,
+     "r": 11.1,
+     "appNumber": 2,
+     "appConf": 0.15
+    },
+    {
+     "px": 700,
+     "py": 41,
+     "r": 11.6,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 735,
+     "py": 40,
+     "r": 11.5,
+     "appNumber": 7,
+     "appConf": 0.84
+    },
+    {
+     "px": 711,
+     "py": 25,
+     "r": 11.1,
+     "appNumber": 4,
+     "appConf": 0.39
+    },
+    {
+     "px": 718,
+     "py": 41,
+     "r": 11.6,
+     "appNumber": 9,
+     "appConf": 0.76
+    },
+    {
+     "px": 730,
+     "py": 24,
+     "r": 11.1,
+     "appNumber": 5,
+     "appConf": 0.64
+    },
+    {
+     "px": 676,
+     "py": 86,
+     "r": 12.9,
+     "appNumber": 0,
+     "appConf": 0.87
+    },
+    {
+     "px": 647,
+     "py": 140,
+     "r": 14.4,
+     "appNumber": 1,
+     "appConf": 0.92
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-12_2018_V2.1__shot008-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_2018_V2.1",
+   "file": "shot008-before.jpg",
+   "side": "before",
+   "shot": 8,
+   "rack": 1,
+   "appBalls": 7,
+   "prefill": [
+    {
+     "px": 292,
+     "py": 23,
+     "r": 11.4,
+     "appNumber": 8,
+     "appConf": 0.67
+    },
+    {
+     "px": 428,
+     "py": 34,
+     "r": 11.6,
+     "appNumber": 7,
+     "appConf": 0.82
+    },
+    {
+     "px": 353,
+     "py": 21,
+     "r": 11.3,
+     "appNumber": 2,
+     "appConf": 0.63
+    },
+    {
+     "px": 410,
+     "py": 23,
+     "r": 11.3,
+     "appNumber": 9,
+     "appConf": 0.52
+    },
+    {
+     "px": 319,
+     "py": 22,
+     "r": 11.4,
+     "appNumber": 3,
+     "appConf": 0.15
+    },
+    {
+     "px": 385,
+     "py": 20,
+     "r": 11.3,
+     "appNumber": 1,
+     "appConf": 0.4
+    },
+    {
+     "px": 680,
+     "py": 54,
+     "r": 12.1,
+     "appNumber": 0,
+     "appConf": 0.93
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-12_2018_V2.1__shot037-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_2018_V2.1",
+   "file": "shot037-before.jpg",
+   "side": "before",
+   "shot": 37,
+   "rack": 1,
+   "appBalls": 7,
+   "prefill": [
+    {
+     "px": 738,
+     "py": 21,
+     "r": 11.2,
+     "appNumber": 7,
+     "appConf": 0.8
+    },
+    {
+     "px": 391,
+     "py": 104,
+     "r": 13.9,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 145,
+     "py": 161,
+     "r": 15.8,
+     "appNumber": 8,
+     "appConf": 0.44
+    },
+    {
+     "px": 217,
+     "py": 141,
+     "r": 15.1,
+     "appNumber": 1,
+     "appConf": 0.64
+    },
+    {
+     "px": 186,
+     "py": 134,
+     "r": 15,
+     "appNumber": 9,
+     "appConf": 0.69
+    },
+    {
+     "px": 201,
+     "py": 157,
+     "r": 15.6,
+     "appNumber": 4,
+     "appConf": 0.19
+    },
+    {
+     "px": 167,
+     "py": 150,
+     "r": 15.5,
+     "appNumber": 3,
+     "appConf": 0.32
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-12_2018_V2.1__shot041-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_2018_V2.1",
+   "file": "shot041-before.jpg",
+   "side": "before",
+   "shot": 41,
+   "rack": 1,
+   "appBalls": 7,
+   "prefill": [
+    {
+     "px": 578,
+     "py": 71,
+     "r": 12.7,
+     "appNumber": 0,
+     "appConf": 1
+    },
+    {
+     "px": 202,
+     "py": 97,
+     "r": 13.6,
+     "appNumber": 3,
+     "appConf": 0.28
+    },
+    {
+     "px": 251,
+     "py": 77,
+     "r": 13,
+     "appNumber": 4,
+     "appConf": 0.4
+    },
+    {
+     "px": 221,
+     "py": 80,
+     "r": 13.1,
+     "appNumber": 7,
+     "appConf": 0.76
+    },
+    {
+     "px": 239,
+     "py": 90,
+     "r": 13.4,
+     "appNumber": 9,
+     "appConf": 0.52
+    },
+    {
+     "px": 265,
+     "py": 97,
+     "r": 13.6,
+     "appNumber": 1,
+     "appConf": 0.74
+    },
+    {
+     "px": 799,
+     "py": 20,
+     "r": 11.1,
+     "appNumber": 8,
+     "appConf": 1
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-12_2018_V2.1__shot016-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_2018_V2.1",
+   "file": "shot016-before.jpg",
+   "side": "before",
+   "shot": 16,
+   "rack": 1,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 372,
+     "py": 127,
+     "r": 14.3,
+     "appNumber": 0,
+     "appConf": 0.95
+    },
+    {
+     "px": 147,
+     "py": 169,
+     "r": 15.6,
+     "appNumber": 8,
+     "appConf": 0.46
+    },
+    {
+     "px": 188,
+     "py": 158,
+     "r": 15.3,
+     "appNumber": 1,
+     "appConf": 0.42
+    },
+    {
+     "px": 165,
+     "py": 151,
+     "r": 15.1,
+     "appNumber": 4,
+     "appConf": 0.32
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-12_2018_V2.1__shot023-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_2018_V2.1",
+   "file": "shot023-before.jpg",
+   "side": "before",
+   "shot": 23,
+   "rack": 1,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 905,
+     "py": 25,
+     "r": 11.1,
+     "appNumber": 1,
+     "appConf": 0.44
+    },
+    {
+     "px": 941,
+     "py": 36,
+     "r": 11.4,
+     "appNumber": 8,
+     "appConf": 0.16
+    },
+    {
+     "px": 922,
+     "py": 33,
+     "r": 11.3,
+     "appNumber": 9,
+     "appConf": 0.71
+    },
+    {
+     "px": 738,
+     "py": 56,
+     "r": 12.1,
+     "appNumber": 0,
+     "appConf": 0.95
+    },
+    {
+     "px": 583,
+     "py": 86,
+     "r": 13,
+     "appNumber": 4,
+     "appConf": 0.78
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-12_2018_V2.1__shot007-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_2018_V2.1",
+   "file": "shot007-before.jpg",
+   "side": "before",
+   "shot": 7,
+   "rack": 1,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 583,
+     "py": 140,
+     "r": 14.6,
+     "appNumber": 0,
+     "appConf": 0.86
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-12_2018_V2.1__shot020-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_2018_V2.1",
+   "file": "shot020-after.jpg",
+   "side": "after",
+   "shot": 20,
+   "rack": 1,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 817,
+     "py": 177,
+     "r": 15.5,
+     "appNumber": 0,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-12_2018_V2.1__shot033-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_2018_V2.1",
+   "file": "shot033-before.jpg",
+   "side": "before",
+   "shot": 33,
+   "rack": 1,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 476,
+     "py": 21,
+     "r": 11.3,
+     "appNumber": 6,
+     "appConf": 1
+    },
+    {
+     "px": 899,
+     "py": 171,
+     "r": 15.3,
+     "appNumber": 0,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-12_2018_V2.1__shot046-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_2018_V2.1",
+   "file": "shot046-after.jpg",
+   "side": "after",
+   "shot": 46,
+   "rack": 1,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 370,
+     "py": 21,
+     "r": 11.4,
+     "appNumber": 9,
+     "appConf": 0.68
+    },
+    {
+     "px": 701,
+     "py": 51,
+     "r": 12.1,
+     "appNumber": 0,
+     "appConf": 0.97
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-12_2018_V2.1__shot014-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_2018_V2.1",
+   "file": "shot014-before.jpg",
+   "side": "before",
+   "shot": 14,
+   "rack": 1,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 682,
+     "py": 56,
+     "r": 12.1,
+     "appNumber": 9,
+     "appConf": 0.96
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-12_2018_V2.1__shot039-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-12_2018_V2.1",
+   "file": "shot039-after.jpg",
+   "side": "after",
+   "shot": 39,
+   "rack": 1,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 478,
+     "py": 24,
+     "r": 11.3,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 462,
+     "py": 137,
+     "r": 14.6,
+     "appNumber": 8,
+     "appConf": 0.49
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-13_1712_V2.2__shot002-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1712_V2.2",
+   "file": "shot002-before.jpg",
+   "side": "before",
+   "shot": 2,
+   "rack": null,
+   "appBalls": 8,
+   "prefill": [
+    {
+     "px": 545,
+     "py": 49,
+     "r": 12.2,
+     "appNumber": 1,
+     "appConf": 1
+    },
+    {
+     "px": 837,
+     "py": 77,
+     "r": 12.8,
+     "appNumber": 0,
+     "appConf": 1
+    },
+    {
+     "px": 1056,
+     "py": 118,
+     "r": 13.9,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 994,
+     "py": 105,
+     "r": 13.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 1027,
+     "py": 89,
+     "r": 13.1,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 1016,
+     "py": 106,
+     "r": 13.6,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 1008,
+     "py": 81,
+     "r": 12.8,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 1038,
+     "py": 109,
+     "r": 13.6,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-13_1712_V2.2__shot017-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1712_V2.2",
+   "file": "shot017-before.jpg",
+   "side": "before",
+   "shot": 17,
+   "rack": null,
+   "appBalls": 8,
+   "prefill": [
+    {
+     "px": 827,
+     "py": 38,
+     "r": 11.8,
+     "appNumber": 5,
+     "appConf": 1
+    },
+    {
+     "px": 314,
+     "py": 98,
+     "r": 13.7,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 228,
+     "py": 90,
+     "r": 13.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 276,
+     "py": 85,
+     "r": 13.3,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 242,
+     "py": 76,
+     "r": 13.1,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 256,
+     "py": 90,
+     "r": 13.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 298,
+     "py": 92,
+     "r": 13.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 549,
+     "py": 80,
+     "r": 13,
+     "appNumber": 0,
+     "appConf": 0.98
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-13_1712_V2.2__shot022-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1712_V2.2",
+   "file": "shot022-before.jpg",
+   "side": "before",
+   "shot": 22,
+   "rack": null,
+   "appBalls": 8,
+   "prefill": [
+    {
+     "px": 521,
+     "py": 41,
+     "r": 12.1,
+     "appNumber": 6,
+     "appConf": 1
+    },
+    {
+     "px": 235,
+     "py": 73,
+     "r": 13,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 288,
+     "py": 84,
+     "r": 13.3,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 258,
+     "py": 66,
+     "r": 12.8,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 268,
+     "py": 88,
+     "r": 13.4,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 281,
+     "py": 68,
+     "r": 12.8,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 249,
+     "py": 83,
+     "r": 13.3,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 364,
+     "py": 118,
+     "r": 14.1,
+     "appNumber": 0,
+     "appConf": 0.83
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-13_1712_V2.2__shot030-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1712_V2.2",
+   "file": "shot030-before.jpg",
+   "side": "before",
+   "shot": 30,
+   "rack": null,
+   "appBalls": 7,
+   "prefill": [
+    {
+     "px": 746,
+     "py": 55,
+     "r": 12.3,
+     "appNumber": 8,
+     "appConf": 1
+    },
+    {
+     "px": 299,
+     "py": 92,
+     "r": 13.6,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 236,
+     "py": 89,
+     "r": 13.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 264,
+     "py": 80,
+     "r": 13.3,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 262,
+     "py": 100,
+     "r": 13.8,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 252,
+     "py": 101,
+     "r": 13.8,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 460,
+     "py": 82,
+     "r": 13.2,
+     "appNumber": 0,
+     "appConf": 0.99
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-13_1712_V2.2__shot005-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1712_V2.2",
+   "file": "shot005-before.jpg",
+   "side": "before",
+   "shot": 5,
+   "rack": null,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 251,
+     "py": 76,
+     "r": 13.1,
+     "appNumber": 2,
+     "appConf": 0.77
+    },
+    {
+     "px": 324,
+     "py": 81,
+     "r": 13.3,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 287,
+     "py": 64,
+     "r": 12.8,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 267,
+     "py": 60,
+     "r": 12.7,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 307,
+     "py": 67,
+     "r": 12.9,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 587,
+     "py": 71,
+     "r": 12.8,
+     "appNumber": 0,
+     "appConf": 0.84
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-13_1712_V2.2__shot009-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1712_V2.2",
+   "file": "shot009-before.jpg",
+   "side": "before",
+   "shot": 9,
+   "rack": null,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 725,
+     "py": 43,
+     "r": 11.9,
+     "appNumber": 3,
+     "appConf": 1
+    },
+    {
+     "px": 275,
+     "py": 89,
+     "r": 13.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 235,
+     "py": 96,
+     "r": 13.7,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 251,
+     "py": 79,
+     "r": 13.2,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 259,
+     "py": 96,
+     "r": 13.7,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 438,
+     "py": 74,
+     "r": 13,
+     "appNumber": 0,
+     "appConf": 0.93
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-13_1712_V2.2__shot028-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1712_V2.2",
+   "file": "shot028-before.jpg",
+   "side": "before",
+   "shot": 28,
+   "rack": null,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 439,
+     "py": 29,
+     "r": 11.7,
+     "appNumber": 7,
+     "appConf": 1
+    },
+    {
+     "px": 717,
+     "py": 77,
+     "r": 12.9,
+     "appNumber": 0,
+     "appConf": 0.93
+    },
+    {
+     "px": 1057,
+     "py": 124,
+     "r": 14,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 1020,
+     "py": 119,
+     "r": 13.9,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 1037,
+     "py": 106,
+     "r": 13.5,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-13_1712_V2.2__shot005-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1712_V2.2",
+   "file": "shot005-after.jpg",
+   "side": "after",
+   "shot": 5,
+   "rack": null,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 844,
+     "py": 52,
+     "r": 12.1,
+     "appNumber": 0,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-13_1712_V2.2__shot013-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1712_V2.2",
+   "file": "shot013-after.jpg",
+   "side": "after",
+   "shot": 13,
+   "rack": null,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 549,
+     "py": 60,
+     "r": 12.5,
+     "appNumber": 0,
+     "appConf": 0.94
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-13_1712_V2.2__shot021-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1712_V2.2",
+   "file": "shot021-before.jpg",
+   "side": "before",
+   "shot": 21,
+   "rack": null,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 558,
+     "py": 54,
+     "r": 12.4,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 283,
+     "py": 158,
+     "r": 15.2,
+     "appNumber": 6,
+     "appConf": 1
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-13_1712_V2.2__shot031-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1712_V2.2",
+   "file": "shot031-after.jpg",
+   "side": "after",
+   "shot": 31,
+   "rack": null,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 517,
+     "py": 28,
+     "r": 11.6,
+     "appNumber": 0,
+     "appConf": 0.88
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-13_1712_V2.2__shot018-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1712_V2.2",
+   "file": "shot018-before.jpg",
+   "side": "before",
+   "shot": 18,
+   "rack": null,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 713,
+     "py": 57,
+     "r": 12.3,
+     "appNumber": 0,
+     "appConf": 1
+    },
+    {
+     "px": 988,
+     "py": 172,
+     "r": 15.2,
+     "appNumber": 5,
+     "appConf": 1
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-13_1735_V2.2__shot003-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1735_V2.2",
+   "file": "shot003-before.jpg",
+   "side": "before",
+   "shot": 3,
+   "rack": 2,
+   "appBalls": 10,
+   "prefill": [
+    {
+     "px": 377,
+     "py": 46,
+     "r": 12.3,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 591,
+     "py": 48,
+     "r": 12.2,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 843,
+     "py": 56,
+     "r": 12.2,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 237,
+     "py": 81,
+     "r": 13.4,
+     "appNumber": 1,
+     "appConf": 0.9
+    },
+    {
+     "px": 995,
+     "py": 95,
+     "r": 13.2,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 458,
+     "py": 118,
+     "r": 14.2,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 665,
+     "py": 122,
+     "r": 14.2,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 398,
+     "py": 132,
+     "r": 14.7,
+     "appNumber": 2,
+     "appConf": 0.9
+    },
+    {
+     "px": 935,
+     "py": 156,
+     "r": 15,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 546,
+     "py": 204,
+     "r": 16.6,
+     "appNumber": 9,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-13_1735_V2.2__shot007-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1735_V2.2",
+   "file": "shot007-after.jpg",
+   "side": "after",
+   "shot": 7,
+   "rack": 2,
+   "appBalls": 7,
+   "prefill": [
+    {
+     "px": 768,
+     "py": 63,
+     "r": 12.4,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 755,
+     "py": 44,
+     "r": 11.9,
+     "appNumber": 3,
+     "appConf": 0.93
+    },
+    {
+     "px": 591,
+     "py": 50,
+     "r": 12.2,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 995,
+     "py": 96,
+     "r": 13.2,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 665,
+     "py": 124,
+     "r": 14.2,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 935,
+     "py": 158,
+     "r": 15,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 965,
+     "py": 184,
+     "r": 15.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-13_1735_V2.2__shot022-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1735_V2.2",
+   "file": "shot022-before.jpg",
+   "side": "before",
+   "shot": 22,
+   "rack": 3,
+   "appBalls": 10,
+   "prefill": [
+    {
+     "px": 911,
+     "py": 179,
+     "r": 15.6,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 538,
+     "py": 151,
+     "r": 15.1,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 969,
+     "py": 108,
+     "r": 13.6,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 798,
+     "py": 108,
+     "r": 13.7,
+     "appNumber": 2,
+     "appConf": 0.9
+    },
+    {
+     "px": 389,
+     "py": 84,
+     "r": 13.3,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 788,
+     "py": 46,
+     "r": 12,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 907,
+     "py": 67,
+     "r": 12.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 653,
+     "py": 71,
+     "r": 12.8,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 483,
+     "py": 22,
+     "r": 11.5,
+     "appNumber": 1,
+     "appConf": 0.3
+    },
+    {
+     "px": 521,
+     "py": 49,
+     "r": 12.2,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-13_1735_V2.2__shot032-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1735_V2.2",
+   "file": "shot032-after.jpg",
+   "side": "after",
+   "shot": 32,
+   "rack": 4,
+   "appBalls": 8,
+   "prefill": [
+    {
+     "px": 755,
+     "py": 27,
+     "r": 11.5,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 575,
+     "py": 54,
+     "r": 12.4,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 280,
+     "py": 89,
+     "r": 13.6,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 931,
+     "py": 103,
+     "r": 13.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 535,
+     "py": 141,
+     "r": 14.9,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 930,
+     "py": 146,
+     "r": 14.7,
+     "appNumber": 0,
+     "appConf": 0.96
+    },
+    {
+     "px": 988,
+     "py": 159,
+     "r": 15.1,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 338,
+     "py": 183,
+     "r": 16.2,
+     "appNumber": 5,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-13_1735_V2.2__shot011-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1735_V2.2",
+   "file": "shot011-before.jpg",
+   "side": "before",
+   "shot": 11,
+   "rack": 2,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 378,
+     "py": 47,
+     "r": 12.3,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 590,
+     "py": 50,
+     "r": 12.2,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 995,
+     "py": 96,
+     "r": 13.2,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 935,
+     "py": 157,
+     "r": 15,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 538,
+     "py": 169,
+     "r": 15.6,
+     "appNumber": 0,
+     "appConf": 0.76
+    },
+    {
+     "px": 965,
+     "py": 183,
+     "r": 15.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-13_1735_V2.2__shot014-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1735_V2.2",
+   "file": "shot014-after.jpg",
+   "side": "after",
+   "shot": 14,
+   "rack": 2,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 693,
+     "py": 42,
+     "r": 11.9,
+     "appNumber": 7,
+     "appConf": 0.7
+    },
+    {
+     "px": 875,
+     "py": 42,
+     "r": 11.8,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 431,
+     "py": 43,
+     "r": 12.1,
+     "appNumber": 0,
+     "appConf": 0.95
+    },
+    {
+     "px": 965,
+     "py": 184,
+     "r": 15.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-13_1735_V2.2__shot025-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1735_V2.2",
+   "file": "shot025-before.jpg",
+   "side": "before",
+   "shot": 25,
+   "rack": 3,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 788,
+     "py": 46,
+     "r": 12,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 521,
+     "py": 49,
+     "r": 12.3,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 907,
+     "py": 67,
+     "r": 12.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 539,
+     "py": 151,
+     "r": 15.1,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 527,
+     "py": 132,
+     "r": 14.6,
+     "appNumber": 0,
+     "appConf": 0.87
+    },
+    {
+     "px": 911,
+     "py": 179,
+     "r": 15.7,
+     "appNumber": 5,
+     "appConf": 0.83
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-13_1735_V2.2__shot029-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1735_V2.2",
+   "file": "shot029-before.jpg",
+   "side": "before",
+   "shot": 29,
+   "rack": 3,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 990,
+     "py": 50,
+     "r": 12,
+     "appNumber": 2,
+     "appConf": 0.51
+    },
+    {
+     "px": 959,
+     "py": 40,
+     "r": 11.7,
+     "appNumber": 4,
+     "appConf": 0.13
+    },
+    {
+     "px": 976,
+     "py": 44,
+     "r": 11.8,
+     "appNumber": 7,
+     "appConf": 0.74
+    },
+    {
+     "px": 803,
+     "py": 81,
+     "r": 13,
+     "appNumber": 0,
+     "appConf": 0.83
+    },
+    {
+     "px": 538,
+     "py": 150,
+     "r": 15.1,
+     "appNumber": 9,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-13_1735_V2.2__shot016-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1735_V2.2",
+   "file": "shot016-after.jpg",
+   "side": "after",
+   "shot": 16,
+   "rack": 2,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 658,
+     "py": 68,
+     "r": 12.7,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 965,
+     "py": 184,
+     "r": 15.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-13_1735_V2.2__shot018-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1735_V2.2",
+   "file": "shot018-after.jpg",
+   "side": "after",
+   "shot": 18,
+   "rack": 2,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 1023,
+     "py": 152,
+     "r": 14.8,
+     "appNumber": 9,
+     "appConf": 0.64
+    },
+    {
+     "px": 587,
+     "py": 161,
+     "r": 15.4,
+     "appNumber": 0,
+     "appConf": 0.92
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-13_1735_V2.2__shot028-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1735_V2.2",
+   "file": "shot028-after.jpg",
+   "side": "after",
+   "shot": 28,
+   "rack": 3,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 804,
+     "py": 81,
+     "r": 13,
+     "appNumber": 0,
+     "appConf": 0.83
+    },
+    {
+     "px": 538,
+     "py": 150,
+     "r": 15.1,
+     "appNumber": 9,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-13_1735_V2.2__shot036-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-13_1735_V2.2",
+   "file": "shot036-after.jpg",
+   "side": "after",
+   "shot": 36,
+   "rack": 4,
+   "appBalls": 3,
+   "prefill": [
+    {
+     "px": 834,
+     "py": 59,
+     "r": 12.4,
+     "appNumber": 0,
+     "appConf": 0.97
+    },
+    {
+     "px": 280,
+     "py": 88,
+     "r": 13.5,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 932,
+     "py": 102,
+     "r": 13.5,
+     "appNumber": 8,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-13_1835_V2.2__shot002-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "9 ft",
+   "session": "2026-10-13_1835_V2.2",
+   "file": "shot002-before.jpg",
+   "side": "before",
+   "shot": 2,
+   "rack": 1,
+   "appBalls": 10,
+   "prefill": [
+    {
+     "px": 735,
+     "py": 140,
+     "r": 12,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 373,
+     "py": 124,
+     "r": 12.2,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 513,
+     "py": 71,
+     "r": 10.5,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 598,
+     "py": 26,
+     "r": 9.1,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 913,
+     "py": 130,
+     "r": 11.4,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 722,
+     "py": 88,
+     "r": 10.6,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 823,
+     "py": 73,
+     "r": 10,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 656,
+     "py": 122,
+     "r": 11.7,
+     "appNumber": 0,
+     "appConf": 0.97
+    },
+    {
+     "px": 885,
+     "py": 15,
+     "r": 8.3,
+     "appNumber": 2,
+     "appConf": 0.9
+    },
+    {
+     "px": 238,
+     "py": 87,
+     "r": 11.4,
+     "appNumber": 1,
+     "appConf": 0.36
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-13_1835_V2.2__shot006-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "9 ft",
+   "session": "2026-10-13_1835_V2.2",
+   "file": "shot006-after.jpg",
+   "side": "after",
+   "shot": 6,
+   "rack": 1,
+   "appBalls": 7,
+   "prefill": [
+    {
+     "px": 846,
+     "py": 16,
+     "r": 8.6,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 593,
+     "py": 17,
+     "r": 8.9,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 600,
+     "py": 27,
+     "r": 9.2,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 366,
+     "py": 32,
+     "r": 9.5,
+     "appNumber": 0,
+     "appConf": 0.94
+    },
+    {
+     "px": 514,
+     "py": 73,
+     "r": 10.6,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 545,
+     "py": 94,
+     "r": 11.3,
+     "appNumber": 3,
+     "appConf": 0.28
+    },
+    {
+     "px": 374,
+     "py": 125,
+     "r": 12.4,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-13_1835_V2.2__shot023-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "9 ft",
+   "session": "2026-10-13_1835_V2.2",
+   "file": "shot023-before.jpg",
+   "side": "before",
+   "shot": 23,
+   "rack": 2,
+   "appBalls": 7,
+   "prefill": [
+    {
+     "px": 895,
+     "py": 37,
+     "r": 9.2,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 490,
+     "py": 51,
+     "r": 10,
+     "appNumber": 0,
+     "appConf": 0.94
+    },
+    {
+     "px": 375,
+     "py": 54,
+     "r": 10.2,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 999,
+     "py": 86,
+     "r": 10.7,
+     "appNumber": 7,
+     "appConf": 0.68
+    },
+    {
+     "px": 518,
+     "py": 85,
+     "r": 11,
+     "appNumber": 2,
+     "appConf": 0.5
+    },
+    {
+     "px": 267,
+     "py": 112,
+     "r": 12.1,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 377,
+     "py": 153,
+     "r": 13.2,
+     "appNumber": 9,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-13_1835_V2.2__shot033-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "9 ft",
+   "session": "2026-10-13_1835_V2.2",
+   "file": "shot033-after.jpg",
+   "side": "after",
+   "shot": 33,
+   "rack": 3,
+   "appBalls": 8,
+   "prefill": [
+    {
+     "px": 717,
+     "py": 16,
+     "r": 8.6,
+     "appNumber": 1,
+     "appConf": 0.9
+    },
+    {
+     "px": 450,
+     "py": 44,
+     "r": 9.7,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 358,
+     "py": 50,
+     "r": 9.9,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 586,
+     "py": 53,
+     "r": 9.8,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 846,
+     "py": 73,
+     "r": 10.1,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 610,
+     "py": 98,
+     "r": 11.1,
+     "appNumber": 0,
+     "appConf": 0.94
+    },
+    {
+     "px": 531,
+     "py": 152,
+     "r": 12.7,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 323,
+     "py": 163,
+     "r": 13.2,
+     "appNumber": 5,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-13_1835_V2.2__shot007-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "9 ft",
+   "session": "2026-10-13_1835_V2.2",
+   "file": "shot007-before.jpg",
+   "side": "before",
+   "shot": 7,
+   "rack": 1,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 846,
+     "py": 16,
+     "r": 8.6,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 593,
+     "py": 17,
+     "r": 8.9,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 366,
+     "py": 32,
+     "r": 9.5,
+     "appNumber": 0,
+     "appConf": 0.94
+    },
+    {
+     "px": 513,
+     "py": 73,
+     "r": 10.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 545,
+     "py": 94,
+     "r": 11.3,
+     "appNumber": 3,
+     "appConf": 0.28
+    },
+    {
+     "px": 373,
+     "py": 126,
+     "r": 12.4,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-13_1835_V2.2__shot010-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "9 ft",
+   "session": "2026-10-13_1835_V2.2",
+   "file": "shot010-after.jpg",
+   "side": "after",
+   "shot": 10,
+   "rack": 1,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 592,
+     "py": 17,
+     "r": 8.9,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 244,
+     "py": 71,
+     "r": 10.8,
+     "appNumber": 0,
+     "appConf": 0.94
+    },
+    {
+     "px": 612,
+     "py": 96,
+     "r": 11.3,
+     "appNumber": 5,
+     "appConf": 0.63
+    },
+    {
+     "px": 916,
+     "py": 143,
+     "r": 12.5,
+     "appNumber": 3,
+     "appConf": 0.46
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-13_1835_V2.2__shot026-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "9 ft",
+   "session": "2026-10-13_1835_V2.2",
+   "file": "shot026-after.jpg",
+   "side": "after",
+   "shot": 26,
+   "rack": 2,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 1000,
+     "py": 87,
+     "r": 10.7,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 519,
+     "py": 87,
+     "r": 11.1,
+     "appNumber": 2,
+     "appConf": 0.9
+    },
+    {
+     "px": 267,
+     "py": 113,
+     "r": 12.1,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 376,
+     "py": 156,
+     "r": 13.3,
+     "appNumber": 4,
+     "appConf": 0.34
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-13_1835_V2.2__shot038-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "9 ft",
+   "session": "2026-10-13_1835_V2.2",
+   "file": "shot038-before.jpg",
+   "side": "before",
+   "shot": 38,
+   "rack": 3,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 716,
+     "py": 17,
+     "r": 8.6,
+     "appNumber": 1,
+     "appConf": 0.9
+    },
+    {
+     "px": 451,
+     "py": 44,
+     "r": 9.7,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 526,
+     "py": 47,
+     "r": 9.7,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 586,
+     "py": 53,
+     "r": 9.8,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 864,
+     "py": 110,
+     "r": 11.2,
+     "appNumber": 6,
+     "appConf": 0.83
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-13_1835_V2.2__shot014-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "9 ft",
+   "session": "2026-10-13_1835_V2.2",
+   "file": "shot014-after.jpg",
+   "side": "after",
+   "shot": 14,
+   "rack": 1,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 591,
+     "py": 18,
+     "r": 8.9,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 902,
+     "py": 47,
+     "r": 9.6,
+     "appNumber": 0,
+     "appConf": 0.94
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-13_1835_V2.2__shot018-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "9 ft",
+   "session": "2026-10-13_1835_V2.2",
+   "file": "shot018-after.jpg",
+   "side": "after",
+   "shot": 18,
+   "rack": 1,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 738,
+     "py": 75,
+     "r": 10.6,
+     "appNumber": 0,
+     "appConf": 0.94
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-13_1835_V2.2__shot029-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "9 ft",
+   "session": "2026-10-13_1835_V2.2",
+   "file": "shot029-before.jpg",
+   "side": "before",
+   "shot": 29,
+   "rack": 2,
+   "appBalls": 3,
+   "prefill": [
+    {
+     "px": 461,
+     "py": 34,
+     "r": 9.5,
+     "appNumber": 0,
+     "appConf": 0.94
+    },
+    {
+     "px": 518,
+     "py": 84,
+     "r": 11,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 376,
+     "py": 152,
+     "r": 13.2,
+     "appNumber": 4,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-13_1835_V2.2__shot042-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "9 ft",
+   "session": "2026-10-13_1835_V2.2",
+   "file": "shot042-after.jpg",
+   "side": "after",
+   "shot": 42,
+   "rack": 3,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 779,
+     "py": 84,
+     "r": 10.8,
+     "appNumber": 0,
+     "appConf": 0.94
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1707_V2.3__shot001-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1707_V2.3",
+   "file": "shot001-before.jpg",
+   "side": "before",
+   "shot": 1,
+   "rack": 1,
+   "appBalls": 12,
+   "prefill": [
+    {
+     "px": 743,
+     "py": 27,
+     "r": 10.5,
+     "appNumber": 4,
+     "appConf": 0.58
+    },
+    {
+     "px": 900,
+     "py": 48,
+     "r": 11,
+     "appNumber": 2,
+     "appConf": 0.86
+    },
+    {
+     "px": 703,
+     "py": 50,
+     "r": 11.2,
+     "appNumber": 9,
+     "appConf": 1
+    },
+    {
+     "px": 538,
+     "py": 59,
+     "r": 11.6,
+     "appNumber": 1,
+     "appConf": 0.78
+    },
+    {
+     "px": 367,
+     "py": 63,
+     "r": 11.9,
+     "appNumber": 7,
+     "appConf": 0.86
+    },
+    {
+     "px": 968,
+     "py": 82,
+     "r": 11.9,
+     "appNumber": 8,
+     "appConf": 0.86
+    },
+    {
+     "px": 902,
+     "py": 104,
+     "r": 12.6,
+     "appNumber": 5,
+     "appConf": 0.81
+    },
+    {
+     "px": 371,
+     "py": 142,
+     "r": 14.1,
+     "appNumber": 3,
+     "appConf": 0.88
+    },
+    {
+     "px": 821,
+     "py": 153,
+     "r": 14,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 528,
+     "py": 175,
+     "r": 14.9,
+     "appNumber": 0,
+     "appConf": 0.94
+    },
+    {
+     "px": 182,
+     "py": 162,
+     "r": 14.8,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 199,
+     "py": 180,
+     "r": 15.3,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-14_1707_V2.3__shot002-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1707_V2.3",
+   "file": "shot002-after.jpg",
+   "side": "after",
+   "shot": 2,
+   "rack": 1,
+   "appBalls": 10,
+   "prefill": [
+    {
+     "px": 743,
+     "py": 27,
+     "r": 10.5,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 703,
+     "py": 50,
+     "r": 11.2,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 900,
+     "py": 49,
+     "r": 11,
+     "appNumber": 2,
+     "appConf": 0.9
+    },
+    {
+     "px": 538,
+     "py": 60,
+     "r": 11.6,
+     "appNumber": 1,
+     "appConf": 0.9
+    },
+    {
+     "px": 366,
+     "py": 63,
+     "r": 11.9,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 967,
+     "py": 82,
+     "r": 11.9,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 449,
+     "py": 104,
+     "r": 12.9,
+     "appNumber": 0,
+     "appConf": 0.94
+    },
+    {
+     "px": 902,
+     "py": 104,
+     "r": 12.6,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 371,
+     "py": 142,
+     "r": 14.1,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 821,
+     "py": 153,
+     "r": 14,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-14_1707_V2.3__shot004-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1707_V2.3",
+   "file": "shot004-before.jpg",
+   "side": "before",
+   "shot": 4,
+   "rack": 1,
+   "appBalls": 9,
+   "prefill": [
+    {
+     "px": 743,
+     "py": 27,
+     "r": 10.5,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 900,
+     "py": 48,
+     "r": 11,
+     "appNumber": 2,
+     "appConf": 0.9
+    },
+    {
+     "px": 703,
+     "py": 50,
+     "r": 11.2,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 366,
+     "py": 63,
+     "r": 11.8,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 967,
+     "py": 81,
+     "r": 11.9,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 606,
+     "py": 91,
+     "r": 12.4,
+     "appNumber": 0,
+     "appConf": 0.96
+    },
+    {
+     "px": 902,
+     "py": 104,
+     "r": 12.6,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 371,
+     "py": 142,
+     "r": 14.1,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 821,
+     "py": 153,
+     "r": 14,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-14_1707_V2.3__shot005-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1707_V2.3",
+   "file": "shot005-after.jpg",
+   "side": "after",
+   "shot": 5,
+   "rack": 1,
+   "appBalls": 8,
+   "prefill": [
+    {
+     "px": 580,
+     "py": 21,
+     "r": 10.5,
+     "appNumber": 3,
+     "appConf": 0.86
+    },
+    {
+     "px": 766,
+     "py": 27,
+     "r": 10.5,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 746,
+     "py": 46,
+     "r": 11.1,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 703,
+     "py": 50,
+     "r": 11.2,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 366,
+     "py": 63,
+     "r": 11.9,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 968,
+     "py": 81,
+     "r": 11.9,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 902,
+     "py": 104,
+     "r": 12.6,
+     "appNumber": 1,
+     "appConf": 0.9
+    },
+    {
+     "px": 821,
+     "py": 153,
+     "r": 14,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-14_1707_V2.3__shot007-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1707_V2.3",
+   "file": "shot007-before.jpg",
+   "side": "before",
+   "shot": 7,
+   "rack": 1,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 796,
+     "py": 47,
+     "r": 11,
+     "appNumber": 0,
+     "appConf": 1
+    },
+    {
+     "px": 703,
+     "py": 51,
+     "r": 11.2,
+     "appNumber": 9,
+     "appConf": 1
+    },
+    {
+     "px": 344,
+     "py": 63,
+     "r": 11.9,
+     "appNumber": 7,
+     "appConf": 0.84
+    },
+    {
+     "px": 968,
+     "py": 82,
+     "r": 11.9,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 902,
+     "py": 105,
+     "r": 12.6,
+     "appNumber": 5,
+     "appConf": 1
+    },
+    {
+     "px": 821,
+     "py": 154,
+     "r": 14,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-14_1707_V2.3__shot007-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1707_V2.3",
+   "file": "shot007-after.jpg",
+   "side": "after",
+   "shot": 7,
+   "rack": 1,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 703,
+     "py": 53,
+     "r": 11.3,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 344,
+     "py": 64,
+     "r": 11.9,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 967,
+     "py": 83,
+     "r": 11.9,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 884,
+     "py": 152,
+     "r": 13.9,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 821,
+     "py": 155,
+     "r": 14.1,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-14_1707_V2.3__shot008-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1707_V2.3",
+   "file": "shot008-before.jpg",
+   "side": "before",
+   "shot": 8,
+   "rack": 1,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 703,
+     "py": 52,
+     "r": 11.3,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 344,
+     "py": 63,
+     "r": 11.9,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 967,
+     "py": 83,
+     "r": 11.9,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 884,
+     "py": 152,
+     "r": 13.9,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 820,
+     "py": 155,
+     "r": 14.1,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-14_1707_V2.3__shot009-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1707_V2.3",
+   "file": "shot009-before.jpg",
+   "side": "before",
+   "shot": 9,
+   "rack": 1,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 703,
+     "py": 52,
+     "r": 11.3,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 344,
+     "py": 63,
+     "r": 11.9,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 967,
+     "py": 83,
+     "r": 11.9,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 601,
+     "py": 100,
+     "r": 12.7,
+     "appNumber": 0,
+     "appConf": 0.97
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-14_1707_V2.3__shot010-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1707_V2.3",
+   "file": "shot010-after.jpg",
+   "side": "after",
+   "shot": 10,
+   "rack": 1,
+   "appBalls": 3,
+   "prefill": [
+    {
+     "px": 309,
+     "py": 37,
+     "r": 11.2,
+     "appNumber": 9,
+     "appConf": 0.8
+    },
+    {
+     "px": 703,
+     "py": 52,
+     "r": 11.3,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 964,
+     "py": 102,
+     "r": 12.5,
+     "appNumber": 8,
+     "appConf": 0.86
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1707_V2.3__shot011-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1707_V2.3",
+   "file": "shot011-after.jpg",
+   "side": "after",
+   "shot": 11,
+   "rack": 1,
+   "appBalls": 3,
+   "prefill": [
+    {
+     "px": 690,
+     "py": 35,
+     "r": 10.8,
+     "appNumber": 9,
+     "appConf": 0.77
+    },
+    {
+     "px": 535,
+     "py": 59,
+     "r": 11.6,
+     "appNumber": 0,
+     "appConf": 0.95
+    },
+    {
+     "px": 854,
+     "py": 94,
+     "r": 12.3,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1707_V2.3__shot012-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1707_V2.3",
+   "file": "shot012-before.jpg",
+   "side": "before",
+   "shot": 12,
+   "rack": 1,
+   "appBalls": 3,
+   "prefill": [
+    {
+     "px": 690,
+     "py": 36,
+     "r": 10.8,
+     "appNumber": 9,
+     "appConf": 0.77
+    },
+    {
+     "px": 479,
+     "py": 59,
+     "r": 11.7,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 831,
+     "py": 81,
+     "r": 12,
+     "appNumber": 8,
+     "appConf": 0.86
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1707_V2.3__shot013-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1707_V2.3",
+   "file": "shot013-after.jpg",
+   "side": "after",
+   "shot": 13,
+   "rack": 1,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 677,
+     "py": 78,
+     "r": 12,
+     "appNumber": 0,
+     "appConf": 1
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1718_V2.3__shot027-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1718_V2.3",
+   "file": "shot027-before.jpg",
+   "side": "before",
+   "shot": 27,
+   "rack": null,
+   "appBalls": 8,
+   "prefill": [
+    {
+     "px": 711,
+     "py": 45,
+     "r": 11.1,
+     "appNumber": 8,
+     "appConf": 1
+    },
+    {
+     "px": 470,
+     "py": 72,
+     "r": 12,
+     "appNumber": 0,
+     "appConf": 0.95
+    },
+    {
+     "px": 326,
+     "py": 82,
+     "r": 12.3,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 238,
+     "py": 96,
+     "r": 12.8,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 278,
+     "py": 94,
+     "r": 12.7,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 257,
+     "py": 80,
+     "r": 12.3,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 296,
+     "py": 92,
+     "r": 12.6,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 259,
+     "py": 99,
+     "r": 12.8,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-14_1718_V2.3__shot009-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1718_V2.3",
+   "file": "shot009-before.jpg",
+   "side": "before",
+   "shot": 9,
+   "rack": null,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 582,
+     "py": 128,
+     "r": 13.4,
+     "appNumber": 3,
+     "appConf": 1
+    },
+    {
+     "px": 664,
+     "py": 26,
+     "r": 10.6,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 698,
+     "py": 29,
+     "r": 10.6,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 681,
+     "py": 30,
+     "r": 10.7,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-14_1718_V2.3__shot021-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1718_V2.3",
+   "file": "shot021-before.jpg",
+   "side": "before",
+   "shot": 21,
+   "rack": null,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 568,
+     "py": 48,
+     "r": 11.2,
+     "appNumber": 0,
+     "appConf": 0.93
+    },
+    {
+     "px": 306,
+     "py": 133,
+     "r": 13.7,
+     "appNumber": 6,
+     "appConf": 1
+    },
+    {
+     "px": 693,
+     "py": 26,
+     "r": 10.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 670,
+     "py": 28,
+     "r": 10.6,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-14_1718_V2.3__shot004-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1718_V2.3",
+   "file": "shot004-before.jpg",
+   "side": "before",
+   "shot": 4,
+   "rack": null,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 387,
+     "py": 89,
+     "r": 12.5,
+     "appNumber": 0,
+     "appConf": 0.98
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1718_V2.3__shot012-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1718_V2.3",
+   "file": "shot012-after.jpg",
+   "side": "after",
+   "shot": 12,
+   "rack": null,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 954,
+     "py": 108,
+     "r": 12.6,
+     "appNumber": 0,
+     "appConf": 0.99
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1718_V2.3__shot019-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1718_V2.3",
+   "file": "shot019-before.jpg",
+   "side": "before",
+   "shot": 19,
+   "rack": null,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 481,
+     "py": 43,
+     "r": 11.1,
+     "appNumber": 6,
+     "appConf": 1
+    },
+    {
+     "px": 848,
+     "py": 159,
+     "r": 14.1,
+     "appNumber": 0,
+     "appConf": 0.86
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1718_V2.3__shot028-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1718_V2.3",
+   "file": "shot028-after.jpg",
+   "side": "after",
+   "shot": 28,
+   "rack": null,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 416,
+     "py": 50,
+     "r": 11.4,
+     "appNumber": 0,
+     "appConf": 0.97
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1718_V2.3__shot003-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1718_V2.3",
+   "file": "shot003-after.jpg",
+   "side": "after",
+   "shot": 3,
+   "rack": null,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 387,
+     "py": 89,
+     "r": 12.5,
+     "appNumber": 0,
+     "appConf": 0.98
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1718_V2.3__shot009-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1718_V2.3",
+   "file": "shot009-after.jpg",
+   "side": "after",
+   "shot": 9,
+   "rack": null,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 528,
+     "py": 50,
+     "r": 11.3,
+     "appNumber": 0,
+     "appConf": 0.94
+    },
+    {
+     "px": 581,
+     "py": 128,
+     "r": 13.4,
+     "appNumber": 3,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1718_V2.3__shot016-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1718_V2.3",
+   "file": "shot016-before.jpg",
+   "side": "before",
+   "shot": 16,
+   "rack": null,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 706,
+     "py": 44,
+     "r": 11,
+     "appNumber": 0,
+     "appConf": 0.98
+    },
+    {
+     "px": 682,
+     "py": 145,
+     "r": 13.8,
+     "appNumber": 5,
+     "appConf": 1
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1718_V2.3__shot023-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1718_V2.3",
+   "file": "shot023-before.jpg",
+   "side": "before",
+   "shot": 23,
+   "rack": null,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 536,
+     "py": 49,
+     "r": 11.3,
+     "appNumber": 0,
+     "appConf": 0.95
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1718_V2.3__shot029-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1718_V2.3",
+   "file": "shot029-before.jpg",
+   "side": "before",
+   "shot": 29,
+   "rack": null,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 661,
+     "py": 55,
+     "r": 11.4,
+     "appNumber": 0,
+     "appConf": 0.95
+    },
+    {
+     "px": 950,
+     "py": 160,
+     "r": 14.1,
+     "appNumber": 9,
+     "appConf": 1
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1729_V2.3__shot001-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1729_V2.3",
+   "file": "shot001-before.jpg",
+   "side": "before",
+   "shot": 1,
+   "rack": 1,
+   "appBalls": 10,
+   "prefill": [
+    {
+     "px": 504,
+     "py": 28,
+     "r": 10.7,
+     "appNumber": 5,
+     "appConf": 0.88
+    },
+    {
+     "px": 692,
+     "py": 47,
+     "r": 11.1,
+     "appNumber": 8,
+     "appConf": 0.86
+    },
+    {
+     "px": 907,
+     "py": 74,
+     "r": 11.6,
+     "appNumber": 3,
+     "appConf": 0.89
+    },
+    {
+     "px": 940,
+     "py": 89,
+     "r": 12,
+     "appNumber": 9,
+     "appConf": 0.93
+    },
+    {
+     "px": 509,
+     "py": 93,
+     "r": 12.5,
+     "appNumber": 6,
+     "appConf": 0.86
+    },
+    {
+     "px": 678,
+     "py": 113,
+     "r": 12.9,
+     "appNumber": 2,
+     "appConf": 0.86
+    },
+    {
+     "px": 642,
+     "py": 145,
+     "r": 13.8,
+     "appNumber": 1,
+     "appConf": 0.88
+    },
+    {
+     "px": 312,
+     "py": 153,
+     "r": 14.4,
+     "appNumber": 4,
+     "appConf": 0.13
+    },
+    {
+     "px": 355,
+     "py": 157,
+     "r": 14.4,
+     "appNumber": 0,
+     "appConf": 0.95
+    },
+    {
+     "px": 763,
+     "py": 174,
+     "r": 14.5,
+     "appNumber": 7,
+     "appConf": 0.74
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-14_1729_V2.3__shot002-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1729_V2.3",
+   "file": "shot002-after.jpg",
+   "side": "after",
+   "shot": 2,
+   "rack": 2,
+   "appBalls": 9,
+   "prefill": [
+    {
+     "px": 504,
+     "py": 28,
+     "r": 10.7,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 699,
+     "py": 31,
+     "r": 10.7,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 907,
+     "py": 73,
+     "r": 11.6,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 946,
+     "py": 85,
+     "r": 11.9,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 510,
+     "py": 91,
+     "r": 12.5,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 678,
+     "py": 113,
+     "r": 12.9,
+     "appNumber": 2,
+     "appConf": 0.9
+    },
+    {
+     "px": 312,
+     "py": 153,
+     "r": 14.4,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 722,
+     "py": 163,
+     "r": 14.3,
+     "appNumber": 7,
+     "appConf": 0.95
+    },
+    {
+     "px": 772,
+     "py": 169,
+     "r": 14.4,
+     "appNumber": 0,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-14_1729_V2.3__shot003-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1729_V2.3",
+   "file": "shot003-before.jpg",
+   "side": "before",
+   "shot": 3,
+   "rack": 2,
+   "appBalls": 10,
+   "prefill": [
+    {
+     "px": 504,
+     "py": 28,
+     "r": 10.7,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 699,
+     "py": 31,
+     "r": 10.6,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 907,
+     "py": 73,
+     "r": 11.6,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 946,
+     "py": 85,
+     "r": 11.9,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 509,
+     "py": 92,
+     "r": 12.5,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 678,
+     "py": 113,
+     "r": 12.9,
+     "appNumber": 2,
+     "appConf": 0.9
+    },
+    {
+     "px": 312,
+     "py": 153,
+     "r": 14.4,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 722,
+     "py": 162,
+     "r": 14.2,
+     "appNumber": 7,
+     "appConf": 0.95
+    },
+    {
+     "px": 772,
+     "py": 168,
+     "r": 14.4,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 559,
+     "py": 154,
+     "r": 14.2,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-14_1729_V2.3__shot005-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1729_V2.3",
+   "file": "shot005-after.jpg",
+   "side": "after",
+   "shot": 5,
+   "rack": 2,
+   "appBalls": 7,
+   "prefill": [
+    {
+     "px": 504,
+     "py": 28,
+     "r": 10.7,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 699,
+     "py": 31,
+     "r": 10.6,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 971,
+     "py": 86,
+     "r": 11.9,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 509,
+     "py": 93,
+     "r": 12.5,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 937,
+     "py": 115,
+     "r": 12.7,
+     "appNumber": 9,
+     "appConf": 0.75
+    },
+    {
+     "px": 312,
+     "py": 153,
+     "r": 14.4,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 772,
+     "py": 168,
+     "r": 14.4,
+     "appNumber": 7,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-14_1729_V2.3__shot006-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1729_V2.3",
+   "file": "shot006-before.jpg",
+   "side": "before",
+   "shot": 6,
+   "rack": 2,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 699,
+     "py": 30,
+     "r": 10.6,
+     "appNumber": 3,
+     "appConf": 0.3
+    },
+    {
+     "px": 915,
+     "py": 72,
+     "r": 11.6,
+     "appNumber": 9,
+     "appConf": 0.78
+    },
+    {
+     "px": 976,
+     "py": 86,
+     "r": 11.9,
+     "appNumber": 6,
+     "appConf": 0.86
+    },
+    {
+     "px": 373,
+     "py": 106,
+     "r": 13,
+     "appNumber": 0,
+     "appConf": 1
+    },
+    {
+     "px": 181,
+     "py": 171,
+     "r": 15,
+     "appNumber": 7,
+     "appConf": 0.86
+    },
+    {
+     "px": 302,
+     "py": 183,
+     "r": 15.2,
+     "appNumber": 5,
+     "appConf": 0.77
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-14_1729_V2.3__shot006-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1729_V2.3",
+   "file": "shot006-after.jpg",
+   "side": "after",
+   "shot": 6,
+   "rack": 2,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 699,
+     "py": 30,
+     "r": 10.6,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 732,
+     "py": 48,
+     "r": 11.1,
+     "appNumber": 0,
+     "appConf": 1
+    },
+    {
+     "px": 915,
+     "py": 71,
+     "r": 11.6,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 976,
+     "py": 86,
+     "r": 11.9,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 181,
+     "py": 171,
+     "r": 15,
+     "appNumber": 7,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-14_1729_V2.3__shot007-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1729_V2.3",
+   "file": "shot007-before.jpg",
+   "side": "before",
+   "shot": 7,
+   "rack": 2,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 699,
+     "py": 31,
+     "r": 10.6,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 913,
+     "py": 76,
+     "r": 11.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 832,
+     "py": 101,
+     "r": 12.5,
+     "appNumber": 6,
+     "appConf": 0.86
+    },
+    {
+     "px": 181,
+     "py": 171,
+     "r": 15,
+     "appNumber": 7,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-14_1729_V2.3__shot007-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1729_V2.3",
+   "file": "shot007-after.jpg",
+   "side": "after",
+   "shot": 7,
+   "rack": 2,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 699,
+     "py": 30,
+     "r": 10.6,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 913,
+     "py": 76,
+     "r": 11.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 690,
+     "py": 89,
+     "r": 12.2,
+     "appNumber": 0,
+     "appConf": 0.99
+    },
+    {
+     "px": 181,
+     "py": 171,
+     "r": 15,
+     "appNumber": 7,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-14_1729_V2.3__shot008-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1729_V2.3",
+   "file": "shot008-after.jpg",
+   "side": "after",
+   "shot": 8,
+   "rack": 2,
+   "appBalls": 3,
+   "prefill": [
+    {
+     "px": 700,
+     "py": 30,
+     "r": 10.6,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 493,
+     "py": 65,
+     "r": 11.8,
+     "appNumber": 0,
+     "appConf": 1
+    },
+    {
+     "px": 913,
+     "py": 76,
+     "r": 11.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1729_V2.3__shot009-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1729_V2.3",
+   "file": "shot009-after.jpg",
+   "side": "after",
+   "shot": 9,
+   "rack": 2,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 913,
+     "py": 76,
+     "r": 11.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 837,
+     "py": 145,
+     "r": 13.7,
+     "appNumber": 0,
+     "appConf": 0.97
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1729_V2.3__shot010-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1729_V2.3",
+   "file": "shot010-after.jpg",
+   "side": "after",
+   "shot": 10,
+   "rack": 2,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 974,
+     "py": 93,
+     "r": 12.1,
+     "appNumber": 0,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-14_1729_V2.3__shot003-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-14_1729_V2.3",
+   "file": "shot003-after.jpg",
+   "side": "after",
+   "shot": 3,
+   "rack": 2,
+   "appBalls": 8,
+   "prefill": [
+    {
+     "px": 504,
+     "py": 28,
+     "r": 10.7,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 699,
+     "py": 31,
+     "r": 10.6,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 907,
+     "py": 73,
+     "r": 11.6,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 947,
+     "py": 86,
+     "r": 11.9,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 509,
+     "py": 93,
+     "r": 12.5,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 677,
+     "py": 121,
+     "r": 13.1,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 312,
+     "py": 153,
+     "r": 14.3,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 772,
+     "py": 168,
+     "r": 14.4,
+     "appNumber": 7,
+     "appConf": 0.66
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-15_1934_V2.3.1__shot004-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1934_V2.3.1",
+   "file": "shot004-before.jpg",
+   "side": "before",
+   "shot": 4,
+   "rack": null,
+   "appBalls": 7,
+   "prefill": [
+    {
+     "px": 817,
+     "py": 43,
+     "r": 11.5,
+     "appNumber": 2,
+     "appConf": 1
+    },
+    {
+     "px": 542,
+     "py": 58,
+     "r": 12.3,
+     "appNumber": 0,
+     "appConf": 0.86
+    },
+    {
+     "px": 351,
+     "py": 62,
+     "r": 12.6,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 289,
+     "py": 51,
+     "r": 12.4,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 320,
+     "py": 49,
+     "r": 12.3,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 336,
+     "py": 56,
+     "r": 12.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 301,
+     "py": 41,
+     "r": 12.1,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-15_1934_V2.3.1__shot006-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1934_V2.3.1",
+   "file": "shot006-before.jpg",
+   "side": "before",
+   "shot": 6,
+   "rack": null,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 714,
+     "py": 68,
+     "r": 12.4,
+     "appNumber": 0,
+     "appConf": 0.93
+    },
+    {
+     "px": 1011,
+     "py": 158,
+     "r": 14.6,
+     "appNumber": 2,
+     "appConf": 1
+    },
+    {
+     "px": 625,
+     "py": 34,
+     "r": 11.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 590,
+     "py": 26,
+     "r": 11.3,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 608,
+     "py": 31,
+     "r": 11.4,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-15_1934_V2.3.1__shot015-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1934_V2.3.1",
+   "file": "shot015-before.jpg",
+   "side": "before",
+   "shot": 15,
+   "rack": null,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 556,
+     "py": 56,
+     "r": 12.2,
+     "appNumber": 0,
+     "appConf": 0.89
+    },
+    {
+     "px": 341,
+     "py": 149,
+     "r": 15.1,
+     "appNumber": 4,
+     "appConf": 1
+    },
+    {
+     "px": 341,
+     "py": 19,
+     "r": 11.4,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 342,
+     "py": 20,
+     "r": 11.4,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-15_1934_V2.3.1__shot030-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1934_V2.3.1",
+   "file": "shot030-before.jpg",
+   "side": "before",
+   "shot": 30,
+   "rack": null,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 719,
+     "py": 38,
+     "r": 11.4,
+     "appNumber": 8,
+     "appConf": 1
+    },
+    {
+     "px": 414,
+     "py": 62,
+     "r": 12.2,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 284,
+     "py": 71,
+     "r": 12.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 246,
+     "py": 74,
+     "r": 12.6,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 262,
+     "py": 57,
+     "r": 12.1,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 267,
+     "py": 75,
+     "r": 12.6,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-15_1934_V2.3.1__shot032-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1934_V2.3.1",
+   "file": "shot032-before.jpg",
+   "side": "before",
+   "shot": 32,
+   "rack": null,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 662,
+     "py": 70,
+     "r": 12.3,
+     "appNumber": 0,
+     "appConf": 0.89
+    },
+    {
+     "px": 965,
+     "py": 148,
+     "r": 14.5,
+     "appNumber": 9,
+     "appConf": 1
+    },
+    {
+     "px": 497,
+     "py": 22,
+     "r": 11,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 532,
+     "py": 31,
+     "r": 11.2,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 515,
+     "py": 30,
+     "r": 11.2,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-15_1934_V2.3.1__shot005-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1934_V2.3.1",
+   "file": "shot005-before.jpg",
+   "side": "before",
+   "shot": 5,
+   "rack": null,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 817,
+     "py": 29,
+     "r": 11.1,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 946,
+     "py": 31,
+     "r": 11,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-15_1934_V2.3.1__shot013-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1934_V2.3.1",
+   "file": "shot013-after.jpg",
+   "side": "after",
+   "shot": 13,
+   "rack": null,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 1008,
+     "py": 131,
+     "r": 13.9,
+     "appNumber": 0,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-15_1934_V2.3.1__shot021-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1934_V2.3.1",
+   "file": "shot021-before.jpg",
+   "side": "before",
+   "shot": 21,
+   "rack": null,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 426,
+     "py": 39,
+     "r": 11.9,
+     "appNumber": 6,
+     "appConf": 0.86
+    },
+    {
+     "px": 657,
+     "py": 94,
+     "r": 13.2,
+     "appNumber": 0,
+     "appConf": 0.91
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-15_1934_V2.3.1__shot031-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1934_V2.3.1",
+   "file": "shot031-after.jpg",
+   "side": "after",
+   "shot": 31,
+   "rack": null,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 834,
+     "py": 56,
+     "r": 11.9,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 553,
+     "py": 146,
+     "r": 14.6,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-15_1934_V2.3.1__shot007-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1934_V2.3.1",
+   "file": "shot007-before.jpg",
+   "side": "before",
+   "shot": 7,
+   "rack": null,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 668,
+     "py": 98,
+     "r": 13.3,
+     "appNumber": 0,
+     "appConf": 0.87
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-15_1934_V2.3.1__shot018-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1934_V2.3.1",
+   "file": "shot018-before.jpg",
+   "side": "before",
+   "shot": 18,
+   "rack": null,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 708,
+     "py": 137,
+     "r": 14.4,
+     "appNumber": 0,
+     "appConf": 0.86
+    },
+    {
+     "px": 989,
+     "py": 156,
+     "r": 14.6,
+     "appNumber": 5,
+     "appConf": 1
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-15_1934_V2.3.1__shot029-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1934_V2.3.1",
+   "file": "shot029-before.jpg",
+   "side": "before",
+   "shot": 29,
+   "rack": null,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 746,
+     "py": 46,
+     "r": 11.6,
+     "appNumber": 8,
+     "appConf": 1
+    },
+    {
+     "px": 695,
+     "py": 38,
+     "r": 11.4,
+     "appNumber": 0,
+     "appConf": 0.82
+    },
+    {
+     "px": 733,
+     "py": 23,
+     "r": 10.9,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 752,
+     "py": 27,
+     "r": 11.1,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-15_1956_V2.3.1__shot002-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1956_V2.3.1",
+   "file": "shot002-before.jpg",
+   "side": "before",
+   "shot": 2,
+   "rack": 1,
+   "appBalls": 9,
+   "prefill": [
+    {
+     "px": 480,
+     "py": 46,
+     "r": 11.7,
+     "appNumber": 3,
+     "appConf": 0.76
+    },
+    {
+     "px": 736,
+     "py": 45,
+     "r": 11.5,
+     "appNumber": 9,
+     "appConf": 0.62
+    },
+    {
+     "px": 578,
+     "py": 47,
+     "r": 11.6,
+     "appNumber": 4,
+     "appConf": 0.86
+    },
+    {
+     "px": 862,
+     "py": 46,
+     "r": 11.4,
+     "appNumber": 6,
+     "appConf": 0.86
+    },
+    {
+     "px": 347,
+     "py": 77,
+     "r": 12.7,
+     "appNumber": 5,
+     "appConf": 0.95
+    },
+    {
+     "px": 851,
+     "py": 136,
+     "r": 14,
+     "appNumber": 7,
+     "appConf": 0.86
+    },
+    {
+     "px": 774,
+     "py": 174,
+     "r": 15.1,
+     "appNumber": 8,
+     "appConf": 0.83
+    },
+    {
+     "px": 577,
+     "py": 180,
+     "r": 15.5,
+     "appNumber": 0,
+     "appConf": 0.87
+    },
+    {
+     "px": 444,
+     "py": 181,
+     "r": 15.6,
+     "appNumber": 2,
+     "appConf": 0.86
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-15_1956_V2.3.1__shot014-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1956_V2.3.1",
+   "file": "shot014-after.jpg",
+   "side": "after",
+   "shot": 14,
+   "rack": 2,
+   "appBalls": 9,
+   "prefill": [
+    {
+     "px": 792,
+     "py": 40,
+     "r": 11.4,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 423,
+     "py": 47,
+     "r": 11.9,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 546,
+     "py": 81,
+     "r": 12.8,
+     "appNumber": 2,
+     "appConf": 0.9
+    },
+    {
+     "px": 1025,
+     "py": 98,
+     "r": 13,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 523,
+     "py": 101,
+     "r": 13.4,
+     "appNumber": 0,
+     "appConf": 0.88
+    },
+    {
+     "px": 379,
+     "py": 104,
+     "r": 13.6,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 428,
+     "py": 112,
+     "r": 13.8,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 787,
+     "py": 124,
+     "r": 13.9,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 983,
+     "py": 166,
+     "r": 15,
+     "appNumber": 8,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-15_1956_V2.3.1__shot017-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1956_V2.3.1",
+   "file": "shot017-before.jpg",
+   "side": "before",
+   "shot": 17,
+   "rack": 2,
+   "appBalls": 14,
+   "prefill": [
+    {
+     "px": 338,
+     "py": 35,
+     "r": 11.6,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 792,
+     "py": 40,
+     "r": 11.4,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 423,
+     "py": 47,
+     "r": 11.9,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 373,
+     "py": 96,
+     "r": 13.3,
+     "appNumber": 0,
+     "appConf": 0.86
+    },
+    {
+     "px": 386,
+     "py": 113,
+     "r": 13.8,
+     "appNumber": 3,
+     "appConf": 0.86
+    },
+    {
+     "px": 1025,
+     "py": 98,
+     "r": 13,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 428,
+     "py": 111,
+     "r": 13.8,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 788,
+     "py": 124,
+     "r": 13.9,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 983,
+     "py": 166,
+     "r": 15,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 314,
+     "py": 33,
+     "r": 11.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 333,
+     "py": 21,
+     "r": 11.2,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 304,
+     "py": 32,
+     "r": 11.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 314,
+     "py": 34,
+     "r": 11.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 331,
+     "py": 22,
+     "r": 11.2,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-15_1956_V2.3.1__shot021-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1956_V2.3.1",
+   "file": "shot021-after.jpg",
+   "side": "after",
+   "shot": 21,
+   "rack": 2,
+   "appBalls": 7,
+   "prefill": [
+    {
+     "px": 423,
+     "py": 47,
+     "r": 11.9,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 1025,
+     "py": 97,
+     "r": 13,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 788,
+     "py": 125,
+     "r": 13.9,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 993,
+     "py": 126,
+     "r": 13.8,
+     "appNumber": 0,
+     "appConf": 0.86
+    },
+    {
+     "px": 551,
+     "py": 150,
+     "r": 14.8,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 983,
+     "py": 166,
+     "r": 15,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 339,
+     "py": 179,
+     "r": 15.8,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-15_1956_V2.3.1__shot005-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1956_V2.3.1",
+   "file": "shot005-after.jpg",
+   "side": "after",
+   "shot": 5,
+   "rack": 1,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 736,
+     "py": 45,
+     "r": 11.5,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 862,
+     "py": 46,
+     "r": 11.4,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 347,
+     "py": 76,
+     "r": 12.7,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 852,
+     "py": 135,
+     "r": 14,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 345,
+     "py": 159,
+     "r": 15,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 774,
+     "py": 174,
+     "r": 15.1,
+     "appNumber": 8,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-15_1956_V2.3.1__shot007-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1956_V2.3.1",
+   "file": "shot007-after.jpg",
+   "side": "after",
+   "shot": 7,
+   "rack": 1,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 696,
+     "py": 26,
+     "r": 11,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 622,
+     "py": 58,
+     "r": 11.9,
+     "appNumber": 9,
+     "appConf": 0.25
+    },
+    {
+     "px": 852,
+     "py": 135,
+     "r": 14,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 774,
+     "py": 174,
+     "r": 15.1,
+     "appNumber": 8,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-15_1956_V2.3.1__shot020-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1956_V2.3.1",
+   "file": "shot020-after.jpg",
+   "side": "after",
+   "shot": 20,
+   "rack": 2,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 423,
+     "py": 47,
+     "r": 11.9,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 787,
+     "py": 126,
+     "r": 13.9,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 552,
+     "py": 151,
+     "r": 14.8,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 339,
+     "py": 179,
+     "r": 15.8,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-15_1956_V2.3.1__shot023-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1956_V2.3.1",
+   "file": "shot023-after.jpg",
+   "side": "after",
+   "shot": 23,
+   "rack": 2,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 532,
+     "py": 137,
+     "r": 14.3,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 975,
+     "py": 166,
+     "r": 14.7,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 332,
+     "py": 178,
+     "r": 15.6,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 412,
+     "py": 178,
+     "r": 15.5,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 472,
+     "py": 177,
+     "r": 15.5,
+     "appNumber": 0,
+     "appConf": 0.86
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-15_1956_V2.3.1__shot009-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1956_V2.3.1",
+   "file": "shot009-before.jpg",
+   "side": "before",
+   "shot": 9,
+   "rack": 1,
+   "appBalls": 3,
+   "prefill": [
+    {
+     "px": 606,
+     "py": 59,
+     "r": 12,
+     "appNumber": 9,
+     "appConf": 0.76
+    },
+    {
+     "px": 642,
+     "py": 77,
+     "r": 12.4,
+     "appNumber": 0,
+     "appConf": 0.92
+    },
+    {
+     "px": 774,
+     "py": 174,
+     "r": 15.1,
+     "appNumber": 8,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-15_1956_V2.3.1__shot011-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1956_V2.3.1",
+   "file": "shot011-after.jpg",
+   "side": "after",
+   "shot": 11,
+   "rack": 1,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 990,
+     "py": 52,
+     "r": 11.5,
+     "appNumber": 9,
+     "appConf": 0.86
+    },
+    {
+     "px": 431,
+     "py": 137,
+     "r": 14.3,
+     "appNumber": 0,
+     "appConf": 0.88
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-15_1956_V2.3.1__shot013-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1956_V2.3.1",
+   "file": "shot013-before.jpg",
+   "side": "before",
+   "shot": 13,
+   "rack": 1,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 913,
+     "py": 63,
+     "r": 12,
+     "appNumber": 9,
+     "appConf": 0.86
+    },
+    {
+     "px": 578,
+     "py": 141,
+     "r": 14.5,
+     "appNumber": 0,
+     "appConf": 0.8
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-15_1956_V2.3.1__shot026-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_1956_V2.3.1",
+   "file": "shot026-after.jpg",
+   "side": "after",
+   "shot": 26,
+   "rack": 2,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 532,
+     "py": 137,
+     "r": 14.3,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 914,
+     "py": 165,
+     "r": 14.8,
+     "appNumber": 0,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-15_2107_V2.3.2__shot005-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_2107_V2.3.2",
+   "file": "shot005-before.jpg",
+   "side": "before",
+   "shot": 5,
+   "rack": 1,
+   "appBalls": 10,
+   "prefill": [
+    {
+     "px": 594,
+     "py": 45,
+     "r": 11.2,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 643,
+     "py": 44,
+     "r": 11.1,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 285,
+     "py": 53,
+     "r": 11.5,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 352,
+     "py": 57,
+     "r": 11.6,
+     "appNumber": 0,
+     "appConf": 0.92
+    },
+    {
+     "px": 603,
+     "py": 100,
+     "r": 12.8,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 275,
+     "py": 113,
+     "r": 13.3,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 467,
+     "py": 167,
+     "r": 14.8,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 803,
+     "py": 169,
+     "r": 14.7,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 897,
+     "py": 25,
+     "r": 10.4,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 897,
+     "py": 25,
+     "r": 10.4,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-15_2107_V2.3.2__shot026-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_2107_V2.3.2",
+   "file": "shot026-after.jpg",
+   "side": "after",
+   "shot": 26,
+   "rack": 3,
+   "appBalls": 9,
+   "prefill": [
+    {
+     "px": 401,
+     "py": 25,
+     "r": 10.7,
+     "appNumber": 3,
+     "appConf": 0.92
+    },
+    {
+     "px": 329,
+     "py": 65,
+     "r": 11.8,
+     "appNumber": 7,
+     "appConf": 0.86
+    },
+    {
+     "px": 761,
+     "py": 72,
+     "r": 11.8,
+     "appNumber": 1,
+     "appConf": 0.17
+    },
+    {
+     "px": 525,
+     "py": 87,
+     "r": 12.4,
+     "appNumber": 0,
+     "appConf": 0.96
+    },
+    {
+     "px": 635,
+     "py": 123,
+     "r": 13.3,
+     "appNumber": 9,
+     "appConf": 0.65
+    },
+    {
+     "px": 254,
+     "py": 126,
+     "r": 13.6,
+     "appNumber": 5,
+     "appConf": 0.88
+    },
+    {
+     "px": 911,
+     "py": 138,
+     "r": 13.6,
+     "appNumber": 6,
+     "appConf": 0.92
+    },
+    {
+     "px": 255,
+     "py": 161,
+     "r": 14.6,
+     "appNumber": 8,
+     "appConf": 0.86
+    },
+    {
+     "px": 752,
+     "py": 163,
+     "r": 14.4,
+     "appNumber": 4,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-15_2107_V2.3.2__shot037-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_2107_V2.3.2",
+   "file": "shot037-before.jpg",
+   "side": "before",
+   "shot": 37,
+   "rack": 4,
+   "appBalls": 14,
+   "prefill": [
+    {
+     "px": 409,
+     "py": 28,
+     "r": 10.8,
+     "appNumber": 1,
+     "appConf": 0.91
+    },
+    {
+     "px": 768,
+     "py": 30,
+     "r": 10.6,
+     "appNumber": 9,
+     "appConf": 0.49
+    },
+    {
+     "px": 596,
+     "py": 54,
+     "r": 11.4,
+     "appNumber": 8,
+     "appConf": 0.84
+    },
+    {
+     "px": 389,
+     "py": 66,
+     "r": 11.8,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 864,
+     "py": 70,
+     "r": 11.7,
+     "appNumber": 0,
+     "appConf": 0.92
+    },
+    {
+     "px": 580,
+     "py": 104,
+     "r": 12.8,
+     "appNumber": 7,
+     "appConf": 0.86
+    },
+    {
+     "px": 249,
+     "py": 125,
+     "r": 13.6,
+     "appNumber": 5,
+     "appConf": 0.94
+    },
+    {
+     "px": 920,
+     "py": 126,
+     "r": 13.2,
+     "appNumber": 3,
+     "appConf": 0.86
+    },
+    {
+     "px": 388,
+     "py": 129,
+     "r": 13.6,
+     "appNumber": 2,
+     "appConf": 0.92
+    },
+    {
+     "px": 761,
+     "py": 148,
+     "r": 13.9,
+     "appNumber": 6,
+     "appConf": 0.94
+    },
+    {
+     "px": 954,
+     "py": 103,
+     "r": 12.6,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 919,
+     "py": 63,
+     "r": 11.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 921,
+     "py": 85,
+     "r": 12.1,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 936,
+     "py": 73,
+     "r": 11.7,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-15_2107_V2.3.2__shot043-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_2107_V2.3.2",
+   "file": "shot043-before.jpg",
+   "side": "before",
+   "shot": 43,
+   "rack": 4,
+   "appBalls": 7,
+   "prefill": [
+    {
+     "px": 859,
+     "py": 52,
+     "r": 11.2,
+     "appNumber": 3,
+     "appConf": 0.8
+    },
+    {
+     "px": 596,
+     "py": 54,
+     "r": 11.4,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 248,
+     "py": 74,
+     "r": 12.1,
+     "appNumber": 0,
+     "appConf": 0.92
+    },
+    {
+     "px": 281,
+     "py": 97,
+     "r": 12.8,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 582,
+     "py": 105,
+     "r": 12.8,
+     "appNumber": 7,
+     "appConf": 0.8
+    },
+    {
+     "px": 249,
+     "py": 124,
+     "r": 13.5,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 618,
+     "py": 167,
+     "r": 14.5,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-15_2107_V2.3.2__shot009-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_2107_V2.3.2",
+   "file": "shot009-before.jpg",
+   "side": "before",
+   "shot": 9,
+   "rack": 1,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 632,
+     "py": 37,
+     "r": 10.9,
+     "appNumber": 0,
+     "appConf": 0.92
+    },
+    {
+     "px": 595,
+     "py": 46,
+     "r": 11.2,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 663,
+     "py": 49,
+     "r": 11.2,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 285,
+     "py": 53,
+     "r": 11.5,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 603,
+     "py": 99,
+     "r": 12.7,
+     "appNumber": 5,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-15_2107_V2.3.2__shot020-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_2107_V2.3.2",
+   "file": "shot020-after.jpg",
+   "side": "after",
+   "shot": 20,
+   "rack": 2,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 688,
+     "py": 50,
+     "r": 11.3,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 676,
+     "py": 74,
+     "r": 12,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 515,
+     "py": 77,
+     "r": 12.1,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 362,
+     "py": 90,
+     "r": 12.5,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 855,
+     "py": 118,
+     "r": 13.2,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-15_2107_V2.3.2__shot034-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_2107_V2.3.2",
+   "file": "shot034-before.jpg",
+   "side": "before",
+   "shot": 34,
+   "rack": 3,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 748,
+     "py": 58,
+     "r": 11.4,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 329,
+     "py": 64,
+     "r": 11.8,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 521,
+     "py": 129,
+     "r": 13.5,
+     "appNumber": 0,
+     "appConf": 0.94
+    },
+    {
+     "px": 255,
+     "py": 161,
+     "r": 14.6,
+     "appNumber": 8,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-15_2107_V2.3.2__shot048-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_2107_V2.3.2",
+   "file": "shot048-after.jpg",
+   "side": "after",
+   "shot": 48,
+   "rack": 4,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 630,
+     "py": 22,
+     "r": 10.5,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 596,
+     "py": 54,
+     "r": 11.4,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 375,
+     "py": 83,
+     "r": 12.3,
+     "appNumber": 0,
+     "appConf": 0.91
+    },
+    {
+     "px": 582,
+     "py": 105,
+     "r": 12.8,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 341,
+     "py": 122,
+     "r": 13.4,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 336,
+     "py": 157,
+     "r": 14.4,
+     "appNumber": 6,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-15_2107_V2.3.2__shot013-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_2107_V2.3.2",
+   "file": "shot013-before.jpg",
+   "side": "before",
+   "shot": 13,
+   "rack": 1,
+   "appBalls": 3,
+   "prefill": [
+    {
+     "px": 285,
+     "py": 53,
+     "r": 11.5,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 654,
+     "py": 84,
+     "r": 12.3,
+     "appNumber": 0,
+     "appConf": 0.92
+    },
+    {
+     "px": 519,
+     "py": 106,
+     "r": 13,
+     "appNumber": 8,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-15_2107_V2.3.2__shot023-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_2107_V2.3.2",
+   "file": "shot023-after.jpg",
+   "side": "after",
+   "shot": 23,
+   "rack": 2,
+   "appBalls": 3,
+   "prefill": [
+    {
+     "px": 676,
+     "py": 74,
+     "r": 12,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 515,
+     "py": 78,
+     "r": 12.1,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 766,
+     "py": 100,
+     "r": 12.7,
+     "appNumber": 0,
+     "appConf": 0.93
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-15_2107_V2.3.2__shot034-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_2107_V2.3.2",
+   "file": "shot034-after.jpg",
+   "side": "after",
+   "shot": 34,
+   "rack": 3,
+   "appBalls": 3,
+   "prefill": [
+    {
+     "px": 748,
+     "py": 58,
+     "r": 11.4,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 637,
+     "py": 114,
+     "r": 13.1,
+     "appNumber": 0,
+     "appConf": 0.87
+    },
+    {
+     "px": 255,
+     "py": 162,
+     "r": 14.6,
+     "appNumber": 8,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-15_2107_V2.3.2__shot052-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-15_2107_V2.3.2",
+   "file": "shot052-after.jpg",
+   "side": "after",
+   "shot": 52,
+   "rack": 4,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 661,
+     "py": 32,
+     "r": 10.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 803,
+     "py": 88,
+     "r": 12.2,
+     "appNumber": 0,
+     "appConf": 0.92
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot004-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot004-before.jpg",
+   "side": "before",
+   "shot": 4,
+   "rack": 1,
+   "appBalls": 10,
+   "prefill": [
+    {
+     "px": 847,
+     "py": 19,
+     "r": 10.5,
+     "appNumber": 8,
+     "appConf": 0.8
+    },
+    {
+     "px": 681,
+     "py": 21,
+     "r": 10.6,
+     "appNumber": 7,
+     "appConf": 0.86
+    },
+    {
+     "px": 725,
+     "py": 33,
+     "r": 10.9,
+     "appNumber": 4,
+     "appConf": 0.86
+    },
+    {
+     "px": 491,
+     "py": 52,
+     "r": 11.4,
+     "appNumber": 6,
+     "appConf": 0.87
+    },
+    {
+     "px": 546,
+     "py": 58,
+     "r": 11.6,
+     "appNumber": 9,
+     "appConf": 0.91
+    },
+    {
+     "px": 790,
+     "py": 73,
+     "r": 12,
+     "appNumber": 3,
+     "appConf": 0.95
+    },
+    {
+     "px": 420,
+     "py": 101,
+     "r": 12.7,
+     "appNumber": 0,
+     "appConf": 0.85
+    },
+    {
+     "px": 570,
+     "py": 102,
+     "r": 12.8,
+     "appNumber": 1,
+     "appConf": 0.93
+    },
+    {
+     "px": 645,
+     "py": 114,
+     "r": 13.1,
+     "appNumber": 2,
+     "appConf": 0.86
+    },
+    {
+     "px": 887,
+     "py": 138,
+     "r": 13.8,
+     "appNumber": 5,
+     "appConf": 0.86
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot006-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot006-after.jpg",
+   "side": "after",
+   "shot": 6,
+   "rack": 1,
+   "appBalls": 7,
+   "prefill": [
+    {
+     "px": 680,
+     "py": 21,
+     "r": 10.6,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 725,
+     "py": 33,
+     "r": 10.9,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 490,
+     "py": 52,
+     "r": 11.4,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 789,
+     "py": 72,
+     "r": 12,
+     "appNumber": 3,
+     "appConf": 0.9
+    },
+    {
+     "px": 419,
+     "py": 100,
+     "r": 12.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 887,
+     "py": 138,
+     "r": 13.8,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 697,
+     "py": 155,
+     "r": 14.2,
+     "appNumber": 0,
+     "appConf": 0.86
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot022-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot022-before.jpg",
+   "side": "before",
+   "shot": 22,
+   "rack": 2,
+   "appBalls": 9,
+   "prefill": [
+    {
+     "px": 893,
+     "py": 32,
+     "r": 10.9,
+     "appNumber": 0,
+     "appConf": 0.89
+    },
+    {
+     "px": 863,
+     "py": 43,
+     "r": 11.2,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 620,
+     "py": 41,
+     "r": 11.1,
+     "appNumber": 2,
+     "appConf": 0.9
+    },
+    {
+     "px": 800,
+     "py": 102,
+     "r": 12.8,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 621,
+     "py": 111,
+     "r": 13,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 299,
+     "py": 116,
+     "r": 13.2,
+     "appNumber": 4,
+     "appConf": 0.9
+    },
+    {
+     "px": 586,
+     "py": 121,
+     "r": 13.3,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 838,
+     "py": 149,
+     "r": 14.1,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 229,
+     "py": 174,
+     "r": 14.7,
+     "appNumber": 3,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot027-before.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot027-before.jpg",
+   "side": "before",
+   "shot": 27,
+   "rack": 2,
+   "appBalls": 21,
+   "prefill": [
+    {
+     "px": 868,
+     "py": 45,
+     "r": 11.3,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 805,
+     "py": 104,
+     "r": 12.9,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 626,
+     "py": 113,
+     "r": 13.1,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 590,
+     "py": 121,
+     "r": 13.3,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 382,
+     "py": 139,
+     "r": 13.8,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 842,
+     "py": 151,
+     "r": 14.2,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 272,
+     "py": 130,
+     "r": 13.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 205,
+     "py": 130,
+     "r": 13.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 246,
+     "py": 124,
+     "r": 13.4,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 221,
+     "py": 115,
+     "r": 13.1,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 230,
+     "py": 139,
+     "r": 13.8,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 264,
+     "py": 129,
+     "r": 13.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 205,
+     "py": 132,
+     "r": 13.6,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 238,
+     "py": 121,
+     "r": 13.3,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 231,
+     "py": 139,
+     "r": 13.8,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 216,
+     "py": 115,
+     "r": 13.1,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 264,
+     "py": 129,
+     "r": 13.5,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 205,
+     "py": 131,
+     "r": 13.6,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 238,
+     "py": 121,
+     "r": 13.3,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 231,
+     "py": 139,
+     "r": 13.8,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 217,
+     "py": 115,
+     "r": 13.1,
+     "appNumber": null,
+     "appConf": 0
+    }
+   ],
+   "bin": "many"
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot009-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot009-after.jpg",
+   "side": "after",
+   "shot": 9,
+   "rack": 1,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 679,
+     "py": 21,
+     "r": 10.6,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 831,
+     "py": 25,
+     "r": 10.7,
+     "appNumber": null,
+     "appConf": 0
+    },
+    {
+     "px": 490,
+     "py": 52,
+     "r": 11.4,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 419,
+     "py": 100,
+     "r": 12.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 887,
+     "py": 138,
+     "r": 13.8,
+     "appNumber": 5,
+     "appConf": 0.9
+    },
+    {
+     "px": 300,
+     "py": 176,
+     "r": 14.8,
+     "appNumber": 0,
+     "appConf": 0.91
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot012-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot012-after.jpg",
+   "side": "after",
+   "shot": 12,
+   "rack": 1,
+   "appBalls": 4,
+   "prefill": [
+    {
+     "px": 846,
+     "py": 25,
+     "r": 10.7,
+     "appNumber": 7,
+     "appConf": 0.86
+    },
+    {
+     "px": 802,
+     "py": 31,
+     "r": 10.8,
+     "appNumber": 8,
+     "appConf": 0.86
+    },
+    {
+     "px": 747,
+     "py": 86,
+     "r": 12.4,
+     "appNumber": 0,
+     "appConf": 0.89
+    },
+    {
+     "px": 418,
+     "py": 100,
+     "r": 12.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot026-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot026-after.jpg",
+   "side": "after",
+   "shot": 26,
+   "rack": 2,
+   "appBalls": 6,
+   "prefill": [
+    {
+     "px": 868,
+     "py": 45,
+     "r": 11.3,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 805,
+     "py": 104,
+     "r": 12.9,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 626,
+     "py": 113,
+     "r": 13.1,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 590,
+     "py": 121,
+     "r": 13.3,
+     "appNumber": 6,
+     "appConf": 0.9
+    },
+    {
+     "px": 382,
+     "py": 140,
+     "r": 13.8,
+     "appNumber": 0,
+     "appConf": 0.9
+    },
+    {
+     "px": 843,
+     "py": 151,
+     "r": 14.2,
+     "appNumber": 5,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot031-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot031-after.jpg",
+   "side": "after",
+   "shot": 31,
+   "rack": 2,
+   "appBalls": 5,
+   "prefill": [
+    {
+     "px": 789,
+     "py": 21,
+     "r": 10.6,
+     "appNumber": 7,
+     "appConf": 0.9
+    },
+    {
+     "px": 678,
+     "py": 33,
+     "r": 10.9,
+     "appNumber": 9,
+     "appConf": 0.9
+    },
+    {
+     "px": 331,
+     "py": 70,
+     "r": 11.9,
+     "appNumber": 0,
+     "appConf": 0.86
+    },
+    {
+     "px": 805,
+     "py": 105,
+     "r": 12.9,
+     "appNumber": 8,
+     "appConf": 0.9
+    },
+    {
+     "px": 1041,
+     "py": 166,
+     "r": 14.6,
+     "appNumber": 6,
+     "appConf": 0.86
+    }
+   ],
+   "bin": "middle"
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot015-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot015-after.jpg",
+   "side": "after",
+   "shot": 15,
+   "rack": 1,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 974,
+     "py": 89,
+     "r": 12.5,
+     "appNumber": 0,
+     "appConf": 0.87
+    },
+    {
+     "px": 418,
+     "py": 100,
+     "r": 12.7,
+     "appNumber": 9,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot017-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot017-after.jpg",
+   "side": "after",
+   "shot": 17,
+   "rack": 1,
+   "appBalls": 0,
+   "prefill": [],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot020-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot020-after.jpg",
+   "side": "after",
+   "shot": 20,
+   "rack": 1,
+   "appBalls": 2,
+   "prefill": [
+    {
+     "px": 805,
+     "py": 99,
+     "r": 12.7,
+     "appNumber": 6,
+     "appConf": 0.12
+    },
+    {
+     "px": 295,
+     "py": 132,
+     "r": 13.6,
+     "appNumber": 3,
+     "appConf": 0.9
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot035-after.jpg",
+   "kind": "app picture (table crop)",
+   "table": "7 ft",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot035-after.jpg",
+   "side": "after",
+   "shot": 35,
+   "rack": 2,
+   "appBalls": 1,
+   "prefill": [
+    {
+     "px": 759,
+     "py": 109,
+     "r": 13,
+     "appNumber": 0,
+     "appConf": 0.88
+    }
+   ],
+   "bin": "few"
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot004-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot004.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot005-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot005.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot006-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot006.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot007-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot007.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot008-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot008.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot009-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot009.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot010-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot010.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot011-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot011.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot012-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot012.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot013-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot013.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot014-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot014.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot015-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot015.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot016-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot016.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot017-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot017.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot021-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot021.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot022-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot022.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot023-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot023.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot024-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot024.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot025-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot025.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot026-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot026.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot027-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot027.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot028-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot028.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot029-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot029.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot030-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot030.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot031-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot031.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot032-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot032.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot033-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot033.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot034-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot034.mp4",
+   "side": "end",
+   "prefill": []
+  },
+  {
+   "image": "images/2026-10-16_evening_V2.3.3__shot035-last.jpg",
+   "kind": "video frame (full frame, end of clip)",
+   "session": "2026-10-16_evening_V2.3.3",
+   "file": "shot035.mp4",
+   "side": "end",
+   "prefill": []
+  }
+ ]
+}

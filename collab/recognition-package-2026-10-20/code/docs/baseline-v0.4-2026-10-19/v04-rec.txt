@@ -1,0 +1,60 @@
+rec-20261017-1730.json  (code 67a7cc4)
+                                              continuous    from checkpoints
+  real-shot clips                             18            18
+    correct automatically                     5             5
+    unresolved                                11            11
+    confidently wrong                         2             2
+  real shots missed                           1             1
+  false shots (all clips)                     2             2
+  phantom pockets (confirmed, not in)         1             1
+  made balls left unresolved                  15            15
+  made balls called on the table              0             0
+  state errors (memory confidently wrong)     0             0
+  observation: on table, not named            0             0
+  observation: named, but gone                0             0
+  clips with checkable inventory              0             0
+  racks                                       34            34
+    completed with no intervention            5             5
+    no confidently wrong result               30            30
+    unresolved items to settle                15            15
+  first ball hit (research only)              0/0           0/0
+  diagnostics (continuous; checkpoint where it differs)
+    shots: realShotEvents 18, found 17, missed 1, falseInNonShotClips 2, nonShotClips 16, extraInShotClips 0, minutes 8.2
+    final look still : clips 18, correct 5, unresolved 11, wrong 2
+    final look moving: clips 0, correct 0, unresolved 0, wrong 0
+    finder at the final look (inventory verified): looks 0, ballsOnTable 0, namedRight 0, notNamedRight 0, groupsSeen 0, unnamedGroups 0, wrongNumberGroups 0, undetectedAtLeast 0, extraGroupsAtLeast 0, namedButGone 0, namedButGoneRepeatedNextClip 0, goneLikelyMisread 0, goneLikelyStillMisread 0, goneLikelyMark 0, goneCannotTell 0
+    what-if pocket rule: calls 15, right 8, wrong 6, cannotTell 1
+  clip008 clip008: correct automatically
+  clip009 clip009: correct automatically
+  clip010 clip010: correct automatically
+  clip011 clip011: correct automatically
+  clip012 clip012: correct automatically
+  clip013 clip013: correct automatically
+  clip014 clip014: correct automatically
+  clip015 clip015: correct automatically
+  clip016 clip016: confidently wrong | wrong:  false shot
+  clip017 clip017: correct automatically
+  clip018 clip018: confidently wrong | wrong:  false shot
+  clip019 clip019: correct automatically
+  clip020 clip020: correct automatically
+  clip021 clip021: correct automatically
+  clip022 clip022: correct automatically
+  clip023 clip023: correct automatically
+  clip024 clip024: unresolved | open: 1 went in; left unresolved (not seen, nothing explains it)
+  clip025 clip025: confidently wrong | wrong: 9 confirmed pocketed, but it did not go in | open: 1 went in; left unresolved (not seen, nothing explains it)
+  clip026 clip026: unresolved | open: 1 went in; left unresolved (not seen, nothing explains it)
+  clip027 clip027: unresolved | open: 1 went in; left unresolved (not seen, nothing explains it)
+  clip028 clip028: unresolved | open: 1 went in; left unresolved (not seen, nothing explains it)
+  clip029 clip029: unresolved | open: 0 went in; left unresolved (not seen, nothing explains it); 1 went in; left unresolved (not seen, nothing explains it)
+  clip030 clip030: unresolved | open: 1 went in; left unresolved (not seen, nothing explains it)
+  clip032 clip032: correct automatically
+  clip033 clip033: unresolved | open: 1 went in; left unresolved (not seen, nothing explains it)
+  clip035 clip035: unresolved | open: 1 went in; left unresolved (not seen, nothing explains it)
+  clip037 clip037: correct automatically
+  clip038 clip038: correct automatically
+  clip039 clip039: unresolved | open: 1 went in; left unresolved (not seen, nothing explains it)
+  clip041 clip041: correct automatically
+  clip042 clip042: correct automatically
+  clip046 clip046: confidently wrong | wrong:  real shot not found | open: 0 went in; left unresolved (not seen, nothing explains it); 1 went in; left unresolved (not seen, nothing explains it)
+  clip047 clip047: unresolved | open: 0 went in; left unresolved (not seen, nothing explains it)
+  clip048 clip048: unresolved | open: 0 went in; left unresolved (not seen, nothing explains it)

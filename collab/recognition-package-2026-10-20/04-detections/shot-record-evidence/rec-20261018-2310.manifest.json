@@ -1,0 +1,1382 @@
+{
+ "format": "chalkline.evidence/1",
+ "session": "rec-20261018-2310",
+ "detections": {
+  "tool": "tools/clip-detect.js --detector",
+  "code": "67a7cc4",
+  "analysedFps": 30,
+  "coordinates": "table inches (x along 0..L, y across 0..W) and camera pixels (px, py) in the 1280x720 frame",
+  "detector": {
+   "file": "detector-v1/best.pt",
+   "sha256": "16601d820ca758ad6cfd78d085279469b7bee78c8fad68e3ccc6c4be24be66b9"
+  },
+  "perSpot": {
+   "x": "table in",
+   "y": "table in",
+   "px": "frame px",
+   "py": "frame px",
+   "c": "detector confidence",
+   "rec": "reader's number (0 = cue ball)",
+   "p": "reader's score for rec",
+   "nb": "\"not a ball\" score"
+  }
+ },
+ "sources": [
+  {
+   "file": "sessions/rec-20261018-2310/part01.zip",
+   "sha256": "6317dce98d57aa6d7a29e83bca002de35a672590291f640d75c839c52dd0484a",
+   "bytes": 25484651,
+   "part": 1,
+   "recorder": "R0.4",
+   "setup": {
+    "phone": "",
+    "table": "7 ft",
+    "spot": "low side",
+    "light": "Normal lights",
+    "place": "home",
+    "short": false,
+    "evening": true
+   },
+   "meta": {
+    "member": "meta.json",
+    "sha256": "3619c401796ca5dc2b739e21833326e3d42641f0df22b428061e68a28c9956c2"
+   }
+  },
+  {
+   "file": "sessions/rec-20261018-2310/part02.zip",
+   "sha256": "dcb72821acc4c50c0aab67751460e235aa27746af77a10130541e0e01abe60aa",
+   "bytes": 23509874,
+   "part": 2,
+   "recorder": "R0.4",
+   "setup": {
+    "phone": "",
+    "table": "7 ft",
+    "spot": "low side",
+    "light": "Normal lights",
+    "place": "home",
+    "short": false,
+    "evening": true
+   },
+   "meta": {
+    "member": "meta.json",
+    "sha256": "f485c943a49c9b7a14423ad6142dfc11c5ec8a6a551a7123e2ba26af99756218"
+   }
+  },
+  {
+   "file": "sessions/rec-20261018-2310/part03.zip",
+   "sha256": "3a3b5b8c61bd8ad2ddc9e1d3e9188fb33dc40cf95b837f0294043dd88c91ac44",
+   "bytes": 24515543,
+   "part": 3,
+   "recorder": "R0.4",
+   "setup": {
+    "phone": "",
+    "table": "7 ft",
+    "spot": "low side",
+    "light": "Normal lights",
+    "place": "home",
+    "short": false,
+    "evening": true
+   },
+   "meta": {
+    "member": "meta.json",
+    "sha256": "de075bfa452d61d3d653e02cfe750d812d22b661df4820bc406eee709f38094a"
+   }
+  },
+  {
+   "file": "sessions/rec-20261018-2310/part04.zip",
+   "sha256": "ecd8f7e8ec1203d92eb52c8e284345ab58aad5d2250318c35e36181f209a10a3",
+   "bytes": 24525093,
+   "part": 4,
+   "recorder": "R0.4",
+   "setup": {
+    "phone": "",
+    "table": "7 ft",
+    "spot": "low side",
+    "light": "Normal lights",
+    "place": "home",
+    "short": false,
+    "evening": true
+   },
+   "meta": {
+    "member": "meta.json",
+    "sha256": "1fd256988904502e302fe5e7c52002c331256cdf33c15d4b11f2fe4d6b0a743f"
+   }
+  },
+  {
+   "file": "sessions/rec-20261018-2310/part05.zip",
+   "sha256": "d5ac7df842f70ad6b2a915c4cfde9ed54ef32eb55e03dcf28799fc0fb83a051e",
+   "bytes": 19639476,
+   "part": 5,
+   "recorder": "R0.4",
+   "setup": {
+    "phone": "",
+    "table": "7 ft",
+    "spot": "low side",
+    "light": "Normal lights",
+    "place": "home",
+    "short": false,
+    "evening": true
+   },
+   "meta": {
+    "member": "meta.json",
+    "sha256": "bac3d75d717698e060a862aa960c9977aee7440f8df45441a6107de3ded1dda8"
+   }
+  }
+ ],
+ "clips": {
+  "clip001": {
+   "step": "eRest",
+   "redone": false,
+   "answers": null,
+   "video": {
+    "file": "sessions/rec-20261018-2310/part01.zip",
+    "member": "clip001.mp4",
+    "sha256": "98086234b333190cf9317ba7801a4a8459fa0e87f380114c085ccf8123beabc9",
+    "bytes": 2369424,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip001.json",
+    "sha256": "ea8733dbef289b017efbeab4c24e4ef2e9d648670e55d9fb2020a7735020990d",
+    "bytes": 229464,
+    "frames": 300,
+    "spots": 3000,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.21333050408037146,
+      0.44761980312800814
+     ],
+     [
+      0.7814768681242354,
+      0.43848962515370626
+     ],
+     [
+      0.9367573147260735,
+      0.7324858759796491
+     ],
+     [
+      0.06779708543920332,
+      0.7557860300810687
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 3408,
+     "kept": 3000,
+     "pocket": 0,
+     "cushion": 408
+    }
+   }
+  },
+  "clip002": {
+   "step": "eHide",
+   "redone": false,
+   "answers": null,
+   "video": {
+    "file": "sessions/rec-20261018-2310/part01.zip",
+    "member": "clip002.mp4",
+    "sha256": "697b43adeacce951954d7323af3841fcd1654b279fd5a4c5d23a3ee949a606cc",
+    "bytes": 3360651,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip002.json",
+    "sha256": "5bb8c05ad4c991bf2d2f30e94f1b28288ec55de91fe99467e013e6f069c88094",
+    "bytes": 295413,
+    "frames": 420,
+    "spots": 3840,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.21357099822189168,
+      0.44343091896966735
+     ],
+     [
+      0.7817695362919282,
+      0.4357880697669847
+     ],
+     [
+      0.9373455397246022,
+      0.7311495627297192
+     ],
+     [
+      0.06711113885196096,
+      0.7534650058094458
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 4332,
+     "kept": 3840,
+     "pocket": 0,
+     "cushion": 492
+    }
+   }
+  },
+  "clip003": {
+   "step": "ePocket",
+   "redone": false,
+   "answers": {
+    "in": [
+     1
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part01.zip",
+    "member": "clip003.mp4",
+    "sha256": "f175000f0fa2b4a6ededc83592b4f0a9197cadca4176aed0273e7e566ceb4735",
+    "bytes": 3872024,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip003.json",
+    "sha256": "96792bb1143ddc5b7b32adf88316594d054e1f507ecb0e08d5680b8faf74efe3",
+    "bytes": 335919,
+    "frames": 481,
+    "spots": 4364,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.21346408038502754,
+      0.4433606720273838
+     ],
+     [
+      0.7818080323261618,
+      0.435767323053183
+     ],
+     [
+      0.9369441170707482,
+      0.7311830096684762
+     ],
+     [
+      0.06712132965604913,
+      0.7538368943882485
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 4690,
+     "kept": 4364,
+     "pocket": 0,
+     "cushion": 326
+    }
+   }
+  },
+  "clip004": {
+   "step": "eMiss",
+   "redone": false,
+   "answers": {
+    "in": [],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part01.zip",
+    "member": "clip004.mp4",
+    "sha256": "6c0a97765766091236730b83ee63462813dae8f01941d86e9c021d7e5f29d94c",
+    "bytes": 3880688,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip004.json",
+    "sha256": "82c1ac11701581fedb3058b6bfcb8ae5b82332e71aaa96a53abc6a29cadc32a8",
+    "bytes": 331877,
+    "frames": 480,
+    "spots": 4301,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.21286803907205112,
+      0.4409693398614755
+     ],
+     [
+      0.7824710569779216,
+      0.4304012823982651
+     ],
+     [
+      0.9383866878324489,
+      0.7278537557949127
+     ],
+     [
+      0.06703257936629065,
+      0.7499178180889209
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 4334,
+     "kept": 4301,
+     "pocket": 12,
+     "cushion": 21
+    }
+   }
+  },
+  "clip005": {
+   "step": "eNear",
+   "redone": true,
+   "answers": {
+    "redo": true
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part01.zip",
+    "member": "clip005.mp4",
+    "sha256": "2dd3c463221f19c6b9c78a56a721d6bab5f53c3e29b1d6b690a4974b0f4b5ac1",
+    "bytes": 3869602,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "notAnalysed": "marked \"redo\" by the player (left out of the truth)"
+  },
+  "clip006": {
+   "step": "eNear",
+   "redone": true,
+   "answers": {
+    "redo": true
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part01.zip",
+    "member": "clip006.mp4",
+    "sha256": "d9ad744bf9a778d42448d24914e8f8f87da800d11e60e9517ba58b2da9f9bd7d",
+    "bytes": 3900404,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "notAnalysed": "marked \"redo\" by the player (left out of the truth)"
+  },
+  "clip007": {
+   "step": "eNear",
+   "redone": false,
+   "answers": {
+    "in": [],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part01.zip",
+    "member": "clip007.mp4",
+    "sha256": "45d0718a6c7daf816e16ec403311f8a2d6ad4dcf078bba2ff8c126ac34011e77",
+    "bytes": 3927150,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip007.json",
+    "sha256": "ecfddb1771c533537a497629410a427be687a687e8e0e91ab7402a9fbc4004d6",
+    "bytes": 335468,
+    "frames": 481,
+    "spots": 4330,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.21318953651327624,
+      0.44110803250686836
+     ],
+     [
+      0.783032009647956,
+      0.4319354659959758
+     ],
+     [
+      0.938661370898914,
+      0.7290252917929733
+     ],
+     [
+      0.0674143280666948,
+      0.7505810437114301
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 4549,
+     "kept": 4330,
+     "pocket": 0,
+     "cushion": 219
+    }
+   }
+  },
+  "clip008": {
+   "step": "eMulti",
+   "redone": false,
+   "answers": {
+    "in": [],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part02.zip",
+    "member": "clip008.mp4",
+    "sha256": "ae15decf2b84f46e6ff58509663b7c0c1bc9bb6cce9241cf27d419f0f789bb08",
+    "bytes": 3849255,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip008.json",
+    "sha256": "57f1f9c9e1a3ab8c4e657b89f8e6a8e56a02639ba2868b28531ab5e55ae1020d",
+    "bytes": 329652,
+    "frames": 481,
+    "spots": 4271,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.21256621378282614,
+      0.4414013328524535
+     ],
+     [
+      0.7829270787191881,
+      0.4298139139041937
+     ],
+     [
+      0.939286900232881,
+      0.7284637738233279
+     ],
+     [
+      0.06693292058356896,
+      0.7497258466733346
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 4632,
+     "kept": 4271,
+     "pocket": 0,
+     "cushion": 361
+    }
+   }
+  },
+  "clip009": {
+   "step": "play1",
+   "redone": true,
+   "answers": {
+    "redo": true
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part02.zip",
+    "member": "clip009.mp4",
+    "sha256": "3adb016705532d249269ad3eda4281d5d3ae928cc1b4f433aaf2116cb2769435",
+    "bytes": 4850830,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "notAnalysed": "marked \"redo\" by the player (left out of the truth)"
+  },
+  "clip010": {
+   "step": "play1",
+   "redone": true,
+   "answers": {
+    "redo": true
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part02.zip",
+    "member": "clip010.mp4",
+    "sha256": "d263fa0264e3281d06b8d6e704d0a50b7a14add7c1efbcdb78a47d84dff7b69d",
+    "bytes": 4847395,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "notAnalysed": "marked \"redo\" by the player (left out of the truth)"
+  },
+  "clip011": {
+   "step": "play1",
+   "redone": false,
+   "answers": {
+    "in": [
+     5,
+     6
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part02.zip",
+    "member": "clip011.mp4",
+    "sha256": "58e0fd62c8ea1aaabaca0e9aef0fba131596d4f5ec33f582ca3f8f844d67f73a",
+    "bytes": 4839161,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip011.json",
+    "sha256": "fabe351d128700530bdec3b12eeea4bb85aeda5625dfdc9947872ff5c9b9cedd",
+    "bytes": 227982,
+    "frames": 601,
+    "spots": 2865,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.2128317613339624,
+      0.4396491352826359
+     ],
+     [
+      0.7832597975546106,
+      0.43169271635002865
+     ],
+     [
+      0.9380995191601376,
+      0.7285191027364023
+     ],
+     [
+      0.06664849024674618,
+      0.7494554723590737
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 2889,
+     "kept": 2865,
+     "pocket": 0,
+     "cushion": 24
+    }
+   }
+  },
+  "clip012": {
+   "step": "play2",
+   "redone": false,
+   "answers": {
+    "in": [
+     7,
+     8,
+     9
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part02.zip",
+    "member": "clip012.mp4",
+    "sha256": "e6fb64c97a9ac0f0492575ff78acc16b85d4a3c4b77ffca4aba3929cddb398f0",
+    "bytes": 4843819,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip012.json",
+    "sha256": "2d472e65912ccad6ddff66a12dda84aeb3de98126b72242a56edfac6ca47d848",
+    "bytes": 121463,
+    "frames": 600,
+    "spots": 1453,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.21523258342140789,
+      0.4395256314855738
+     ],
+     [
+      0.7704603231247842,
+      0.43186843873483544
+     ],
+     [
+      0.9495181235331213,
+      0.730060102629628
+     ],
+     [
+      0.06968784031927107,
+      0.7466815508636371
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 2362,
+     "kept": 1453,
+     "pocket": 1,
+     "cushion": 908
+    }
+   }
+  },
+  "clip013": {
+   "step": "play3",
+   "redone": false,
+   "answers": {
+    "in": [
+     4,
+     5
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part03.zip",
+    "member": "clip013.mp4",
+    "sha256": "ae009d23e06d33ae2942a03b40bac6075dc9443c7ab537682731f18e425dca6b",
+    "bytes": 4845205,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip013.json",
+    "sha256": "767aca28c78971ec61a20824f6515da9b2388228b08df80cceda6a6577b0f8c4",
+    "bytes": 185722,
+    "frames": 601,
+    "spots": 2331,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.21147733183648015,
+      0.4376954441909968
+     ],
+     [
+      0.7797153451864096,
+      0.42913038711269597
+     ],
+     [
+      0.9336720898570366,
+      0.7254922845629016
+     ],
+     [
+      0.06453574551915033,
+      0.7503655250930473
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 3291,
+     "kept": 2331,
+     "pocket": 0,
+     "cushion": 960
+    }
+   }
+  },
+  "clip014": {
+   "step": "play4",
+   "redone": false,
+   "answers": {
+    "in": [
+     4,
+     5
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part03.zip",
+    "member": "clip014.mp4",
+    "sha256": "f21e79427411cf5c6a56724184b82d7d9ca27af22b1f66166f6a36567ce63f9e",
+    "bytes": 4854303,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip014.json",
+    "sha256": "14bcdf66ae975667c5821450cb64805d02b58cb3a934dba0ef4f350640a370f5",
+    "bytes": 162816,
+    "frames": 601,
+    "spots": 2011,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.2158067753482691,
+      0.44072998662412205
+     ],
+     [
+      0.7815798174726512,
+      0.4300682652350494
+     ],
+     [
+      0.9369096402864902,
+      0.725815727792355
+     ],
+     [
+      0.0632914899313676,
+      0.7500490235829695
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 2541,
+     "kept": 2011,
+     "pocket": 3,
+     "cushion": 527
+    }
+   }
+  },
+  "clip015": {
+   "step": "play5",
+   "redone": true,
+   "answers": {
+    "redo": true
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part03.zip",
+    "member": "clip015.mp4",
+    "sha256": "d50e8121cd2580f105d69c063f4e1e5f1533f41046289977f3080fcac437ae11",
+    "bytes": 4840599,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "notAnalysed": "marked \"redo\" by the player (left out of the truth)"
+  },
+  "clip016": {
+   "step": "play5",
+   "redone": false,
+   "answers": {
+    "in": [
+     1,
+     2
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part03.zip",
+    "member": "clip016.mp4",
+    "sha256": "d85c159cb33a3fd5a076cb79af88e66bcefc7c91b7e6859906907e7958107d31",
+    "bytes": 4840272,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip016.json",
+    "sha256": "d69e53416b6924210c13887df3e659148691ed09406753b0945ec1206ede8786",
+    "bytes": 402028,
+    "frames": 601,
+    "spots": 5217,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.21254891542691884,
+      0.4412362040317604
+     ],
+     [
+      0.7831551296195326,
+      0.4300525094161967
+     ],
+     [
+      0.9398890631679542,
+      0.7292660564852876
+     ],
+     [
+      0.06867706929790499,
+      0.747311771397097
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 5238,
+     "kept": 5217,
+     "pocket": 0,
+     "cushion": 21
+    }
+   }
+  },
+  "clip017": {
+   "step": "play6",
+   "redone": true,
+   "answers": {
+    "redo": true
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part03.zip",
+    "member": "clip017.mp4",
+    "sha256": "f10a5c70b4060aaa034f3c440fe86eee78e3d52ec7f8849f9a498d7a2ec99939",
+    "bytes": 4844631,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "notAnalysed": "marked \"redo\" by the player (left out of the truth)"
+  },
+  "clip018": {
+   "step": "play6",
+   "redone": false,
+   "answers": {
+    "in": [
+     4,
+     5
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part04.zip",
+    "member": "clip018.mp4",
+    "sha256": "499512e8e1bec208e303bd07c0e330d6e423a5329776e63db9992efd5cc6111e",
+    "bytes": 4843790,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip018.json",
+    "sha256": "0a112cbd36fe2845c12e017e847f6fa66451a4172abee379024051060a442543",
+    "bytes": 208195,
+    "frames": 601,
+    "spots": 2607,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.4444954632471399,
+      0.4381476281944656
+     ],
+     [
+      0.7813744734770259,
+      0.42960702896285535
+     ],
+     [
+      0.937917027109712,
+      0.7300353092914688
+     ],
+     [
+      0.36719193807799383,
+      0.7411174350930931
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 3335,
+     "kept": 2607,
+     "pocket": 0,
+     "cushion": 728
+    }
+   }
+  },
+  "clip019": {
+   "step": "play7",
+   "redone": false,
+   "answers": {
+    "in": [
+     6,
+     7
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part04.zip",
+    "member": "clip019.mp4",
+    "sha256": "af27302562e37fe1f7e0b82ad6e3a213b91b22f53bb9aaefbe2fc922e47ba4fa",
+    "bytes": 4846636,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip019.json",
+    "sha256": "fc78118fcf6d6c551cc32f049d0fa51718c1101a06880b3e684337553a6a58ac",
+    "bytes": 184766,
+    "frames": 601,
+    "spots": 2279,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.21954901962174195,
+      0.4331895958955882
+     ],
+     [
+      0.8304700696909089,
+      0.4333921337510066
+     ],
+     [
+      0.7945581701477046,
+      0.7284491139664357
+     ],
+     [
+      0.07306173394400572,
+      0.7442596554283004
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 3224,
+     "kept": 2279,
+     "pocket": 9,
+     "cushion": 936
+    }
+   }
+  },
+  "clip020": {
+   "step": "play8",
+   "redone": false,
+   "answers": {
+    "in": [
+     1,
+     2
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part04.zip",
+    "member": "clip020.mp4",
+    "sha256": "93e4d79b3c9a1fffc5321ed3e283e7c2b2f97b02db0946a293d3adab40919539",
+    "bytes": 4855721,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip020.json",
+    "sha256": "d5091674116c93d4a601352c07161a00869c4bd66b0546f3224ea1e03be43cd5",
+    "bytes": 390249,
+    "frames": 601,
+    "spots": 5064,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.21697475061283328,
+      0.4367032569791306
+     ],
+     [
+      0.7927582911984128,
+      0.42722896508588354
+     ],
+     [
+      0.9295071827237067,
+      0.7251532183638204
+     ],
+     [
+      0.07050087990808335,
+      0.7455824158463173
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 5328,
+     "kept": 5064,
+     "pocket": 3,
+     "cushion": 261
+    }
+   }
+  },
+  "clip021": {
+   "step": "play9",
+   "redone": false,
+   "answers": {
+    "in": [
+     3,
+     4
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part04.zip",
+    "member": "clip021.mp4",
+    "sha256": "c0798c45147ddad841db890b2e484349404f00ec4a7fe0f6b95abfb557ec62d6",
+    "bytes": 4846859,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip021.json",
+    "sha256": "036f65bb40b9c2177fb519d12cd9f7a22fd9474b9433335d2adca7dbcc499665",
+    "bytes": 326302,
+    "frames": 600,
+    "spots": 4207,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.22004024690122392,
+      0.43427109958313775
+     ],
+     [
+      0.7898754567429803,
+      0.4343798285153543
+     ],
+     [
+      0.9448694455490454,
+      0.7305208911617178
+     ],
+     [
+      0.07229173746861912,
+      0.7449908128222128
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 4576,
+     "kept": 4207,
+     "pocket": 0,
+     "cushion": 369
+    }
+   }
+  },
+  "clip022": {
+   "step": "play10",
+   "redone": false,
+   "answers": {
+    "in": [
+     5,
+     6,
+     7
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part04.zip",
+    "member": "clip022.mp4",
+    "sha256": "cee4c035b28eacc4fbe9450a8b628b256a222a50bfcdb762190972e5fb8e00b9",
+    "bytes": 4842140,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip022.json",
+    "sha256": "04eb479feee18d497ee2b8ade8d0b868db3d4e3f083f9f103685db4538080263",
+    "bytes": 82197,
+    "frames": 601,
+    "spots": 885,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.2204795416256507,
+      0.437065130021925
+     ],
+     [
+      0.4028444291442474,
+      0.43707487786595683
+     ],
+     [
+      0.7556337340094776,
+      0.7332558491036156
+     ],
+     [
+      0.06586451056635503,
+      0.7491820925523834
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 2779,
+     "kept": 885,
+     "pocket": 0,
+     "cushion": 1894
+    }
+   }
+  },
+  "clip023": {
+   "step": "play11",
+   "redone": false,
+   "answers": {
+    "in": [
+     3,
+     6,
+     8
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part05.zip",
+    "member": "clip023.mp4",
+    "sha256": "83cd7ca0909477677dbb62ad0be1c5ef9a3399ccf0df8b4abd0321054b60e4d2",
+    "bytes": 4852198,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip023.json",
+    "sha256": "eabd1df4d8d2f980bd5b77a38b443013abf6c3594bf28a6bba55ff05981bebf6",
+    "bytes": 136802,
+    "frames": 601,
+    "spots": 1654,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.36934203043221203,
+      0.4295635239157461
+     ],
+     [
+      0.7867915404175153,
+      0.4295635239157462
+     ],
+     [
+      0.9443837821256487,
+      0.7340344693420164
+     ],
+     [
+      0.35726339286960995,
+      0.7340344693420164
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 2765,
+     "kept": 1654,
+     "pocket": 0,
+     "cushion": 1111
+    }
+   }
+  },
+  "clip024": {
+   "step": "play12",
+   "redone": false,
+   "answers": {
+    "in": [
+     2,
+     3
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part05.zip",
+    "member": "clip024.mp4",
+    "sha256": "778ec60488d054745683dccc09a9ca5ea09aefc92e9ab53f6c9ba99792695554",
+    "bytes": 4857884,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip024.json",
+    "sha256": "af8c8e4a43c831f0a27c15c1e50b7ac7bf210b8d2a13204eb046ca7ecf197be6",
+    "bytes": 273930,
+    "frames": 601,
+    "spots": 3521,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.21470765539922243,
+      0.4356841096705281
+     ],
+     [
+      0.7858475639812945,
+      0.43029618132879394
+     ],
+     [
+      0.9423511367562206,
+      0.7279817047970745
+     ],
+     [
+      0.06906537127787918,
+      0.7438818035761259
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 4377,
+     "kept": 3521,
+     "pocket": 2,
+     "cushion": 854
+    }
+   }
+  },
+  "clip025": {
+   "step": "play13",
+   "redone": false,
+   "answers": {
+    "in": [
+     6
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part05.zip",
+    "member": "clip025.mp4",
+    "sha256": "82a85e345b342b685b2acbe24020cd9403de34c57b8dcb7654c999f22b2159d9",
+    "bytes": 4851521,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip025.json",
+    "sha256": "55ec14ec455790bf88298cd9ba3590cbf133856ef36da89fa106356ca78a3e83",
+    "bytes": 217230,
+    "frames": 601,
+    "spots": 2742,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.214935339759495,
+      0.4366285740947814
+     ],
+     [
+      0.7857532002052455,
+      0.4298039191417965
+     ],
+     [
+      0.9434417928457721,
+      0.7289612247903968
+     ],
+     [
+      0.06900271514506023,
+      0.745821954458084
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 3804,
+     "kept": 2742,
+     "pocket": 2,
+     "cushion": 1060
+    }
+   }
+  },
+  "clip026": {
+   "step": "play14",
+   "redone": false,
+   "answers": {
+    "in": [
+     4,
+     5
+    ],
+    "offTable": false
+   },
+   "video": {
+    "file": "sessions/rec-20261018-2310/part05.zip",
+    "member": "clip026.mp4",
+    "sha256": "58878105c889e79db070c47a886ab560a1c453138d9ab916424b3ac273ec0f48",
+    "bytes": 4845951,
+    "size": [
+     1280,
+     720
+    ],
+    "fps": 60
+   },
+   "detections": {
+    "file": "evidence/rec-20261018-2310/detections/clip026.json",
+    "sha256": "0a9cfbfe3dbcee1948d95fe6ecb5f09ac795085adfc8b11fd089263359e2c976",
+    "bytes": 87733,
+    "frames": 601,
+    "spots": 993,
+    "table": [
+     78,
+     39
+    ],
+    "outline": [
+     [
+      0.21957921149340862,
+      0.429393752388384
+     ],
+     [
+      0.6979668096056071,
+      0.4267672839940503
+     ],
+     [
+      0.5026472745473183,
+      0.734166878601515
+     ],
+     [
+      0.07578805115590537,
+      0.7392012879888787
+     ]
+    ],
+    "finder": "detector-v1",
+    "det": {
+     "boxes": 1748,
+     "kept": 993,
+     "pocket": 5,
+     "cushion": 750
+    }
+   }
+  }
+ }
+}

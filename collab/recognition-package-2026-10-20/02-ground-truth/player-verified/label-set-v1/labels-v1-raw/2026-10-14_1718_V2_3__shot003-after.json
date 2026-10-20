@@ -1,0 +1,45 @@
+{
+  "balls": [
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p0",
+      "moved": true,
+      "num": 0,
+      "partial": false,
+      "proposedNum": 0,
+      "r": 12.5,
+      "renumbered": false,
+      "resized": false,
+      "src": "proposed",
+      "unknown": false,
+      "x": 389.2,
+      "y": 88.4
+    },
+    {
+      "checked": true,
+      "id": "amvef3qmh",
+      "inPocket": true,
+      "moved": false,
+      "num": null,
+      "partial": false,
+      "proposedNum": null,
+      "r": 10,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": true,
+      "x": 956.7,
+      "y": 43.3
+    }
+  ],
+  "checkedBy": "person",
+  "file": "shot003-after.jpg",
+  "h": 275,
+  "image": "images/2026-10-14_1718_V2.3__shot003-after.jpg",
+  "removed": [],
+  "session": "2026-10-14_1718_V2.3",
+  "status": "done",
+  "updated": "2026-10-18T22:49:20.845Z",
+  "w": 1239
+}

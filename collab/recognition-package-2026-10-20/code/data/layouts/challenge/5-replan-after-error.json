@@ -1,0 +1,6 @@
+{ "name": "5. Replan after a confirmed cue-ball error",
+  "ft": 9,
+  "balls": [[0, 44, 30], [1, 49, 40], [2, 75, 25], [9, 30, 10]],
+  "expected": { "type": "replan", "error": { "afterShot": 1, "cue": [55, 12] }, "pocketAfterError": 5,
+    "why": "Natural shots on the 1 (top side pocket) leave the cue ball above the 2, where the 2 goes in the bottom-right corner. If the cue ball instead really stops at (55, 12), below and left of the 2, the bottom-right corner is an 83 degree cut and the top-right corner a 13 degree cut, so the plan for the 2 must switch to the top-right corner (pocket 5)." },
+  "found": "hand-made; probe.js: plain shots on the 1 mostly end at (85-98, 41-49); potGeom from (55,12): pocket 2 cut 83, pocket 5 cut 13" }

@@ -1,0 +1,20 @@
+2026-10-16_evening_V2.3.3.json  (code c7cc9a1)
+                                              continuous    from checkpoints
+  real-shot clips                             24            24
+    correct automatically                     0             3
+    unresolved                                11            10
+    confidently wrong                         13            11
+  real shots missed                           4             4
+  false shots (all clips)                     2             2
+  phantom pockets (confirmed, not in)         2             0
+  made balls left unresolved                  10            10
+  made balls called on the table              3             3
+  state errors (memory confidently wrong)     8             8
+  observation: on table, not named            18            18
+  observation: named, but gone                11            11
+  clips with checkable inventory              29            29
+  racks                                       2             2
+    completed with no intervention            0             0
+    no confidently wrong result               0             0
+    unresolved items to settle                25            22
+  first ball hit (research only)              13/19         13/19

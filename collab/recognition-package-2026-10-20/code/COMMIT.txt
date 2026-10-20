@@ -1,0 +1,2 @@
+70db07f8b3a9a0cde84d6497086abca2c76346ae
+plus tools/experiments/rest-naming.js from commit 9cf317e (branch claude/project-thread-9vpr76)

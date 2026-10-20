@@ -1,0 +1,1377 @@
+{
+ "oct16-k14": {
+  "calibration": {
+   "pictures": 14,
+   "examples": 1032,
+   "perClass": [
+    165,
+    15,
+    30,
+    45,
+    72,
+    90,
+    105,
+    150,
+    165,
+    195,
+    0
+   ],
+   "lam": 0.1,
+   "cv": {
+    "0.001": 0.4333657216449201,
+    "0.01": 0.35890912476620074,
+    "0.1": 0.3497557755316513,
+    "1.0": 0.35011612066866604
+   },
+   "lossNoCalibration": 0.3655541342505743,
+   "mode": "full",
+   "mu": 1.0,
+   "anchors": 5674,
+   "trainTop1Before": 0.9777131782945736,
+   "trainTop1After": 0.9777131782945736
+  },
+  "pictures": [
+   "shot004",
+   "shot005",
+   "shot006",
+   "shot007",
+   "shot008",
+   "shot009",
+   "shot010",
+   "shot011",
+   "shot012",
+   "shot013",
+   "shot014",
+   "shot015",
+   "shot016",
+   "shot017"
+  ],
+  "frozen30": {
+   "checkpoint": {
+    "v06": {
+     "shots": 13,
+     "endRight": 5,
+     "confidentlyWrong": 4,
+     "phantom": 0,
+     "madeOpen": 3,
+     "stateErrors": 0,
+     "missed": 2,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot030",
+      "shot031",
+      "shot032",
+      "shot033"
+     ]
+    },
+    "calibrated": {
+     "shots": 13,
+     "endRight": 5,
+     "confidentlyWrong": 4,
+     "phantom": 1,
+     "madeOpen": 3,
+     "stateErrors": 0,
+     "missed": 2,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot030",
+      "shot031",
+      "shot032",
+      "shot033"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "continuous": {
+    "v06": {
+     "shots": 13,
+     "endRight": 0,
+     "confidentlyWrong": 4,
+     "phantom": 0,
+     "madeOpen": 6,
+     "stateErrors": 0,
+     "missed": 2,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot030",
+      "shot031",
+      "shot032",
+      "shot033"
+     ]
+    },
+    "calibrated": {
+     "shots": 13,
+     "endRight": 0,
+     "confidentlyWrong": 4,
+     "phantom": 0,
+     "madeOpen": 6,
+     "stateErrors": 0,
+     "missed": 2,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot030",
+      "shot031",
+      "shot032",
+      "shot033"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "looks-v06": {
+    "ALL start": {
+     "N": 89,
+     "named": 83,
+     "rejected": 0,
+     "unnamed": 2,
+     "wrong": 0,
+     "absent": 4,
+     "extra": 0,
+     "right": 10,
+     "looks": 15
+    },
+    "ALL end": {
+     "N": 75,
+     "named": 72,
+     "rejected": 0,
+     "unnamed": 2,
+     "wrong": 0,
+     "absent": 1,
+     "extra": 2,
+     "right": 11,
+     "looks": 14
+    }
+   },
+   "looks-cal": {
+    "ALL start": {
+     "N": 89,
+     "named": 83,
+     "rejected": 0,
+     "unnamed": 2,
+     "wrong": 0,
+     "absent": 4,
+     "extra": 0,
+     "right": 10,
+     "looks": 15
+    },
+    "ALL end": {
+     "N": 75,
+     "named": 73,
+     "rejected": 0,
+     "unnamed": 1,
+     "wrong": 0,
+     "absent": 1,
+     "extra": 2,
+     "right": 11,
+     "looks": 14
+    }
+   }
+  },
+  "odd30": {
+   "checkpoint": {
+    "v06": {
+     "shots": 13,
+     "endRight": 5,
+     "confidentlyWrong": 4,
+     "phantom": 0,
+     "madeOpen": 3,
+     "stateErrors": 0,
+     "missed": 2,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot030",
+      "shot031",
+      "shot032",
+      "shot033"
+     ]
+    },
+    "calibrated": {
+     "shots": 13,
+     "endRight": 5,
+     "confidentlyWrong": 4,
+     "phantom": 0,
+     "madeOpen": 3,
+     "stateErrors": 0,
+     "missed": 2,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot030",
+      "shot031",
+      "shot032",
+      "shot033"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "continuous": {
+    "v06": {
+     "shots": 13,
+     "endRight": 0,
+     "confidentlyWrong": 4,
+     "phantom": 0,
+     "madeOpen": 5,
+     "stateErrors": 0,
+     "missed": 2,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot030",
+      "shot031",
+      "shot032",
+      "shot033"
+     ]
+    },
+    "calibrated": {
+     "shots": 13,
+     "endRight": 0,
+     "confidentlyWrong": 4,
+     "phantom": 0,
+     "madeOpen": 5,
+     "stateErrors": 0,
+     "missed": 2,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot030",
+      "shot031",
+      "shot032",
+      "shot033"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "looks-v06": {
+    "ALL start": {
+     "N": 89,
+     "named": 83,
+     "rejected": 0,
+     "unnamed": 2,
+     "wrong": 0,
+     "absent": 4,
+     "extra": 0,
+     "right": 10,
+     "looks": 15
+    },
+    "ALL end": {
+     "N": 70,
+     "named": 69,
+     "rejected": 0,
+     "unnamed": 1,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 2,
+     "right": 11,
+     "looks": 13
+    }
+   },
+   "looks-cal": {
+    "ALL start": {
+     "N": 89,
+     "named": 83,
+     "rejected": 0,
+     "unnamed": 2,
+     "wrong": 0,
+     "absent": 4,
+     "extra": 0,
+     "right": 10,
+     "looks": 15
+    },
+    "ALL end": {
+     "N": 70,
+     "named": 69,
+     "rejected": 0,
+     "unnamed": 1,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 2,
+     "right": 11,
+     "looks": 13
+    }
+   }
+  }
+ },
+ "otherside-k3": {
+  "calibration": {
+   "pictures": 3,
+   "examples": 398,
+   "perClass": [
+    45,
+    0,
+    38,
+    45,
+    45,
+    45,
+    45,
+    45,
+    45,
+    45,
+    0
+   ],
+   "lam": 0.1,
+   "cv": {
+    "0.001": 0.20583427357888842,
+    "0.01": 0.14152025413121894,
+    "0.1": 0.1158484806425688,
+    "1.0": 0.13156382992331536
+   },
+   "lossNoCalibration": 0.7928354740142822,
+   "mode": "full",
+   "mu": 1.0,
+   "anchors": 2246,
+   "trainTop1Before": 0.8366834170854272,
+   "trainTop1After": 0.9673366834170855
+  },
+  "pictures": [
+   "shot001",
+   "shot002",
+   "shot003"
+  ],
+  "frozen30": {
+   "checkpoint": {
+    "v06": {
+     "shots": 7,
+     "endRight": 1,
+     "confidentlyWrong": 6,
+     "phantom": 0,
+     "madeOpen": 3,
+     "stateErrors": 8,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot004",
+      "shot006",
+      "shot007",
+      "shot008",
+      "shot010",
+      "shot011",
+      "shot012",
+      "shot013"
+     ]
+    },
+    "calibrated": {
+     "shots": 7,
+     "endRight": 1,
+     "confidentlyWrong": 6,
+     "phantom": 0,
+     "madeOpen": 3,
+     "stateErrors": 6,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot004",
+      "shot006",
+      "shot007",
+      "shot008",
+      "shot011",
+      "shot013"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "continuous": {
+    "v06": {
+     "shots": 7,
+     "endRight": 0,
+     "confidentlyWrong": 6,
+     "phantom": 0,
+     "madeOpen": 4,
+     "stateErrors": 8,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot004",
+      "shot006",
+      "shot007",
+      "shot008",
+      "shot010",
+      "shot011",
+      "shot012",
+      "shot013"
+     ]
+    },
+    "calibrated": {
+     "shots": 7,
+     "endRight": 0,
+     "confidentlyWrong": 6,
+     "phantom": 0,
+     "madeOpen": 4,
+     "stateErrors": 6,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot004",
+      "shot006",
+      "shot007",
+      "shot008",
+      "shot011",
+      "shot013"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "looks-v06": {
+    "ALL start": {
+     "N": 50,
+     "named": 35,
+     "rejected": 1,
+     "unnamed": 3,
+     "wrong": 7,
+     "absent": 4,
+     "extra": 0,
+     "right": 1,
+     "looks": 10
+    },
+    "ALL end": {
+     "N": 19,
+     "named": 14,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 3,
+     "absent": 2,
+     "extra": 0,
+     "right": 2,
+     "looks": 5
+    }
+   },
+   "looks-cal": {
+    "ALL start": {
+     "N": 50,
+     "named": 35,
+     "rejected": 1,
+     "unnamed": 7,
+     "wrong": 3,
+     "absent": 4,
+     "extra": 0,
+     "right": 1,
+     "looks": 10
+    },
+    "ALL end": {
+     "N": 19,
+     "named": 14,
+     "rejected": 0,
+     "unnamed": 2,
+     "wrong": 1,
+     "absent": 2,
+     "extra": 0,
+     "right": 2,
+     "looks": 5
+    }
+   }
+  },
+  "odd30": {
+   "checkpoint": {
+    "v06": {
+     "shots": 7,
+     "endRight": 1,
+     "confidentlyWrong": 6,
+     "phantom": 0,
+     "madeOpen": 3,
+     "stateErrors": 8,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot004",
+      "shot006",
+      "shot007",
+      "shot008",
+      "shot010",
+      "shot011",
+      "shot012",
+      "shot013"
+     ]
+    },
+    "calibrated": {
+     "shots": 7,
+     "endRight": 1,
+     "confidentlyWrong": 6,
+     "phantom": 0,
+     "madeOpen": 3,
+     "stateErrors": 6,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot004",
+      "shot006",
+      "shot007",
+      "shot008",
+      "shot011",
+      "shot013"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "continuous": {
+    "v06": {
+     "shots": 7,
+     "endRight": 0,
+     "confidentlyWrong": 6,
+     "phantom": 0,
+     "madeOpen": 4,
+     "stateErrors": 8,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot004",
+      "shot006",
+      "shot007",
+      "shot008",
+      "shot010",
+      "shot011",
+      "shot012",
+      "shot013"
+     ]
+    },
+    "calibrated": {
+     "shots": 7,
+     "endRight": 0,
+     "confidentlyWrong": 6,
+     "phantom": 0,
+     "madeOpen": 4,
+     "stateErrors": 6,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "shot004",
+      "shot006",
+      "shot007",
+      "shot008",
+      "shot011",
+      "shot013"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "looks-v06": {
+    "ALL start": {
+     "N": 50,
+     "named": 36,
+     "rejected": 1,
+     "unnamed": 3,
+     "wrong": 7,
+     "absent": 3,
+     "extra": 0,
+     "right": 1,
+     "looks": 10
+    },
+    "ALL end": {
+     "N": 19,
+     "named": 14,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 3,
+     "absent": 2,
+     "extra": 0,
+     "right": 2,
+     "looks": 5
+    }
+   },
+   "looks-cal": {
+    "ALL start": {
+     "N": 50,
+     "named": 36,
+     "rejected": 1,
+     "unnamed": 7,
+     "wrong": 3,
+     "absent": 3,
+     "extra": 0,
+     "right": 1,
+     "looks": 10
+    },
+    "ALL end": {
+     "N": 19,
+     "named": 14,
+     "rejected": 0,
+     "unnamed": 2,
+     "wrong": 1,
+     "absent": 2,
+     "extra": 0,
+     "right": 2,
+     "looks": 5
+    }
+   }
+  }
+ },
+ "rec-20261017-1730-k1": {
+  "calibration": {
+   "pictures": 1,
+   "examples": 150,
+   "perClass": [
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    15,
+    0
+   ],
+   "lam": 0.1,
+   "cv": {},
+   "lossNoCalibration": 0.03200685605406761,
+   "mode": "full",
+   "mu": 1.0,
+   "anchors": 960,
+   "trainTop1Before": 1.0,
+   "trainTop1After": 1.0
+  },
+  "pictures": [
+   "clip008"
+  ],
+  "frozen30": {
+   "checkpoint": {
+    "v06": {
+     "shots": 18,
+     "endRight": 10,
+     "confidentlyWrong": 1,
+     "phantom": 1,
+     "madeOpen": 9,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 2,
+     "clipsWrong": [
+      "clip016",
+      "clip018",
+      "clip025"
+     ]
+    },
+    "calibrated": {
+     "shots": 18,
+     "endRight": 12,
+     "confidentlyWrong": 1,
+     "phantom": 1,
+     "madeOpen": 7,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 2,
+     "clipsWrong": [
+      "clip016",
+      "clip018",
+      "clip025"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "continuous": {
+    "v06": {
+     "shots": 18,
+     "endRight": 10,
+     "confidentlyWrong": 1,
+     "phantom": 1,
+     "madeOpen": 9,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 2,
+     "clipsWrong": [
+      "clip016",
+      "clip018",
+      "clip025"
+     ]
+    },
+    "calibrated": {
+     "shots": 18,
+     "endRight": 12,
+     "confidentlyWrong": 1,
+     "phantom": 1,
+     "madeOpen": 7,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 2,
+     "clipsWrong": [
+      "clip016",
+      "clip018",
+      "clip025"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "looks-v06": {
+    "ALL start": {
+     "N": 52,
+     "named": 20,
+     "rejected": 22,
+     "unnamed": 8,
+     "wrong": 0,
+     "absent": 2,
+     "extra": 6,
+     "right": 1,
+     "looks": 7
+    },
+    "ALL end": {
+     "N": 52,
+     "named": 20,
+     "rejected": 22,
+     "unnamed": 8,
+     "wrong": 0,
+     "absent": 2,
+     "extra": 6,
+     "right": 1,
+     "looks": 7
+    }
+   },
+   "looks-cal": {
+    "ALL start": {
+     "N": 52,
+     "named": 20,
+     "rejected": 23,
+     "unnamed": 7,
+     "wrong": 0,
+     "absent": 2,
+     "extra": 6,
+     "right": 1,
+     "looks": 7
+    },
+    "ALL end": {
+     "N": 52,
+     "named": 19,
+     "rejected": 24,
+     "unnamed": 7,
+     "wrong": 0,
+     "absent": 2,
+     "extra": 6,
+     "right": 0,
+     "looks": 7
+    }
+   }
+  },
+  "odd30": {
+   "checkpoint": {
+    "v06": {
+     "shots": 18,
+     "endRight": 8,
+     "confidentlyWrong": 3,
+     "phantom": 1,
+     "madeOpen": 10,
+     "stateErrors": 0,
+     "missed": 1,
+     "falseShots": 3,
+     "clipsWrong": [
+      "clip016",
+      "clip018",
+      "clip025",
+      "clip033",
+      "clip038"
+     ]
+    },
+    "calibrated": {
+     "shots": 18,
+     "endRight": 9,
+     "confidentlyWrong": 3,
+     "phantom": 1,
+     "madeOpen": 9,
+     "stateErrors": 0,
+     "missed": 1,
+     "falseShots": 3,
+     "clipsWrong": [
+      "clip016",
+      "clip018",
+      "clip025",
+      "clip033",
+      "clip038"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "continuous": {
+    "v06": {
+     "shots": 18,
+     "endRight": 8,
+     "confidentlyWrong": 3,
+     "phantom": 1,
+     "madeOpen": 10,
+     "stateErrors": 0,
+     "missed": 1,
+     "falseShots": 3,
+     "clipsWrong": [
+      "clip016",
+      "clip018",
+      "clip025",
+      "clip033",
+      "clip038"
+     ]
+    },
+    "calibrated": {
+     "shots": 18,
+     "endRight": 9,
+     "confidentlyWrong": 3,
+     "phantom": 1,
+     "madeOpen": 9,
+     "stateErrors": 0,
+     "missed": 1,
+     "falseShots": 3,
+     "clipsWrong": [
+      "clip016",
+      "clip018",
+      "clip025",
+      "clip033",
+      "clip038"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "looks-v06": {
+    "ALL start": {
+     "N": 52,
+     "named": 20,
+     "rejected": 22,
+     "unnamed": 8,
+     "wrong": 0,
+     "absent": 2,
+     "extra": 6,
+     "right": 1,
+     "looks": 7
+    },
+    "ALL end": {
+     "N": 52,
+     "named": 20,
+     "rejected": 22,
+     "unnamed": 8,
+     "wrong": 0,
+     "absent": 2,
+     "extra": 6,
+     "right": 1,
+     "looks": 7
+    }
+   },
+   "looks-cal": {
+    "ALL start": {
+     "N": 52,
+     "named": 20,
+     "rejected": 23,
+     "unnamed": 7,
+     "wrong": 0,
+     "absent": 2,
+     "extra": 6,
+     "right": 1,
+     "looks": 7
+    },
+    "ALL end": {
+     "N": 52,
+     "named": 19,
+     "rejected": 24,
+     "unnamed": 7,
+     "wrong": 0,
+     "absent": 2,
+     "extra": 6,
+     "right": 0,
+     "looks": 7
+    }
+   }
+  }
+ },
+ "rec-20261018-2310-k2": {
+  "calibration": {
+   "pictures": 2,
+   "examples": 285,
+   "perClass": [
+    30,
+    30,
+    30,
+    30,
+    30,
+    15,
+    30,
+    30,
+    30,
+    30,
+    0
+   ],
+   "lam": 0.1,
+   "cv": {
+    "0.001": 0.1853417116488086,
+    "0.01": 0.12933710558596073,
+    "0.1": 0.1083508817570829,
+    "1.0": 0.11161339034443382
+   },
+   "lossNoCalibration": 0.7365988194942474,
+   "mode": "full",
+   "mu": 1.0,
+   "anchors": 1368,
+   "trainTop1Before": 0.8947368421052632,
+   "trainTop1After": 0.9263157894736842
+  },
+  "pictures": [
+   "clip001",
+   "clip002"
+  ],
+  "frozen30": {
+   "checkpoint": {
+    "v06": {
+     "shots": 18,
+     "endRight": 3,
+     "confidentlyWrong": 1,
+     "phantom": 0,
+     "madeOpen": 29,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "clip023"
+     ]
+    },
+    "calibrated": {
+     "shots": 18,
+     "endRight": 3,
+     "confidentlyWrong": 1,
+     "phantom": 0,
+     "madeOpen": 29,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "clip023"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "continuous": {
+    "v06": {
+     "shots": 18,
+     "endRight": 3,
+     "confidentlyWrong": 1,
+     "phantom": 0,
+     "madeOpen": 29,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "clip023"
+     ]
+    },
+    "calibrated": {
+     "shots": 18,
+     "endRight": 3,
+     "confidentlyWrong": 1,
+     "phantom": 0,
+     "madeOpen": 29,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "clip023"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "looks-v06": {
+    "ALL start": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    },
+    "ALL end": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    }
+   },
+   "looks-cal": {
+    "ALL start": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    },
+    "ALL end": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    }
+   }
+  },
+  "odd30": {
+   "checkpoint": {
+    "v06": {
+     "shots": 18,
+     "endRight": 4,
+     "confidentlyWrong": 3,
+     "phantom": 0,
+     "madeOpen": 27,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 4,
+     "clipsWrong": [
+      "clip016",
+      "clip023",
+      "clip026"
+     ]
+    },
+    "calibrated": {
+     "shots": 18,
+     "endRight": 4,
+     "confidentlyWrong": 3,
+     "phantom": 0,
+     "madeOpen": 27,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 4,
+     "clipsWrong": [
+      "clip016",
+      "clip023",
+      "clip026"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "continuous": {
+    "v06": {
+     "shots": 18,
+     "endRight": 4,
+     "confidentlyWrong": 3,
+     "phantom": 0,
+     "madeOpen": 27,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 4,
+     "clipsWrong": [
+      "clip016",
+      "clip023",
+      "clip026"
+     ]
+    },
+    "calibrated": {
+     "shots": 18,
+     "endRight": 4,
+     "confidentlyWrong": 3,
+     "phantom": 0,
+     "madeOpen": 27,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 4,
+     "clipsWrong": [
+      "clip016",
+      "clip023",
+      "clip026"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "looks-v06": {
+    "ALL start": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    },
+    "ALL end": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    }
+   },
+   "looks-cal": {
+    "ALL start": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    },
+    "ALL end": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    }
+   }
+  }
+ },
+ "rec-20261019-1710-k2": {
+  "calibration": {
+   "pictures": 2,
+   "examples": 270,
+   "perClass": [
+    30,
+    30,
+    30,
+    30,
+    15,
+    15,
+    30,
+    30,
+    30,
+    30,
+    0
+   ],
+   "lam": 1.0,
+   "cv": {
+    "0.001": 0.7843065232767117,
+    "0.01": 0.5696307559364953,
+    "0.1": 0.37652235720267435,
+    "1.0": 0.28213610751834395
+   },
+   "lossNoCalibration": 0.9744031131267548,
+   "mode": "full",
+   "mu": 1.0,
+   "anchors": 1398,
+   "trainTop1Before": 0.8333333333333334,
+   "trainTop1After": 0.9185185185185185
+  },
+  "pictures": [
+   "clip001",
+   "clip002"
+  ],
+  "frozen30": {
+   "checkpoint": {
+    "v06": {
+     "shots": 21,
+     "endRight": 12,
+     "confidentlyWrong": 1,
+     "phantom": 0,
+     "madeOpen": 8,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "clip014"
+     ]
+    },
+    "calibrated": {
+     "shots": 21,
+     "endRight": 13,
+     "confidentlyWrong": 1,
+     "phantom": 0,
+     "madeOpen": 7,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "clip014"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "continuous": {
+    "v06": {
+     "shots": 21,
+     "endRight": 12,
+     "confidentlyWrong": 1,
+     "phantom": 0,
+     "madeOpen": 8,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "clip014"
+     ]
+    },
+    "calibrated": {
+     "shots": 21,
+     "endRight": 13,
+     "confidentlyWrong": 1,
+     "phantom": 0,
+     "madeOpen": 7,
+     "stateErrors": 0,
+     "missed": 0,
+     "falseShots": 1,
+     "clipsWrong": [
+      "clip014"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "looks-v06": {
+    "ALL start": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    },
+    "ALL end": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    }
+   },
+   "looks-cal": {
+    "ALL start": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    },
+    "ALL end": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    }
+   }
+  },
+  "odd30": {
+   "checkpoint": {
+    "v06": {
+     "shots": 21,
+     "endRight": 11,
+     "confidentlyWrong": 2,
+     "phantom": 0,
+     "madeOpen": 8,
+     "stateErrors": 0,
+     "missed": 1,
+     "falseShots": 1,
+     "clipsWrong": [
+      "clip009",
+      "clip014"
+     ]
+    },
+    "calibrated": {
+     "shots": 21,
+     "endRight": 12,
+     "confidentlyWrong": 2,
+     "phantom": 0,
+     "madeOpen": 7,
+     "stateErrors": 0,
+     "missed": 1,
+     "falseShots": 1,
+     "clipsWrong": [
+      "clip009",
+      "clip014"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "continuous": {
+    "v06": {
+     "shots": 21,
+     "endRight": 11,
+     "confidentlyWrong": 2,
+     "phantom": 0,
+     "madeOpen": 8,
+     "stateErrors": 0,
+     "missed": 1,
+     "falseShots": 1,
+     "clipsWrong": [
+      "clip009",
+      "clip014"
+     ]
+    },
+    "calibrated": {
+     "shots": 21,
+     "endRight": 12,
+     "confidentlyWrong": 2,
+     "phantom": 0,
+     "madeOpen": 7,
+     "stateErrors": 0,
+     "missed": 1,
+     "falseShots": 1,
+     "clipsWrong": [
+      "clip009",
+      "clip014"
+     ]
+    },
+    "newWrongClips": []
+   },
+   "looks-v06": {
+    "ALL start": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    },
+    "ALL end": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    }
+   },
+   "looks-cal": {
+    "ALL start": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    },
+    "ALL end": {
+     "N": 0,
+     "named": 0,
+     "rejected": 0,
+     "unnamed": 0,
+     "wrong": 0,
+     "absent": 0,
+     "extra": 0,
+     "right": 0,
+     "looks": 0
+    }
+   }
+  }
+ }
+}

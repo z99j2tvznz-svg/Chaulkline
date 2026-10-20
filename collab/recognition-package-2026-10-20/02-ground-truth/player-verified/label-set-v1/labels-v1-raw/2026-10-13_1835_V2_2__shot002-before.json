@@ -1,0 +1,199 @@
+{
+  "balls": [
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p3",
+      "moved": true,
+      "num": 5,
+      "partial": false,
+      "proposedNum": 5,
+      "r": 9.1,
+      "renumbered": false,
+      "resized": false,
+      "src": "proposed",
+      "unknown": false,
+      "x": 602.4,
+      "y": 25.6
+    },
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p7",
+      "moved": true,
+      "num": 0,
+      "partial": false,
+      "proposedNum": 0,
+      "r": 11.7,
+      "renumbered": false,
+      "resized": false,
+      "src": "proposed",
+      "unknown": false,
+      "x": 660.9,
+      "y": 125.5
+    },
+    {
+      "checked": true,
+      "id": "amve440ij",
+      "moved": true,
+      "num": 6,
+      "partial": true,
+      "proposedNum": null,
+      "r": 10.6,
+      "renumbered": false,
+      "resized": false,
+      "src": "added",
+      "unknown": false,
+      "x": 379.4,
+      "y": 117.9
+    },
+    {
+      "checked": true,
+      "id": "amve446uc",
+      "moved": true,
+      "num": 9,
+      "partial": false,
+      "proposedNum": null,
+      "r": 10.6,
+      "renumbered": false,
+      "resized": false,
+      "src": "added",
+      "unknown": false,
+      "x": 517.5,
+      "y": 71.7
+    },
+    {
+      "checked": true,
+      "id": "amve44el2",
+      "moved": true,
+      "num": 2,
+      "partial": false,
+      "proposedNum": null,
+      "r": 10.6,
+      "renumbered": false,
+      "resized": false,
+      "src": "added",
+      "unknown": false,
+      "x": 915.2,
+      "y": 122.3
+    },
+    {
+      "checked": true,
+      "id": "amve44nqq",
+      "moved": true,
+      "num": 8,
+      "partial": false,
+      "proposedNum": null,
+      "r": 9.5,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 888.7,
+      "y": 15.6
+    },
+    {
+      "checked": true,
+      "id": "amve4aoo8",
+      "moved": true,
+      "num": 4,
+      "partial": false,
+      "proposedNum": null,
+      "r": 10.6,
+      "renumbered": false,
+      "resized": false,
+      "src": "added",
+      "unknown": false,
+      "x": 827.1,
+      "y": 72.2
+    },
+    {
+      "checked": true,
+      "id": "amve4atq7",
+      "moved": true,
+      "num": 7,
+      "partial": false,
+      "proposedNum": null,
+      "r": 9.5,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 726.3,
+      "y": 87.4
+    },
+    {
+      "checked": true,
+      "id": "amve4b0p5",
+      "moved": true,
+      "num": 3,
+      "partial": false,
+      "proposedNum": null,
+      "r": 11.9,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 740.6,
+      "y": 138.8
+    }
+  ],
+  "checkedBy": "person",
+  "file": "shot002-before.jpg",
+  "h": 259,
+  "image": "images/2026-10-13_1835_V2.2__shot002-before.jpg",
+  "removed": [
+    {
+      "proposedNum": 1,
+      "r": 11.4,
+      "x": 238,
+      "y": 87
+    },
+    {
+      "proposedNum": 6,
+      "r": 12.2,
+      "x": 373,
+      "y": 124
+    },
+    {
+      "proposedNum": 9,
+      "r": 10.5,
+      "x": 513,
+      "y": 71
+    },
+    {
+      "proposedNum": 8,
+      "r": 11.4,
+      "x": 913,
+      "y": 130
+    },
+    {
+      "proposedNum": 2,
+      "r": 8.3,
+      "x": 885,
+      "y": 15
+    },
+    {
+      "proposedNum": 4,
+      "r": 10,
+      "x": 823,
+      "y": 73
+    },
+    {
+      "proposedNum": 7,
+      "r": 10.6,
+      "x": 722,
+      "y": 88
+    },
+    {
+      "proposedNum": 3,
+      "r": 12,
+      "x": 735,
+      "y": 140
+    }
+  ],
+  "session": "2026-10-13_1835_V2.2",
+  "status": "done",
+  "updated": "2026-10-18T20:29:26.663Z",
+  "w": 1250
+}

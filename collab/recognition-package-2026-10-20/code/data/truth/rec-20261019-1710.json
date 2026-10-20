@@ -1,0 +1,322 @@
+{
+ "about": "Truth for the R0.6 one-shot-per-clip session (rec-20261019-1710, home 7 ft, low side). made = Nackers's tap answers per clip; one shot asked per clip (clip014 likely holds a second, ball-in-hand shot). Redone clip004 left out. Layouts not recorded. Not checked by eye.",
+ "clips": {
+  "clip001": {
+   "shot": false,
+   "made": [],
+   "step": "eRest",
+   "layout": [],
+   "verify": {
+    "shot": "scripted: no shot asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip002": {
+   "shot": false,
+   "made": [],
+   "step": "eHide",
+   "layout": [],
+   "verify": {
+    "shot": "scripted: no shot asked for; not checked by eye",
+    "made": "scripted",
+    "state": "no"
+   }
+  },
+  "clip003": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "ePocket",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip005": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "eMiss",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip006": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "eNear",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip007": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "eMulti",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip008": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play1",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip009": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "play2",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip010": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "play3",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip011": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "play4",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip012": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "play5",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip013": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "play6",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip014": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "play7",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip015": {
+   "shot": true,
+   "made": [
+    2
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play8",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip016": {
+   "shot": true,
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "step": "play9",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip017": {
+   "shot": true,
+   "made": [
+    9
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play10",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip018": {
+   "shot": true,
+   "made": [
+    3
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play11",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip019": {
+   "shot": true,
+   "made": [
+    4
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play12",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip020": {
+   "shot": true,
+   "made": [
+    5
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play13",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip021": {
+   "shot": true,
+   "made": [
+    6
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play14",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip022": {
+   "shot": true,
+   "made": [
+    7
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play15",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip023": {
+   "shot": true,
+   "made": [
+    8
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play16",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  },
+  "clip024": {
+   "shot": true,
+   "made": [
+    9
+   ],
+   "offTable": false,
+   "scratch": false,
+   "step": "play17",
+   "layout": [],
+   "verify": {
+    "shot": "yes (asked for; not checked by eye); one shot per clip",
+    "made": "yes (owner tap answer, whole clip)",
+    "state": "no"
+   }
+  }
+ }
+}

@@ -1,0 +1,171 @@
+{
+  "balls": [
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p3",
+      "moved": true,
+      "num": 7,
+      "partial": false,
+      "proposedNum": 7,
+      "r": 10.7,
+      "renumbered": false,
+      "resized": false,
+      "src": "proposed",
+      "unknown": false,
+      "x": 1001.2,
+      "y": 84.2
+    },
+    {
+      "checked": true,
+      "id": "amve46tcg",
+      "moved": true,
+      "num": 8,
+      "partial": false,
+      "proposedNum": null,
+      "r": 9.6,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 524.5,
+      "y": 83.2
+    },
+    {
+      "checked": true,
+      "id": "amve46zat",
+      "moved": true,
+      "num": 5,
+      "partial": false,
+      "proposedNum": null,
+      "r": 12,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 274.3,
+      "y": 111.1
+    },
+    {
+      "checked": true,
+      "id": "amve474it",
+      "moved": true,
+      "num": 9,
+      "partial": false,
+      "proposedNum": null,
+      "r": 13.4,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 383.9,
+      "y": 153.2
+    },
+    {
+      "checked": true,
+      "id": "amve47b9f",
+      "moved": true,
+      "num": 6,
+      "partial": false,
+      "proposedNum": null,
+      "r": 10.7,
+      "renumbered": false,
+      "resized": false,
+      "src": "added",
+      "unknown": false,
+      "x": 381.1,
+      "y": 50.4
+    },
+    {
+      "checked": true,
+      "id": "amve47ftt",
+      "moved": true,
+      "num": 0,
+      "partial": false,
+      "proposedNum": null,
+      "r": 10.7,
+      "renumbered": false,
+      "resized": false,
+      "src": "added",
+      "unknown": false,
+      "x": 495.2,
+      "y": 52.4
+    },
+    {
+      "checked": true,
+      "id": "amve47l42",
+      "moved": true,
+      "num": 3,
+      "partial": false,
+      "proposedNum": null,
+      "r": 12,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 1098.4,
+      "y": 123.1
+    },
+    {
+      "checked": true,
+      "id": "amve47qya",
+      "moved": false,
+      "num": 4,
+      "partial": false,
+      "proposedNum": null,
+      "r": 9.6,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 898.5,
+      "y": 36.4
+    }
+  ],
+  "checkedBy": "person",
+  "file": "shot023-before.jpg",
+  "h": 250,
+  "image": "images/2026-10-13_1835_V2.2__shot023-before.jpg",
+  "removed": [
+    {
+      "proposedNum": 2,
+      "r": 11,
+      "x": 518,
+      "y": 85
+    },
+    {
+      "proposedNum": 5,
+      "r": 12.1,
+      "x": 267,
+      "y": 112
+    },
+    {
+      "proposedNum": 9,
+      "r": 13.2,
+      "x": 377,
+      "y": 153
+    },
+    {
+      "proposedNum": 6,
+      "r": 10.2,
+      "x": 375,
+      "y": 54
+    },
+    {
+      "proposedNum": 0,
+      "r": 10,
+      "x": 490,
+      "y": 51
+    },
+    {
+      "proposedNum": 4,
+      "r": 9.2,
+      "x": 895,
+      "y": 37
+    }
+  ],
+  "session": "2026-10-13_1835_V2.2",
+  "status": "done",
+  "updated": "2026-10-18T20:31:17.412Z",
+  "w": 1263
+}

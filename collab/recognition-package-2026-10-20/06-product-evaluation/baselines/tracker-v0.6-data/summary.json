@@ -1,0 +1,109 @@
+{
+ "totals": {
+  "v05": {
+   "checkpoint": {
+    "correctAutomatically": 28,
+    "confidentlyWrong": 28,
+    "phantomPockets": 2,
+    "madeCalledOnTable": 4,
+    "stateErrors": 16,
+    "madeLeftUnresolved": 77,
+    "realShotsMissed": 8,
+    "falseShots": 10,
+    "correctionsNeeded": 107,
+    "racksComplete": 20
+   },
+   "continuous": {
+    "correctAutomatically": 22,
+    "confidentlyWrong": 28,
+    "phantomPockets": 2,
+    "madeCalledOnTable": 4,
+    "stateErrors": 16,
+    "madeLeftUnresolved": 78,
+    "realShotsMissed": 8,
+    "falseShots": 10,
+    "correctionsNeeded": 116,
+    "racksComplete": 20
+   }
+  },
+  "outline": {
+   "checkpoint": {
+    "correctAutomatically": 30,
+    "confidentlyWrong": 26,
+    "phantomPockets": 2,
+    "madeCalledOnTable": 4,
+    "stateErrors": 16,
+    "madeLeftUnresolved": 74,
+    "realShotsMissed": 5,
+    "falseShots": 10,
+    "correctionsNeeded": 104,
+    "racksComplete": 22
+   },
+   "continuous": {
+    "correctAutomatically": 24,
+    "confidentlyWrong": 26,
+    "phantomPockets": 2,
+    "madeCalledOnTable": 4,
+    "stateErrors": 16,
+    "madeLeftUnresolved": 75,
+    "realShotsMissed": 5,
+    "falseShots": 10,
+    "correctionsNeeded": 113,
+    "racksComplete": 22
+   }
+  },
+  "absence": {
+   "checkpoint": {
+    "correctAutomatically": 37,
+    "confidentlyWrong": 28,
+    "phantomPockets": 2,
+    "madeCalledOnTable": 4,
+    "stateErrors": 16,
+    "madeLeftUnresolved": 66,
+    "realShotsMissed": 8,
+    "falseShots": 10,
+    "correctionsNeeded": 96,
+    "racksComplete": 24
+   },
+   "continuous": {
+    "correctAutomatically": 26,
+    "confidentlyWrong": 28,
+    "phantomPockets": 2,
+    "madeCalledOnTable": 4,
+    "stateErrors": 16,
+    "madeLeftUnresolved": 73,
+    "realShotsMissed": 8,
+    "falseShots": 10,
+    "correctionsNeeded": 111,
+    "racksComplete": 24
+   }
+  },
+  "both": {
+   "checkpoint": {
+    "correctAutomatically": 38,
+    "confidentlyWrong": 26,
+    "phantomPockets": 2,
+    "madeCalledOnTable": 4,
+    "stateErrors": 16,
+    "madeLeftUnresolved": 64,
+    "realShotsMissed": 5,
+    "falseShots": 10,
+    "correctionsNeeded": 94,
+    "racksComplete": 25
+   },
+   "continuous": {
+    "correctAutomatically": 27,
+    "confidentlyWrong": 26,
+    "phantomPockets": 2,
+    "madeCalledOnTable": 4,
+    "stateErrors": 16,
+    "madeLeftUnresolved": 71,
+    "realShotsMissed": 5,
+    "falseShots": 10,
+    "correctionsNeeded": 109,
+    "racksComplete": 25
+   }
+  }
+ },
+ "newWrong": []
+}

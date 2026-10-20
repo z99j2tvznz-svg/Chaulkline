@@ -1,0 +1,171 @@
+{
+  "balls": [
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p0",
+      "moved": true,
+      "num": 4,
+      "partial": false,
+      "proposedNum": 4,
+      "r": 8.6,
+      "renumbered": false,
+      "resized": false,
+      "src": "proposed",
+      "unknown": false,
+      "x": 849.8,
+      "y": 16.2
+    },
+    {
+      "checked": true,
+      "id": "amve44yy0",
+      "moved": true,
+      "num": 8,
+      "partial": false,
+      "proposedNum": null,
+      "r": 9.5,
+      "renumbered": false,
+      "resized": false,
+      "src": "added",
+      "unknown": false,
+      "x": 884.8,
+      "y": 13.4
+    },
+    {
+      "checked": true,
+      "id": "amve4563v",
+      "moved": true,
+      "num": 0,
+      "partial": false,
+      "proposedNum": null,
+      "r": 9.5,
+      "renumbered": false,
+      "resized": false,
+      "src": "added",
+      "unknown": false,
+      "x": 371.2,
+      "y": 32.3
+    },
+    {
+      "checked": true,
+      "id": "amve45axz",
+      "moved": true,
+      "num": 6,
+      "partial": false,
+      "proposedNum": null,
+      "r": 11.9,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 380.9,
+      "y": 119.1
+    },
+    {
+      "checked": true,
+      "id": "amve45jdp",
+      "moved": false,
+      "num": 9,
+      "partial": false,
+      "proposedNum": null,
+      "r": 10.6,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 519.7,
+      "y": 71.8
+    },
+    {
+      "checked": true,
+      "id": "amve45umc",
+      "moved": false,
+      "num": 3,
+      "partial": false,
+      "proposedNum": null,
+      "r": 10.6,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 549.9,
+      "y": 93.4
+    },
+    {
+      "checked": true,
+      "id": "amve46fnd",
+      "moved": false,
+      "num": 5,
+      "partial": false,
+      "proposedNum": null,
+      "r": 8.5,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 604,
+      "y": 26.2
+    },
+    {
+      "checked": true,
+      "id": "amve46j8j",
+      "moved": true,
+      "num": 7,
+      "partial": true,
+      "proposedNum": null,
+      "r": 8.5,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 595.9,
+      "y": 17.1
+    }
+  ],
+  "checkedBy": "person",
+  "file": "shot006-after.jpg",
+  "h": 247,
+  "image": "images/2026-10-13_1835_V2.2__shot006-after.jpg",
+  "removed": [
+    {
+      "proposedNum": 0,
+      "r": 9.5,
+      "x": 366,
+      "y": 32
+    },
+    {
+      "proposedNum": 6,
+      "r": 12.4,
+      "x": 374,
+      "y": 125
+    },
+    {
+      "proposedNum": 9,
+      "r": 10.6,
+      "x": 514,
+      "y": 73
+    },
+    {
+      "proposedNum": 3,
+      "r": 11.3,
+      "x": 545,
+      "y": 94
+    },
+    {
+      "proposedNum": 7,
+      "r": 8.9,
+      "x": 593,
+      "y": 17
+    },
+    {
+      "proposedNum": 5,
+      "r": 9.2,
+      "x": 600,
+      "y": 27
+    }
+  ],
+  "session": "2026-10-13_1835_V2.2",
+  "status": "done",
+  "updated": "2026-10-18T22:45:41.910Z",
+  "w": 1263
+}

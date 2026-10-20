@@ -1,0 +1,7545 @@
+{
+ "readerReproduced": 3.933906555175781e-06,
+ "referenceCloth": [
+  0.1725490242242813,
+  0.7176470756530762,
+  0.9137254953384399
+ ],
+ "pairs": {
+  "9 vs cue": {
+   "m": {
+    "Oct 17 far spot | another ball in the square": {
+     "n": 2,
+     "right": 0,
+     "confidently wrong": 0,
+     "unsure": 2,
+     "reader right": 1,
+     "reader confidently wrong": 1,
+     "reader unsure": 0,
+     "cut": [
+      0.008928571428571428,
+      0.25
+     ]
+    },
+    "Oct 17 far spot | clean single ball": {
+     "n": 7,
+     "right": 3,
+     "confidently wrong": 0,
+     "unsure": 4,
+     "reader right": 5,
+     "reader confidently wrong": 0,
+     "reader unsure": 2,
+     "cut": [
+      0.008928571428571428,
+      0.25
+     ]
+    },
+    "Oct 17 far spot | touching or overlapping": {
+     "n": 3,
+     "right": 0,
+     "confidently wrong": 0,
+     "unsure": 3,
+     "reader right": 0,
+     "reader confidently wrong": 3,
+     "reader unsure": 0,
+     "cut": [
+      0.008928571428571428,
+      0.25
+     ]
+    },
+    "Oct 16 close side | clean single ball": {
+     "n": 24,
+     "right": 14,
+     "confidently wrong": 0,
+     "unsure": 10,
+     "reader right": 24,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.008928571428571428,
+      0.25
+     ]
+    },
+    "Oct 17 other side | clean single ball": {
+     "n": 6,
+     "right": 3,
+     "confidently wrong": 0,
+     "unsure": 3,
+     "reader right": 6,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.008928571428571428,
+      0.25
+     ]
+    },
+    "Oct 17 recorder | clean single ball": {
+     "n": 2,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 1,
+     "reader right": 2,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.008928571428571428,
+      0.25
+     ]
+    },
+    "Oct 18 recorder | clean single ball": {
+     "n": 4,
+     "right": 2,
+     "confidently wrong": 2,
+     "unsure": 0,
+     "reader right": 2,
+     "reader confidently wrong": 2,
+     "reader unsure": 0,
+     "cut": [
+      0.008928571428571428,
+      0.16071428571428573
+     ]
+    },
+    "Oct 19 recorder | clean single ball": {
+     "n": 4,
+     "right": 0,
+     "confidently wrong": 0,
+     "unsure": 4,
+     "reader right": 2,
+     "reader confidently wrong": 2,
+     "reader unsure": 0,
+     "cut": [
+      0.008928571428571428,
+      0.25
+     ]
+    }
+   },
+   "mn": {
+    "Oct 17 far spot | another ball in the square": {
+     "n": 2,
+     "right": 0,
+     "confidently wrong": 1,
+     "unsure": 1,
+     "reader right": 1,
+     "reader confidently wrong": 1,
+     "reader unsure": 0,
+     "cut": [
+      0.026785714285714284,
+      0.1875
+     ]
+    },
+    "Oct 17 far spot | clean single ball": {
+     "n": 7,
+     "right": 2,
+     "confidently wrong": 5,
+     "unsure": 0,
+     "reader right": 5,
+     "reader confidently wrong": 0,
+     "reader unsure": 2,
+     "cut": [
+      0.026785714285714284,
+      0.1875
+     ]
+    },
+    "Oct 17 far spot | touching or overlapping": {
+     "n": 3,
+     "right": 2,
+     "confidently wrong": 0,
+     "unsure": 1,
+     "reader right": 0,
+     "reader confidently wrong": 3,
+     "reader unsure": 0,
+     "cut": [
+      0.026785714285714284,
+      0.1875
+     ]
+    },
+    "Oct 16 close side | clean single ball": {
+     "n": 24,
+     "right": 2,
+     "confidently wrong": 0,
+     "unsure": 22,
+     "reader right": 24,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.026785714285714284,
+      1.0
+     ]
+    },
+    "Oct 17 other side | clean single ball": {
+     "n": 6,
+     "right": 3,
+     "confidently wrong": 0,
+     "unsure": 3,
+     "reader right": 6,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.026785714285714284,
+      1.0
+     ]
+    },
+    "Oct 17 recorder | clean single ball": {
+     "n": 2,
+     "right": 0,
+     "confidently wrong": 0,
+     "unsure": 2,
+     "reader right": 2,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.026785714285714284,
+      1.0
+     ]
+    },
+    "Oct 18 recorder | clean single ball": {
+     "n": 4,
+     "right": 0,
+     "confidently wrong": 0,
+     "unsure": 4,
+     "reader right": 2,
+     "reader confidently wrong": 2,
+     "reader unsure": 0,
+     "cut": [
+      0.026785714285714284,
+      1.0
+     ]
+    },
+    "Oct 19 recorder | clean single ball": {
+     "n": 4,
+     "right": 2,
+     "confidently wrong": 1,
+     "unsure": 1,
+     "reader right": 2,
+     "reader confidently wrong": 2,
+     "reader unsure": 0,
+     "cut": [
+      0.0625,
+      1.0
+     ]
+    }
+   }
+  },
+  "8 vs 2": {
+   "m": {
+    "Oct 17 far spot | another ball in the square": {
+     "n": 1,
+     "right": 0,
+     "confidently wrong": 0,
+     "unsure": 1,
+     "reader right": 1,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.6869925856590271,
+      0.8136528730392456
+     ]
+    },
+    "Oct 17 far spot | clean single ball": {
+     "n": 1,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 0,
+     "reader confidently wrong": 0,
+     "reader unsure": 1,
+     "cut": [
+      0.6869925856590271,
+      0.8136528730392456
+     ]
+    },
+    "Oct 17 far spot | touching or overlapping": {
+     "n": 3,
+     "right": 3,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 2,
+     "reader confidently wrong": 0,
+     "reader unsure": 1,
+     "cut": [
+      0.6869925856590271,
+      0.8136528730392456
+     ]
+    },
+    "Oct 16 close side | clean single ball": {
+     "n": 12,
+     "right": 12,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 12,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.6869925856590271,
+      0.7366624474525452
+     ]
+    },
+    "Oct 16 close side | touching or overlapping": {
+     "n": 1,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 0,
+     "reader confidently wrong": 0,
+     "reader unsure": 1,
+     "cut": [
+      0.6869925856590271,
+      0.7366624474525452
+     ]
+    },
+    "Oct 17 other side | clean single ball": {
+     "n": 6,
+     "right": 6,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 3,
+     "reader confidently wrong": 3,
+     "reader unsure": 0,
+     "cut": [
+      0.6869925856590271,
+      0.7366624474525452
+     ]
+    },
+    "Oct 17 recorder | clean single ball": {
+     "n": 2,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 1,
+     "reader right": 2,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.6798655390739441,
+      0.7366624474525452
+     ]
+    },
+    "Oct 18 recorder | clean single ball": {
+     "n": 4,
+     "right": 4,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 4,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.6869925856590271,
+      0.7366624474525452
+     ]
+    },
+    "Oct 19 recorder | clean single ball": {
+     "n": 4,
+     "right": 4,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 4,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.6869925856590271,
+      0.7366624474525452
+     ]
+    }
+   },
+   "mn": {
+    "Oct 17 far spot | another ball in the square": {
+     "n": 1,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 1,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.6858266592025757,
+      0.697235107421875
+     ]
+    },
+    "Oct 17 far spot | clean single ball": {
+     "n": 1,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 0,
+     "reader confidently wrong": 0,
+     "reader unsure": 1,
+     "cut": [
+      0.6858266592025757,
+      0.697235107421875
+     ]
+    },
+    "Oct 17 far spot | touching or overlapping": {
+     "n": 3,
+     "right": 3,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 2,
+     "reader confidently wrong": 0,
+     "reader unsure": 1,
+     "cut": [
+      0.6858266592025757,
+      0.697235107421875
+     ]
+    },
+    "Oct 16 close side | clean single ball": {
+     "n": 12,
+     "right": 12,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 12,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.6858266592025757,
+      0.697235107421875
+     ]
+    },
+    "Oct 16 close side | touching or overlapping": {
+     "n": 1,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 0,
+     "reader confidently wrong": 0,
+     "reader unsure": 1,
+     "cut": [
+      0.6858266592025757,
+      0.697235107421875
+     ]
+    },
+    "Oct 17 other side | clean single ball": {
+     "n": 6,
+     "right": 6,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 3,
+     "reader confidently wrong": 3,
+     "reader unsure": 0,
+     "cut": [
+      0.6858266592025757,
+      0.697235107421875
+     ]
+    },
+    "Oct 17 recorder | clean single ball": {
+     "n": 2,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 1,
+     "reader right": 2,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.6733558177947998,
+      0.697235107421875
+     ]
+    },
+    "Oct 18 recorder | clean single ball": {
+     "n": 4,
+     "right": 2,
+     "confidently wrong": 0,
+     "unsure": 2,
+     "reader right": 4,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.6858266592025757,
+      0.7392756342887878
+     ]
+    },
+    "Oct 19 recorder | clean single ball": {
+     "n": 4,
+     "right": 4,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 4,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.6858266592025757,
+      0.697235107421875
+     ]
+    }
+   }
+  },
+  "7 vs 4": {
+   "m": {
+    "Oct 17 far spot | clean single ball": {
+     "n": 2,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 1,
+     "reader right": 0,
+     "reader confidently wrong": 0,
+     "reader unsure": 2,
+     "cut": [
+      0.08031149953603745,
+      0.3256535232067108
+     ]
+    },
+    "Oct 16 close side | clean single ball": {
+     "n": 15,
+     "right": 15,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 14,
+     "reader confidently wrong": 0,
+     "reader unsure": 1,
+     "cut": [
+      0.08031149953603745,
+      0.28297972679138184
+     ]
+    },
+    "Oct 17 other side | clean single ball": {
+     "n": 6,
+     "right": 5,
+     "confidently wrong": 0,
+     "unsure": 1,
+     "reader right": 3,
+     "reader confidently wrong": 0,
+     "reader unsure": 3,
+     "cut": [
+      0.07460203766822815,
+      0.28297972679138184
+     ]
+    },
+    "Oct 17 recorder | another ball in the square": {
+     "n": 1,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 1,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.08031149953603745,
+      0.28297972679138184
+     ]
+    },
+    "Oct 17 recorder | clean single ball": {
+     "n": 1,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 1,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.08031149953603745,
+      0.28297972679138184
+     ]
+    },
+    "Oct 18 recorder | clean single ball": {
+     "n": 4,
+     "right": 4,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 4,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.08031149953603745,
+      0.28297972679138184
+     ]
+    },
+    "Oct 19 recorder | clean single ball": {
+     "n": 3,
+     "right": 3,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 2,
+     "reader confidently wrong": 1,
+     "reader unsure": 0,
+     "cut": [
+      0.08031149953603745,
+      0.28297972679138184
+     ]
+    }
+   },
+   "mn": {
+    "Oct 17 far spot | clean single ball": {
+     "n": 2,
+     "right": 1,
+     "confidently wrong": 1,
+     "unsure": 0,
+     "reader right": 0,
+     "reader confidently wrong": 0,
+     "reader unsure": 2,
+     "cut": [
+      -0.23781153559684753,
+      0.09884332120418549
+     ]
+    },
+    "Oct 16 close side | clean single ball": {
+     "n": 15,
+     "right": 4,
+     "confidently wrong": 0,
+     "unsure": 11,
+     "reader right": 14,
+     "reader confidently wrong": 0,
+     "reader unsure": 1,
+     "cut": [
+      -0.23781153559684753,
+      0.3643246293067932
+     ]
+    },
+    "Oct 17 other side | clean single ball": {
+     "n": 6,
+     "right": 2,
+     "confidently wrong": 0,
+     "unsure": 4,
+     "reader right": 3,
+     "reader confidently wrong": 0,
+     "reader unsure": 3,
+     "cut": [
+      -0.23781153559684753,
+      0.3643246293067932
+     ]
+    },
+    "Oct 17 recorder | another ball in the square": {
+     "n": 1,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 1,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      -0.23781153559684753,
+      0.3643246293067932
+     ]
+    },
+    "Oct 17 recorder | clean single ball": {
+     "n": 1,
+     "right": 0,
+     "confidently wrong": 0,
+     "unsure": 1,
+     "reader right": 1,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      -0.23781153559684753,
+      0.3643246293067932
+     ]
+    },
+    "Oct 18 recorder | clean single ball": {
+     "n": 4,
+     "right": 2,
+     "confidently wrong": 2,
+     "unsure": 0,
+     "reader right": 4,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      0.27834150195121765,
+      0.3643246293067932
+     ]
+    },
+    "Oct 19 recorder | clean single ball": {
+     "n": 3,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 2,
+     "reader right": 2,
+     "reader confidently wrong": 1,
+     "reader unsure": 0,
+     "cut": [
+      -0.23781153559684753,
+      0.3643246293067932
+     ]
+    }
+   }
+  },
+  "5 vs 3": {
+   "m": {
+    "Oct 17 far spot | clean single ball": {
+     "n": 6,
+     "right": 5,
+     "confidently wrong": 0,
+     "unsure": 1,
+     "reader right": 5,
+     "reader confidently wrong": 1,
+     "reader unsure": 0,
+     "cut": [
+      -17.080596923828125,
+      2.855785369873047
+     ]
+    },
+    "Oct 16 close side | clean single ball": {
+     "n": 9,
+     "right": 9,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 9,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      -17.080596923828125,
+      -2.1813855171203613
+     ]
+    },
+    "Oct 17 other side | clean single ball": {
+     "n": 6,
+     "right": 6,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 6,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      -17.080596923828125,
+      -2.1813855171203613
+     ]
+    },
+    "Oct 17 recorder | clean single ball": {
+     "n": 2,
+     "right": 2,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 2,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      -17.080596923828125,
+      -2.1813855171203613
+     ]
+    },
+    "Oct 18 recorder | clean single ball": {
+     "n": 3,
+     "right": 3,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 3,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      -17.080596923828125,
+      -2.1813855171203613
+     ]
+    },
+    "Oct 19 recorder | clean single ball": {
+     "n": 3,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 2,
+     "reader right": 3,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      -18.974199295043945,
+      -2.1813855171203613
+     ]
+    }
+   },
+   "mn": {
+    "Oct 17 far spot | clean single ball": {
+     "n": 6,
+     "right": 5,
+     "confidently wrong": 0,
+     "unsure": 1,
+     "reader right": 5,
+     "reader confidently wrong": 1,
+     "reader unsure": 0,
+     "cut": [
+      -9.764338493347168,
+      4.12062931060791
+     ]
+    },
+    "Oct 16 close side | clean single ball": {
+     "n": 9,
+     "right": 9,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 9,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      -9.764338493347168,
+      -1.119192123413086
+     ]
+    },
+    "Oct 17 other side | clean single ball": {
+     "n": 6,
+     "right": 6,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 6,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      -9.764338493347168,
+      -1.119192123413086
+     ]
+    },
+    "Oct 17 recorder | clean single ball": {
+     "n": 2,
+     "right": 2,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 2,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      -9.764338493347168,
+      -1.119192123413086
+     ]
+    },
+    "Oct 18 recorder | clean single ball": {
+     "n": 3,
+     "right": 1,
+     "confidently wrong": 0,
+     "unsure": 2,
+     "reader right": 3,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      -12.198650360107422,
+      -1.119192123413086
+     ]
+    },
+    "Oct 19 recorder | clean single ball": {
+     "n": 3,
+     "right": 3,
+     "confidently wrong": 0,
+     "unsure": 0,
+     "reader right": 3,
+     "reader confidently wrong": 0,
+     "reader unsure": 0,
+     "cut": [
+      -9.764338493347168,
+      -1.119192123413086
+     ]
+    }
+   }
+  },
+  "ball vs not a ball m": {
+   "Oct 17 far spot | ball": {
+    "n": 34,
+    "right": 34,
+    "confidently wrong": 0,
+    "unsure": 0,
+    "reader right": 25,
+    "reader confidently wrong": 5,
+    "reader unsure": 4
+   },
+   "Oct 16 close side | ball": {
+    "n": 71,
+    "right": 71,
+    "confidently wrong": 0,
+    "unsure": 0,
+    "reader right": 69,
+    "reader confidently wrong": 2,
+    "reader unsure": 0
+   },
+   "Oct 17 other side | ball": {
+    "n": 27,
+    "right": 27,
+    "confidently wrong": 0,
+    "unsure": 0,
+    "reader right": 27,
+    "reader confidently wrong": 0,
+    "reader unsure": 0
+   },
+   "Oct 17 recorder | ball": {
+    "n": 16,
+    "right": 16,
+    "confidently wrong": 0,
+    "unsure": 0,
+    "reader right": 16,
+    "reader confidently wrong": 0,
+    "reader unsure": 0
+   },
+   "Oct 18 recorder | ball": {
+    "n": 19,
+    "right": 19,
+    "confidently wrong": 0,
+    "unsure": 0,
+    "reader right": 19,
+    "reader confidently wrong": 0,
+    "reader unsure": 0
+   },
+   "Oct 19 recorder | ball": {
+    "n": 19,
+    "right": 19,
+    "confidently wrong": 0,
+    "unsure": 0,
+    "reader right": 19,
+    "reader confidently wrong": 0,
+    "reader unsure": 0
+   },
+   "light step clip012 (by eye: all balls)": {
+    "n": 16,
+    "ball": 16,
+    "no ball": 0,
+    "unsure": 0,
+    "reader not a ball": 15,
+    "cut": [
+     0.25,
+     0.5
+    ]
+   },
+   "light step clip013 (by eye: all balls)": {
+    "n": 16,
+    "ball": 16,
+    "no ball": 0,
+    "unsure": 0,
+    "reader not a ball": 16,
+    "cut": [
+     0.25,
+     0.5
+    ]
+   },
+   "light step clip014 (by eye: all balls)": {
+    "n": 16,
+    "ball": 16,
+    "no ball": 0,
+    "unsure": 0,
+    "reader not a ball": 4,
+    "cut": [
+     0.25,
+     0.5
+    ]
+   }
+  },
+  "ball vs not a ball mn": {
+   "Oct 17 far spot | ball": {
+    "n": 34,
+    "right": 34,
+    "confidently wrong": 0,
+    "unsure": 0,
+    "reader right": 25,
+    "reader confidently wrong": 5,
+    "reader unsure": 4
+   },
+   "Oct 16 close side | ball": {
+    "n": 71,
+    "right": 71,
+    "confidently wrong": 0,
+    "unsure": 0,
+    "reader right": 69,
+    "reader confidently wrong": 2,
+    "reader unsure": 0
+   },
+   "Oct 17 other side | ball": {
+    "n": 27,
+    "right": 27,
+    "confidently wrong": 0,
+    "unsure": 0,
+    "reader right": 27,
+    "reader confidently wrong": 0,
+    "reader unsure": 0
+   },
+   "Oct 17 recorder | ball": {
+    "n": 16,
+    "right": 16,
+    "confidently wrong": 0,
+    "unsure": 0,
+    "reader right": 16,
+    "reader confidently wrong": 0,
+    "reader unsure": 0
+   },
+   "Oct 18 recorder | ball": {
+    "n": 19,
+    "right": 19,
+    "confidently wrong": 0,
+    "unsure": 0,
+    "reader right": 19,
+    "reader confidently wrong": 0,
+    "reader unsure": 0
+   },
+   "Oct 19 recorder | ball": {
+    "n": 19,
+    "right": 19,
+    "confidently wrong": 0,
+    "unsure": 0,
+    "reader right": 19,
+    "reader confidently wrong": 0,
+    "reader unsure": 0
+   },
+   "light step clip012 (by eye: all balls)": {
+    "n": 16,
+    "ball": 16,
+    "no ball": 0,
+    "unsure": 0,
+    "reader not a ball": 15,
+    "cut": [
+     0.25,
+     0.5
+    ]
+   },
+   "light step clip013 (by eye: all balls)": {
+    "n": 16,
+    "ball": 16,
+    "no ball": 0,
+    "unsure": 0,
+    "reader not a ball": 16,
+    "cut": [
+     0.25,
+     0.5
+    ]
+   },
+   "light step clip014 (by eye: all balls)": {
+    "n": 16,
+    "ball": 16,
+    "no ball": 0,
+    "unsure": 0,
+    "reader not a ball": 4,
+    "cut": [
+     0.25,
+     0.5
+    ]
+   }
+  }
+ },
+ "veto": {
+  "m": {
+   "Oct 17 other side | clean single ball": {
+    "sure right": 21,
+    "sure wrong": 3,
+    "sure wrong -> unsure": 3,
+    "sure right -> unsure": 0
+   },
+   "ALL": {
+    "sure right": 148,
+    "sure wrong": 13,
+    "sure wrong -> unsure": 6,
+    "sure right -> unsure": 2
+   },
+   "by pair 8 vs 2": {
+    "sure right": 0,
+    "sure wrong": 0,
+    "sure wrong -> unsure": 3,
+    "sure right -> unsure": 0
+   },
+   "Oct 17 far spot | another ball in the square": {
+    "sure right": 2,
+    "sure wrong": 1,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 0
+   },
+   "Oct 17 far spot | clean single ball": {
+    "sure right": 14,
+    "sure wrong": 1,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 0
+   },
+   "Oct 17 far spot | touching or overlapping": {
+    "sure right": 2,
+    "sure wrong": 3,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 0
+   },
+   "Oct 17 recorder | clean single ball": {
+    "sure right": 9,
+    "sure wrong": 0,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 0
+   },
+   "Oct 17 recorder | another ball in the square": {
+    "sure right": 1,
+    "sure wrong": 0,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 0
+   },
+   "Oct 18 recorder | clean single ball": {
+    "sure right": 17,
+    "sure wrong": 2,
+    "sure wrong -> unsure": 2,
+    "sure right -> unsure": 2
+   },
+   "by pair 9 vs cue": {
+    "sure right": 0,
+    "sure wrong": 0,
+    "sure wrong -> unsure": 2,
+    "sure right -> unsure": 2
+   },
+   "Oct 19 recorder | clean single ball": {
+    "sure right": 15,
+    "sure wrong": 3,
+    "sure wrong -> unsure": 1,
+    "sure right -> unsure": 0
+   },
+   "by pair 7 vs 4": {
+    "sure right": 0,
+    "sure wrong": 0,
+    "sure wrong -> unsure": 1,
+    "sure right -> unsure": 0
+   },
+   "Oct 16 close side | clean single ball": {
+    "sure right": 67,
+    "sure wrong": 0,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 0
+   }
+  },
+  "mn": {
+   "Oct 17 other side | clean single ball": {
+    "sure right": 21,
+    "sure wrong": 3,
+    "sure wrong -> unsure": 3,
+    "sure right -> unsure": 0
+   },
+   "ALL": {
+    "sure right": 148,
+    "sure wrong": 13,
+    "sure wrong -> unsure": 5,
+    "sure right -> unsure": 8
+   },
+   "by pair 8 vs 2": {
+    "sure right": 0,
+    "sure wrong": 0,
+    "sure wrong -> unsure": 3,
+    "sure right -> unsure": 0
+   },
+   "Oct 17 far spot | another ball in the square": {
+    "sure right": 2,
+    "sure wrong": 1,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 1
+   },
+   "Oct 17 far spot | clean single ball": {
+    "sure right": 14,
+    "sure wrong": 1,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 5
+   },
+   "by pair 9 vs cue": {
+    "sure right": 0,
+    "sure wrong": 0,
+    "sure wrong -> unsure": 2,
+    "sure right -> unsure": 6
+   },
+   "Oct 17 far spot | touching or overlapping": {
+    "sure right": 2,
+    "sure wrong": 3,
+    "sure wrong -> unsure": 2,
+    "sure right -> unsure": 0
+   },
+   "Oct 17 recorder | clean single ball": {
+    "sure right": 9,
+    "sure wrong": 0,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 0
+   },
+   "Oct 17 recorder | another ball in the square": {
+    "sure right": 1,
+    "sure wrong": 0,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 0
+   },
+   "Oct 18 recorder | clean single ball": {
+    "sure right": 17,
+    "sure wrong": 2,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 2
+   },
+   "by pair 7 vs 4": {
+    "sure right": 0,
+    "sure wrong": 0,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 2
+   },
+   "Oct 19 recorder | clean single ball": {
+    "sure right": 15,
+    "sure wrong": 3,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 0
+   },
+   "Oct 16 close side | clean single ball": {
+    "sure right": 67,
+    "sure wrong": 0,
+    "sure wrong -> unsure": 0,
+    "sure right -> unsure": 0
+   }
+  }
+ },
+ "light": {
+  "light steps 12-14 (by eye)": {
+   "n": 48,
+   "not a ball as captured": 35,
+   "not a ball, cloth replaced": 0,
+   "not a ball, white balance": 2
+  },
+  "verified balls, Oct 17 far spot": {
+   "n": 34,
+   "not a ball as captured": 7,
+   "named right as captured": 18,
+   "not a ball, cloth replaced": 4,
+   "named right, cloth replaced": 22,
+   "confidently wrong, cloth replaced": 8,
+   "not a ball, white balance": 3,
+   "named right, white balance": 19,
+   "confidently wrong, white balance": 11,
+   "confidently wrong as captured": 5
+  },
+  "verified balls, Oct 16 close side": {
+   "n": 71,
+   "not a ball as captured": 2,
+   "named right as captured": 67,
+   "not a ball, cloth replaced": 2,
+   "named right, cloth replaced": 66,
+   "confidently wrong, cloth replaced": 0,
+   "not a ball, white balance": 1,
+   "named right, white balance": 67,
+   "confidently wrong, white balance": 0,
+   "confidently wrong as captured": 0
+  },
+  "verified balls, Oct 17 other side": {
+   "n": 27,
+   "not a ball as captured": 0,
+   "named right as captured": 21,
+   "not a ball, cloth replaced": 0,
+   "named right, cloth replaced": 19,
+   "confidently wrong, cloth replaced": 4,
+   "not a ball, white balance": 0,
+   "named right, white balance": 17,
+   "confidently wrong, white balance": 7,
+   "confidently wrong as captured": 3
+  },
+  "verified balls, Oct 17 recorder": {
+   "n": 16,
+   "not a ball as captured": 0,
+   "named right as captured": 10,
+   "not a ball, cloth replaced": 0,
+   "named right, cloth replaced": 9,
+   "confidently wrong, cloth replaced": 1,
+   "not a ball, white balance": 0,
+   "named right, white balance": 10,
+   "confidently wrong, white balance": 0,
+   "confidently wrong as captured": 0
+  },
+  "verified balls, Oct 18 recorder": {
+   "n": 19,
+   "not a ball as captured": 0,
+   "named right as captured": 17,
+   "not a ball, cloth replaced": 0,
+   "named right, cloth replaced": 16,
+   "confidently wrong, cloth replaced": 3,
+   "not a ball, white balance": 0,
+   "named right, white balance": 7,
+   "confidently wrong, white balance": 9,
+   "confidently wrong as captured": 2
+  },
+  "verified balls, Oct 19 recorder": {
+   "n": 19,
+   "not a ball as captured": 0,
+   "named right as captured": 15,
+   "not a ball, cloth replaced": 0,
+   "named right, cloth replaced": 15,
+   "confidently wrong, cloth replaced": 3,
+   "not a ball, white balance": 0,
+   "named right, white balance": 15,
+   "confidently wrong, white balance": 3,
+   "confidently wrong as captured": 3
+  }
+ },
+ "counts": {
+  "Oct 17 other side | ball | clean single ball": 27,
+  "Oct 17 far spot | ball | another ball in the square": 3,
+  "Oct 17 far spot | ball | clean single ball": 22,
+  "Oct 17 far spot | ball | touching or overlapping": 7,
+  "Oct 17 far spot | ball, number not verified | clean single ball": 2,
+  "Oct 17 recorder | ball | clean single ball": 9,
+  "Oct 17 recorder | ball | another ball in the square": 1,
+  "Oct 17 recorder | ball, number not verified | clean single ball": 4,
+  "Oct 17 recorder | ball, number not verified | another ball in the square": 2,
+  "Oct 18 recorder | ball | clean single ball": 19,
+  "Oct 19 recorder | ball, number not verified | clean single ball": 1,
+  "Oct 19 recorder | ball | clean single ball": 18,
+  "Oct 16 close side | ball | clean single ball": 68,
+  "Oct 16 close side | ball, number not verified | clean single ball": 1,
+  "Oct 16 close side | ball | touching or overlapping": 1,
+  "Oct 16 close side | ball, number not verified | touching or overlapping": 1
+ },
+ "examples": [
+  {
+   "id": "otherside:shot001:0",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.08,
+    "colour": 0.812,
+    "dark": 0.0,
+    "hue": -21.137,
+    "blue": -0.396
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.08,
+    "colour": 0.866,
+    "dark": 0.0,
+    "hue": -15.101,
+    "blue": -0.517
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "otherside:shot001:1",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.973,
+    "colour": 0.009,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": 0.314
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.991,
+    "colour": 0.0,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": NaN
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 0
+   }
+  },
+  {
+   "id": "otherside:shot001:2",
+   "truth": 5,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.94,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.143,
+    "colour": 0.741,
+    "dark": 0.0,
+    "hue": 7.889,
+    "blue": -0.442
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.071,
+    "colour": 0.884,
+    "dark": 0.0,
+    "hue": 6.337,
+    "blue": -0.515
+   },
+   "calls": {
+    "5 vs 3/m": 5,
+    "5 vs 3/mn": 5
+   }
+  },
+  {
+   "id": "otherside:shot001:3",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.929,
+    "dark": 0.0,
+    "hue": 178.22,
+    "blue": 0.666
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.161,
+    "colour": 0.705,
+    "dark": 0.0,
+    "hue": -179.391,
+    "blue": 0.547
+   },
+   "calls": {}
+  },
+  {
+   "id": "otherside:shot001:4",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 0.99,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.946,
+    "dark": 0.0,
+    "hue": -163.188,
+    "blue": 0.665
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.545,
+    "dark": 0.0,
+    "hue": -157.529,
+    "blue": 0.417
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "otherside:shot001:5",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.57,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.089,
+    "colour": 0.304,
+    "dark": 0.0,
+    "hue": -74.768,
+    "blue": 0.045
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.482,
+    "dark": 0.0,
+    "hue": -19.019,
+    "blue": -0.103
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "otherside:shot001:6",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.438,
+    "colour": 0.5,
+    "dark": 0.0,
+    "hue": 44.187,
+    "blue": -0.626
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.455,
+    "colour": 0.545,
+    "dark": 0.0,
+    "hue": 41.084,
+    "blue": -0.683
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "otherside:shot001:7",
+   "truth": 4,
+   "view": "clean single ball",
+   "reader": 4,
+   "p": 0.97,
+   "nb": 0.03,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.098,
+    "colour": 0.652,
+    "dark": 0.0,
+    "hue": -133.296,
+    "blue": 0.406
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.125,
+    "colour": 0.625,
+    "dark": 0.0,
+    "hue": -129.615,
+    "blue": 0.367
+   },
+   "calls": {
+    "7 vs 4/m": 4,
+    "7 vs 4/mn": 4
+   }
+  },
+  {
+   "id": "otherside:shot001:8",
+   "truth": 2,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -160.662,
+    "blue": 0.814
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": -159.491,
+    "blue": 0.774
+   },
+   "calls": {
+    "8 vs 2/m": 2,
+    "8 vs 2/mn": 2
+   }
+  },
+  {
+   "id": "otherside:shot002:0",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.821,
+    "dark": 0.0,
+    "hue": -22.728,
+    "blue": -0.36
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.866,
+    "dark": 0.0,
+    "hue": -15.577,
+    "blue": -0.499
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "otherside:shot002:1",
+   "truth": 5,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.76,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.143,
+    "colour": 0.732,
+    "dark": 0.0,
+    "hue": 6.349,
+    "blue": -0.421
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.152,
+    "colour": 0.777,
+    "dark": 0.0,
+    "hue": 6.231,
+    "blue": -0.493
+   },
+   "calls": {
+    "5 vs 3/m": 5,
+    "5 vs 3/mn": 5
+   }
+  },
+  {
+   "id": "otherside:shot002:2",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.938,
+    "colour": 0.009,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": 0.3
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.991,
+    "colour": 0.0,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": NaN
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 0
+   }
+  },
+  {
+   "id": "otherside:shot002:3",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 0.99,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.027,
+    "colour": 0.964,
+    "dark": 0.0,
+    "hue": -163.37,
+    "blue": 0.68
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.098,
+    "colour": 0.598,
+    "dark": 0.0,
+    "hue": -159.561,
+    "blue": 0.483
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "otherside:shot002:4",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.946,
+    "dark": 0.0,
+    "hue": 179.362,
+    "blue": 0.673
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.17,
+    "colour": 0.786,
+    "dark": 0.0,
+    "hue": -178.211,
+    "blue": 0.62
+   },
+   "calls": {}
+  },
+  {
+   "id": "otherside:shot002:5",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 0.51,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.062,
+    "colour": 0.375,
+    "dark": 0.0,
+    "hue": -82.741,
+    "blue": 0.08
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.598,
+    "dark": 0.0,
+    "hue": -32.54,
+    "blue": -0.098
+   },
+   "calls": {
+    "7 vs 4/m": "unsure",
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "otherside:shot002:6",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.402,
+    "colour": 0.527,
+    "dark": 0.0,
+    "hue": 44.564,
+    "blue": -0.614
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.411,
+    "colour": 0.536,
+    "dark": 0.0,
+    "hue": 41.852,
+    "blue": -0.646
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "otherside:shot002:7",
+   "truth": 4,
+   "view": "clean single ball",
+   "reader": 4,
+   "p": 0.92,
+   "nb": 0.07,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.08,
+    "colour": 0.75,
+    "dark": 0.0,
+    "hue": -128.671,
+    "blue": 0.397
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.107,
+    "colour": 0.67,
+    "dark": 0.0,
+    "hue": -125.34,
+    "blue": 0.353
+   },
+   "calls": {
+    "7 vs 4/m": 4,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "otherside:shot002:8",
+   "truth": 2,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -159.522,
+    "blue": 0.847
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": -158.864,
+    "blue": 0.833
+   },
+   "calls": {
+    "8 vs 2/m": 2,
+    "8 vs 2/mn": 2
+   }
+  },
+  {
+   "id": "otherside:shot003:0",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.33,
+    "colour": 0.589,
+    "dark": 0.0,
+    "hue": 44.267,
+    "blue": -0.626
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.321,
+    "colour": 0.661,
+    "dark": 0.0,
+    "hue": 38.967,
+    "blue": -0.69
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "otherside:shot003:1",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 0.99,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.92,
+    "dark": 0.0,
+    "hue": -163.191,
+    "blue": 0.665
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.089,
+    "colour": 0.679,
+    "dark": 0.0,
+    "hue": -158.852,
+    "blue": 0.495
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "otherside:shot003:2",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.08,
+    "colour": 0.839,
+    "dark": 0.0,
+    "hue": -20.383,
+    "blue": -0.422
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.875,
+    "dark": 0.0,
+    "hue": -15.592,
+    "blue": -0.518
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "otherside:shot003:3",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.929,
+    "dark": 0.0,
+    "hue": 177.371,
+    "blue": 0.672
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.152,
+    "colour": 0.786,
+    "dark": 0.0,
+    "hue": 179.241,
+    "blue": 0.617
+   },
+   "calls": {}
+  },
+  {
+   "id": "otherside:shot003:4",
+   "truth": 5,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.82,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.161,
+    "colour": 0.732,
+    "dark": 0.0,
+    "hue": 7.519,
+    "blue": -0.452
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.143,
+    "colour": 0.786,
+    "dark": 0.0,
+    "hue": 6.109,
+    "blue": -0.49
+   },
+   "calls": {
+    "5 vs 3/m": 5,
+    "5 vs 3/mn": 5
+   }
+  },
+  {
+   "id": "otherside:shot003:5",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.5,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.071,
+    "colour": 0.33,
+    "dark": 0.0,
+    "hue": -69.753,
+    "blue": 0.047
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.554,
+    "dark": 0.0,
+    "hue": -18.788,
+    "blue": -0.14
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "otherside:shot003:6",
+   "truth": 4,
+   "view": "clean single ball",
+   "reader": 4,
+   "p": 0.92,
+   "nb": 0.07,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.214,
+    "colour": 0.536,
+    "dark": 0.0,
+    "hue": -136.29,
+    "blue": 0.393
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.232,
+    "colour": 0.518,
+    "dark": 0.0,
+    "hue": -136.589,
+    "blue": 0.382
+   },
+   "calls": {
+    "7 vs 4/m": 4,
+    "7 vs 4/mn": 4
+   }
+  },
+  {
+   "id": "otherside:shot003:7",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.955,
+    "colour": 0.009,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": 0.11
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.964,
+    "colour": 0.0,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": 0.051
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 0
+   }
+  },
+  {
+   "id": "otherside:shot003:8",
+   "truth": 2,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 0.964,
+    "white": 0.0,
+    "colour": 0.964,
+    "dark": 0.0,
+    "hue": -160.462,
+    "blue": 0.86
+   },
+   "mn": {
+    "ballness": 0.973,
+    "white": 0.0,
+    "colour": 0.973,
+    "dark": 0.0,
+    "hue": -160.382,
+    "blue": 0.852
+   },
+   "calls": {
+    "8 vs 2/m": 2,
+    "8 vs 2/mn": 2
+   }
+  },
+  {
+   "id": "firstspot:shot002:0",
+   "truth": 9,
+   "view": "another ball in the square",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.714,
+    "colour": 0.027,
+    "dark": 0.0,
+    "hue": -170.943,
+    "blue": 0.106
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.67,
+    "colour": 0.062,
+    "dark": 0.0,
+    "hue": -175.466,
+    "blue": 0.171
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "firstspot:shot002:1",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.83,
+    "dark": 0.0,
+    "hue": -28.389,
+    "blue": -0.294
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.821,
+    "dark": 0.0,
+    "hue": -21.354,
+    "blue": -0.364
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "firstspot:shot002:2",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 0.89,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -179.125,
+    "blue": 0.599
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -179.505,
+    "blue": 0.616
+   },
+   "calls": {}
+  },
+  {
+   "id": "firstspot:shot002:3",
+   "truth": 5,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.759,
+    "dark": 0.0,
+    "hue": -2.181,
+    "blue": -0.409
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.089,
+    "colour": 0.804,
+    "dark": 0.0,
+    "hue": -1.119,
+    "blue": -0.485
+   },
+   "calls": {
+    "5 vs 3/m": "unsure",
+    "5 vs 3/mn": "unsure"
+   }
+  },
+  {
+   "id": "firstspot:shot002:4",
+   "truth": 1,
+   "view": "clean single ball",
+   "reader": 1,
+   "p": 0.96,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.098,
+    "colour": 0.679,
+    "dark": 0.0,
+    "hue": 38.808,
+    "blue": -0.517
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.098,
+    "colour": 0.714,
+    "dark": 0.0,
+    "hue": 35.755,
+    "blue": -0.55
+   },
+   "calls": {}
+  },
+  {
+   "id": "firstspot:shot002:5",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.777,
+    "colour": 0.161,
+    "dark": 0.0,
+    "hue": -170.653,
+    "blue": 0.334
+   },
+   "mn": {
+    "ballness": 0.991,
+    "white": 0.616,
+    "colour": 0.277,
+    "dark": 0.0,
+    "hue": -171.893,
+    "blue": 0.377
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 9
+   }
+  },
+  {
+   "id": "firstspot:shot002:6",
+   "truth": 2,
+   "view": "another ball in the square",
+   "reader": 2,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 0.982,
+    "white": 0.054,
+    "colour": 0.884,
+    "dark": 0.0,
+    "hue": -161.504,
+    "blue": 0.737
+   },
+   "mn": {
+    "ballness": 0.982,
+    "white": 0.107,
+    "colour": 0.857,
+    "dark": 0.0,
+    "hue": -162.932,
+    "blue": 0.739
+   },
+   "calls": {
+    "8 vs 2/m": "unsure",
+    "8 vs 2/mn": 2
+   }
+  },
+  {
+   "id": "firstspot:shot002:7",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 0.51,
+   "nb": 0.01,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.83,
+    "dark": 0.0,
+    "hue": -163.659,
+    "blue": 0.453
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.973,
+    "dark": 0.0,
+    "hue": -167.677,
+    "blue": 0.542
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "firstspot:shot004:0",
+   "truth": 9,
+   "view": "touching or overlapping",
+   "reader": 0,
+   "p": 0.9,
+   "nb": 0.09,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.759,
+    "colour": 0.009,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": 0.064
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.616,
+    "colour": 0.134,
+    "dark": 0.0,
+    "hue": 179.773,
+    "blue": 0.271
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "firstspot:shot004:1",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.812,
+    "dark": 0.0,
+    "hue": -23.951,
+    "blue": -0.331
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.875,
+    "dark": 0.0,
+    "hue": -21.311,
+    "blue": -0.389
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "firstspot:shot004:2",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.92,
+    "colour": 0.018,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": 0.248
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 175.491,
+    "blue": 0.425
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 9
+   }
+  },
+  {
+   "id": "firstspot:shot004:3",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 0.9,
+   "nb": 0.0,
+   "m": {
+    "ballness": 0.991,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": -178.254,
+    "blue": 0.598
+   },
+   "mn": {
+    "ballness": 0.991,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": -179.123,
+    "blue": 0.602
+   },
+   "calls": {}
+  },
+  {
+   "id": "firstspot:shot004:4",
+   "truth": 8,
+   "view": "touching or overlapping",
+   "reader": 8,
+   "p": 0.96,
+   "nb": 0.03,
+   "m": {
+    "ballness": 0.982,
+    "white": 0.125,
+    "colour": 0.625,
+    "dark": 0.0,
+    "hue": -168.163,
+    "blue": 0.369
+   },
+   "mn": {
+    "ballness": 0.991,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": -168.355,
+    "blue": 0.553
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "firstspot:shot004:5",
+   "truth": 4,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 0.17,
+   "nb": 0.74,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.089,
+    "colour": 0.188,
+    "dark": 0.0,
+    "hue": -159.071,
+    "blue": 0.283
+   },
+   "mn": {
+    "ballness": 0.991,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": -167.736,
+    "blue": 0.598
+   },
+   "calls": {
+    "7 vs 4/m": "unsure",
+    "7 vs 4/mn": 4
+   }
+  },
+  {
+   "id": "firstspot:shot004:6",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 4,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.804,
+    "white": 0.161,
+    "colour": 0.098,
+    "dark": 0.0,
+    "hue": -152.902,
+    "blue": 0.032
+   },
+   "mn": {
+    "ballness": 0.804,
+    "white": 0.0,
+    "colour": 0.607,
+    "dark": 0.0,
+    "hue": -167.649,
+    "blue": 0.406
+   },
+   "calls": {}
+  },
+  {
+   "id": "firstspot:shot006:0",
+   "truth": 9,
+   "view": "touching or overlapping",
+   "reader": 0,
+   "p": 0.94,
+   "nb": 0.05,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.768,
+    "colour": 0.009,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": 0.034
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.527,
+    "colour": 0.196,
+    "dark": 0.0,
+    "hue": 178.618,
+    "blue": 0.285
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 9
+   }
+  },
+  {
+   "id": "firstspot:shot006:1",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.812,
+    "dark": 0.0,
+    "hue": -34.106,
+    "blue": -0.22
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.795,
+    "dark": 0.0,
+    "hue": -26.335,
+    "blue": -0.302
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "firstspot:shot006:2",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 0.91,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 179.03,
+    "blue": 0.569
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 179.913,
+    "blue": 0.604
+   },
+   "calls": {}
+  },
+  {
+   "id": "firstspot:shot006:3",
+   "truth": 8,
+   "view": "touching or overlapping",
+   "reader": 8,
+   "p": 0.95,
+   "nb": 0.04,
+   "m": {
+    "ballness": 0.982,
+    "white": 0.152,
+    "colour": 0.562,
+    "dark": 0.0,
+    "hue": -163.895,
+    "blue": 0.381
+   },
+   "mn": {
+    "ballness": 0.982,
+    "white": 0.0,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": -165.788,
+    "blue": 0.571
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "firstspot:shot006:4",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.848,
+    "colour": 0.08,
+    "dark": 0.0,
+    "hue": -170.611,
+    "blue": 0.306
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": 176.977,
+    "blue": 0.382
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 9
+   }
+  },
+  {
+   "id": "firstspot:shot006:5",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 4,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.804,
+    "white": 0.196,
+    "colour": 0.125,
+    "dark": 0.0,
+    "hue": -132.487,
+    "blue": 0.0
+   },
+   "mn": {
+    "ballness": 0.795,
+    "white": 0.0,
+    "colour": 0.598,
+    "dark": 0.0,
+    "hue": -164.848,
+    "blue": 0.392
+   },
+   "calls": {}
+  },
+  {
+   "id": "firstspot:shot008:0",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.116,
+    "colour": 0.688,
+    "dark": 0.0,
+    "hue": -37.059,
+    "blue": -0.128
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.152,
+    "colour": 0.58,
+    "dark": 0.0,
+    "hue": -74.316,
+    "blue": 0.044
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "firstspot:shot008:1",
+   "truth": 9,
+   "view": "touching or overlapping",
+   "reader": 0,
+   "p": 0.93,
+   "nb": 0.07,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.786,
+    "colour": 0.018,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": 0.054
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.357,
+    "dark": 0.0,
+    "hue": -177.972,
+    "blue": 0.304
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 9
+   }
+  },
+  {
+   "id": "firstspot:shot008:2",
+   "truth": 0,
+   "view": "another ball in the square",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.83,
+    "colour": 0.089,
+    "dark": 0.0,
+    "hue": -169.743,
+    "blue": 0.343
+   },
+   "mn": {
+    "ballness": 0.991,
+    "white": 0.0,
+    "colour": 0.679,
+    "dark": 0.0,
+    "hue": 177.541,
+    "blue": 0.361
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 9
+   }
+  },
+  {
+   "id": "firstspot:shot008:3",
+   "truth": 8,
+   "view": "touching or overlapping",
+   "reader": 8,
+   "p": 0.52,
+   "nb": 0.48,
+   "m": {
+    "ballness": 0.982,
+    "white": 0.143,
+    "colour": 0.67,
+    "dark": 0.0,
+    "hue": -163.013,
+    "blue": 0.384
+   },
+   "mn": {
+    "ballness": 0.973,
+    "white": 0.0,
+    "colour": 0.973,
+    "dark": 0.0,
+    "hue": -161.116,
+    "blue": 0.618
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "firstspot:shot008:4",
+   "truth": 6,
+   "view": "touching or overlapping",
+   "reader": 8,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.991,
+    "white": 0.036,
+    "colour": 0.911,
+    "dark": 0.0,
+    "hue": 177.59,
+    "blue": 0.382
+   },
+   "mn": {
+    "ballness": 0.991,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": -178.761,
+    "blue": 0.604
+   },
+   "calls": {}
+  },
+  {
+   "id": "firstspot:shot010:0",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 0.29,
+   "nb": 0.37,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.366,
+    "colour": 0.536,
+    "dark": 0.0,
+    "hue": 42.654,
+    "blue": -0.436
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.955,
+    "dark": 0.0,
+    "hue": 142.85,
+    "blue": 0.162
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": 9
+   }
+  },
+  {
+   "id": "firstspot:shot010:1",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.98,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.804,
+    "dark": 0.0,
+    "hue": -24.413,
+    "blue": -0.284
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.741,
+    "dark": 0.0,
+    "hue": -35.034,
+    "blue": -0.15
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "firstspot:shot010:2",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.92,
+    "colour": 0.0,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": 0.167
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 172.711,
+    "blue": 0.394
+   },
+   "calls": {
+    "9 vs cue/m": 0,
+    "9 vs cue/mn": 9
+   }
+  },
+  {
+   "id": "firstspot:shot010:3",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.12,
+   "nb": 0.87,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.0,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": -0.026
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.643,
+    "dark": 0.0,
+    "hue": -169.65,
+    "blue": 0.364
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": 4
+   }
+  },
+  {
+   "id": "firstspot:shot010:4",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.92,
+    "dark": 0.0,
+    "hue": 176.978,
+    "blue": 0.378
+   },
+   "mn": {
+    "ballness": 0.991,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": 178.773,
+    "blue": 0.581
+   },
+   "calls": {}
+  },
+  {
+   "id": "firstspot:shot012:0",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.812,
+    "colour": 0.098,
+    "dark": 0.0,
+    "hue": -171.95,
+    "blue": 0.33
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.705,
+    "colour": 0.205,
+    "dark": 0.0,
+    "hue": -175.699,
+    "blue": 0.348
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 9
+   }
+  },
+  {
+   "id": "firstspot:shot012:1",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 0.55,
+   "nb": 0.19,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.357,
+    "colour": 0.527,
+    "dark": 0.0,
+    "hue": 41.757,
+    "blue": -0.429
+   },
+   "mn": {
+    "ballness": 0.991,
+    "white": 0.0,
+    "colour": 0.911,
+    "dark": 0.0,
+    "hue": 142.148,
+    "blue": 0.156
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": 9
+   }
+  },
+  {
+   "id": "firstspot:shot012:2",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 0.44,
+   "nb": 0.56,
+   "m": {
+    "ballness": 0.964,
+    "white": 0.152,
+    "colour": 0.759,
+    "dark": 0.0,
+    "hue": 176.079,
+    "blue": 0.442
+   },
+   "mn": {
+    "ballness": 0.964,
+    "white": 0.0,
+    "colour": 0.964,
+    "dark": 0.0,
+    "hue": 177.798,
+    "blue": 0.591
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261017-1730:clip008:0",
+   "truth": 2,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": -159.217,
+    "blue": 0.883
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": -158.817,
+    "blue": 0.878
+   },
+   "calls": {
+    "8 vs 2/m": 2,
+    "8 vs 2/mn": 2
+   }
+  },
+  {
+   "id": "rec-20261017-1730:clip008:1",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.152,
+    "colour": 0.848,
+    "dark": 0.0,
+    "hue": 168.615,
+    "blue": 0.57
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.188,
+    "colour": 0.795,
+    "dark": 0.0,
+    "hue": 165.656,
+    "blue": 0.522
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261017-1730:clip008:2",
+   "truth": 1,
+   "view": "clean single ball",
+   "reader": 1,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.75,
+    "dark": 0.0,
+    "hue": 37.232,
+    "blue": -0.54
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.75,
+    "dark": 0.0,
+    "hue": 36.907,
+    "blue": -0.542
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261017-1730:clip008:3",
+   "truth": 4,
+   "view": "another ball in the square",
+   "reader": 4,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.116,
+    "colour": 0.759,
+    "dark": 0.0,
+    "hue": -130.42,
+    "blue": 0.427
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.125,
+    "colour": 0.75,
+    "dark": 0.0,
+    "hue": -125.94,
+    "blue": 0.388
+   },
+   "calls": {
+    "7 vs 4/m": 4,
+    "7 vs 4/mn": 4
+   }
+  },
+  {
+   "id": "rec-20261017-1730:clip008:4",
+   "truth": 5,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.83,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.929,
+    "dark": 0.0,
+    "hue": 3.164,
+    "blue": -0.615
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.946,
+    "dark": 0.0,
+    "hue": 4.121,
+    "blue": -0.651
+   },
+   "calls": {
+    "5 vs 3/m": 5,
+    "5 vs 3/mn": 5
+   }
+  },
+  {
+   "id": "rec-20261017-1730:clip008:5",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.795,
+    "dark": 0.0,
+    "hue": -22.834,
+    "blue": -0.378
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.786,
+    "dark": 0.0,
+    "hue": -20.667,
+    "blue": -0.389
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "rec-20261017-1730:clip008:6",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.214,
+    "colour": 0.616,
+    "dark": 0.0,
+    "hue": 43.581,
+    "blue": -0.525
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.223,
+    "colour": 0.625,
+    "dark": 0.0,
+    "hue": 38.829,
+    "blue": -0.567
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261017-1730:clip008:7",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.955,
+    "dark": 0.009,
+    "hue": -162.581,
+    "blue": 0.687
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.955,
+    "dark": 0.009,
+    "hue": -162.487,
+    "blue": 0.686
+   },
+   "calls": {
+    "8 vs 2/m": "unsure",
+    "8 vs 2/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261017-1730:clip008:8",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 0.65,
+   "nb": 0.03,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.179,
+    "colour": 0.768,
+    "dark": 0.0,
+    "hue": -163.978,
+    "blue": 0.682
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.25,
+    "colour": 0.732,
+    "dark": 0.0,
+    "hue": -163.742,
+    "blue": 0.691
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261017-1730:clip008:9",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.348,
+    "colour": 0.643,
+    "dark": 0.0,
+    "hue": 174.039,
+    "blue": 0.64
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.33,
+    "colour": 0.634,
+    "dark": 0.0,
+    "hue": 174.235,
+    "blue": 0.598
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261017-1730:clip008:10",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.821,
+    "colour": 0.125,
+    "dark": 0.0,
+    "hue": -175.907,
+    "blue": 0.283
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.83,
+    "colour": 0.107,
+    "dark": 0.0,
+    "hue": -179.691,
+    "blue": 0.244
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261017-1730:clip008:11",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 0.7,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.571,
+    "colour": 0.384,
+    "dark": 0.0,
+    "hue": -137.085,
+    "blue": 0.461
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.545,
+    "colour": 0.348,
+    "dark": 0.0,
+    "hue": -124.386,
+    "blue": 0.261
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261017-1730:clip008:12",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.92,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.312,
+    "colour": 0.571,
+    "dark": 0.0,
+    "hue": 8.931,
+    "blue": -0.391
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.366,
+    "colour": 0.58,
+    "dark": 0.0,
+    "hue": 12.134,
+    "blue": -0.385
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261017-1730:clip008:13",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.705,
+    "dark": 0.0,
+    "hue": -72.175,
+    "blue": 0.075
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.696,
+    "dark": 0.0,
+    "hue": -77.381,
+    "blue": 0.099
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261017-1730:clip008:14",
+   "truth": null,
+   "view": "another ball in the square",
+   "reader": 7,
+   "p": 0.5,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.277,
+    "colour": 0.491,
+    "dark": 0.0,
+    "hue": -60.968,
+    "blue": 0.012
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.214,
+    "colour": 0.482,
+    "dark": 0.0,
+    "hue": -48.248,
+    "blue": -0.051
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261017-1730:clip008:15",
+   "truth": null,
+   "view": "another ball in the square",
+   "reader": 0,
+   "p": 0.59,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.732,
+    "colour": 0.009,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": 0.086
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.688,
+    "colour": 0.009,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": -0.008
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261018-2310:clip001:0",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.446,
+    "dark": 0.429,
+    "hue": -165.615,
+    "blue": 0.562
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.027,
+    "colour": 0.509,
+    "dark": 0.304,
+    "hue": -42.828,
+    "blue": 0.094
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip001:1",
+   "truth": 4,
+   "view": "clean single ball",
+   "reader": 4,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.884,
+    "dark": 0.0,
+    "hue": -124.812,
+    "blue": 0.45
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.875,
+    "dark": 0.0,
+    "hue": -29.194,
+    "blue": -0.238
+   },
+   "calls": {
+    "7 vs 4/m": 4,
+    "7 vs 4/mn": 7
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip001:2",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.98,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.875,
+    "dark": 0.0,
+    "hue": -20.487,
+    "blue": -0.439
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -9.81,
+    "blue": -0.676
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip001:3",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.455,
+    "colour": 0.473,
+    "dark": 0.0,
+    "hue": 96.974,
+    "blue": -0.132
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.438,
+    "colour": 0.411,
+    "dark": 0.0,
+    "hue": 33.891,
+    "blue": -0.511
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip001:4",
+   "truth": 5,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.134,
+    "colour": 0.759,
+    "dark": 0.0,
+    "hue": 5.06,
+    "blue": -0.527
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.946,
+    "dark": 0.0,
+    "hue": 9.204,
+    "blue": -0.641
+   },
+   "calls": {
+    "5 vs 3/m": 5,
+    "5 vs 3/mn": 5
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip001:5",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": 169.536,
+    "blue": 0.571
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.098,
+    "colour": 0.688,
+    "dark": 0.0,
+    "hue": 143.381,
+    "blue": 0.135
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261018-2310:clip001:6",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.723,
+    "colour": 0.241,
+    "dark": 0.0,
+    "hue": -169.937,
+    "blue": 0.394
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.634,
+    "colour": 0.188,
+    "dark": 0.0,
+    "hue": 7.048,
+    "blue": -0.342
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip001:7",
+   "truth": 1,
+   "view": "clean single ball",
+   "reader": 1,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.812,
+    "dark": 0.0,
+    "hue": 43.1,
+    "blue": -0.626
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 31.656,
+    "blue": -0.776
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261018-2310:clip001:8",
+   "truth": 2,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.107,
+    "colour": 0.884,
+    "dark": 0.0,
+    "hue": -156.854,
+    "blue": 0.831
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.116,
+    "colour": 0.821,
+    "dark": 0.0,
+    "hue": -154.858,
+    "blue": 0.697
+   },
+   "calls": {
+    "8 vs 2/m": 2,
+    "8 vs 2/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip001:9",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.714,
+    "dark": 0.036,
+    "hue": -49.025,
+    "blue": -0.019
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.893,
+    "dark": 0.036,
+    "hue": -7.919,
+    "blue": -0.51
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": 7
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip002:0",
+   "truth": 4,
+   "view": "clean single ball",
+   "reader": 4,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.08,
+    "colour": 0.875,
+    "dark": 0.0,
+    "hue": -124.524,
+    "blue": 0.446
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.866,
+    "dark": 0.0,
+    "hue": -29.424,
+    "blue": -0.227
+   },
+   "calls": {
+    "7 vs 4/m": 4,
+    "7 vs 4/mn": 7
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip002:1",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.062,
+    "colour": 0.366,
+    "dark": 0.5,
+    "hue": -164.884,
+    "blue": 0.536
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.429,
+    "dark": 0.375,
+    "hue": -40.751,
+    "blue": 0.072
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip002:2",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 0.99,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.446,
+    "colour": 0.473,
+    "dark": 0.0,
+    "hue": 93.995,
+    "blue": -0.136
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.438,
+    "colour": 0.375,
+    "dark": 0.0,
+    "hue": 38.141,
+    "blue": -0.513
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip002:3",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.98,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.875,
+    "dark": 0.0,
+    "hue": -20.887,
+    "blue": -0.438
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -9.764,
+    "blue": -0.673
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip002:4",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.732,
+    "colour": 0.25,
+    "dark": 0.0,
+    "hue": -172.683,
+    "blue": 0.381
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.67,
+    "colour": 0.134,
+    "dark": 0.0,
+    "hue": 8.595,
+    "blue": -0.333
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip002:5",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 169.197,
+    "blue": 0.565
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.161,
+    "colour": 0.688,
+    "dark": 0.0,
+    "hue": 146.473,
+    "blue": 0.179
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261018-2310:clip002:6",
+   "truth": 2,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.107,
+    "colour": 0.893,
+    "dark": 0.0,
+    "hue": -158.746,
+    "blue": 0.832
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.143,
+    "colour": 0.821,
+    "dark": 0.0,
+    "hue": -156.856,
+    "blue": 0.727
+   },
+   "calls": {
+    "8 vs 2/m": 2,
+    "8 vs 2/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261018-2310:clip002:7",
+   "truth": 1,
+   "view": "clean single ball",
+   "reader": 1,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.83,
+    "dark": 0.0,
+    "hue": 43.385,
+    "blue": -0.646
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 31.215,
+    "blue": -0.785
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261018-2310:clip002:8",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.688,
+    "dark": 0.045,
+    "hue": -44.063,
+    "blue": -0.01
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.893,
+    "dark": 0.036,
+    "hue": -8.759,
+    "blue": -0.495
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": 7
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip001:0",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 4,
+   "p": 0.93,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.062,
+    "colour": 0.848,
+    "dark": 0.036,
+    "hue": -113.926,
+    "blue": 0.373
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.92,
+    "dark": 0.027,
+    "hue": -82.464,
+    "blue": 0.157
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261019-1710:clip001:1",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.857,
+    "colour": 0.062,
+    "dark": 0.0,
+    "hue": 171.046,
+    "blue": 0.179
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.955,
+    "colour": 0.036,
+    "dark": 0.0,
+    "hue": 14.817,
+    "blue": -0.419
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 0
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip001:2",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.17,
+    "dark": 0.732,
+    "hue": -169.817,
+    "blue": 0.593
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.134,
+    "dark": 0.759,
+    "hue": -170.962,
+    "blue": 0.539
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip001:3",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.92,
+    "dark": 0.0,
+    "hue": 160.605,
+    "blue": 0.467
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.179,
+    "colour": 0.812,
+    "dark": 0.0,
+    "hue": 154.656,
+    "blue": 0.396
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261019-1710:clip001:4",
+   "truth": 1,
+   "view": "clean single ball",
+   "reader": 1,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.875,
+    "dark": 0.0,
+    "hue": 41.187,
+    "blue": -0.671
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.938,
+    "dark": 0.0,
+    "hue": 34.699,
+    "blue": -0.702
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261019-1710:clip001:5",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.696,
+    "dark": 0.214,
+    "hue": -26.722,
+    "blue": -0.151
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.741,
+    "dark": 0.143,
+    "hue": -18.697,
+    "blue": -0.257
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": 7
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip001:6",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.973,
+    "dark": 0.0,
+    "hue": -18.027,
+    "blue": -0.537
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -12.199,
+    "blue": -0.649
+   },
+   "calls": {
+    "5 vs 3/m": "unsure",
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip001:7",
+   "truth": 2,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -159.609,
+    "blue": 0.839
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": -159.046,
+    "blue": 0.822
+   },
+   "calls": {
+    "8 vs 2/m": 2,
+    "8 vs 2/mn": 2
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip001:8",
+   "truth": 5,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": 9.675,
+    "blue": -0.702
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": 10.258,
+    "blue": -0.742
+   },
+   "calls": {
+    "5 vs 3/m": 5,
+    "5 vs 3/mn": 5
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip001:9",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.83,
+    "colour": 0.009,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": -0.026
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.741,
+    "colour": 0.134,
+    "dark": 0.0,
+    "hue": 25.905,
+    "blue": -0.317
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip002:0",
+   "truth": 4,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 0.96,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.08,
+    "colour": 0.866,
+    "dark": 0.036,
+    "hue": -107.693,
+    "blue": 0.326
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.089,
+    "colour": 0.848,
+    "dark": 0.036,
+    "hue": -100.417,
+    "blue": 0.278
+   },
+   "calls": {
+    "7 vs 4/m": 4,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip002:1",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.089,
+    "colour": 0.902,
+    "dark": 0.0,
+    "hue": 159.792,
+    "blue": 0.464
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.143,
+    "colour": 0.848,
+    "dark": 0.0,
+    "hue": 157.235,
+    "blue": 0.431
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261019-1710:clip002:2",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.875,
+    "colour": 0.036,
+    "dark": 0.0,
+    "hue": 23.343,
+    "blue": -0.019
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.884,
+    "colour": 0.036,
+    "dark": 0.0,
+    "hue": 23.338,
+    "blue": -0.09
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 0
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip002:3",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.027,
+    "colour": 0.134,
+    "dark": 0.759,
+    "hue": -170.509,
+    "blue": 0.525
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.027,
+    "colour": 0.107,
+    "dark": 0.786,
+    "hue": -170.268,
+    "blue": 0.517
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip002:4",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.679,
+    "dark": 0.17,
+    "hue": -20.865,
+    "blue": -0.181
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.705,
+    "dark": 0.17,
+    "hue": -21.2,
+    "blue": -0.181
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip002:5",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": -17.081,
+    "blue": -0.554
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -14.831,
+    "blue": -0.594
+   },
+   "calls": {
+    "5 vs 3/m": "unsure",
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip002:6",
+   "truth": 2,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -160.621,
+    "blue": 0.822
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -159.861,
+    "blue": 0.823
+   },
+   "calls": {
+    "8 vs 2/m": 2,
+    "8 vs 2/mn": 2
+   }
+  },
+  {
+   "id": "rec-20261019-1710:clip002:7",
+   "truth": 1,
+   "view": "clean single ball",
+   "reader": 1,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.875,
+    "dark": 0.0,
+    "hue": 41.537,
+    "blue": -0.682
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.893,
+    "dark": 0.0,
+    "hue": 38.986,
+    "blue": -0.691
+   },
+   "calls": {}
+  },
+  {
+   "id": "rec-20261019-1710:clip002:8",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 0.97,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.83,
+    "colour": 0.009,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": -0.08
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.812,
+    "colour": 0.027,
+    "dark": 0.0,
+    "hue": 60.601,
+    "blue": -0.211
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 0
+   }
+  },
+  {
+   "id": "oct16:shot004:0",
+   "truth": 1,
+   "view": "clean single ball",
+   "reader": 1,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.902,
+    "dark": 0.0,
+    "hue": 38.12,
+    "blue": -0.7
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.92,
+    "dark": 0.0,
+    "hue": 35.981,
+    "blue": -0.709
+   },
+   "calls": {}
+  },
+  {
+   "id": "oct16:shot004:1",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.214,
+    "colour": 0.625,
+    "dark": 0.0,
+    "hue": 38.788,
+    "blue": -0.557
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.232,
+    "colour": 0.616,
+    "dark": 0.0,
+    "hue": 43.312,
+    "blue": -0.538
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot004:2",
+   "truth": 4,
+   "view": "clean single ball",
+   "reader": 4,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.071,
+    "colour": 0.902,
+    "dark": 0.0,
+    "hue": -127.426,
+    "blue": 0.452
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.08,
+    "colour": 0.893,
+    "dark": 0.0,
+    "hue": -108.441,
+    "blue": 0.299
+   },
+   "calls": {
+    "7 vs 4/m": 4,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot004:3",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.964,
+    "dark": 0.0,
+    "hue": -18.974,
+    "blue": -0.521
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": -15.534,
+    "blue": -0.584
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "oct16:shot004:4",
+   "truth": 2,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": -158.666,
+    "blue": 0.843
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": -158.55,
+    "blue": 0.839
+   },
+   "calls": {
+    "8 vs 2/m": 2,
+    "8 vs 2/mn": 2
+   }
+  },
+  {
+   "id": "oct16:shot004:5",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.911,
+    "colour": 0.054,
+    "dark": 0.0,
+    "hue": -173.66,
+    "blue": 0.333
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.911,
+    "colour": 0.054,
+    "dark": 0.0,
+    "hue": -173.997,
+    "blue": 0.338
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot004:6",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": 166.943,
+    "blue": 0.538
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": 165.76,
+    "blue": 0.532
+   },
+   "calls": {}
+  },
+  {
+   "id": "oct16:shot004:7",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.688,
+    "dark": 0.0,
+    "hue": -41.567,
+    "blue": -0.057
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.705,
+    "dark": 0.0,
+    "hue": -29.472,
+    "blue": -0.122
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot004:8",
+   "truth": 5,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.9,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 3.994,
+    "blue": -0.671
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 4.732,
+    "blue": -0.698
+   },
+   "calls": {
+    "5 vs 3/m": 5,
+    "5 vs 3/mn": 5
+   }
+  },
+  {
+   "id": "oct16:shot004:9",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.777,
+    "dark": 0.152,
+    "hue": -162.072,
+    "blue": 0.647
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.071,
+    "colour": 0.795,
+    "dark": 0.116,
+    "hue": -162.415,
+    "blue": 0.633
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "oct16:shot005:0",
+   "truth": 4,
+   "view": "clean single ball",
+   "reader": 4,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.902,
+    "dark": 0.0,
+    "hue": -128.491,
+    "blue": 0.469
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.893,
+    "dark": 0.0,
+    "hue": -123.429,
+    "blue": 0.418
+   },
+   "calls": {
+    "7 vs 4/m": 4,
+    "7 vs 4/mn": 4
+   }
+  },
+  {
+   "id": "oct16:shot005:1",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.196,
+    "colour": 0.625,
+    "dark": 0.0,
+    "hue": 39.14,
+    "blue": -0.546
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.241,
+    "colour": 0.598,
+    "dark": 0.0,
+    "hue": 45.446,
+    "blue": -0.52
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot005:2",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.866,
+    "colour": 0.054,
+    "dark": 0.0,
+    "hue": -176.815,
+    "blue": 0.289
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.866,
+    "colour": 0.098,
+    "dark": 0.0,
+    "hue": -176.997,
+    "blue": 0.305
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot005:3",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.955,
+    "dark": 0.0,
+    "hue": -22.195,
+    "blue": -0.471
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.955,
+    "dark": 0.0,
+    "hue": -20.529,
+    "blue": -0.492
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "oct16:shot005:4",
+   "truth": 2,
+   "view": "clean single ball",
+   "reader": 2,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -157.335,
+    "blue": 0.85
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -157.714,
+    "blue": 0.846
+   },
+   "calls": {
+    "8 vs 2/m": 2,
+    "8 vs 2/mn": 2
+   }
+  },
+  {
+   "id": "oct16:shot005:5",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": 167.762,
+    "blue": 0.548
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": 168.339,
+    "blue": 0.561
+   },
+   "calls": {}
+  },
+  {
+   "id": "oct16:shot005:6",
+   "truth": 5,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.73,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": 4.047,
+    "blue": -0.659
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.955,
+    "dark": 0.0,
+    "hue": 5.471,
+    "blue": -0.655
+   },
+   "calls": {
+    "5 vs 3/m": 5,
+    "5 vs 3/mn": 5
+   }
+  },
+  {
+   "id": "oct16:shot005:7",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.795,
+    "dark": 0.0,
+    "hue": -46.207,
+    "blue": -0.036
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.795,
+    "dark": 0.0,
+    "hue": -46.897,
+    "blue": -0.03
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot005:8",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.723,
+    "dark": 0.214,
+    "hue": -158.396,
+    "blue": 0.634
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.795,
+    "dark": 0.134,
+    "hue": -160.306,
+    "blue": 0.64
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "oct16:shot006:0",
+   "truth": 4,
+   "view": "clean single ball",
+   "reader": 4,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.893,
+    "dark": 0.0,
+    "hue": -129.532,
+    "blue": 0.459
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.08,
+    "colour": 0.884,
+    "dark": 0.0,
+    "hue": -121.868,
+    "blue": 0.389
+   },
+   "calls": {
+    "7 vs 4/m": 4,
+    "7 vs 4/mn": 4
+   }
+  },
+  {
+   "id": "oct16:shot006:1",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.214,
+    "colour": 0.625,
+    "dark": 0.0,
+    "hue": 42.076,
+    "blue": -0.549
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.223,
+    "colour": 0.589,
+    "dark": 0.0,
+    "hue": 49.401,
+    "blue": -0.509
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot006:2",
+   "truth": 3,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.973,
+    "dark": 0.0,
+    "hue": -20.612,
+    "blue": -0.497
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": -17.838,
+    "blue": -0.539
+   },
+   "calls": {
+    "5 vs 3/m": 3,
+    "5 vs 3/mn": 3
+   }
+  },
+  {
+   "id": "oct16:shot006:3",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.866,
+    "colour": 0.062,
+    "dark": 0.0,
+    "hue": 169.17,
+    "blue": 0.209
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.866,
+    "colour": 0.045,
+    "dark": 0.0,
+    "hue": 163.38,
+    "blue": 0.164
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot006:4",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.973,
+    "dark": 0.0,
+    "hue": 166.413,
+    "blue": 0.536
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.973,
+    "dark": 0.0,
+    "hue": 167.085,
+    "blue": 0.544
+   },
+   "calls": {}
+  },
+  {
+   "id": "oct16:shot006:5",
+   "truth": 5,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.94,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": 5.337,
+    "blue": -0.675
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": 6.406,
+    "blue": -0.685
+   },
+   "calls": {
+    "5 vs 3/m": 5,
+    "5 vs 3/mn": 5
+   }
+  },
+  {
+   "id": "oct16:shot006:6",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 0.99,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.652,
+    "dark": 0.0,
+    "hue": -47.95,
+    "blue": -0.016
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.67,
+    "dark": 0.0,
+    "hue": -42.477,
+    "blue": -0.043
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot006:7",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.857,
+    "dark": 0.054,
+    "hue": -160.573,
+    "blue": 0.612
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.062,
+    "colour": 0.848,
+    "dark": 0.054,
+    "hue": -161.973,
+    "blue": 0.597
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "oct16:shot007:0",
+   "truth": 4,
+   "view": "clean single ball",
+   "reader": 4,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.062,
+    "colour": 0.911,
+    "dark": 0.0,
+    "hue": -131.718,
+    "blue": 0.498
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.062,
+    "colour": 0.911,
+    "dark": 0.0,
+    "hue": -125.783,
+    "blue": 0.444
+   },
+   "calls": {
+    "7 vs 4/m": 4,
+    "7 vs 4/mn": 4
+   }
+  },
+  {
+   "id": "oct16:shot007:1",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.214,
+    "colour": 0.625,
+    "dark": 0.0,
+    "hue": 41.701,
+    "blue": -0.551
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.241,
+    "colour": 0.554,
+    "dark": 0.0,
+    "hue": 49.958,
+    "blue": -0.506
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot007:2",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": 165.247,
+    "blue": 0.529
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": 165.142,
+    "blue": 0.532
+   },
+   "calls": {}
+  },
+  {
+   "id": "oct16:shot007:3",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.938,
+    "colour": 0.027,
+    "dark": 0.0,
+    "hue": -174.005,
+    "blue": 0.325
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.955,
+    "colour": 0.0,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": 0.303
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 0
+   }
+  },
+  {
+   "id": "oct16:shot007:4",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.732,
+    "dark": 0.0,
+    "hue": -59.334,
+    "blue": 0.014
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.768,
+    "dark": 0.0,
+    "hue": -56.111,
+    "blue": 0.002
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot007:5",
+   "truth": 5,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.69,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": 2.856,
+    "blue": -0.652
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.946,
+    "dark": 0.0,
+    "hue": 4.504,
+    "blue": -0.645
+   },
+   "calls": {
+    "5 vs 3/m": 5,
+    "5 vs 3/mn": 5
+   }
+  },
+  {
+   "id": "oct16:shot007:6",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.768,
+    "dark": 0.161,
+    "hue": -160.744,
+    "blue": 0.62
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.821,
+    "dark": 0.107,
+    "hue": -163.163,
+    "blue": 0.622
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "oct16:shot008:0",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.188,
+    "colour": 0.634,
+    "dark": 0.0,
+    "hue": 40.012,
+    "blue": -0.552
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.196,
+    "colour": 0.607,
+    "dark": 0.0,
+    "hue": 44.904,
+    "blue": -0.516
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot008:1",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.509,
+    "dark": 0.429,
+    "hue": -163.435,
+    "blue": 0.665
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.679,
+    "dark": 0.268,
+    "hue": -164.195,
+    "blue": 0.673
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "oct16:shot008:2",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": 167.613,
+    "blue": 0.554
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": 169.658,
+    "blue": 0.581
+   },
+   "calls": {}
+  },
+  {
+   "id": "oct16:shot008:3",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.67,
+    "dark": 0.009,
+    "hue": -48.759,
+    "blue": -0.009
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.705,
+    "dark": 0.0,
+    "hue": -58.817,
+    "blue": 0.024
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot008:4",
+   "truth": 5,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.97,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 8.377,
+    "blue": -0.71
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": 9.609,
+    "blue": -0.69
+   },
+   "calls": {
+    "5 vs 3/m": 5,
+    "5 vs 3/mn": 5
+   }
+  },
+  {
+   "id": "oct16:shot008:5",
+   "truth": 4,
+   "view": "clean single ball",
+   "reader": 4,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.75,
+    "dark": 0.0,
+    "hue": -139.24,
+    "blue": 0.427
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -154.978,
+    "blue": 0.607
+   },
+   "calls": {
+    "7 vs 4/m": 4,
+    "7 vs 4/mn": 4
+   }
+  },
+  {
+   "id": "oct16:shot009:0",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.179,
+    "colour": 0.607,
+    "dark": 0.0,
+    "hue": 38.921,
+    "blue": -0.527
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.232,
+    "colour": 0.571,
+    "dark": 0.0,
+    "hue": 47.014,
+    "blue": -0.491
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot009:1",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 0.87,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.866,
+    "colour": 0.027,
+    "dark": 0.0,
+    "hue": 79.886,
+    "blue": 0.178
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.866,
+    "colour": 0.062,
+    "dark": 0.0,
+    "hue": 152.593,
+    "blue": 0.152
+   },
+   "calls": {}
+  },
+  {
+   "id": "oct16:shot009:2",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": 168.232,
+    "blue": 0.555
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": 168.366,
+    "blue": 0.564
+   },
+   "calls": {}
+  },
+  {
+   "id": "oct16:shot009:3",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.705,
+    "dark": 0.0,
+    "hue": -37.949,
+    "blue": -0.073
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.75,
+    "dark": 0.0,
+    "hue": -37.146,
+    "blue": -0.089
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot009:4",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.455,
+    "dark": 0.491,
+    "hue": -163.78,
+    "blue": 0.64
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.714,
+    "dark": 0.223,
+    "hue": -167.788,
+    "blue": 0.62
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "oct16:shot009:5",
+   "truth": 5,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.82,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 4.999,
+    "blue": -0.67
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 6.206,
+    "blue": -0.687
+   },
+   "calls": {
+    "5 vs 3/m": 5,
+    "5 vs 3/mn": 5
+   }
+  },
+  {
+   "id": "oct16:shot010:0",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.232,
+    "colour": 0.616,
+    "dark": 0.0,
+    "hue": 39.838,
+    "blue": -0.562
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.232,
+    "colour": 0.616,
+    "dark": 0.0,
+    "hue": 45.076,
+    "blue": -0.536
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot010:1",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.679,
+    "dark": 0.25,
+    "hue": -161.739,
+    "blue": 0.62
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.062,
+    "colour": 0.777,
+    "dark": 0.134,
+    "hue": -163.015,
+    "blue": 0.576
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "oct16:shot010:2",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.759,
+    "dark": 0.0,
+    "hue": -46.4,
+    "blue": -0.05
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.75,
+    "dark": 0.0,
+    "hue": -45.538,
+    "blue": -0.048
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot010:3",
+   "truth": 6,
+   "view": "clean single ball",
+   "reader": 6,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": 167.382,
+    "blue": 0.549
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": 167.162,
+    "blue": 0.545
+   },
+   "calls": {}
+  },
+  {
+   "id": "oct16:shot010:4",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.848,
+    "colour": 0.08,
+    "dark": 0.0,
+    "hue": -179.652,
+    "blue": 0.32
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.902,
+    "colour": 0.027,
+    "dark": 0.0,
+    "hue": -177.278,
+    "blue": 0.278
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot011:0",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.911,
+    "colour": 0.0,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": 0.292
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.848,
+    "colour": 0.089,
+    "dark": 0.0,
+    "hue": -177.391,
+    "blue": 0.324
+   },
+   "calls": {
+    "9 vs cue/m": 0,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot011:1",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.179,
+    "colour": 0.688,
+    "dark": 0.0,
+    "hue": 42.732,
+    "blue": -0.575
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.223,
+    "colour": 0.634,
+    "dark": 0.0,
+    "hue": 53.874,
+    "blue": -0.525
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot011:2",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 0.99,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.696,
+    "dark": 0.0,
+    "hue": -41.947,
+    "blue": -0.049
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.759,
+    "dark": 0.0,
+    "hue": -43.085,
+    "blue": -0.072
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot011:3",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.527,
+    "dark": 0.375,
+    "hue": -163.065,
+    "blue": 0.629
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.58,
+    "dark": 0.295,
+    "hue": -164.07,
+    "blue": 0.58
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "oct16:shot012:0",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.062,
+    "colour": 0.589,
+    "dark": 0.286,
+    "hue": -166.954,
+    "blue": 0.574
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.134,
+    "colour": 0.446,
+    "dark": 0.286,
+    "hue": -168.0,
+    "blue": 0.527
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "oct16:shot012:1",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.232,
+    "colour": 0.634,
+    "dark": 0.0,
+    "hue": 41.004,
+    "blue": -0.551
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.232,
+    "colour": 0.589,
+    "dark": 0.0,
+    "hue": 47.182,
+    "blue": -0.517
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot012:2",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.857,
+    "colour": 0.036,
+    "dark": 0.0,
+    "hue": 179.975,
+    "blue": 0.222
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.938,
+    "colour": 0.0,
+    "dark": 0.0,
+    "hue": NaN,
+    "blue": 0.109
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": 0
+   }
+  },
+  {
+   "id": "oct16:shot012:3",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.554,
+    "dark": 0.0,
+    "hue": -36.432,
+    "blue": -0.08
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.598,
+    "dark": 0.0,
+    "hue": -20.064,
+    "blue": -0.161
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot013:0",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.214,
+    "colour": 0.589,
+    "dark": 0.0,
+    "hue": 41.817,
+    "blue": -0.53
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.223,
+    "colour": 0.562,
+    "dark": 0.0,
+    "hue": 46.684,
+    "blue": -0.502
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot013:1",
+   "truth": 7,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 0.85,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.75,
+    "dark": 0.0,
+    "hue": -41.559,
+    "blue": -0.058
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.741,
+    "dark": 0.0,
+    "hue": -46.336,
+    "blue": -0.034
+   },
+   "calls": {
+    "7 vs 4/m": 7,
+    "7 vs 4/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot013:2",
+   "truth": 8,
+   "view": "touching or overlapping",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.661,
+    "dark": 0.205,
+    "hue": -164.109,
+    "blue": 0.56
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.679,
+    "dark": 0.17,
+    "hue": -163.431,
+    "blue": 0.527
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "oct16:shot013:3",
+   "truth": null,
+   "view": "touching or overlapping",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 0.991,
+    "white": 0.384,
+    "colour": 0.241,
+    "dark": 0.196,
+    "hue": -169.464,
+    "blue": 0.384
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.438,
+    "colour": 0.411,
+    "dark": 0.0,
+    "hue": -179.145,
+    "blue": 0.404
+   },
+   "calls": {}
+  },
+  {
+   "id": "oct16:shot014:0",
+   "truth": 8,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.723,
+    "dark": 0.196,
+    "hue": -163.199,
+    "blue": 0.606
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.688,
+    "dark": 0.152,
+    "hue": -163.102,
+    "blue": 0.531
+   },
+   "calls": {
+    "8 vs 2/m": 8,
+    "8 vs 2/mn": 8
+   }
+  },
+  {
+   "id": "oct16:shot014:1",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.232,
+    "colour": 0.634,
+    "dark": 0.0,
+    "hue": 40.337,
+    "blue": -0.573
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.25,
+    "colour": 0.598,
+    "dark": 0.0,
+    "hue": 48.575,
+    "blue": -0.537
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot014:2",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 0.99,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.821,
+    "colour": 0.045,
+    "dark": 0.0,
+    "hue": -174.258,
+    "blue": 0.25
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.83,
+    "colour": 0.089,
+    "dark": 0.0,
+    "hue": 179.49,
+    "blue": 0.29
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot015:0",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.92,
+    "colour": 0.036,
+    "dark": 0.0,
+    "hue": -171.469,
+    "blue": 0.269
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.929,
+    "colour": 0.045,
+    "dark": 0.0,
+    "hue": 19.651,
+    "blue": -0.379
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot015:1",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.214,
+    "colour": 0.634,
+    "dark": 0.0,
+    "hue": 43.608,
+    "blue": -0.556
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.232,
+    "colour": 0.634,
+    "dark": 0.0,
+    "hue": 50.515,
+    "blue": -0.532
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot016:0",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.866,
+    "colour": 0.062,
+    "dark": 0.0,
+    "hue": 173.172,
+    "blue": 0.288
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.848,
+    "colour": 0.036,
+    "dark": 0.0,
+    "hue": 171.565,
+    "blue": 0.208
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot016:1",
+   "truth": 9,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.188,
+    "colour": 0.643,
+    "dark": 0.0,
+    "hue": 39.823,
+    "blue": -0.536
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.223,
+    "colour": 0.625,
+    "dark": 0.0,
+    "hue": 46.233,
+    "blue": -0.511
+   },
+   "calls": {
+    "9 vs cue/m": 9,
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "oct16:shot017:0",
+   "truth": 0,
+   "view": "clean single ball",
+   "reader": 0,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.821,
+    "colour": 0.116,
+    "dark": 0.0,
+    "hue": -174.355,
+    "blue": 0.362
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.893,
+    "colour": 0.045,
+    "dark": 0.0,
+    "hue": -170.527,
+    "blue": 0.326
+   },
+   "calls": {
+    "9 vs cue/m": "unsure",
+    "9 vs cue/mn": "unsure"
+   }
+  },
+  {
+   "id": "light:clip012:0",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.991,
+    "white": 0.009,
+    "colour": 0.0,
+    "dark": 0.911,
+    "hue": NaN,
+    "blue": 0.303
+   },
+   "mn": {
+    "ballness": 0.991,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": -161.574,
+    "blue": 0.714
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:1",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.69,
+   "nb": 0.31,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -13.056,
+    "blue": -0.651
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": -56.55,
+    "blue": -0.081
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:2",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.062,
+    "colour": 0.732,
+    "dark": 0.188,
+    "hue": -7.317,
+    "blue": -0.488
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.562,
+    "dark": 0.33,
+    "hue": -107.287,
+    "blue": 0.257
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:3",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 21.101,
+    "blue": -0.802
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.83,
+    "dark": 0.0,
+    "hue": 72.614,
+    "blue": -0.447
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:4",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.027,
+    "colour": 0.438,
+    "dark": 0.393,
+    "hue": 28.572,
+    "blue": -0.156
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.964,
+    "dark": 0.036,
+    "hue": 179.728,
+    "blue": 0.477
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:5",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 5.391,
+    "blue": -0.634
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.571,
+    "dark": 0.0,
+    "hue": -32.259,
+    "blue": -0.025
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:6",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 0.202,
+    "blue": -0.699
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.071,
+    "colour": 0.705,
+    "dark": 0.0,
+    "hue": -15.526,
+    "blue": -0.271
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:7",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.982,
+    "white": 0.08,
+    "colour": 0.089,
+    "dark": 0.741,
+    "hue": 95.874,
+    "blue": 0.08
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 168.739,
+    "blue": 0.528
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:8",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.938,
+    "dark": 0.0,
+    "hue": 29.886,
+    "blue": -0.505
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 153.442,
+    "blue": 0.255
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:9",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.0,
+    "dark": 0.964,
+    "hue": NaN,
+    "blue": -0.03
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.054,
+    "dark": 0.946,
+    "hue": -173.082,
+    "blue": 0.489
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:10",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.062,
+    "colour": 0.58,
+    "dark": 0.259,
+    "hue": -15.377,
+    "blue": -0.293
+   },
+   "mn": {
+    "ballness": 0.991,
+    "white": 0.0,
+    "colour": 0.938,
+    "dark": 0.054,
+    "hue": -139.633,
+    "blue": 0.469
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:11",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 27.488,
+    "blue": -0.547
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.946,
+    "dark": 0.0,
+    "hue": 150.014,
+    "blue": 0.206
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:12",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.946,
+    "dark": 0.0,
+    "hue": 23.261,
+    "blue": -0.692
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.911,
+    "dark": 0.0,
+    "hue": 104.235,
+    "blue": -0.165
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:13",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.973,
+    "dark": 0.0,
+    "hue": -5.814,
+    "blue": -0.603
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.027,
+    "colour": 0.884,
+    "dark": 0.009,
+    "hue": -69.242,
+    "blue": 0.018
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:14",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.929,
+    "dark": 0.0,
+    "hue": 27.724,
+    "blue": -0.518
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.964,
+    "dark": 0.0,
+    "hue": 152.464,
+    "blue": 0.223
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip012:15",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.277,
+    "dark": 0.607,
+    "hue": 25.095,
+    "blue": -0.318
+   },
+   "mn": {
+    "ballness": 0.991,
+    "white": 0.0,
+    "colour": 0.607,
+    "dark": 0.348,
+    "hue": -162.759,
+    "blue": 0.334
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:0",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.991,
+    "white": 0.009,
+    "colour": 0.062,
+    "dark": 0.759,
+    "hue": -160.548,
+    "blue": 0.157
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.116,
+    "colour": 0.241,
+    "dark": 0.375,
+    "hue": -149.205,
+    "blue": 0.2
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:1",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.634,
+    "dark": 0.134,
+    "hue": 33.436,
+    "blue": -0.392
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.152,
+    "colour": 0.643,
+    "dark": 0.0,
+    "hue": 39.894,
+    "blue": -0.44
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:2",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.982,
+    "white": 0.223,
+    "colour": 0.036,
+    "dark": 0.054,
+    "hue": -175.918,
+    "blue": 0.055
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.839,
+    "colour": 0.071,
+    "dark": 0.009,
+    "hue": -178.122,
+    "blue": 0.386
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:3",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.17,
+    "colour": 0.455,
+    "dark": 0.134,
+    "hue": 2.411,
+    "blue": -0.261
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.375,
+    "colour": 0.464,
+    "dark": 0.0,
+    "hue": 1.81,
+    "blue": -0.335
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:4",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.991,
+    "white": 0.018,
+    "colour": 0.634,
+    "dark": 0.08,
+    "hue": 4.731,
+    "blue": -0.355
+   },
+   "mn": {
+    "ballness": 0.991,
+    "white": 0.009,
+    "colour": 0.348,
+    "dark": 0.0,
+    "hue": -163.872,
+    "blue": 0.186
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:5",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.92,
+    "white": 0.143,
+    "colour": 0.188,
+    "dark": 0.062,
+    "hue": -179.352,
+    "blue": 0.187
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.821,
+    "dark": 0.0,
+    "hue": 175.437,
+    "blue": 0.411
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:6",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.982,
+    "white": 0.0,
+    "colour": 0.054,
+    "dark": 0.866,
+    "hue": -165.417,
+    "blue": 0.513
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.259,
+    "dark": 0.643,
+    "hue": -165.744,
+    "blue": 0.601
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:7",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 8,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.946,
+    "white": 0.009,
+    "colour": 0.196,
+    "dark": 0.723,
+    "hue": -164.883,
+    "blue": 0.667
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.991,
+    "dark": 0.0,
+    "hue": -161.976,
+    "blue": 0.746
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:8",
+   "truth": null,
+   "view": "another ball in the square",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.143,
+    "dark": 0.643,
+    "hue": -165.586,
+    "blue": 0.306
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.893,
+    "dark": 0.107,
+    "hue": -160.378,
+    "blue": 0.598
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:9",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.938,
+    "white": 0.018,
+    "colour": 0.179,
+    "dark": 0.616,
+    "hue": 159.421,
+    "blue": 0.269
+   },
+   "mn": {
+    "ballness": 0.973,
+    "white": 0.0,
+    "colour": 0.768,
+    "dark": 0.205,
+    "hue": -174.6,
+    "blue": 0.698
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:10",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.982,
+    "white": 0.161,
+    "colour": 0.42,
+    "dark": 0.098,
+    "hue": -12.264,
+    "blue": -0.194
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.741,
+    "dark": 0.098,
+    "hue": -153.124,
+    "blue": 0.418
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:11",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.018,
+    "colour": 0.643,
+    "dark": 0.232,
+    "hue": -17.39,
+    "blue": -0.248
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.786,
+    "dark": 0.107,
+    "hue": -103.177,
+    "blue": 0.216
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:12",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.955,
+    "white": 0.089,
+    "colour": 0.455,
+    "dark": 0.089,
+    "hue": 36.928,
+    "blue": -0.278
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.33,
+    "colour": 0.509,
+    "dark": 0.0,
+    "hue": 94.538,
+    "blue": -0.112
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:13",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.964,
+    "white": 0.277,
+    "colour": 0.08,
+    "dark": 0.402,
+    "hue": -166.232,
+    "blue": 0.456
+   },
+   "mn": {
+    "ballness": 0.991,
+    "white": 0.357,
+    "colour": 0.571,
+    "dark": 0.009,
+    "hue": -171.212,
+    "blue": 0.641
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:14",
+   "truth": null,
+   "view": "another ball in the square",
+   "reader": 4,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.893,
+    "white": 0.161,
+    "colour": 0.054,
+    "dark": 0.08,
+    "hue": 155.774,
+    "blue": 0.049
+   },
+   "mn": {
+    "ballness": 0.938,
+    "white": 0.0,
+    "colour": 0.92,
+    "dark": 0.018,
+    "hue": 178.489,
+    "blue": 0.503
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip013:15",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 0.964,
+    "white": 0.214,
+    "colour": 0.027,
+    "dark": 0.589,
+    "hue": -177.631,
+    "blue": 0.222
+   },
+   "mn": {
+    "ballness": 0.893,
+    "white": 0.0,
+    "colour": 0.723,
+    "dark": 0.17,
+    "hue": -164.428,
+    "blue": 0.647
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:0",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 1,
+   "p": 0.78,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.098,
+    "colour": 0.812,
+    "dark": 0.0,
+    "hue": 34.823,
+    "blue": -0.651
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.902,
+    "dark": 0.0,
+    "hue": 101.482,
+    "blue": -0.226
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:1",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 0.11,
+   "nb": 0.89,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.071,
+    "colour": 0.679,
+    "dark": 0.116,
+    "hue": 159.965,
+    "blue": 0.27
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 173.332,
+    "blue": 0.554
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:2",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 0.56,
+   "nb": 0.38,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.455,
+    "dark": 0.152,
+    "hue": -58.54,
+    "blue": 0.086
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.955,
+    "dark": 0.045,
+    "hue": -142.972,
+    "blue": 0.496
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:3",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.955,
+    "dark": 0.009,
+    "hue": -17.14,
+    "blue": -0.544
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.946,
+    "dark": 0.0,
+    "hue": -50.828,
+    "blue": -0.153
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:4",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.982,
+    "dark": 0.0,
+    "hue": 2.992,
+    "blue": -0.646
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.679,
+    "dark": 0.0,
+    "hue": 5.362,
+    "blue": -0.344
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:5",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 1.0,
+    "dark": 0.0,
+    "hue": 31.749,
+    "blue": -0.784
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.92,
+    "dark": 0.0,
+    "hue": 75.345,
+    "blue": -0.509
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:6",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.08,
+    "colour": 0.777,
+    "dark": 0.009,
+    "hue": -11.571,
+    "blue": -0.48
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.812,
+    "dark": 0.027,
+    "hue": -65.395,
+    "blue": -0.019
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:7",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.95,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.009,
+    "colour": 0.929,
+    "dark": 0.0,
+    "hue": 9.269,
+    "blue": -0.562
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.045,
+    "colour": 0.571,
+    "dark": 0.0,
+    "hue": 18.038,
+    "blue": -0.189
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:8",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 0.19,
+   "nb": 0.77,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.134,
+    "colour": 0.714,
+    "dark": 0.009,
+    "hue": 161.046,
+    "blue": 0.104
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.991,
+    "dark": 0.009,
+    "hue": 171.127,
+    "blue": 0.419
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:9",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.54,
+   "nb": 0.17,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.179,
+    "colour": 0.375,
+    "dark": 0.0,
+    "hue": 36.521,
+    "blue": -0.198
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.83,
+    "dark": 0.0,
+    "hue": 163.024,
+    "blue": 0.289
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:10",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.027,
+    "colour": 0.018,
+    "dark": 0.875,
+    "hue": NaN,
+    "blue": 0.278
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.179,
+    "dark": 0.821,
+    "hue": -171.868,
+    "blue": 0.553
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:11",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 7,
+   "p": 1.0,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.036,
+    "colour": 0.938,
+    "dark": 0.0,
+    "hue": -155.577,
+    "blue": 0.516
+   },
+   "mn": {
+    "ballness": 0.973,
+    "white": 0.0,
+    "colour": 0.973,
+    "dark": 0.0,
+    "hue": -158.318,
+    "blue": 0.717
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:12",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 5,
+   "p": 0.51,
+   "nb": 0.22,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.089,
+    "colour": 0.571,
+    "dark": 0.045,
+    "hue": 36.193,
+    "blue": -0.312
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.839,
+    "dark": 0.009,
+    "hue": 150.637,
+    "blue": 0.197
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:13",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.94,
+   "nb": 0.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.054,
+    "colour": 0.625,
+    "dark": 0.268,
+    "hue": -15.092,
+    "blue": -0.253
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.384,
+    "dark": 0.357,
+    "hue": -108.223,
+    "blue": 0.26
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:14",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 3,
+   "p": 0.0,
+   "nb": 1.0,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.161,
+    "colour": 0.232,
+    "dark": 0.312,
+    "hue": -21.876,
+    "blue": 0.0
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.0,
+    "colour": 0.848,
+    "dark": 0.116,
+    "hue": -162.851,
+    "blue": 0.418
+   },
+   "calls": {}
+  },
+  {
+   "id": "light:clip014:15",
+   "truth": null,
+   "view": "clean single ball",
+   "reader": 9,
+   "p": 0.08,
+   "nb": 0.83,
+   "m": {
+    "ballness": 1.0,
+    "white": 0.098,
+    "colour": 0.696,
+    "dark": 0.0,
+    "hue": 31.609,
+    "blue": -0.369
+   },
+   "mn": {
+    "ballness": 1.0,
+    "white": 0.116,
+    "colour": 0.607,
+    "dark": 0.0,
+    "hue": 153.593,
+    "blue": 0.176
+   },
+   "calls": {}
+  }
+ ]
+}

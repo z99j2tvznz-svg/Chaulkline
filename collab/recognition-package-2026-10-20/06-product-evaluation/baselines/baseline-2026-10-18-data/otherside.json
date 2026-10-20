@@ -1,0 +1,6677 @@
+{
+ "truth": "2026-10-17_1500_V2.3.3_otherside.json",
+ "truthHash": "dc8bca442d4b",
+ "code": "c7cc9a1",
+ "detections": {
+  "shot001.json": "9d8b41237c29",
+  "shot002.json": "faebd418129e",
+  "shot003.json": "80e2bd5f813f",
+  "shot004.json": "929131ec7262",
+  "shot006.json": "0810faceea8c",
+  "shot007.json": "31685e529037",
+  "shot008.json": "eb1baa51a1c2",
+  "shot010.json": "e51b8c12be3f",
+  "shot011.json": "bd610fe55921",
+  "shot012.json": "d899a416af4e",
+  "shot013.json": "164be03e1b89",
+  "shot014.json": "3713708add99",
+  "shot015.json": "e2d9b55416c5"
+ },
+ "continuous": {
+  "totals": {
+   "realShotClips": 9,
+   "correctAutomatically": 0,
+   "unresolved": 3,
+   "confidentlyWrong": 6,
+   "realShotsMissed": 1,
+   "nonShotClips": 4,
+   "falseShots": 1,
+   "nonShotClipsWrong": 2,
+   "phantomPockets": 0,
+   "madeLeftUnresolved": 5,
+   "madeCalledOnTable": 1,
+   "stateErrors": 9,
+   "obsMissedOrUnnamed": 26,
+   "obsNamedButGone": 10,
+   "stateCheckedClips": 12,
+   "racks": 1,
+   "racksComplete": 0,
+   "racksIntact": 0,
+   "correctionsNeeded": 14,
+   "firstBall": {
+    "checked": 8,
+    "right": 2
+   }
+  },
+  "racks": [
+   {
+    "rack": "rack 1",
+    "mode": "continuous",
+    "clips": [
+     {
+      "clip": "shot001",
+      "realShot": false,
+      "wrong": [],
+      "unresolved": [],
+      "unverifiable": [
+       {
+        "fact": "state",
+        "why": "no: balls are being placed, the rack is not set yet"
+       }
+      ],
+      "falseShots": 0,
+      "obsErrors": null,
+      "stateErrors": null,
+      "result": "correct automatically",
+      "first": null,
+      "trace": [
+       {
+        "label": "before",
+        "prev": {},
+        "seen": [
+         {
+          "num": 0,
+          "x": 24,
+          "y": 11.7,
+          "score": 31
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 2,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 3,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 4,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 5,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 6,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 7,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 8,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 9,
+          "why": "not seen at rack start"
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "unconfirmed",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "unconfirmed"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "unconfirmed",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "unconfirmed"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 7.2,
+          "y": 30.5,
+          "score": 29.7
+         },
+         {
+          "num": 5,
+          "x": 51.3,
+          "y": 29.2,
+          "score": 15.4
+         },
+         {
+          "num": 6,
+          "x": 36.9,
+          "y": 17.4,
+          "score": 30.8
+         },
+         {
+          "num": null,
+          "x": 51.1,
+          "y": 15.4,
+          "score": 18
+         },
+         {
+          "num": 0,
+          "x": 16.5,
+          "y": 14.4,
+          "score": 31
+         },
+         {
+          "num": 3,
+          "x": 7.5,
+          "y": 13.6,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 30.6
+         },
+         {
+          "num": 9,
+          "x": 69.2,
+          "y": 6.8,
+          "score": 31
+         }
+        ],
+        "unnamed": 1,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": []
+     },
+     {
+      "clip": "shot002",
+      "realShot": true,
+      "wrong": [],
+      "unresolved": [
+       {
+        "fact": "made",
+        "ball": 1,
+        "what": "went in; left unresolved (not seen; may be one of the unnamed balls)"
+       },
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        4,
+        8
+       ],
+       "namedButGone": []
+      },
+      "stateErrors": [],
+      "result": "unresolved",
+      "first": {
+       "truth": 1,
+       "tracker": null
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 7.3,
+          "y": 30.5,
+          "score": 38.1
+         },
+         {
+          "num": 5,
+          "x": 51.3,
+          "y": 29.2,
+          "score": 13.3
+         },
+         {
+          "num": 1,
+          "x": 34,
+          "y": 26.3,
+          "score": 39.9
+         },
+         {
+          "num": 6,
+          "x": 36.8,
+          "y": 17.1,
+          "score": 39.9
+         },
+         {
+          "num": 0,
+          "x": 16.5,
+          "y": 14.4,
+          "score": 40
+         },
+         {
+          "num": 2,
+          "x": 54.8,
+          "y": 11.5,
+          "score": 40
+         },
+         {
+          "num": null,
+          "x": 39.8,
+          "y": 8.7,
+          "score": 39.6
+         },
+         {
+          "num": 9,
+          "x": 69.2,
+          "y": 6.8,
+          "score": 40
+         }
+        ],
+        "unnamed": 1,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 3,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "present",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "present",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 7.3,
+          "y": 30.5,
+          "score": 29.9
+         },
+         {
+          "num": 5,
+          "x": 51.3,
+          "y": 29.2,
+          "score": 5
+         },
+         {
+          "num": 6,
+          "x": 36.8,
+          "y": 17.2,
+          "score": 30.9
+         },
+         {
+          "num": 3,
+          "x": 7.5,
+          "y": 13.6,
+          "score": 31
+         },
+         {
+          "num": 0,
+          "x": 27,
+          "y": 12,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 54.8,
+          "y": 11.5,
+          "score": 31
+         },
+         {
+          "num": null,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 30.7
+         },
+         {
+          "num": 9,
+          "x": 69.2,
+          "y": 6.8,
+          "score": 31
+         }
+        ],
+        "unnamed": 1,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       8.5
+      ]
+     },
+     {
+      "clip": "shot003",
+      "realShot": true,
+      "wrong": [],
+      "unresolved": [
+       {
+        "fact": "state",
+        "ball": 1,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 5,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        4,
+        5,
+        8
+       ],
+       "namedButGone": []
+      },
+      "stateErrors": [],
+      "result": "unresolved",
+      "first": {
+       "truth": 2,
+       "tracker": null
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": null,
+          "x": 7.2,
+          "y": 30.6,
+          "score": 16.1
+         },
+         {
+          "num": 3,
+          "x": 51.3,
+          "y": 29.2,
+          "score": 19.8
+         },
+         {
+          "num": 6,
+          "x": 36.8,
+          "y": 16.9,
+          "score": 39.9
+         },
+         {
+          "num": 0,
+          "x": 27,
+          "y": 11.9,
+          "score": 40
+         },
+         {
+          "num": null,
+          "x": 54.7,
+          "y": 11.5,
+          "score": 30
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 33.1
+         },
+         {
+          "num": 9,
+          "x": 69.2,
+          "y": 6.8,
+          "score": 40
+         }
+        ],
+        "unnamed": 2,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 7.2,
+          "y": 30.5,
+          "score": 29.7
+         },
+         {
+          "num": null,
+          "x": 51.3,
+          "y": 29.2,
+          "score": 1.2
+         },
+         {
+          "num": 0,
+          "x": 59.2,
+          "y": 20.3,
+          "score": 31
+         },
+         {
+          "num": 6,
+          "x": 36.8,
+          "y": 17.2,
+          "score": 30.9
+         },
+         {
+          "num": 3,
+          "x": 7.5,
+          "y": 13.5,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 62.9,
+          "y": 12.5,
+          "score": 31
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": null,
+          "x": 39.8,
+          "y": 8.7,
+          "score": 30.6
+         }
+        ],
+        "unnamed": 2,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       8.93
+      ]
+     },
+     {
+      "clip": "shot004",
+      "realShot": true,
+      "wrong": [
+       {
+        "fact": "shot",
+        "what": "false shot"
+       },
+       {
+        "fact": "made",
+        "ball": 3,
+        "what": "went in, but the system says it is on the table (seen)"
+       },
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "state",
+        "ball": 0,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 1,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 5,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 1,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        0,
+        4,
+        5,
+        8
+       ],
+       "namedButGone": [
+        2,
+        3
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": {
+       "truth": 3,
+       "tracker": 3
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": null,
+          "x": 7.1,
+          "y": 30.7,
+          "score": 8.3
+         },
+         {
+          "num": 6,
+          "x": 36.8,
+          "y": 16.8,
+          "score": 39.9
+         },
+         {
+          "num": 3,
+          "x": 7.4,
+          "y": 13.5,
+          "score": 40
+         },
+         {
+          "num": 8,
+          "x": 39.9,
+          "y": 8.6,
+          "score": 39.8
+         },
+         {
+          "num": 0,
+          "x": 20,
+          "y": 1.3,
+          "score": 40
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.8,
+          "score": 14.6
+         },
+         {
+          "num": null,
+          "x": 51.3,
+          "y": 29.3,
+          "score": 31.2
+         }
+        ],
+        "unnamed": 2,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 2,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "unconfirmed",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "unconfirmed",
+         "8": "present",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "unconfirmed",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "unconfirmed",
+         "8": "present",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 27.7,
+          "y": 32.4,
+          "score": 11.7
+         },
+         {
+          "num": 3,
+          "x": 51.3,
+          "y": 29.3,
+          "score": 18.4
+         },
+         {
+          "num": 6,
+          "x": 45.7,
+          "y": 22,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 30.4
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 25
+         }
+        ],
+        "unnamed": 0,
+        "settled": false,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 1,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       5.8,
+       14.93
+      ]
+     },
+     {
+      "clip": "shot006",
+      "realShot": true,
+      "wrong": [
+       {
+        "fact": "shot",
+        "what": "real shot not found at 5.1 s"
+       },
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       },
+       {
+        "fact": "state",
+        "ball": 3,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "made",
+        "ball": 4,
+        "what": "went in; left unresolved (not seen; table not settled)"
+       },
+       {
+        "fact": "state",
+        "ball": 0,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 1,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 5,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        0,
+        5,
+        8
+       ],
+       "namedButGone": [
+        2,
+        3
+       ]
+      },
+      "stateErrors": [
+       2,
+       3
+      ],
+      "result": "confidently wrong",
+      "first": null,
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 0,
+          "x": 37.2,
+          "y": 31,
+          "score": 31
+         },
+         {
+          "num": null,
+          "x": 51.3,
+          "y": 29.3,
+          "score": 0
+         },
+         {
+          "num": 6,
+          "x": 45.7,
+          "y": 22,
+          "score": 31
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 30
+         },
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 31.9,
+          "score": 23
+         }
+        ],
+        "unnamed": 1,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 3,
+          "x": 51.3,
+          "y": 29.3,
+          "score": 2.8
+         },
+         {
+          "num": 6,
+          "x": 45.7,
+          "y": 22,
+          "score": 30.8
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.9,
+          "y": 8.7,
+          "score": 24.2
+         },
+         {
+          "num": 7,
+          "x": 29.8,
+          "y": 31.8,
+          "score": 21
+         }
+        ],
+        "unnamed": 0,
+        "settled": false,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 1,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": []
+     },
+     {
+      "clip": "shot007",
+      "realShot": true,
+      "wrong": [
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "state",
+        "ball": 1,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 3,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        8
+       ],
+       "namedButGone": [
+        2
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": {
+       "truth": 5,
+       "tracker": 3
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 31.9,
+          "score": 40
+         },
+         {
+          "num": 3,
+          "x": 51.3,
+          "y": 29.3,
+          "score": 9.3
+         },
+         {
+          "num": 0,
+          "x": 54.9,
+          "y": 25.5,
+          "score": 40
+         },
+         {
+          "num": 6,
+          "x": 45.7,
+          "y": 22,
+          "score": 40
+         },
+         {
+          "num": 2,
+          "x": 39.9,
+          "y": 8.7,
+          "score": 37.9
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 9,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "unconfirmed"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "unconfirmed"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 32,
+          "score": 31
+         },
+         {
+          "num": 5,
+          "x": 38.5,
+          "y": 33,
+          "score": 30.3
+         },
+         {
+          "num": 0,
+          "x": 57.1,
+          "y": 28.7,
+          "score": 31
+         },
+         {
+          "num": 6,
+          "x": 45.6,
+          "y": 22,
+          "score": 30.9
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.7,
+          "score": 30.6
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       7.43
+      ]
+     },
+     {
+      "clip": "shot008",
+      "realShot": true,
+      "wrong": [
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "made",
+        "ball": 5,
+        "what": "went in; left unresolved (not seen; table not settled)"
+       },
+       {
+        "fact": "state",
+        "ball": 0,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 1,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 3,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 6,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        0,
+        6,
+        8
+       ],
+       "namedButGone": [
+        2
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": {
+       "truth": 5,
+       "tracker": 6
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 5,
+          "x": 38.5,
+          "y": 33,
+          "score": 38.4
+         },
+         {
+          "num": 7,
+          "x": 29.8,
+          "y": 31.8,
+          "score": 40
+         },
+         {
+          "num": 0,
+          "x": 57.1,
+          "y": 28.7,
+          "score": 40
+         },
+         {
+          "num": 6,
+          "x": 45.7,
+          "y": 21.9,
+          "score": 40
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 40
+         },
+         {
+          "num": 2,
+          "x": 39.9,
+          "y": 8.7,
+          "score": 39.4
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 32,
+          "score": 30.9
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.9,
+          "y": 8.7,
+          "score": 30.8
+         }
+        ],
+        "unnamed": 0,
+        "settled": false,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 1,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       4.5
+      ]
+     },
+     {
+      "clip": "shot010",
+      "realShot": false,
+      "wrong": [
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "state",
+        "ball": 1,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 3,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 5,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        8
+       ],
+       "namedButGone": [
+        2
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": null,
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 32,
+          "score": 29.9
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 30.7
+         },
+         {
+          "num": 0,
+          "x": 66,
+          "y": 5.5,
+          "score": 16
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 31.9,
+          "score": 30.9
+         },
+         {
+          "num": 6,
+          "x": 51.9,
+          "y": 30.1,
+          "score": 31
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 30.8
+         },
+         {
+          "num": 0,
+          "x": 70.1,
+          "y": 2.5,
+          "score": 31
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": []
+     },
+     {
+      "clip": "shot011",
+      "realShot": true,
+      "wrong": [
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "state",
+        "ball": 0,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 1,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 3,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 5,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 6,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        0,
+        6,
+        8
+       ],
+       "namedButGone": [
+        2
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": {
+       "truth": 6,
+       "tracker": null
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 6,
+          "x": 50.9,
+          "y": 30.6,
+          "score": 39
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 39
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 38.7
+         },
+         {
+          "num": 0,
+          "x": 70.8,
+          "y": 2.2,
+          "score": 39
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 31.9,
+          "score": 31
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.7,
+          "score": 30.8
+         }
+        ],
+        "unnamed": 0,
+        "settled": false,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 1,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       3.77
+      ]
+     },
+     {
+      "clip": "shot012",
+      "realShot": false,
+      "wrong": [
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "state",
+        "ball": 0,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 1,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 3,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 5,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 6,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 7,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        0,
+        6,
+        7,
+        8
+       ],
+       "namedButGone": [
+        2
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": null,
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 22
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 21.8
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 1,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 22
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 21.8
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 1,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": []
+     },
+     {
+      "clip": "shot013",
+      "realShot": true,
+      "wrong": [
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "made",
+        "ball": 7,
+        "what": "went in; left unresolved (not seen; table not settled)"
+       },
+       {
+        "fact": "state",
+        "ball": 0,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 1,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 3,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 5,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 6,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        0,
+        8
+       ],
+       "namedButGone": [
+        2
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": {
+       "truth": 7,
+       "tracker": 7
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 31.9,
+          "score": 39.9
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 40
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 39.7
+         },
+         {
+          "num": 0,
+          "x": 64.5,
+          "y": 3.7,
+          "score": 40
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 29
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 29.8
+         }
+        ],
+        "unnamed": 0,
+        "settled": false,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 1,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       5.57
+      ]
+     },
+     {
+      "clip": "shot014",
+      "realShot": false,
+      "wrong": [],
+      "unresolved": [
+       {
+        "fact": "state",
+        "ball": 1,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 3,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 5,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 6,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 7,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "gone, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [],
+       "namedButGone": []
+      },
+      "stateErrors": [],
+      "result": "unresolved",
+      "first": null,
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "unconfirmed",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 0,
+          "x": 29.6,
+          "y": 3.8,
+          "score": 24
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 2,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 9,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "unconfirmed",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "unconfirmed"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "unconfirmed",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "unconfirmed"
+        },
+        "seen": [
+         {
+          "num": 9,
+          "x": 68.3,
+          "y": 25.9,
+          "score": 29.9
+         },
+         {
+          "num": 0,
+          "x": 27.5,
+          "y": 4.8,
+          "score": 31
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 2,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "unconfirmed",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": []
+     },
+     {
+      "clip": "shot015",
+      "realShot": true,
+      "wrong": [],
+      "unresolved": [
+       {
+        "fact": "made",
+        "ball": 9,
+        "what": "went in; left unresolved (possibly pocketed: last seen heading to a pocket outside the mouth)"
+       },
+       {
+        "fact": "state",
+        "ball": 1,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 3,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 5,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 6,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 7,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "gone, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [],
+       "namedButGone": []
+      },
+      "stateErrors": [],
+      "result": "unresolved",
+      "first": {
+       "truth": 9,
+       "tracker": null
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "unconfirmed",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 9,
+          "x": 68.3,
+          "y": 25.9,
+          "score": 38.8
+         },
+         {
+          "num": 0,
+          "x": 27.5,
+          "y": 4.8,
+          "score": 39
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 2,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "unconfirmed",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "unconfirmed",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 0,
+          "x": 21,
+          "y": 8.2,
+          "score": 31
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [
+         {
+          "ball": 9,
+          "x": 74.8,
+          "y": 33.8,
+          "t": 4.63,
+          "jaws": false,
+          "inMouth": false
+         }
+        ],
+        "proposed": [
+         {
+          "ball": 9,
+          "change": "pocketed",
+          "evidence": "lost heading toward a pocket, outside the mouth"
+         }
+        ],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 2,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 3,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 9,
+          "why": "possibly pocketed: last seen heading to a pocket outside the mouth",
+          "possiblyPocketed": true
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "unconfirmed",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "unconfirmed"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       4.3
+      ]
+     }
+    ],
+    "completion": false,
+    "integrity": false,
+    "corrections": 14
+   }
+  ]
+ },
+ "checkpoint": {
+  "totals": {
+   "realShotClips": 9,
+   "correctAutomatically": 0,
+   "unresolved": 3,
+   "confidentlyWrong": 6,
+   "realShotsMissed": 1,
+   "nonShotClips": 4,
+   "falseShots": 1,
+   "nonShotClipsWrong": 2,
+   "phantomPockets": 0,
+   "madeLeftUnresolved": 5,
+   "madeCalledOnTable": 1,
+   "stateErrors": 9,
+   "obsMissedOrUnnamed": 26,
+   "obsNamedButGone": 10,
+   "stateCheckedClips": 12,
+   "racks": 1,
+   "racksComplete": 0,
+   "racksIntact": 0,
+   "correctionsNeeded": 13,
+   "firstBall": {
+    "checked": 8,
+    "right": 2
+   }
+  },
+  "racks": [
+   {
+    "rack": "rack 1",
+    "mode": "checkpoint",
+    "clips": [
+     {
+      "clip": "shot001",
+      "realShot": false,
+      "wrong": [],
+      "unresolved": [],
+      "unverifiable": [
+       {
+        "fact": "state",
+        "why": "no: balls are being placed, the rack is not set yet"
+       }
+      ],
+      "falseShots": 0,
+      "obsErrors": null,
+      "stateErrors": null,
+      "result": "correct automatically",
+      "first": null,
+      "trace": [
+       {
+        "label": "before",
+        "prev": {},
+        "seen": [
+         {
+          "num": 0,
+          "x": 24,
+          "y": 11.7,
+          "score": 31
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 2,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 3,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 4,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 5,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 6,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 7,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 8,
+          "why": "not seen at rack start"
+         },
+         {
+          "ball": 9,
+          "why": "not seen at rack start"
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "unconfirmed",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "unconfirmed"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "unconfirmed",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "unconfirmed"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 7.2,
+          "y": 30.5,
+          "score": 29.7
+         },
+         {
+          "num": 5,
+          "x": 51.3,
+          "y": 29.2,
+          "score": 15.4
+         },
+         {
+          "num": 6,
+          "x": 36.9,
+          "y": 17.4,
+          "score": 30.8
+         },
+         {
+          "num": null,
+          "x": 51.1,
+          "y": 15.4,
+          "score": 18
+         },
+         {
+          "num": 0,
+          "x": 16.5,
+          "y": 14.4,
+          "score": 31
+         },
+         {
+          "num": 3,
+          "x": 7.5,
+          "y": 13.6,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 30.6
+         },
+         {
+          "num": 9,
+          "x": 69.2,
+          "y": 6.8,
+          "score": 31
+         }
+        ],
+        "unnamed": 1,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": []
+     },
+     {
+      "clip": "shot002",
+      "realShot": true,
+      "wrong": [],
+      "unresolved": [
+       {
+        "fact": "made",
+        "ball": 1,
+        "what": "went in; left unresolved (not seen; may be one of the unnamed balls)"
+       },
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        4,
+        8
+       ],
+       "namedButGone": []
+      },
+      "stateErrors": [],
+      "result": "unresolved",
+      "first": {
+       "truth": 1,
+       "tracker": null
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "present",
+         "2": "present",
+         "3": "present",
+         "4": "present",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "present",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 7.3,
+          "y": 30.5,
+          "score": 38.1
+         },
+         {
+          "num": 5,
+          "x": 51.3,
+          "y": 29.2,
+          "score": 13.3
+         },
+         {
+          "num": 1,
+          "x": 34,
+          "y": 26.3,
+          "score": 39.9
+         },
+         {
+          "num": 6,
+          "x": 36.8,
+          "y": 17.1,
+          "score": 39.9
+         },
+         {
+          "num": 0,
+          "x": 16.5,
+          "y": 14.4,
+          "score": 40
+         },
+         {
+          "num": 2,
+          "x": 54.8,
+          "y": 11.5,
+          "score": 40
+         },
+         {
+          "num": null,
+          "x": 39.8,
+          "y": 8.7,
+          "score": 39.6
+         },
+         {
+          "num": 9,
+          "x": 69.2,
+          "y": 6.8,
+          "score": 40
+         }
+        ],
+        "unnamed": 1,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 3,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "present",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "present",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 7.3,
+          "y": 30.5,
+          "score": 29.9
+         },
+         {
+          "num": 5,
+          "x": 51.3,
+          "y": 29.2,
+          "score": 5
+         },
+         {
+          "num": 6,
+          "x": 36.8,
+          "y": 17.2,
+          "score": 30.9
+         },
+         {
+          "num": 3,
+          "x": 7.5,
+          "y": 13.6,
+          "score": 31
+         },
+         {
+          "num": 0,
+          "x": 27,
+          "y": 12,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 54.8,
+          "y": 11.5,
+          "score": 31
+         },
+         {
+          "num": null,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 30.7
+         },
+         {
+          "num": 9,
+          "x": 69.2,
+          "y": 6.8,
+          "score": 31
+         }
+        ],
+        "unnamed": 1,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 1,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "unconfirmed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 1,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       8.5
+      ]
+     },
+     {
+      "clip": "shot003",
+      "realShot": true,
+      "wrong": [],
+      "unresolved": [
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 5,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        4,
+        5,
+        8
+       ],
+       "namedButGone": []
+      },
+      "stateErrors": [],
+      "result": "unresolved",
+      "first": {
+       "truth": 2,
+       "tracker": null
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "present",
+         "4": "present",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "present",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": null,
+          "x": 7.2,
+          "y": 30.6,
+          "score": 16.1
+         },
+         {
+          "num": 3,
+          "x": 51.3,
+          "y": 29.2,
+          "score": 19.8
+         },
+         {
+          "num": 6,
+          "x": 36.8,
+          "y": 16.9,
+          "score": 39.9
+         },
+         {
+          "num": 0,
+          "x": 27,
+          "y": 11.9,
+          "score": 40
+         },
+         {
+          "num": null,
+          "x": 54.7,
+          "y": 11.5,
+          "score": 30
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 33.1
+         },
+         {
+          "num": 9,
+          "x": 69.2,
+          "y": 6.8,
+          "score": 40
+         }
+        ],
+        "unnamed": 2,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 7.2,
+          "y": 30.5,
+          "score": 29.7
+         },
+         {
+          "num": null,
+          "x": 51.3,
+          "y": 29.2,
+          "score": 1.2
+         },
+         {
+          "num": 0,
+          "x": 59.2,
+          "y": 20.3,
+          "score": 31
+         },
+         {
+          "num": 6,
+          "x": 36.8,
+          "y": 17.2,
+          "score": 30.9
+         },
+         {
+          "num": 3,
+          "x": 7.5,
+          "y": 13.5,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 62.9,
+          "y": 12.5,
+          "score": 31
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": null,
+          "x": 39.8,
+          "y": 8.7,
+          "score": 30.6
+         }
+        ],
+        "unnamed": 2,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       8.93
+      ]
+     },
+     {
+      "clip": "shot004",
+      "realShot": true,
+      "wrong": [
+       {
+        "fact": "shot",
+        "what": "false shot"
+       },
+       {
+        "fact": "made",
+        "ball": 3,
+        "what": "went in, but the system says it is on the table (seen)"
+       },
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "state",
+        "ball": 0,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 4,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 5,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 1,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        0,
+        4,
+        5,
+        8
+       ],
+       "namedButGone": [
+        2,
+        3
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": {
+       "truth": 3,
+       "tracker": 3
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "present",
+         "4": "present",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "present",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": null,
+          "x": 7.1,
+          "y": 30.7,
+          "score": 8.3
+         },
+         {
+          "num": 6,
+          "x": 36.8,
+          "y": 16.8,
+          "score": 39.9
+         },
+         {
+          "num": 3,
+          "x": 7.4,
+          "y": 13.5,
+          "score": 40
+         },
+         {
+          "num": 8,
+          "x": 39.9,
+          "y": 8.6,
+          "score": 39.8
+         },
+         {
+          "num": 0,
+          "x": 20,
+          "y": 1.3,
+          "score": 40
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.8,
+          "score": 14.6
+         },
+         {
+          "num": null,
+          "x": 51.3,
+          "y": 29.3,
+          "score": 31.2
+         }
+        ],
+        "unnamed": 2,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "unconfirmed",
+         "8": "present",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 3,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "unconfirmed",
+         "8": "present",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 27.7,
+          "y": 32.4,
+          "score": 11.7
+         },
+         {
+          "num": 3,
+          "x": 51.3,
+          "y": 29.3,
+          "score": 18.4
+         },
+         {
+          "num": 6,
+          "x": 45.7,
+          "y": 22,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 30.4
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 25
+         }
+        ],
+        "unnamed": 0,
+        "settled": false,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [
+         {
+          "ball": 2,
+          "change": "reversed",
+          "why": "seen again after it was counted pocketed"
+         }
+        ],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         }
+        ],
+        "reversed": [
+         2
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "pocketed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       5.8,
+       14.93
+      ]
+     },
+     {
+      "clip": "shot006",
+      "realShot": true,
+      "wrong": [
+       {
+        "fact": "shot",
+        "what": "real shot not found at 5.1 s"
+       },
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       },
+       {
+        "fact": "state",
+        "ball": 3,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "made",
+        "ball": 4,
+        "what": "went in; left unresolved (not seen; table not settled)"
+       },
+       {
+        "fact": "state",
+        "ball": 0,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 5,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        0,
+        5,
+        8
+       ],
+       "namedButGone": [
+        2,
+        3
+       ]
+      },
+      "stateErrors": [
+       2,
+       3
+      ],
+      "result": "confidently wrong",
+      "first": null,
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "present",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "present",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 0,
+          "x": 37.2,
+          "y": 31,
+          "score": 31
+         },
+         {
+          "num": null,
+          "x": 51.3,
+          "y": 29.3,
+          "score": 0
+         },
+         {
+          "num": 6,
+          "x": 45.7,
+          "y": 22,
+          "score": 31
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 30
+         },
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 31.9,
+          "score": 23
+         }
+        ],
+        "unnamed": 1,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [
+         {
+          "ball": 2,
+          "change": "reversed",
+          "why": "seen again after it was counted pocketed"
+         }
+        ],
+        "unresolved": [
+         {
+          "ball": 4,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen; may be one of the unnamed balls",
+          "possiblyPocketed": false
+         }
+        ],
+        "reversed": [
+         2
+        ],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 3,
+          "x": 51.3,
+          "y": 29.3,
+          "score": 2.8
+         },
+         {
+          "num": 6,
+          "x": 45.7,
+          "y": 22,
+          "score": 30.8
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.9,
+          "y": 8.7,
+          "score": 24.2
+         },
+         {
+          "num": 7,
+          "x": 29.8,
+          "y": 31.8,
+          "score": 21
+         }
+        ],
+        "unnamed": 0,
+        "settled": false,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [
+         {
+          "ball": 3,
+          "change": "reversed",
+          "why": "seen again after it was counted pocketed"
+         }
+        ],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 4,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         }
+        ],
+        "reversed": [
+         3
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "pocketed",
+         "2": "present",
+         "3": "present",
+         "4": "unconfirmed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": []
+     },
+     {
+      "clip": "shot007",
+      "realShot": true,
+      "wrong": [
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "state",
+        "ball": 3,
+        "what": "gone, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        8
+       ],
+       "namedButGone": [
+        2
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": {
+       "truth": 5,
+       "tracker": 3
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "present",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 31.9,
+          "score": 40
+         },
+         {
+          "num": 3,
+          "x": 51.3,
+          "y": 29.3,
+          "score": 9.3
+         },
+         {
+          "num": 0,
+          "x": 54.9,
+          "y": 25.5,
+          "score": 40
+         },
+         {
+          "num": 6,
+          "x": 45.7,
+          "y": 22,
+          "score": 40
+         },
+         {
+          "num": 2,
+          "x": 39.9,
+          "y": 8.7,
+          "score": 37.9
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [
+         {
+          "ball": 2,
+          "change": "reversed",
+          "why": "seen again after it was counted pocketed"
+         },
+         {
+          "ball": 3,
+          "change": "reversed",
+          "why": "seen again after it was counted pocketed"
+         }
+        ],
+        "unresolved": [
+         {
+          "ball": 5,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 9,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "reversed": [
+         2,
+         3
+        ],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "present",
+         "4": "pocketed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "unconfirmed"
+        },
+        "game": {
+         "onTable": [
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "present",
+         "4": "pocketed",
+         "5": "unconfirmed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "unconfirmed"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 32,
+          "score": 31
+         },
+         {
+          "num": 5,
+          "x": 38.5,
+          "y": 33,
+          "score": 30.3
+         },
+         {
+          "num": 0,
+          "x": 57.1,
+          "y": 28.7,
+          "score": 31
+         },
+         {
+          "num": 6,
+          "x": 45.6,
+          "y": 22,
+          "score": 30.9
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.7,
+          "score": 30.6
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 3,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "unconfirmed",
+         "4": "pocketed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       7.43
+      ]
+     },
+     {
+      "clip": "shot008",
+      "realShot": true,
+      "wrong": [
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "made",
+        "ball": 5,
+        "what": "went in; left unresolved (not seen; table not settled)"
+       },
+       {
+        "fact": "state",
+        "ball": 0,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 6,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        0,
+        6,
+        8
+       ],
+       "namedButGone": [
+        2
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": {
+       "truth": 5,
+       "tracker": 6
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "present",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 5,
+          "x": 38.5,
+          "y": 33,
+          "score": 38.4
+         },
+         {
+          "num": 7,
+          "x": 29.8,
+          "y": 31.8,
+          "score": 40
+         },
+         {
+          "num": 0,
+          "x": 57.1,
+          "y": 28.7,
+          "score": 40
+         },
+         {
+          "num": 6,
+          "x": 45.7,
+          "y": 21.9,
+          "score": 40
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 40
+         },
+         {
+          "num": 2,
+          "x": 39.9,
+          "y": 8.7,
+          "score": 39.4
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [
+         {
+          "ball": 2,
+          "change": "reversed",
+          "why": "seen again after it was counted pocketed"
+         }
+        ],
+        "unresolved": [
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "reversed": [
+         2
+        ],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "present",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 32,
+          "score": 30.9
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.9,
+          "y": 8.7,
+          "score": 30.8
+         }
+        ],
+        "unnamed": 0,
+        "settled": false,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 5,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "unconfirmed",
+         "6": "unconfirmed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          5,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       4.5
+      ]
+     },
+     {
+      "clip": "shot010",
+      "realShot": false,
+      "wrong": [
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        8
+       ],
+       "namedButGone": [
+        2
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": null,
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "present",
+         "7": "present",
+         "8": "present",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 32,
+          "score": 29.9
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 30.7
+         },
+         {
+          "num": 0,
+          "x": 66,
+          "y": 5.5,
+          "score": 16
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [
+         {
+          "ball": 2,
+          "change": "reversed",
+          "why": "seen again after it was counted pocketed"
+         }
+        ],
+        "unresolved": [
+         {
+          "ball": 6,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "reversed": [
+         2
+        ],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "unconfirmed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "unconfirmed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 31.9,
+          "score": 30.9
+         },
+         {
+          "num": 6,
+          "x": 51.9,
+          "y": 30.1,
+          "score": 31
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 30.8
+         },
+         {
+          "num": 0,
+          "x": 70.1,
+          "y": 2.5,
+          "score": 31
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "present",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": []
+     },
+     {
+      "clip": "shot011",
+      "realShot": true,
+      "wrong": [
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "state",
+        "ball": 0,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 6,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        0,
+        6,
+        8
+       ],
+       "namedButGone": [
+        2
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": {
+       "truth": 6,
+       "tracker": null
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "present",
+         "7": "present",
+         "8": "present",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 6,
+          "x": 50.9,
+          "y": 30.6,
+          "score": 39
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 39
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 38.7
+         },
+         {
+          "num": 0,
+          "x": 70.8,
+          "y": 2.2,
+          "score": 39
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [
+         {
+          "ball": 2,
+          "change": "reversed",
+          "why": "seen again after it was counted pocketed"
+         }
+        ],
+        "unresolved": [
+         {
+          "ball": 7,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "reversed": [
+         2
+        ],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "present",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "present",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 31.9,
+          "score": 31
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 31
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.7,
+          "score": 30.8
+         }
+        ],
+        "unnamed": 0,
+        "settled": false,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "unconfirmed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       3.77
+      ]
+     },
+     {
+      "clip": "shot012",
+      "realShot": false,
+      "wrong": [
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "state",
+        "ball": 0,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 6,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 7,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        0,
+        6,
+        7,
+        8
+       ],
+       "namedButGone": [
+        2
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": null,
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "present",
+         "7": "present",
+         "8": "present",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 22
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 21.8
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [
+         {
+          "ball": 2,
+          "change": "reversed",
+          "why": "seen again after it was counted pocketed"
+         }
+        ],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "reversed": [
+         2
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "unconfirmed",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 22
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 21.8
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 6,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "unconfirmed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          6,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": []
+     },
+     {
+      "clip": "shot013",
+      "realShot": true,
+      "wrong": [
+       {
+        "fact": "state",
+        "ball": 2,
+        "what": "gone, but the system has it on the table (seen)"
+       }
+      ],
+      "unresolved": [
+       {
+        "fact": "made",
+        "ball": 7,
+        "what": "went in; left unresolved (not seen; table not settled)"
+       },
+       {
+        "fact": "state",
+        "ball": 0,
+        "what": "on the table, left unconfirmed"
+       },
+       {
+        "fact": "state",
+        "ball": 8,
+        "what": "on the table, left unconfirmed"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [
+        0,
+        8
+       ],
+       "namedButGone": [
+        2
+       ]
+      },
+      "stateErrors": [
+       2
+      ],
+      "result": "confidently wrong",
+      "first": {
+       "truth": 7,
+       "tracker": 7
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "pocketed",
+         "7": "present",
+         "8": "present",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 7,
+          "x": 29.7,
+          "y": 31.9,
+          "score": 39.9
+         },
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 40
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 39.7
+         },
+         {
+          "num": 0,
+          "x": 64.5,
+          "y": 3.7,
+          "score": 40
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [
+         {
+          "ball": 2,
+          "change": "reversed",
+          "why": "seen again after it was counted pocketed"
+         }
+        ],
+        "unresolved": [
+         {
+          "ball": 8,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "reversed": [
+         2
+        ],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "pocketed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "pocketed",
+         "7": "present",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 9,
+          "x": 75,
+          "y": 10.9,
+          "score": 29
+         },
+         {
+          "num": 2,
+          "x": 39.8,
+          "y": 8.6,
+          "score": 29.8
+         }
+        ],
+        "unnamed": 0,
+        "settled": false,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 0,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 7,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         },
+         {
+          "ball": 8,
+          "why": "not seen and the table was still moving",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "unconfirmed",
+         "1": "pocketed",
+         "2": "present",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "pocketed",
+         "7": "unconfirmed",
+         "8": "unconfirmed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          2,
+          7,
+          8,
+          9
+         ],
+         "lowest": 2,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       5.57
+      ]
+     },
+     {
+      "clip": "shot014",
+      "realShot": false,
+      "wrong": [],
+      "unresolved": [],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [],
+       "namedButGone": []
+      },
+      "stateErrors": [],
+      "result": "correct automatically",
+      "first": null,
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "pocketed",
+         "7": "pocketed",
+         "8": "pocketed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 0,
+          "x": 29.6,
+          "y": 3.8,
+          "score": 24
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 9,
+          "why": "not seen, nothing explains it",
+          "possiblyPocketed": false
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "pocketed",
+         "7": "pocketed",
+         "8": "pocketed",
+         "9": "unconfirmed"
+        },
+        "game": {
+         "onTable": [
+          9
+         ],
+         "lowest": 9,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "pocketed",
+         "7": "pocketed",
+         "8": "pocketed",
+         "9": "unconfirmed"
+        },
+        "seen": [
+         {
+          "num": 9,
+          "x": 68.3,
+          "y": 25.9,
+          "score": 29.9
+         },
+         {
+          "num": 0,
+          "x": 27.5,
+          "y": 4.8,
+          "score": 31
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "pocketed",
+         "7": "pocketed",
+         "8": "pocketed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          9
+         ],
+         "lowest": 9,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": []
+     },
+     {
+      "clip": "shot015",
+      "realShot": true,
+      "wrong": [],
+      "unresolved": [
+       {
+        "fact": "made",
+        "ball": 9,
+        "what": "went in; left unresolved (possibly pocketed: last seen heading to a pocket outside the mouth)"
+       }
+      ],
+      "unverifiable": [],
+      "falseShots": 0,
+      "obsErrors": {
+       "missedOrUnnamed": [],
+       "namedButGone": []
+      },
+      "stateErrors": [],
+      "result": "unresolved",
+      "first": {
+       "truth": 9,
+       "tracker": null
+      },
+      "trace": [
+       {
+        "label": "before",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "pocketed",
+         "7": "pocketed",
+         "8": "pocketed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 9,
+          "x": 68.3,
+          "y": 25.9,
+          "score": 38.8
+         },
+         {
+          "num": 0,
+          "x": 27.5,
+          "y": 4.8,
+          "score": 39
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [],
+        "proposed": [],
+        "confirmed": [],
+        "unresolved": [],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "pocketed",
+         "7": "pocketed",
+         "8": "pocketed",
+         "9": "present"
+        },
+        "game": {
+         "onTable": [
+          9
+         ],
+         "lowest": 9,
+         "lowestSure": true,
+         "rackOver": false
+        }
+       },
+       {
+        "label": "after",
+        "prev": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "pocketed",
+         "7": "pocketed",
+         "8": "pocketed",
+         "9": "present"
+        },
+        "seen": [
+         {
+          "num": 0,
+          "x": 21,
+          "y": 8.2,
+          "score": 31
+         }
+        ],
+        "unnamed": 0,
+        "settled": true,
+        "pocketEvents": [
+         {
+          "ball": 9,
+          "x": 74.8,
+          "y": 33.8,
+          "t": 4.63,
+          "jaws": false,
+          "inMouth": false
+         }
+        ],
+        "proposed": [
+         {
+          "ball": 9,
+          "change": "pocketed",
+          "evidence": "lost heading toward a pocket, outside the mouth"
+         }
+        ],
+        "confirmed": [],
+        "unresolved": [
+         {
+          "ball": 9,
+          "why": "possibly pocketed: last seen heading to a pocket outside the mouth",
+          "possiblyPocketed": true
+         }
+        ],
+        "after": {
+         "0": "present",
+         "1": "pocketed",
+         "2": "pocketed",
+         "3": "pocketed",
+         "4": "pocketed",
+         "5": "pocketed",
+         "6": "pocketed",
+         "7": "pocketed",
+         "8": "pocketed",
+         "9": "unconfirmed"
+        },
+        "game": {
+         "onTable": [
+          9
+         ],
+         "lowest": 9,
+         "lowestSure": false,
+         "rackOver": false
+        }
+       }
+      ],
+      "shotsAt": [
+       4.3
+      ]
+     }
+    ],
+    "completion": false,
+    "integrity": false,
+    "corrections": 13
+   }
+  ]
+ }
+}

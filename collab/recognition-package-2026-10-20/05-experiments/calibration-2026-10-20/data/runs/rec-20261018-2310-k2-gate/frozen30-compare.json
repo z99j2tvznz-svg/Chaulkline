@@ -1,0 +1,60 @@
+{
+ "checkpoint": {
+  "v06": {
+   "shots": 18,
+   "endRight": 3,
+   "confidentlyWrong": 1,
+   "phantom": 0,
+   "madeOpen": 29,
+   "stateErrors": 0,
+   "missed": 0,
+   "falseShots": 1,
+   "clipsWrong": [
+    "clip023"
+   ]
+  },
+  "calibrated": {
+   "shots": 18,
+   "endRight": 3,
+   "confidentlyWrong": 1,
+   "phantom": 0,
+   "madeOpen": 29,
+   "stateErrors": 0,
+   "missed": 0,
+   "falseShots": 1,
+   "clipsWrong": [
+    "clip023"
+   ]
+  },
+  "newWrongClips": []
+ },
+ "continuous": {
+  "v06": {
+   "shots": 18,
+   "endRight": 3,
+   "confidentlyWrong": 1,
+   "phantom": 0,
+   "madeOpen": 29,
+   "stateErrors": 0,
+   "missed": 0,
+   "falseShots": 1,
+   "clipsWrong": [
+    "clip023"
+   ]
+  },
+  "calibrated": {
+   "shots": 18,
+   "endRight": 3,
+   "confidentlyWrong": 1,
+   "phantom": 0,
+   "madeOpen": 29,
+   "stateErrors": 0,
+   "missed": 0,
+   "falseShots": 1,
+   "clipsWrong": [
+    "clip023"
+   ]
+  },
+  "newWrongClips": []
+ }
+}

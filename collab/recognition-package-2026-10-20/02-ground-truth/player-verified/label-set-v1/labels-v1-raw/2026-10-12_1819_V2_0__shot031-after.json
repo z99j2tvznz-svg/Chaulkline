@@ -1,0 +1,110 @@
+{
+  "balls": [
+    {
+      "checked": true,
+      "id": "p0",
+      "moved": true,
+      "num": 8,
+      "partial": false,
+      "proposedNum": 8,
+      "r": 9.5,
+      "renumbered": false,
+      "resized": false,
+      "src": "proposed",
+      "unknown": false,
+      "x": 289.1,
+      "y": 22.2
+    },
+    {
+      "checked": true,
+      "id": "p1",
+      "moved": true,
+      "num": 9,
+      "partial": false,
+      "proposedNum": 9,
+      "r": 9.3,
+      "renumbered": false,
+      "resized": false,
+      "src": "proposed",
+      "unknown": false,
+      "x": 573,
+      "y": 24.4
+    },
+    {
+      "checked": true,
+      "id": "p2",
+      "moved": true,
+      "num": 7,
+      "partial": false,
+      "proposedNum": 7,
+      "r": 8.8,
+      "renumbered": false,
+      "resized": true,
+      "src": "proposed",
+      "unknown": false,
+      "x": 512,
+      "y": 39.9
+    },
+    {
+      "checked": true,
+      "id": "p3",
+      "moved": true,
+      "num": 6,
+      "partial": false,
+      "proposedNum": 6,
+      "r": 10.2,
+      "renumbered": false,
+      "resized": false,
+      "src": "proposed",
+      "unknown": false,
+      "x": 785.3,
+      "y": 58.9
+    },
+    {
+      "checked": true,
+      "id": "amve3ljvw",
+      "moved": true,
+      "num": 5,
+      "partial": false,
+      "proposedNum": null,
+      "r": 9.8,
+      "renumbered": false,
+      "resized": false,
+      "src": "added",
+      "unknown": false,
+      "x": 177,
+      "y": 38.5
+    },
+    {
+      "checked": true,
+      "id": "amve3mz4h",
+      "moved": true,
+      "num": 0,
+      "partial": false,
+      "proposedNum": null,
+      "r": 11,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 165.4,
+      "y": 89.3
+    }
+  ],
+  "checkedBy": "person",
+  "file": "shot031-after.jpg",
+  "h": 167,
+  "image": "images/2026-10-12_1819_V2.0__shot031-after.jpg",
+  "removed": [
+    {
+      "proposedNum": 0,
+      "r": 11.4,
+      "x": 162,
+      "y": 91
+    }
+  ],
+  "session": "2026-10-12_1819_V2.0",
+  "status": "done",
+  "updated": "2026-10-18T18:33:26.627Z",
+  "w": 961
+}

@@ -1,0 +1,29 @@
+{
+  "balls": [
+    {
+      "checked": true,
+      "id": "amve5pbds",
+      "moved": false,
+      "num": 0,
+      "partial": false,
+      "proposedNum": null,
+      "r": 12.7,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 771.4,
+      "y": 290.9
+    }
+  ],
+  "checkedBy": "person",
+  "file": "shot035.mp4",
+  "h": 720,
+  "image": "images/2026-10-16_evening_V2.3.3__shot035-last.jpg",
+  "removed": [],
+  "session": "2026-10-16_evening_V2.3.3",
+  "status": "done",
+  "updated": "2026-10-18T18:26:14.564Z",
+  "w": 1280,
+  "warningsSeen": []
+}

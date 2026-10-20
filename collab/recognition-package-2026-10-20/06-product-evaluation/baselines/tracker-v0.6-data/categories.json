@@ -1,0 +1,84 @@
+{
+ "checkpoint": {
+  "total": {
+   "after look not settled (table still moving at clip end)": 29,
+   "ball count did not fall to match": 2,
+   "after look has an unnamed spot (identification)": 16,
+   "not named before the shot (identification)": 11,
+   "another missing ball not named before (identification)": 6
+  },
+  "perSession": {
+   "2026-10-16_evening_V2.3.3": {
+    "after look not settled (table still moving at clip end)": 2,
+    "ball count did not fall to match": 2,
+    "after look has an unnamed spot (identification)": 1
+   },
+   "2026-10-17_1500_V2.3.3_otherside": {
+    "after look has an unnamed spot (identification)": 1,
+    "after look not settled (table still moving at clip end)": 3
+   },
+   "2026-10-17_2151_V2.3.3_firstspot": {
+    "after look has an unnamed spot (identification)": 6,
+    "not named before the shot (identification)": 2,
+    "after look not settled (table still moving at clip end)": 1
+   },
+   "rec-20261017-1730": {
+    "not named before the shot (identification)": 7,
+    "another missing ball not named before (identification)": 2
+   },
+   "rec-20261018-2310": {
+    "after look has an unnamed spot (identification)": 2,
+    "after look not settled (table still moving at clip end)": 23,
+    "not named before the shot (identification)": 1,
+    "another missing ball not named before (identification)": 3
+   },
+   "rec-20261019-1710": {
+    "after look has an unnamed spot (identification)": 6,
+    "not named before the shot (identification)": 1,
+    "another missing ball not named before (identification)": 1
+   }
+  }
+ },
+ "continuous": {
+  "total": {
+   "uncertainty carried from an earlier shot (this ball)": 10,
+   "another missing ball uncertain from an earlier shot": 9,
+   "after look has an unnamed spot (identification)": 10,
+   "after look not settled (table still moving at clip end)": 27,
+   "not named before the shot (identification)": 9,
+   "another missing ball not named before (identification)": 6
+  },
+  "perSession": {
+   "2026-10-16_evening_V2.3.3": {
+    "uncertainty carried from an earlier shot (this ball)": 1,
+    "another missing ball uncertain from an earlier shot": 8,
+    "after look has an unnamed spot (identification)": 1,
+    "after look not settled (table still moving at clip end)": 1
+   },
+   "2026-10-17_1500_V2.3.3_otherside": {
+    "uncertainty carried from an earlier shot (this ball)": 1,
+    "after look not settled (table still moving at clip end)": 3,
+    "another missing ball uncertain from an earlier shot": 1
+   },
+   "2026-10-17_2151_V2.3.3_firstspot": {
+    "uncertainty carried from an earlier shot (this ball)": 8,
+    "after look has an unnamed spot (identification)": 1
+   },
+   "rec-20261017-1730": {
+    "not named before the shot (identification)": 7,
+    "another missing ball not named before (identification)": 2
+   },
+   "rec-20261018-2310": {
+    "after look has an unnamed spot (identification)": 2,
+    "after look not settled (table still moving at clip end)": 23,
+    "not named before the shot (identification)": 1,
+    "another missing ball not named before (identification)": 3
+   },
+   "rec-20261019-1710": {
+    "after look has an unnamed spot (identification)": 6,
+    "not named before the shot (identification)": 1,
+    "another missing ball not named before (identification)": 1
+   }
+  }
+ }
+}

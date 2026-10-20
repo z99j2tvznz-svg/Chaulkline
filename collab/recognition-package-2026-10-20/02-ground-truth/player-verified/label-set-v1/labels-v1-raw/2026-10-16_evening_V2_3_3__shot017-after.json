@@ -1,0 +1,28 @@
+{
+  "balls": [
+    {
+      "checked": true,
+      "id": "amve4x8uc",
+      "moved": true,
+      "num": 0,
+      "partial": false,
+      "proposedNum": null,
+      "r": 10.4,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 592.6,
+      "y": 23.6
+    }
+  ],
+  "checkedBy": "person",
+  "file": "shot017-after.jpg",
+  "h": 251,
+  "image": "images/2026-10-16_evening_V2.3.3__shot017-after.jpg",
+  "removed": [],
+  "session": "2026-10-16_evening_V2.3.3",
+  "status": "done",
+  "updated": "2026-10-18T23:05:29.514Z",
+  "w": 1196
+}

@@ -1,0 +1,481 @@
+{
+ "about": "Hand-checked truth per shot clip of the Oct 17 session from the first spot (V2.3.3, two racks of 9-ball, partly out of order), from contact sheets and first/last frames. Same fields as the Oct 16 file, plus more = start times of extra real shots in the same clip. at = seconds into the clip when the cue ball starts, by eye. Clip 29 was never saved.",
+ "trackerOpts": {
+  "pockets": null
+ },
+ "trackerOptsWhy": "Default pocket mouths. Pockets are rarely caught from this spot whatever mouths are used (tried the Oct 16 ones and ones fitted to this outline; default had the fewest false calls).",
+ "clips": {
+  "shot001": {
+   "shot": false,
+   "made": [],
+   "note": "balls being placed by hand; one rolls along the far rail",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "no: balls are being placed, the rack is not set yet"
+   }
+  },
+  "shot002": {
+   "shot": false,
+   "made": [],
+   "note": "4 s, hand near the table, nothing shot",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "no: the rack is still being set"
+   }
+  },
+  "shot003": {
+   "shot": true,
+   "made": [
+    5
+   ],
+   "first": 5,
+   "scratch": false,
+   "at": 8.3,
+   "note": "the orange 5 into the far right corner (the reader calls both reds 3)",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot004": {
+   "shot": true,
+   "made": [],
+   "first": null,
+   "scratch": false,
+   "at": 3.7,
+   "note": "cue goes left into the 9 and the 2; the 2 stops by the far left corner. The 1 dropped before this clip and the 2 after it, both off camera",
+   "offCameraBefore": [
+    1
+   ],
+   "unsureBalls": [
+    2
+   ],
+   "unsureWhy": "the 2 dropped after the clip, off camera; not known whether from this shot",
+   "verify": {
+    "shot": "yes",
+    "made": "partial: the fate of ball(s) [2] in this clip is not known (the 2 dropped after the clip, off camera; not known whether from this shot)",
+    "state": "yes"
+   }
+  },
+  "shot005": {
+   "shot": false,
+   "made": [],
+   "note": "cue ball rolls a little at the start; the player walks in front",
+   "offCameraBefore": [
+    2
+   ],
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot006": {
+   "shot": true,
+   "made": [],
+   "first": 3,
+   "scratch": false,
+   "at": 5.3,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot007": {
+   "shot": true,
+   "made": [],
+   "first": 3,
+   "scratch": false,
+   "at": 5.2,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot008": {
+   "shot": true,
+   "made": [],
+   "first": null,
+   "scratch": false,
+   "at": 5.5,
+   "note": "3 and 6 both move",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot009": {
+   "shot": true,
+   "made": [],
+   "first": 3,
+   "scratch": false,
+   "at": 3.2,
+   "note": "cue ball ends by the far left corner but stays up; the app called a scratch",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot010": {
+   "shot": true,
+   "made": [
+    8
+   ],
+   "first": 8,
+   "scratch": false,
+   "at": 6.1,
+   "note": "8 into the near side pocket; balls moved between clip 9 and 10 off camera",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot011": {
+   "shot": true,
+   "made": [
+    7
+   ],
+   "first": 7,
+   "scratch": false,
+   "at": 1.8,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot012": {
+   "shot": true,
+   "made": [
+    3
+   ],
+   "first": 3,
+   "scratch": false,
+   "at": 0.8,
+   "note": "3 into the far side pocket, the 6 moves too",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot013": {
+   "shot": true,
+   "made": [
+    6
+   ],
+   "first": 6,
+   "scratch": false,
+   "at": 1.1,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot014": {
+   "shot": true,
+   "made": [
+    9
+   ],
+   "first": 9,
+   "scratch": false,
+   "at": 2.6,
+   "note": "9 into the near left corner ends rack 1; from 8 s the balls are rolled out by hand for rack 2",
+   "settleEnd": 8.0,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot015": {
+   "shot": true,
+   "made": [],
+   "first": 1,
+   "scratch": false,
+   "at": 12.2,
+   "note": "the 9 is nudged with the stick at about 4 s (not a shot); real shot at 12.2, the 1 stops by the far left corner",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot016": {
+   "shot": true,
+   "made": [
+    1
+   ],
+   "first": 1,
+   "scratch": false,
+   "at": 10.2,
+   "note": "player's body covers much of the table",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot017": {
+   "shot": true,
+   "made": [
+    2
+   ],
+   "first": 2,
+   "scratch": false,
+   "at": 6.7,
+   "note": "practice strokes from 4 s; 2 into the near side pocket",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot018": {
+   "shot": true,
+   "made": [
+    3
+   ],
+   "first": 3,
+   "scratch": false,
+   "at": 3.8,
+   "note": "3 into the far side pocket",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot019": {
+   "shot": true,
+   "made": [
+    4
+   ],
+   "first": 4,
+   "scratch": false,
+   "at": 4.5,
+   "note": "4 into the far right corner",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot020": {
+   "shot": true,
+   "made": [],
+   "first": null,
+   "scratch": false,
+   "at": 8.8,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot021": {
+   "shot": true,
+   "made": [],
+   "first": null,
+   "scratch": false,
+   "at": 5.9,
+   "more": [
+    15.9
+   ],
+   "note": "two real shots; the second sends the 5 to the far right corner. No scratch (the app called one)",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot022": {
+   "shot": true,
+   "made": [
+    5
+   ],
+   "first": 5,
+   "scratch": false,
+   "at": 8.2,
+   "note": "practice strokes first; 5 into the far right corner. No scratch (the app called one)",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot023": {
+   "shot": true,
+   "made": [
+    6
+   ],
+   "first": 6,
+   "scratch": false,
+   "at": 1.7,
+   "note": "6 into the near right corner",
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot024": {
+   "shot": true,
+   "made": [],
+   "first": 7,
+   "scratch": false,
+   "at": 4.7,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot025": {
+   "shot": true,
+   "made": [],
+   "first": 7,
+   "scratch": false,
+   "at": 3.3,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot026": {
+   "shot": true,
+   "made": [],
+   "first": 7,
+   "scratch": false,
+   "at": 4.9,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot027": {
+   "shot": true,
+   "made": [],
+   "first": 7,
+   "scratch": false,
+   "at": 2.9,
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  },
+  "shot028": {
+   "shot": true,
+   "made": [
+    7
+   ],
+   "first": 7,
+   "scratch": false,
+   "at": 3.7,
+   "note": "7 into the near right corner; then the player stands in front. The 8 dropped after this clip, off camera",
+   "unsureBalls": [
+    8
+   ],
+   "unsureWhy": "the 8 dropped after the clip, off camera; not known whether from this shot",
+   "verify": {
+    "shot": "yes",
+    "made": "partial: the fate of ball(s) [8] in this clip is not known (the 8 dropped after the clip, off camera; not known whether from this shot)",
+    "state": "yes"
+   }
+  },
+  "shot030": {
+   "shot": true,
+   "made": [],
+   "first": 9,
+   "scratch": false,
+   "at": 3.0,
+   "note": "starts with the end of an earlier shot still rolling; soft shot on the 9 at 3 s",
+   "offCameraBefore": [
+    8
+   ],
+   "verify": {
+    "shot": "yes",
+    "made": "yes",
+    "state": "yes"
+   }
+  }
+ },
+ "verifyAbout": "Added Oct 18 for the rack scorer (docs/baseline-rules.md). racks = which clips belong to which rack and the balls at its start. Per clip: offCameraBefore = balls that left the table between the previous clip and this one, off camera; madeAfterClip = balls this clip's shot pocketed after the clip ended; unsureBalls = balls whose fate in this clip the truth cannot tell; settleEnd = seconds into the clip where the after-look must end (the next rack starts inside the clip); verify = per fact, 'yes' or why not. trackerOpts.pockets are fitted to where balls went in and are NOT used by the baseline.",
+ "racks": [
+  {
+   "name": "rack 1",
+   "clips": [
+    "shot001",
+    "shot002",
+    "shot003",
+    "shot004",
+    "shot005",
+    "shot006",
+    "shot007",
+    "shot008",
+    "shot009",
+    "shot010",
+    "shot011",
+    "shot012",
+    "shot013",
+    "shot014"
+   ],
+   "start": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  },
+  {
+   "name": "rack 2",
+   "clips": [
+    "shot015",
+    "shot016",
+    "shot017",
+    "shot018",
+    "shot019",
+    "shot020",
+    "shot021",
+    "shot022",
+    "shot023",
+    "shot024",
+    "shot025",
+    "shot026",
+    "shot027",
+    "shot028",
+    "shot030"
+   ],
+   "start": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  }
+ ]
+}

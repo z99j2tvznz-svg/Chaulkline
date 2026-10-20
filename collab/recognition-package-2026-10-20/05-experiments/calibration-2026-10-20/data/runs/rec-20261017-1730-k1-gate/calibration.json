@@ -1,0 +1,25 @@
+{
+ "pictures": 1,
+ "examples": 150,
+ "perClass": [
+  15,
+  15,
+  15,
+  15,
+  15,
+  15,
+  15,
+  15,
+  15,
+  15,
+  0
+ ],
+ "lam": 0.1,
+ "cv": {},
+ "lossNoCalibration": 0.03200685605406761,
+ "mode": "gate",
+ "mu": 1.0,
+ "anchors": 960,
+ "trainTop1Before": 1.0,
+ "trainTop1After": 1.0
+}

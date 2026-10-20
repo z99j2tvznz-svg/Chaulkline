@@ -1,0 +1,92 @@
+{
+  "balls": [
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p0",
+      "moved": true,
+      "num": 8,
+      "partial": false,
+      "proposedNum": 8,
+      "r": 12.3,
+      "renumbered": false,
+      "resized": false,
+      "src": "proposed",
+      "unknown": false,
+      "x": 747.6,
+      "y": 54.3
+    },
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p6",
+      "moved": true,
+      "num": 0,
+      "partial": false,
+      "proposedNum": 0,
+      "r": 13.2,
+      "renumbered": false,
+      "resized": false,
+      "src": "proposed",
+      "unknown": false,
+      "x": 462.6,
+      "y": 81.5
+    },
+    {
+      "checked": true,
+      "id": "amveeunai",
+      "inPocket": true,
+      "moved": true,
+      "num": 7,
+      "partial": false,
+      "proposedNum": null,
+      "r": 8.4,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 271.9,
+      "y": 26.3
+    }
+  ],
+  "checkedBy": "person",
+  "file": "shot030-before.jpg",
+  "h": 294,
+  "image": "images/2026-10-13_1712_V2.2__shot030-before.jpg",
+  "removed": [
+    {
+      "proposedNum": null,
+      "r": 13.8,
+      "x": 252,
+      "y": 101
+    },
+    {
+      "proposedNum": null,
+      "r": 13.8,
+      "x": 262,
+      "y": 100
+    },
+    {
+      "proposedNum": null,
+      "r": 13.5,
+      "x": 236,
+      "y": 89
+    },
+    {
+      "proposedNum": null,
+      "r": 13.3,
+      "x": 264,
+      "y": 80
+    },
+    {
+      "proposedNum": null,
+      "r": 13.6,
+      "x": 299,
+      "y": 92
+    }
+  ],
+  "session": "2026-10-13_1712_V2.2",
+  "status": "done",
+  "updated": "2026-10-18T22:42:20.937Z",
+  "w": 1280
+}

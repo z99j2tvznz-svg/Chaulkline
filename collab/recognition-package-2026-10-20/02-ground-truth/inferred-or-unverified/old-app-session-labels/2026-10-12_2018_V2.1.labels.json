@@ -1,0 +1,7139 @@
+{
+ "app": "V2.1",
+ "ft": 7,
+ "table": [
+  78,
+  39
+ ],
+ "ballR": 1.125,
+ "shots": [
+  {
+   "shot": 1,
+   "t": 1791861550469,
+   "rack": 1,
+   "target": null,
+   "via": "path",
+   "vis": null,
+   "agree": null,
+   "objAt": [
+    64.1,
+    27.5
+   ],
+   "inferred": true,
+   "hidden": {
+    "at": [
+     64.1,
+     27.5
+    ],
+    "deg": 18,
+    "slow": 0.33,
+    "pt": 4,
+    "see": 0
+   },
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 0,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": false,
+   "steady": false,
+   "before": {
+    "file": "shot001-before.jpg",
+    "crop": [
+     0,
+     275,
+     1248,
+     275
+    ],
+    "scale": 1,
+    "w": 1248,
+    "h": 275,
+    "ageS": 22.7,
+    "balls": [
+     {
+      "id": 1,
+      "x": 68.7,
+      "y": 30.1,
+      "px": 892,
+      "py": 43,
+      "pr": 11.5,
+      "conf": 0.89,
+      "top": [
+       [
+        1,
+        0.12
+       ],
+       [
+        4,
+        0.41
+       ],
+       [
+        5,
+        0.69
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 57.6,
+      "y": 19.1,
+      "px": 809,
+      "py": 90,
+      "pr": 12.9,
+      "conf": 0.75,
+      "top": [
+       [
+        0,
+        0.12
+       ],
+       [
+        9,
+        0.24
+       ],
+       [
+        1,
+        0.44
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot001-after.jpg",
+    "crop": [
+     0,
+     271,
+     1248,
+     276
+    ],
+    "scale": 1,
+    "w": 1248,
+    "h": 276,
+    "ageS": 0.6,
+    "balls": [
+     {
+      "id": null,
+      "x": 61.8,
+      "y": 25.5,
+      "px": 837,
+      "py": 62,
+      "pr": 12.1,
+      "conf": 0,
+      "top": [
+       [
+        0,
+        0.15
+       ],
+       [
+        9,
+        0.23
+       ],
+       [
+        7,
+        0.32
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 2,
+   "t": 1791861564793,
+   "rack": 1,
+   "target": null,
+   "via": "path",
+   "vis": null,
+   "agree": null,
+   "objAt": [
+    53.5,
+    18.2
+   ],
+   "inferred": true,
+   "hidden": {
+    "at": [
+     53.5,
+     18.2
+    ],
+    "deg": 50,
+    "slow": 0.57,
+    "pt": 10,
+    "see": 0
+   },
+   "drop": 3,
+   "scratch": true,
+   "mic": {
+    "clicks": 0,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": true,
+   "settleTimeout": false,
+   "truthUnsure": false,
+   "steady": false,
+   "before": {
+    "file": "shot002-before.jpg",
+    "crop": [
+     0,
+     271,
+     1248,
+     276
+    ],
+    "scale": 1,
+    "w": 1248,
+    "h": 276,
+    "ageS": 9,
+    "balls": [
+     {
+      "id": 1,
+      "x": 66.5,
+      "y": 28.4,
+      "px": 875,
+      "py": 50,
+      "pr": 11.7,
+      "conf": 0.9,
+      "top": [
+       [
+        1,
+        0.11
+       ],
+       [
+        4,
+        0.42
+       ],
+       [
+        5,
+        0.67
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot002-after.jpg",
+    "crop": [
+     0,
+     271,
+     1248,
+     276
+    ],
+    "scale": 1,
+    "w": 1248,
+    "h": 276,
+    "ageS": 5.3,
+    "balls": [
+     {
+      "id": 1,
+      "x": 66.4,
+      "y": 28.4,
+      "px": 875,
+      "py": 50,
+      "pr": 11.7,
+      "conf": 0.9,
+      "top": [
+       [
+        1,
+        0.13
+       ],
+       [
+        4,
+        0.41
+       ],
+       [
+        5,
+        0.66
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 3,
+   "t": 1791861577202,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 1,
+   "agree": null,
+   "objAt": [
+    66.4,
+    28.4
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": 5,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": false,
+   "steady": false,
+   "before": {
+    "file": "shot003-before.jpg",
+    "crop": [
+     0,
+     271,
+     1248,
+     276
+    ],
+    "scale": 1,
+    "w": 1248,
+    "h": 276,
+    "ageS": 7.7,
+    "balls": [
+     {
+      "id": 1,
+      "x": 66.4,
+      "y": 28.4,
+      "px": 875,
+      "py": 50,
+      "pr": 11.7,
+      "conf": 0.9,
+      "top": [
+       [
+        1,
+        0.14
+       ],
+       [
+        4,
+        0.46
+       ],
+       [
+        3,
+        0.68
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 48.3,
+      "y": 14.3,
+      "px": 716,
+      "py": 115,
+      "pr": 13.7,
+      "conf": 0.95,
+      "top": [
+       [
+        0,
+        0.12
+       ],
+       [
+        9,
+        0.17
+       ],
+       [
+        1,
+        0.49
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot003-after.jpg",
+    "crop": [
+     0,
+     271,
+     1248,
+     276
+    ],
+    "scale": 1,
+    "w": 1248,
+    "h": 276,
+    "ageS": 0,
+    "balls": [
+     {
+      "id": 0,
+      "x": 53.1,
+      "y": 24.6,
+      "px": 753,
+      "py": 66,
+      "pr": 12.3,
+      "conf": 0.96,
+      "top": [
+       [
+        0,
+        0.06
+       ],
+       [
+        9,
+        0.19
+       ],
+       [
+        7,
+        0.3
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 4,
+   "t": 1791861599186,
+   "rack": 1,
+   "target": 9,
+   "via": "track",
+   "vis": 1,
+   "agree": false,
+   "objAt": [
+    41.7,
+    16.5
+   ],
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 0,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": false,
+   "steady": false,
+   "before": {
+    "file": "shot004-before.jpg",
+    "crop": [
+     0,
+     271,
+     1248,
+     276
+    ],
+    "scale": 1,
+    "w": 1248,
+    "h": 276,
+    "ageS": 11.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 53.1,
+      "y": 24.6,
+      "px": 752,
+      "py": 66,
+      "pr": 12.3,
+      "conf": 0.96,
+      "top": [
+       [
+        0,
+        0.06
+       ],
+       [
+        9,
+        0.19
+       ],
+       [
+        7,
+        0.3
+       ]
+      ]
+     },
+     {
+      "id": 1,
+      "x": 41.7,
+      "y": 16.5,
+      "px": 641,
+      "py": 103,
+      "pr": 13.4,
+      "conf": 0.75,
+      "top": [
+       [
+        1,
+        0.28
+       ],
+       [
+        9,
+        0.37
+       ],
+       [
+        4,
+        0.44
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot004-after.jpg",
+    "crop": [
+     0,
+     271,
+     1248,
+     276
+    ],
+    "scale": 1,
+    "w": 1248,
+    "h": 276,
+    "ageS": 0,
+    "balls": [
+     {
+      "id": 0,
+      "x": 45.1,
+      "y": 20,
+      "px": 676,
+      "py": 86,
+      "pr": 12.9,
+      "conf": 0.87,
+      "top": [
+       [
+        0,
+        0.08
+       ],
+       [
+        9,
+        0.31
+       ],
+       [
+        1,
+        0.43
+       ]
+      ]
+     },
+     {
+      "id": 1,
+      "x": 41.9,
+      "y": 9.8,
+      "px": 647,
+      "py": 140,
+      "pr": 14.4,
+      "conf": 0.92,
+      "top": [
+       [
+        1,
+        0.09
+       ],
+       [
+        4,
+        0.33
+       ],
+       [
+        5,
+        0.68
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 5,
+   "t": 1791861610563,
+   "rack": 1,
+   "target": 9,
+   "via": "track",
+   "vis": 1,
+   "agree": false,
+   "objAt": [
+    41.9,
+    9.8
+   ],
+   "drop": 7,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": 31,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": true,
+   "settleTimeout": false,
+   "truthUnsure": false,
+   "steady": false,
+   "before": {
+    "file": "shot005-before.jpg",
+    "crop": [
+     0,
+     271,
+     1248,
+     276
+    ],
+    "scale": 1,
+    "w": 1248,
+    "h": 276,
+    "ageS": 7.1,
+    "balls": [
+     {
+      "id": 2,
+      "x": 54.1,
+      "y": 35.4,
+      "px": 746,
+      "py": 24,
+      "pr": 11.1,
+      "conf": 0.15,
+      "top": [
+       [
+        0,
+        0.92
+       ],
+       [
+        9,
+        1.11
+       ],
+       [
+        7,
+        1.17
+       ]
+      ]
+     },
+     {
+      "id": null,
+      "x": 48.5,
+      "y": 30.8,
+      "px": 700,
+      "py": 41,
+      "pr": 11.6,
+      "conf": 0,
+      "top": [
+       [
+        0,
+        0.93
+       ],
+       [
+        9,
+        0.93
+       ],
+       [
+        1,
+        1.22
+       ]
+      ]
+     },
+     {
+      "id": 7,
+      "x": 52.2,
+      "y": 30.9,
+      "px": 735,
+      "py": 40,
+      "pr": 11.5,
+      "conf": 0.84,
+      "top": [
+       [
+        0,
+        0.12
+       ],
+       [
+        7,
+        0.17
+       ],
+       [
+        9,
+        0.25
+       ]
+      ]
+     },
+     {
+      "id": 4,
+      "x": 50.1,
+      "y": 35.2,
+      "px": 711,
+      "py": 25,
+      "pr": 11.1,
+      "conf": 0.39,
+      "top": [
+       [
+        0,
+        0.48
+       ],
+       [
+        9,
+        0.5
+       ],
+       [
+        1,
+        0.61
+       ]
+      ]
+     },
+     {
+      "id": 9,
+      "x": 50.4,
+      "y": 30.7,
+      "px": 718,
+      "py": 41,
+      "pr": 11.6,
+      "conf": 0.76,
+      "top": [
+       [
+        0,
+        0.18
+       ],
+       [
+        9,
+        0.28
+       ],
+       [
+        7,
+        0.29
+       ]
+      ]
+     },
+     {
+      "id": 5,
+      "x": 52.2,
+      "y": 35.5,
+      "px": 730,
+      "py": 24,
+      "pr": 11.1,
+      "conf": 0.64,
+      "top": [
+       [
+        5,
+        0.45
+       ],
+       [
+        1,
+        0.48
+       ],
+       [
+        9,
+        0.72
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 45.1,
+      "y": 20,
+      "px": 676,
+      "py": 86,
+      "pr": 12.9,
+      "conf": 0.87,
+      "top": [
+       [
+        0,
+        0.11
+       ],
+       [
+        9,
+        0.12
+       ],
+       [
+        7,
+        0.35
+       ]
+      ]
+     },
+     {
+      "id": 1,
+      "x": 41.9,
+      "y": 9.8,
+      "px": 647,
+      "py": 140,
+      "pr": 14.4,
+      "conf": 0.92,
+      "top": [
+       [
+        1,
+        0.09
+       ],
+       [
+        4,
+        0.32
+       ],
+       [
+        5,
+        0.68
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot005-after.jpg",
+    "crop": [
+     0,
+     271,
+     1248,
+     276
+    ],
+    "scale": 1,
+    "w": 1248,
+    "h": 276,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 34.4,
+      "y": 18,
+      "px": 561,
+      "py": 96,
+      "pr": 13.2,
+      "conf": 0.91,
+      "top": [
+       [
+        0,
+        0.06
+       ],
+       [
+        9,
+        0.2
+       ],
+       [
+        7,
+        0.31
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 6,
+   "t": 1791861652138,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 1,
+   "agree": null,
+   "objAt": [
+    26.6,
+    36.4
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 4,
+    "strike": 3,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot006-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 9.4,
+    "balls": [
+     {
+      "id": 1,
+      "x": 26.7,
+      "y": 36.4,
+      "px": 493,
+      "py": 19,
+      "pr": 11.2,
+      "conf": 0.68,
+      "top": [
+       [
+        9,
+        0.36
+       ],
+       [
+        1,
+        0.38
+       ],
+       [
+        4,
+        0.54
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 46.4,
+      "y": 31.8,
+      "px": 677,
+      "py": 36,
+      "pr": 11.6,
+      "conf": 0.97,
+      "top": [
+       [
+        0,
+        0.1
+       ],
+       [
+        9,
+        0.19
+       ],
+       [
+        7,
+        0.28
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot006-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 36.8,
+      "y": 10,
+      "px": 584,
+      "py": 139,
+      "pr": 14.6,
+      "conf": 0.86,
+      "top": [
+       [
+        0,
+        0.11
+       ],
+       [
+        1,
+        0.43
+       ],
+       [
+        9,
+        0.54
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 7,
+   "t": 1791861677911,
+   "rack": 1,
+   "target": null,
+   "via": "path",
+   "vis": null,
+   "agree": null,
+   "objAt": [
+    64.6,
+    26.5
+   ],
+   "inferred": true,
+   "hidden": {
+    "at": [
+     64.6,
+     26.5
+    ],
+    "deg": 18,
+    "slow": 0.43,
+    "pt": 23,
+    "see": 0.04
+   },
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 0,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot007-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 12.4,
+    "balls": [
+     {
+      "id": 0,
+      "x": 36.8,
+      "y": 10,
+      "px": 583,
+      "py": 140,
+      "pr": 14.6,
+      "conf": 0.86,
+      "top": [
+       [
+        0,
+        0.15
+       ],
+       [
+        1,
+        0.47
+       ],
+       [
+        9,
+        0.58
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot007-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 46.3,
+      "y": 27.1,
+      "px": 680,
+      "py": 54,
+      "pr": 12.1,
+      "conf": 0.93,
+      "top": [
+       [
+        0,
+        0.09
+       ],
+       [
+        9,
+        0.32
+       ],
+       [
+        7,
+        0.46
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 8,
+   "t": 1791861690836,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 7,
+   "agree": null,
+   "objAt": [
+    20.3,
+    32.2
+   ],
+   "drop": 6,
+   "scratch": false,
+   "mic": {
+    "clicks": 1,
+    "strike": 13,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": true,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot008-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 10.6,
+    "balls": [
+     {
+      "id": 8,
+      "x": 5.4,
+      "y": 35.3,
+      "px": 292,
+      "py": 23,
+      "pr": 11.4,
+      "conf": 0.67,
+      "top": [
+       [
+        8,
+        0.4
+       ],
+       [
+        0,
+        0.61
+       ],
+       [
+        2,
+        2.67
+       ]
+      ]
+     },
+     {
+      "id": 7,
+      "x": 20.3,
+      "y": 32.2,
+      "px": 428,
+      "py": 34,
+      "pr": 11.6,
+      "conf": 0.82,
+      "top": [
+       [
+        0,
+        0.13
+       ],
+       [
+        9,
+        0.14
+       ],
+       [
+        7,
+        0.2
+       ]
+      ]
+     },
+     {
+      "id": 2,
+      "x": 11.7,
+      "y": 35.9,
+      "px": 353,
+      "py": 21,
+      "pr": 11.3,
+      "conf": 0.63,
+      "top": [
+       [
+        2,
+        0.47
+       ],
+       [
+        3,
+        0.75
+       ],
+       [
+        1,
+        0.97
+       ]
+      ]
+     },
+     {
+      "id": 9,
+      "x": 17.9,
+      "y": 35.3,
+      "px": 410,
+      "py": 23,
+      "pr": 11.3,
+      "conf": 0.52,
+      "top": [
+       [
+        0,
+        0.52
+       ],
+       [
+        9,
+        0.64
+       ],
+       [
+        1,
+        0.86
+       ]
+      ]
+     },
+     {
+      "id": 3,
+      "x": 8.1,
+      "y": 35.4,
+      "px": 319,
+      "py": 22,
+      "pr": 11.4,
+      "conf": 0.15,
+      "top": [
+       [
+        8,
+        0.99
+       ],
+       [
+        0,
+        1.51
+       ],
+       [
+        3,
+        1.89
+       ]
+      ]
+     },
+     {
+      "id": 1,
+      "x": 15,
+      "y": 36,
+      "px": 385,
+      "py": 20,
+      "pr": 11.3,
+      "conf": 0.4,
+      "top": [
+       [
+        0,
+        0.27
+       ],
+       [
+        1,
+        0.92
+       ],
+       [
+        9,
+        1.06
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 46.3,
+      "y": 27.2,
+      "px": 680,
+      "py": 54,
+      "pr": 12.1,
+      "conf": 0.93,
+      "top": [
+       [
+        0,
+        0.04
+       ],
+       [
+        9,
+        0.12
+       ],
+       [
+        7,
+        0.2
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot008-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0,
+    "balls": [
+     {
+      "id": 0,
+      "x": 3.9,
+      "y": 17.5,
+      "px": 217,
+      "py": 98,
+      "pr": 13.6,
+      "conf": 0.93,
+      "top": [
+       [
+        0,
+        0.1
+       ],
+       [
+        9,
+        0.19
+       ],
+       [
+        7,
+        0.25
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 9,
+   "t": 1791861705966,
+   "rack": 1,
+   "target": null,
+   "via": "path",
+   "vis": null,
+   "agree": null,
+   "objAt": [
+    13,
+    3.2
+   ],
+   "inferred": true,
+   "hidden": {
+    "at": [
+     13,
+     3.2
+    ],
+    "deg": 53,
+    "slow": 0.08,
+    "pt": 6,
+    "see": 0.08
+   },
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 3,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot009-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 8.4,
+    "balls": [
+     {
+      "id": 0,
+      "x": 3.9,
+      "y": 17.6,
+      "px": 217,
+      "py": 98,
+      "pr": 13.6,
+      "conf": 0.93,
+      "top": [
+       [
+        0,
+        0.09
+       ],
+       [
+        9,
+        0.17
+       ],
+       [
+        7,
+        0.22
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot009-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 6.7,
+      "y": 13.9,
+      "px": 234,
+      "py": 118,
+      "pr": 14.2,
+      "conf": 0.92,
+      "top": [
+       [
+        0,
+        0.07
+       ],
+       [
+        9,
+        0.32
+       ],
+       [
+        1,
+        0.39
+       ]
+      ]
+     },
+     {
+      "id": null,
+      "x": 39.7,
+      "y": 4.7,
+      "px": 620,
+      "py": 173,
+      "pr": 15.5,
+      "conf": 0,
+      "top": [
+       [
+        3,
+        0.44
+       ],
+       [
+        2,
+        0.61
+       ],
+       [
+        1,
+        0.72
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 10,
+   "t": 1791861719518,
+   "rack": 1,
+   "target": null,
+   "via": "path",
+   "vis": null,
+   "agree": null,
+   "objAt": [
+    36.7,
+    7.7
+   ],
+   "inferred": true,
+   "hidden": {
+    "at": [
+     36.7,
+     7.7
+    ],
+    "deg": 15,
+    "slow": 0.45,
+    "pt": 16,
+    "see": 0
+   },
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 3,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot010-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 6,
+    "balls": [
+     {
+      "id": 0,
+      "x": 6.7,
+      "y": 13.9,
+      "px": 234,
+      "py": 118,
+      "pr": 14.1,
+      "conf": 0.92,
+      "top": [
+       [
+        0,
+        0.07
+       ],
+       [
+        9,
+        0.16
+       ],
+       [
+        7,
+        0.25
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot010-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0,
+    "balls": [
+     {
+      "id": 0,
+      "x": 75.3,
+      "y": 18.2,
+      "px": 998,
+      "py": 95,
+      "pr": 13.1,
+      "conf": 0.74,
+      "top": [
+       [
+        0,
+        0.27
+       ],
+       [
+        1,
+        0.62
+       ],
+       [
+        9,
+        0.8
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 11,
+   "t": 1791861733608,
+   "rack": 1,
+   "target": null,
+   "vis": null,
+   "agree": null,
+   "objAt": null,
+   "drop": 1,
+   "scratch": false,
+   "mic": null,
+   "unseen": true,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot011-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 2.7,
+    "balls": [
+     {
+      "id": 1,
+      "x": 74.9,
+      "y": 16.4,
+      "px": 1002,
+      "py": 103,
+      "pr": 13.3,
+      "conf": 0.73,
+      "top": [
+       [
+        0,
+        0.18
+       ],
+       [
+        1,
+        0.31
+       ],
+       [
+        9,
+        0.4
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 75.2,
+      "y": 18.1,
+      "px": 998,
+      "py": 95,
+      "pr": 13.1,
+      "conf": 0.74,
+      "top": [
+       [
+        0,
+        0.17
+       ],
+       [
+        7,
+        0.22
+       ],
+       [
+        9,
+        0.25
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot011-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 56.6,
+      "y": 13.4,
+      "px": 810,
+      "py": 120,
+      "pr": 13.9,
+      "conf": 0.84,
+      "top": [
+       [
+        0,
+        0.17
+       ],
+       [
+        9,
+        0.25
+       ],
+       [
+        1,
+        0.44
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 12,
+   "t": 1791861746517,
+   "rack": 1,
+   "target": null,
+   "via": "path",
+   "vis": null,
+   "agree": null,
+   "objAt": [
+    49.5,
+    21.3
+   ],
+   "inferred": true,
+   "hidden": {
+    "at": [
+     49.5,
+     21.3
+    ],
+    "deg": 43,
+    "slow": 0.37,
+    "pt": 4,
+    "see": 0.13
+   },
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 5,
+    "strike": -5,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot012-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 9.3,
+    "balls": [
+     {
+      "id": 0,
+      "x": 56.6,
+      "y": 13.4,
+      "px": 810,
+      "py": 120,
+      "pr": 13.9,
+      "conf": 0.84,
+      "top": [
+       [
+        9,
+        0.09
+       ],
+       [
+        0,
+        0.14
+       ],
+       [
+        1,
+        0.35
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot012-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 36.1,
+      "y": 8.3,
+      "px": 575,
+      "py": 150,
+      "pr": 14.9,
+      "conf": 0.94,
+      "top": [
+       [
+        0,
+        0.06
+       ],
+       [
+        9,
+        0.36
+       ],
+       [
+        1,
+        0.43
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 13,
+   "t": 1791861755257,
+   "rack": 1,
+   "target": null,
+   "vis": null,
+   "agree": null,
+   "objAt": null,
+   "drop": 1,
+   "scratch": false,
+   "mic": null,
+   "unseen": true,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot013-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.7,
+    "balls": [
+     {
+      "id": 7,
+      "x": 48,
+      "y": 33.3,
+      "px": 691,
+      "py": 31,
+      "pr": 11.4,
+      "conf": 0.9,
+      "top": [
+       [
+        7,
+        0.09
+       ],
+       [
+        0,
+        0.17
+       ],
+       [
+        9,
+        0.18
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot013-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0,
+    "balls": [
+     {
+      "id": 7,
+      "x": 48,
+      "y": 33.3,
+      "px": 691,
+      "py": 31,
+      "pr": 11.4,
+      "conf": 0.9,
+      "top": [
+       [
+        7,
+        0.04
+       ],
+       [
+        0,
+        0.1
+       ],
+       [
+        9,
+        0.14
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 14,
+   "t": 1791861772267,
+   "rack": 1,
+   "target": null,
+   "vis": null,
+   "agree": null,
+   "objAt": null,
+   "drop": 0,
+   "scratch": false,
+   "mic": null,
+   "unseen": true,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot014-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 1,
+    "balls": [
+     {
+      "id": 9,
+      "x": 46.5,
+      "y": 26.7,
+      "px": 682,
+      "py": 56,
+      "pr": 12.1,
+      "conf": 0.96,
+      "top": [
+       [
+        0,
+        0.04
+       ],
+       [
+        9,
+        0.11
+       ],
+       [
+        7,
+        0.19
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot014-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0,
+    "balls": [
+     {
+      "id": 9,
+      "x": 46.4,
+      "y": 26.6,
+      "px": 682,
+      "py": 57,
+      "pr": 12.2,
+      "conf": 0.96,
+      "top": [
+       [
+        0,
+        0.09
+       ],
+       [
+        9,
+        0.18
+       ],
+       [
+        7,
+        0.25
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 15,
+   "t": 1791861800385,
+   "rack": 1,
+   "target": null,
+   "via": null,
+   "vis": null,
+   "agree": null,
+   "objAt": null,
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 4,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot015-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 9.8,
+    "balls": [
+     {
+      "id": 0,
+      "x": 46.4,
+      "y": 26.7,
+      "px": 682,
+      "py": 57,
+      "pr": 12.2,
+      "conf": 1,
+      "top": [
+       [
+        0,
+        0.01
+       ],
+       [
+        9,
+        0.24
+       ],
+       [
+        1,
+        0.33
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot015-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 18.8,
+      "y": 12.2,
+      "px": 372,
+      "py": 127,
+      "pr": 14.3,
+      "conf": 0.95,
+      "top": [
+       [
+        0,
+        0.09
+       ],
+       [
+        1,
+        0.41
+       ],
+       [
+        9,
+        0.41
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 16,
+   "t": 1791861818339,
+   "rack": 1,
+   "target": null,
+   "via": "path",
+   "vis": null,
+   "agree": null,
+   "objAt": [
+    45.8,
+    24.5
+   ],
+   "inferred": true,
+   "hidden": {
+    "at": [
+     45.8,
+     24.5
+    ],
+    "deg": 15,
+    "slow": 0.26,
+    "pt": 11,
+    "see": 0
+   },
+   "drop": 3,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": 8,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": true,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot016-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 3.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 18.8,
+      "y": 12.2,
+      "px": 372,
+      "py": 127,
+      "pr": 14.3,
+      "conf": 0.95,
+      "top": [
+       [
+        0,
+        0.05
+       ],
+       [
+        9,
+        0.28
+       ],
+       [
+        1,
+        0.3
+       ]
+      ]
+     },
+     {
+      "id": 8,
+      "x": 2.9,
+      "y": 5.6,
+      "px": 147,
+      "py": 169,
+      "pr": 15.6,
+      "conf": 0.46,
+      "top": [
+       [
+        8,
+        1.03
+       ],
+       [
+        0,
+        1.41
+       ],
+       [
+        6,
+        2.06
+       ]
+      ]
+     },
+     {
+      "id": 1,
+      "x": 5.4,
+      "y": 7.2,
+      "px": 188,
+      "py": 158,
+      "pr": 15.3,
+      "conf": 0.42,
+      "top": [
+       [
+        0,
+        0.63
+       ],
+       [
+        1,
+        0.87
+       ],
+       [
+        9,
+        1.04
+       ]
+      ]
+     },
+     {
+      "id": 4,
+      "x": 3.1,
+      "y": 8.4,
+      "px": 165,
+      "py": 151,
+      "pr": 15.1,
+      "conf": 0.32,
+      "top": [
+       [
+        0,
+        1.13
+       ],
+       [
+        4,
+        1.13
+       ],
+       [
+        9,
+        1.27
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot016-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 47.3,
+      "y": 22.4,
+      "px": 694,
+      "py": 75,
+      "pr": 12.7,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.11
+       ],
+       [
+        1,
+        0.4
+       ],
+       [
+        9,
+        0.47
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 17,
+   "t": 1791861844559,
+   "rack": 1,
+   "target": null,
+   "via": "path",
+   "vis": null,
+   "agree": null,
+   "objAt": [
+    64.4,
+    7.2
+   ],
+   "inferred": true,
+   "hidden": {
+    "at": [
+     64.4,
+     7.2
+    ],
+    "deg": 17,
+    "slow": 0.75,
+    "pt": 14,
+    "see": 0
+   },
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot017-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 8,
+    "balls": [
+     {
+      "id": 0,
+      "x": 47.3,
+      "y": 22.4,
+      "px": 694,
+      "py": 75,
+      "pr": 12.7,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.08
+       ],
+       [
+        9,
+        0.4
+       ],
+       [
+        1,
+        0.42
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot017-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 53.1,
+      "y": 20.3,
+      "px": 758,
+      "py": 85,
+      "pr": 12.9,
+      "conf": 0.94,
+      "top": [
+       [
+        0,
+        0.06
+       ],
+       [
+        9,
+        0.09
+       ],
+       [
+        7,
+        0.18
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 18,
+   "t": 1791861889629,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 3,
+   "agree": null,
+   "objAt": [
+    70.9,
+    7
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 1,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot018-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 9.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 53.1,
+      "y": 20.4,
+      "px": 758,
+      "py": 84,
+      "pr": 12.9,
+      "conf": 0.94,
+      "top": [
+       [
+        0,
+        0.06
+       ],
+       [
+        9,
+        0.12
+       ],
+       [
+        7,
+        0.34
+       ]
+      ]
+     },
+     {
+      "id": 3,
+      "x": 70.9,
+      "y": 7,
+      "px": 1000,
+      "py": 157,
+      "pr": 14.9,
+      "conf": 1,
+      "top": [
+       [
+        3,
+        0.06
+       ],
+       [
+        2,
+        0.2
+       ],
+       [
+        7,
+        0.4
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot018-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0,
+    "balls": [
+     {
+      "id": 0,
+      "x": 43.2,
+      "y": 27,
+      "px": 649,
+      "py": 55,
+      "pr": 12.1,
+      "conf": 0.96,
+      "top": [
+       [
+        0,
+        0.06
+       ],
+       [
+        9,
+        0.25
+       ],
+       [
+        7,
+        0.31
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 19,
+   "t": 1791861917856,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 3,
+   "agree": null,
+   "objAt": [
+    31.4,
+    18.9
+   ],
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot019-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 6.7,
+    "balls": [
+     {
+      "id": 0,
+      "x": 43.2,
+      "y": 27.1,
+      "px": 649,
+      "py": 55,
+      "pr": 12.1,
+      "conf": 0.96,
+      "top": [
+       [
+        0,
+        0.09
+       ],
+       [
+        1,
+        0.29
+       ],
+       [
+        9,
+        0.31
+       ]
+      ]
+     },
+     {
+      "id": 3,
+      "x": 31.4,
+      "y": 18.8,
+      "px": 526,
+      "py": 92,
+      "pr": 13.2,
+      "conf": 1,
+      "top": [
+       [
+        3,
+        0.06
+       ],
+       [
+        2,
+        0.08
+       ],
+       [
+        7,
+        0.56
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot019-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 39.5,
+      "y": 22.8,
+      "px": 613,
+      "py": 73,
+      "pr": 12.7,
+      "conf": 0.92,
+      "top": [
+       [
+        7,
+        0.05
+       ],
+       [
+        0,
+        0.08
+       ],
+       [
+        9,
+        0.13
+       ]
+      ]
+     },
+     {
+      "id": 3,
+      "x": 6.7,
+      "y": 2.4,
+      "px": 181,
+      "py": 191,
+      "pr": 16.3,
+      "conf": 0.58,
+      "top": [
+       [
+        3,
+        0.53
+       ],
+       [
+        2,
+        0.62
+       ],
+       [
+        7,
+        0.7
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 20,
+   "t": 1791861931668,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 3,
+   "agree": null,
+   "objAt": [
+    6.8,
+    2.4
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": 7,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot020-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 9.8,
+    "balls": [
+     {
+      "id": 0,
+      "x": 39.5,
+      "y": 22.8,
+      "px": 613,
+      "py": 73,
+      "pr": 12.7,
+      "conf": 0.92,
+      "top": [
+       [
+        0,
+        0.07
+       ],
+       [
+        7,
+        0.09
+       ],
+       [
+        9,
+        0.14
+       ]
+      ]
+     },
+     {
+      "id": 3,
+      "x": 6.8,
+      "y": 2.4,
+      "px": 181,
+      "py": 191,
+      "pr": 16.3,
+      "conf": 0.58,
+      "top": [
+       [
+        3,
+        0.46
+       ],
+       [
+        2,
+        0.53
+       ],
+       [
+        7,
+        0.6
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot020-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0,
+    "balls": [
+     {
+      "id": 0,
+      "x": 55.2,
+      "y": 4,
+      "px": 817,
+      "py": 177,
+      "pr": 15.5,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.1
+       ],
+       [
+        1,
+        0.39
+       ],
+       [
+        9,
+        0.57
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 21,
+   "t": 1791861963880,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 3,
+   "agree": null,
+   "objAt": [
+    16.6,
+    36.5
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": 51,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot021-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 10.4,
+    "balls": [
+     {
+      "id": 0,
+      "x": 41,
+      "y": 32.6,
+      "px": 626,
+      "py": 33,
+      "pr": 11.5,
+      "conf": 0.95,
+      "top": [
+       [
+        0,
+        0.08
+       ],
+       [
+        9,
+        0.19
+       ],
+       [
+        7,
+        0.24
+       ]
+      ]
+     },
+     {
+      "id": 3,
+      "x": 16.5,
+      "y": 36.5,
+      "px": 400,
+      "py": 18,
+      "pr": 11.2,
+      "conf": 1,
+      "top": [
+       [
+        3,
+        0
+       ],
+       [
+        7,
+        0.31
+       ],
+       [
+        2,
+        0.35
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot021-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 23,
+      "y": 13.4,
+      "px": 424,
+      "py": 120,
+      "pr": 14.1,
+      "conf": 0.94,
+      "top": [
+       [
+        0,
+        0.08
+       ],
+       [
+        9,
+        0.37
+       ],
+       [
+        1,
+        0.44
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 22,
+   "t": 1791861982822,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 4,
+   "agree": null,
+   "objAt": [
+    71.9,
+    33.7
+   ],
+   "drop": 4,
+   "scratch": false,
+   "mic": {
+    "clicks": 3,
+    "strike": null,
+    "contact": 698,
+    "lag": 0,
+    "cap": true,
+    "ball": [
+     71.9,
+     33.7
+    ]
+   },
+   "unseen": false,
+   "doubt": true,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot022-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 9.6,
+    "balls": [
+     {
+      "id": 4,
+      "x": 71.9,
+      "y": 33.7,
+      "px": 910,
+      "py": 29,
+      "pr": 11.3,
+      "conf": 0.56,
+      "top": [
+       [
+        2,
+        0.37
+       ],
+       [
+        4,
+        0.65
+       ],
+       [
+        7,
+        0.67
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 23,
+      "y": 13.5,
+      "px": 425,
+      "py": 120,
+      "pr": 14.1,
+      "conf": 0.94,
+      "top": [
+       [
+        0,
+        0.08
+       ],
+       [
+        1,
+        0.3
+       ],
+       [
+        9,
+        0.33
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot022-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 52.1,
+      "y": 26.9,
+      "px": 738,
+      "py": 56,
+      "pr": 12.1,
+      "conf": 0.95,
+      "top": [
+       [
+        0,
+        0.05
+       ],
+       [
+        9,
+        0.25
+       ],
+       [
+        7,
+        0.33
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 23,
+   "t": 1791862003387,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 4,
+   "agree": null,
+   "objAt": [
+    36.6,
+    20.1
+   ],
+   "drop": 3,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": -5,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": true,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot023-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 7.5,
+    "balls": [
+     {
+      "id": 1,
+      "x": 71.7,
+      "y": 35,
+      "px": 905,
+      "py": 25,
+      "pr": 11.1,
+      "conf": 0.44,
+      "top": [
+       [
+        0,
+        0.78
+       ],
+       [
+        1,
+        0.83
+       ],
+       [
+        9,
+        0.94
+       ]
+      ]
+     },
+     {
+      "id": 8,
+      "x": 74.7,
+      "y": 32.1,
+      "px": 941,
+      "py": 36,
+      "pr": 11.4,
+      "conf": 0.16,
+      "top": [
+       [
+        2,
+        1.81
+       ],
+       [
+        8,
+        1.81
+       ],
+       [
+        0,
+        1.94
+       ]
+      ]
+     },
+     {
+      "id": 9,
+      "x": 72.8,
+      "y": 32.8,
+      "px": 922,
+      "py": 33,
+      "pr": 11.3,
+      "conf": 0.71,
+      "top": [
+       [
+        0,
+        0.13
+       ],
+       [
+        1,
+        0.26
+       ],
+       [
+        9,
+        0.34
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 52.1,
+      "y": 26.9,
+      "px": 738,
+      "py": 56,
+      "pr": 12.1,
+      "conf": 0.95,
+      "top": [
+       [
+        0,
+        0.05
+       ],
+       [
+        9,
+        0.24
+       ],
+       [
+        7,
+        0.32
+       ]
+      ]
+     },
+     {
+      "id": 4,
+      "x": 36.6,
+      "y": 20.1,
+      "px": 583,
+      "py": 86,
+      "pr": 13,
+      "conf": 0.78,
+      "top": [
+       [
+        4,
+        0.24
+       ],
+       [
+        7,
+        0.26
+       ],
+       [
+        2,
+        0.28
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot023-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0,
+    "balls": [
+     {
+      "id": 0,
+      "x": 26.2,
+      "y": 35.7,
+      "px": 488,
+      "py": 21,
+      "pr": 11.2,
+      "conf": 0.74,
+      "top": [
+       [
+        0,
+        0.14
+       ],
+       [
+        7,
+        0.23
+       ],
+       [
+        9,
+        0.27
+       ]
+      ]
+     },
+     {
+      "id": 4,
+      "x": 5,
+      "y": 19.8,
+      "px": 239,
+      "py": 87,
+      "pr": 13.3,
+      "conf": 0.59,
+      "top": [
+       [
+        2,
+        0.32
+       ],
+       [
+        7,
+        0.44
+       ],
+       [
+        4,
+        0.53
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 24,
+   "t": 1791862018548,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 4,
+   "agree": null,
+   "objAt": [
+    5,
+    19.8
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 3,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot024-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 7.6,
+    "balls": [
+     {
+      "id": 0,
+      "x": 26.1,
+      "y": 35.7,
+      "px": 488,
+      "py": 21,
+      "pr": 11.2,
+      "conf": 0.74,
+      "top": [
+       [
+        0,
+        0.14
+       ],
+       [
+        7,
+        0.23
+       ],
+       [
+        9,
+        0.27
+       ]
+      ]
+     },
+     {
+      "id": 4,
+      "x": 5,
+      "y": 19.8,
+      "px": 238,
+      "py": 87,
+      "pr": 13.3,
+      "conf": 0.59,
+      "top": [
+       [
+        2,
+        0.31
+       ],
+       [
+        7,
+        0.5
+       ],
+       [
+        4,
+        0.57
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot024-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 56,
+      "y": 23.7,
+      "px": 782,
+      "py": 69,
+      "pr": 12.5,
+      "conf": 0.98,
+      "top": [
+       [
+        0,
+        0.07
+       ],
+       [
+        9,
+        0.22
+       ],
+       [
+        7,
+        0.29
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 25,
+   "t": 1791862058464,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 4,
+   "agree": null,
+   "objAt": [
+    21.5,
+    36.2
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 4,
+    "strike": 13,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot025-before.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 9.6,
+    "balls": [
+     {
+      "id": 4,
+      "x": 21.5,
+      "y": 36.2,
+      "px": 445,
+      "py": 20,
+      "pr": 11.2,
+      "conf": 1,
+      "top": [
+       [
+        4,
+        0.28
+       ],
+       [
+        7,
+        0.29
+       ],
+       [
+        2,
+        0.3
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 56,
+      "y": 23.8,
+      "px": 782,
+      "py": 69,
+      "pr": 12.5,
+      "conf": 0.98,
+      "top": [
+       [
+        0,
+        0.04
+       ],
+       [
+        9,
+        0.07
+       ],
+       [
+        7,
+        0.14
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot025-after.jpg",
+    "crop": [
+     0,
+     273,
+     1254,
+     278
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 278,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 34.4,
+      "y": 5.8,
+      "px": 553,
+      "py": 166,
+      "pr": 15.3,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.17
+       ],
+       [
+        1,
+        0.38
+       ],
+       [
+        9,
+        0.48
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 26,
+   "t": 1791862094309,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 4,
+   "agree": null,
+   "objAt": [
+    57.4,
+    23.6
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 3,
+    "strike": -14,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot026-before.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 9.1,
+    "balls": [
+     {
+      "id": 4,
+      "x": 57.4,
+      "y": 23.6,
+      "px": 796,
+      "py": 70,
+      "pr": 12.5,
+      "conf": 1,
+      "top": [
+       [
+        4,
+        0.19
+       ],
+       [
+        2,
+        0.36
+       ],
+       [
+        7,
+        0.5
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 34.2,
+      "y": 5.5,
+      "px": 552,
+      "py": 168,
+      "pr": 15.5,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.25
+       ],
+       [
+        1,
+        0.63
+       ],
+       [
+        9,
+        0.76
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot026-after.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 52.4,
+      "y": 26.7,
+      "px": 741,
+      "py": 56,
+      "pr": 12.1,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.06
+       ],
+       [
+        9,
+        0.23
+       ],
+       [
+        7,
+        0.29
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 27,
+   "t": 1791862118674,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 5,
+   "agree": null,
+   "objAt": [
+    69.8,
+    7
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": 9,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot027-before.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 10.5,
+    "balls": [
+     {
+      "id": 0,
+      "x": 52.4,
+      "y": 26.7,
+      "px": 741,
+      "py": 56,
+      "pr": 12.1,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.05
+       ],
+       [
+        9,
+        0.25
+       ],
+       [
+        7,
+        0.33
+       ]
+      ]
+     },
+     {
+      "id": 5,
+      "x": 69.8,
+      "y": 7,
+      "px": 986,
+      "py": 156,
+      "pr": 14.8,
+      "conf": 0.9,
+      "top": [
+       [
+        5,
+        0.1
+       ],
+       [
+        3,
+        0.14
+       ],
+       [
+        2,
+        0.37
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot027-after.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 17.3,
+      "y": 3.2,
+      "px": 327,
+      "py": 185,
+      "pr": 16.2,
+      "conf": 0.91,
+      "top": [
+       [
+        0,
+        0.11
+       ],
+       [
+        9,
+        0.12
+       ],
+       [
+        1,
+        0.31
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 28,
+   "t": 1791862149308,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 5,
+   "agree": null,
+   "objAt": [
+    37.4,
+    24.8
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 3,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot028-before.jpg",
+    "crop": [
+     0,
+     271,
+     1246,
+     280
+    ],
+    "scale": 1,
+    "w": 1246,
+    "h": 280,
+    "ageS": 10.5,
+    "balls": [
+     {
+      "id": 5,
+      "x": 37.4,
+      "y": 24.8,
+      "px": 592,
+      "py": 64,
+      "pr": 12.4,
+      "conf": 1,
+      "top": [
+       [
+        5,
+        0.07
+       ],
+       [
+        2,
+        0.18
+       ],
+       [
+        4,
+        0.24
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 17.3,
+      "y": 3.1,
+      "px": 327,
+      "py": 185,
+      "pr": 16.2,
+      "conf": 0.91,
+      "top": [
+       [
+        0,
+        0.09
+       ],
+       [
+        9,
+        0.22
+       ],
+       [
+        1,
+        0.39
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot028-after.jpg",
+    "crop": [
+     0,
+     271,
+     1246,
+     280
+    ],
+    "scale": 1,
+    "w": 1246,
+    "h": 280,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 7.5,
+      "y": 34.9,
+      "px": 311,
+      "py": 24,
+      "pr": 11.5,
+      "conf": 0.85,
+      "top": [
+       [
+        7,
+        0.09
+       ],
+       [
+        0,
+        0.16
+       ],
+       [
+        9,
+        0.22
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 29,
+   "t": 1791862178752,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 5,
+   "agree": null,
+   "objAt": [
+    19.7,
+    36.2
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 1,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot029-before.jpg",
+    "crop": [
+     0,
+     271,
+     1246,
+     280
+    ],
+    "scale": 1,
+    "w": 1246,
+    "h": 280,
+    "ageS": 8.6,
+    "balls": [
+     {
+      "id": 5,
+      "x": 19.7,
+      "y": 36.2,
+      "px": 428,
+      "py": 20,
+      "pr": 11.3,
+      "conf": 1,
+      "top": [
+       [
+        5,
+        0.21
+       ],
+       [
+        2,
+        0.38
+       ],
+       [
+        4,
+        0.38
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 39.2,
+      "y": 30.5,
+      "px": 609,
+      "py": 41,
+      "pr": 11.7,
+      "conf": 0.93,
+      "top": [
+       [
+        0,
+        0.03
+       ],
+       [
+        9,
+        0.25
+       ],
+       [
+        1,
+        0.34
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot029-after.jpg",
+    "crop": [
+     0,
+     271,
+     1246,
+     280
+    ],
+    "scale": 1,
+    "w": 1246,
+    "h": 280,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 31.6,
+      "y": 2.6,
+      "px": 516,
+      "py": 188,
+      "pr": 16.1,
+      "conf": 0.92,
+      "top": [
+       [
+        0,
+        0.09
+       ],
+       [
+        9,
+        0.24
+       ],
+       [
+        7,
+        0.25
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 30,
+   "t": 1791862217132,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 6,
+   "agree": null,
+   "objAt": [
+    8.4,
+    30.4
+   ],
+   "drop": 4,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": -4,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": true,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot030-before.jpg",
+    "crop": [
+     0,
+     271,
+     1251,
+     279
+    ],
+    "scale": 1,
+    "w": 1251,
+    "h": 279,
+    "ageS": 10.3,
+    "balls": [
+     {
+      "id": 6,
+      "x": 8.4,
+      "y": 30.3,
+      "px": 307,
+      "py": 41,
+      "pr": 12,
+      "conf": 0.49,
+      "top": [
+       [
+        4,
+        0.37
+       ],
+       [
+        6,
+        0.43
+       ],
+       [
+        5,
+        0.45
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 35.9,
+      "y": 13.5,
+      "px": 575,
+      "py": 119,
+      "pr": 14,
+      "conf": 1,
+      "top": [
+       [
+        0,
+        0.08
+       ],
+       [
+        1,
+        0.44
+       ],
+       [
+        9,
+        0.47
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot030-after.jpg",
+    "crop": [
+     0,
+     271,
+     1251,
+     279
+    ],
+    "scale": 1,
+    "w": 1251,
+    "h": 279,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 34.7,
+      "y": 16.7,
+      "px": 562,
+      "py": 102,
+      "pr": 13.5,
+      "conf": 0.94,
+      "top": [
+       [
+        0,
+        0.11
+       ],
+       [
+        9,
+        0.24
+       ],
+       [
+        1,
+        0.43
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 31,
+   "t": 1791862229686,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 5,
+   "agree": null,
+   "objAt": [
+    49.3,
+    19.5
+   ],
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 0,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot031-before.jpg",
+    "crop": [
+     0,
+     271,
+     1251,
+     279
+    ],
+    "scale": 1,
+    "w": 1251,
+    "h": 279,
+    "ageS": 3.5,
+    "balls": [
+     {
+      "id": 5,
+      "x": 49.3,
+      "y": 19.5,
+      "px": 720,
+      "py": 88,
+      "pr": 13,
+      "conf": 0.87,
+      "top": [
+       [
+        5,
+        0.11
+       ],
+       [
+        6,
+        0.17
+       ],
+       [
+        4,
+        0.63
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 34.6,
+      "y": 16.7,
+      "px": 562,
+      "py": 103,
+      "pr": 13.6,
+      "conf": 0.94,
+      "top": [
+       [
+        0,
+        0.09
+       ],
+       [
+        9,
+        0.23
+       ],
+       [
+        1,
+        0.43
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot031-after.jpg",
+    "crop": [
+     0,
+     271,
+     1251,
+     279
+    ],
+    "scale": 1,
+    "w": 1251,
+    "h": 279,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 5,
+      "x": 49.3,
+      "y": 19.3,
+      "px": 720,
+      "py": 89,
+      "pr": 13.1,
+      "conf": 0.9,
+      "top": [
+       [
+        5,
+        0.18
+       ],
+       [
+        6,
+        0.2
+       ],
+       [
+        4,
+        0.5
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 34.7,
+      "y": 16.4,
+      "px": 562,
+      "py": 104,
+      "pr": 13.6,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.07
+       ],
+       [
+        1,
+        0.4
+       ],
+       [
+        9,
+        0.48
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 32,
+   "t": 1791862248038,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 6,
+   "agree": null,
+   "objAt": [
+    49.3,
+    19.5
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 3,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot032-before.jpg",
+    "crop": [
+     0,
+     271,
+     1251,
+     279
+    ],
+    "scale": 1,
+    "w": 1251,
+    "h": 279,
+    "ageS": 6.9,
+    "balls": [
+     {
+      "id": 6,
+      "x": 49.3,
+      "y": 19.5,
+      "px": 720,
+      "py": 88,
+      "pr": 13,
+      "conf": 1,
+      "top": [
+       [
+        5,
+        0.07
+       ],
+       [
+        6,
+        0.2
+       ],
+       [
+        4,
+        0.61
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 34.6,
+      "y": 16.8,
+      "px": 562,
+      "py": 102,
+      "pr": 13.5,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.11
+       ],
+       [
+        9,
+        0.12
+       ],
+       [
+        1,
+        0.33
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot032-after.jpg",
+    "crop": [
+     0,
+     271,
+     1251,
+     279
+    ],
+    "scale": 1,
+    "w": 1251,
+    "h": 279,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 61.8,
+      "y": 4.9,
+      "px": 899,
+      "py": 169,
+      "pr": 15.2,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.09
+       ],
+       [
+        9,
+        0.14
+       ],
+       [
+        7,
+        0.36
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 33,
+   "t": 1791862279376,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 6,
+   "agree": null,
+   "objAt": [
+    24.9,
+    35.8
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 6,
+    "strike": null,
+    "contact": 763,
+    "lag": 0,
+    "cap": true,
+    "ball": [
+     24.9,
+     35.8
+    ]
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot033-before.jpg",
+    "crop": [
+     0,
+     271,
+     1251,
+     279
+    ],
+    "scale": 1,
+    "w": 1251,
+    "h": 279,
+    "ageS": 7.5,
+    "balls": [
+     {
+      "id": 6,
+      "x": 24.9,
+      "y": 35.8,
+      "px": 476,
+      "py": 21,
+      "pr": 11.3,
+      "conf": 1,
+      "top": [
+       [
+        6,
+        0.1
+       ],
+       [
+        5,
+        0.28
+       ],
+       [
+        4,
+        0.56
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 61.8,
+      "y": 4.7,
+      "px": 899,
+      "py": 171,
+      "pr": 15.3,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.17
+       ],
+       [
+        1,
+        0.44
+       ],
+       [
+        9,
+        0.58
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot033-after.jpg",
+    "crop": [
+     0,
+     271,
+     1251,
+     279
+    ],
+    "scale": 1,
+    "w": 1251,
+    "h": 279,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 16.1,
+      "y": 11.8,
+      "px": 339,
+      "py": 129,
+      "pr": 14.5,
+      "conf": 0.92,
+      "top": [
+       [
+        0,
+        0.07
+       ],
+       [
+        9,
+        0.29
+       ],
+       [
+        1,
+        0.38
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 34,
+   "t": 1791862286290,
+   "rack": 1,
+   "target": null,
+   "via": null,
+   "vis": null,
+   "agree": null,
+   "objAt": null,
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 0,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot034-before.jpg",
+    "crop": [
+     0,
+     271,
+     1251,
+     279
+    ],
+    "scale": 1,
+    "w": 1251,
+    "h": 279,
+    "ageS": 4.8,
+    "balls": [
+     {
+      "id": 0,
+      "x": 16.1,
+      "y": 11.8,
+      "px": 339,
+      "py": 130,
+      "pr": 14.5,
+      "conf": 0.92,
+      "top": [
+       [
+        0,
+        0.09
+       ],
+       [
+        1,
+        0.37
+       ],
+       [
+        9,
+        0.46
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot034-after.jpg",
+    "crop": [
+     0,
+     271,
+     1251,
+     279
+    ],
+    "scale": 1,
+    "w": 1251,
+    "h": 279,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 16.1,
+      "y": 12,
+      "px": 340,
+      "py": 129,
+      "pr": 14.5,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.13
+       ],
+       [
+        9,
+        0.13
+       ],
+       [
+        7,
+        0.35
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 35,
+   "t": 1791862320044,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 7,
+   "agree": null,
+   "objAt": [
+    7.4,
+    30.1
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 1,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot035-before.jpg",
+    "crop": [
+     0,
+     271,
+     1256,
+     285
+    ],
+    "scale": 1,
+    "w": 1256,
+    "h": 285,
+    "ageS": 9.6,
+    "balls": [
+     {
+      "id": 7,
+      "x": 7.4,
+      "y": 30.1,
+      "px": 294,
+      "py": 42,
+      "pr": 12.2,
+      "conf": 0.23,
+      "top": [
+       [
+        7,
+        0.67
+       ],
+       [
+        9,
+        1.43
+       ],
+       [
+        4,
+        1.63
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 30.8,
+      "y": 15.2,
+      "px": 516,
+      "py": 111,
+      "pr": 14,
+      "conf": 0.92,
+      "top": [
+       [
+        0,
+        0.09
+       ],
+       [
+        9,
+        0.39
+       ],
+       [
+        1,
+        0.41
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot035-after.jpg",
+    "crop": [
+     0,
+     271,
+     1256,
+     285
+    ],
+    "scale": 1,
+    "w": 1256,
+    "h": 285,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 45,
+      "y": 21,
+      "px": 672,
+      "py": 81,
+      "pr": 13,
+      "conf": 0.89,
+      "top": [
+       [
+        0,
+        0.12
+       ],
+       [
+        1,
+        0.41
+       ],
+       [
+        9,
+        0.5
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 36,
+   "t": 1791862340248,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 7,
+   "agree": null,
+   "objAt": [
+    26.6,
+    14.9
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": 16,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot036-before.jpg",
+    "crop": [
+     0,
+     271,
+     1256,
+     285
+    ],
+    "scale": 1,
+    "w": 1256,
+    "h": 285,
+    "ageS": 10.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 45,
+      "y": 21,
+      "px": 672,
+      "py": 80,
+      "pr": 13,
+      "conf": 0.89,
+      "top": [
+       [
+        0,
+        0.1
+       ],
+       [
+        1,
+        0.39
+       ],
+       [
+        9,
+        0.54
+       ]
+      ]
+     },
+     {
+      "id": 7,
+      "x": 26.6,
+      "y": 14.9,
+      "px": 466,
+      "py": 112,
+      "pr": 14.1,
+      "conf": 0.43,
+      "top": [
+       [
+        6,
+        0.24
+       ],
+       [
+        7,
+        0.29
+       ],
+       [
+        5,
+        0.41
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot036-after.jpg",
+    "crop": [
+     0,
+     271,
+     1256,
+     285
+    ],
+    "scale": 1,
+    "w": 1256,
+    "h": 285,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 19.8,
+      "y": 16.5,
+      "px": 391,
+      "py": 104,
+      "pr": 13.9,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.03
+       ],
+       [
+        9,
+        0.09
+       ],
+       [
+        7,
+        0.18
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 37,
+   "t": 1791862367789,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 7,
+   "agree": null,
+   "objAt": [
+    53.3,
+    35.8
+   ],
+   "drop": 6,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": 11,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": true,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot037-before.jpg",
+    "crop": [
+     0,
+     271,
+     1256,
+     285
+    ],
+    "scale": 1,
+    "w": 1256,
+    "h": 285,
+    "ageS": 10.7,
+    "balls": [
+     {
+      "id": 7,
+      "x": 53.3,
+      "y": 35.8,
+      "px": 738,
+      "py": 21,
+      "pr": 11.2,
+      "conf": 0.8,
+      "top": [
+       [
+        7,
+        0.22
+       ],
+       [
+        6,
+        0.23
+       ],
+       [
+        5,
+        0.35
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 19.8,
+      "y": 16.6,
+      "px": 391,
+      "py": 104,
+      "pr": 13.9,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.04
+       ],
+       [
+        9,
+        0.08
+       ],
+       [
+        7,
+        0.19
+       ]
+      ]
+     },
+     {
+      "id": 8,
+      "x": 2.7,
+      "y": 7.2,
+      "px": 145,
+      "py": 161,
+      "pr": 15.8,
+      "conf": 0.44,
+      "top": [
+       [
+        3,
+        1.08
+       ],
+       [
+        2,
+        1.27
+       ],
+       [
+        1,
+        1.58
+       ]
+      ]
+     },
+     {
+      "id": 1,
+      "x": 7.1,
+      "y": 10.3,
+      "px": 217,
+      "py": 141,
+      "pr": 15.1,
+      "conf": 0.64,
+      "top": [
+       [
+        0,
+        0.46
+       ],
+       [
+        1,
+        0.52
+       ],
+       [
+        9,
+        0.62
+       ]
+      ]
+     },
+     {
+      "id": 9,
+      "x": 4.3,
+      "y": 11.3,
+      "px": 186,
+      "py": 134,
+      "pr": 15,
+      "conf": 0.69,
+      "top": [
+       [
+        9,
+        0.17
+       ],
+       [
+        0,
+        0.21
+       ],
+       [
+        7,
+        0.46
+       ]
+      ]
+     },
+     {
+      "id": 4,
+      "x": 6.8,
+      "y": 7.7,
+      "px": 201,
+      "py": 157,
+      "pr": 15.6,
+      "conf": 0.19,
+      "top": [
+       [
+        7,
+        1.58
+       ],
+       [
+        4,
+        1.69
+       ],
+       [
+        3,
+        1.71
+       ]
+      ]
+     },
+     {
+      "id": 3,
+      "x": 3.8,
+      "y": 8.7,
+      "px": 167,
+      "py": 150,
+      "pr": 15.5,
+      "conf": 0.32,
+      "top": [
+       [
+        3,
+        0.85
+       ],
+       [
+        4,
+        0.85
+       ],
+       [
+        7,
+        1.05
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot037-after.jpg",
+    "crop": [
+     0,
+     271,
+     1256,
+     285
+    ],
+    "scale": 1,
+    "w": 1256,
+    "h": 285,
+    "ageS": 3.6,
+    "balls": [
+     {
+      "id": 0,
+      "x": 62.8,
+      "y": 21.8,
+      "px": 857,
+      "py": 76,
+      "pr": 12.8,
+      "conf": 0.96,
+      "top": [
+       [
+        0,
+        0.03
+       ],
+       [
+        9,
+        0.19
+       ],
+       [
+        1,
+        0.3
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 38,
+   "t": 1791862392688,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 8,
+   "agree": null,
+   "objAt": [
+    7.4,
+    6.8
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 4,
+    "strike": 10,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot038-before.jpg",
+    "crop": [
+     0,
+     271,
+     1264,
+     281
+    ],
+    "scale": 1,
+    "w": 1264,
+    "h": 281,
+    "ageS": 9.6,
+    "balls": [
+     {
+      "id": 0,
+      "x": 62.8,
+      "y": 21.1,
+      "px": 857,
+      "py": 77,
+      "pr": 12.9,
+      "conf": 0.96,
+      "top": [
+       [
+        0,
+        0.08
+       ],
+       [
+        9,
+        0.27
+       ],
+       [
+        1,
+        0.42
+       ]
+      ]
+     },
+     {
+      "id": 8,
+      "x": 7.4,
+      "y": 6.8,
+      "px": 210,
+      "py": 160,
+      "pr": 15.8,
+      "conf": 0.86,
+      "top": [
+       [
+        8,
+        0.16
+       ],
+       [
+        0,
+        0.63
+       ],
+       [
+        6,
+        2.37
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot038-after.jpg",
+    "crop": [
+     0,
+     271,
+     1264,
+     281
+    ],
+    "scale": 1,
+    "w": 1264,
+    "h": 281,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 55.5,
+      "y": 2.1,
+      "px": 832,
+      "py": 186,
+      "pr": 16.3,
+      "conf": 0.91,
+      "top": [
+       [
+        0,
+        0.04
+       ],
+       [
+        9,
+        0.1
+       ],
+       [
+        7,
+        0.24
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 39,
+   "t": 1791862420854,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 8,
+   "agree": null,
+   "objAt": [
+    30.9,
+    19.3
+   ],
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 5,
+    "strike": -11,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot039-before.jpg",
+    "crop": [
+     0,
+     271,
+     1255,
+     277
+    ],
+    "scale": 1,
+    "w": 1255,
+    "h": 277,
+    "ageS": 8.1,
+    "balls": [
+     {
+      "id": 8,
+      "x": 30.9,
+      "y": 19.3,
+      "px": 520,
+      "py": 88,
+      "pr": 13.2,
+      "conf": 0.35,
+      "top": [
+       [
+        8,
+        0.8
+       ],
+       [
+        0,
+        1.27
+       ],
+       [
+        3,
+        2.11
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 55.9,
+      "y": 2.4,
+      "px": 832,
+      "py": 186,
+      "pr": 15.8,
+      "conf": 0.91,
+      "top": [
+       [
+        0,
+        0.1
+       ],
+       [
+        9,
+        0.1
+       ],
+       [
+        7,
+        0.2
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot039-after.jpg",
+    "crop": [
+     0,
+     271,
+     1255,
+     277
+    ],
+    "scale": 1,
+    "w": 1255,
+    "h": 277,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 25.4,
+      "y": 35,
+      "px": 478,
+      "py": 24,
+      "pr": 11.3,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.07
+       ],
+       [
+        9,
+        0.15
+       ],
+       [
+        7,
+        0.28
+       ]
+      ]
+     },
+     {
+      "id": 8,
+      "x": 26.7,
+      "y": 10.3,
+      "px": 462,
+      "py": 137,
+      "pr": 14.6,
+      "conf": 0.49,
+      "top": [
+       [
+        8,
+        0.72
+       ],
+       [
+        0,
+        1.18
+       ],
+       [
+        3,
+        2.15
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 40,
+   "t": 1791862435954,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 8,
+   "agree": null,
+   "objAt": [
+    26.7,
+    10.3
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 7,
+    "strike": -35,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot040-before.jpg",
+    "crop": [
+     0,
+     271,
+     1255,
+     277
+    ],
+    "scale": 1,
+    "w": 1255,
+    "h": 277,
+    "ageS": 9.8,
+    "balls": [
+     {
+      "id": 0,
+      "x": 25.4,
+      "y": 35,
+      "px": 478,
+      "py": 24,
+      "pr": 11.3,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.07
+       ],
+       [
+        9,
+        0.14
+       ],
+       [
+        7,
+        0.27
+       ]
+      ]
+     },
+     {
+      "id": 8,
+      "x": 26.7,
+      "y": 10.3,
+      "px": 462,
+      "py": 137,
+      "pr": 14.6,
+      "conf": 0.49,
+      "top": [
+       [
+        8,
+        0.67
+       ],
+       [
+        0,
+        1.14
+       ],
+       [
+        3,
+        2.18
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot040-after.jpg",
+    "crop": [
+     0,
+     271,
+     1255,
+     277
+    ],
+    "scale": 1,
+    "w": 1255,
+    "h": 277,
+    "ageS": 0,
+    "balls": [
+     {
+      "id": 0,
+      "x": 44.3,
+      "y": 10.1,
+      "px": 673,
+      "py": 137,
+      "pr": 14.5,
+      "conf": 0.88,
+      "top": [
+       [
+        0,
+        0.14
+       ],
+       [
+        9,
+        0.33
+       ],
+       [
+        1,
+        0.44
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 41,
+   "t": 1791862494841,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 8,
+   "agree": null,
+   "objAt": [
+    60.3,
+    35.7
+   ],
+   "drop": 6,
+   "scratch": false,
+   "mic": {
+    "clicks": 0,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": true,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot041-before.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 8.7,
+    "balls": [
+     {
+      "id": 0,
+      "x": 36.2,
+      "y": 23,
+      "px": 578,
+      "py": 71,
+      "pr": 12.7,
+      "conf": 1,
+      "top": [
+       [
+        0,
+        0.04
+       ],
+       [
+        7,
+        0.12
+       ],
+       [
+        9,
+        0.15
+       ]
+      ]
+     },
+     {
+      "id": 3,
+      "x": 2.7,
+      "y": 17.8,
+      "px": 202,
+      "py": 97,
+      "pr": 13.6,
+      "conf": 0.28,
+      "top": [
+       [
+        7,
+        0.93
+       ],
+       [
+        3,
+        1.28
+       ],
+       [
+        4,
+        1.28
+       ]
+      ]
+     },
+     {
+      "id": 4,
+      "x": 5.7,
+      "y": 22,
+      "px": 251,
+      "py": 77,
+      "pr": 13,
+      "conf": 0.4,
+      "top": [
+       [
+        0,
+        0.61
+       ],
+       [
+        9,
+        0.66
+       ],
+       [
+        1,
+        0.77
+       ]
+      ]
+     },
+     {
+      "id": 7,
+      "x": 3.2,
+      "y": 21.3,
+      "px": 221,
+      "py": 80,
+      "pr": 13.1,
+      "conf": 0.76,
+      "top": [
+       [
+        7,
+        0.28
+       ],
+       [
+        0,
+        0.41
+       ],
+       [
+        9,
+        0.56
+       ]
+      ]
+     },
+     {
+      "id": 9,
+      "x": 5.5,
+      "y": 19.3,
+      "px": 239,
+      "py": 90,
+      "pr": 13.4,
+      "conf": 0.52,
+      "top": [
+       [
+        0,
+        0.28
+       ],
+       [
+        1,
+        0.63
+       ],
+       [
+        9,
+        0.65
+       ]
+      ]
+     },
+     {
+      "id": 1,
+      "x": 8.3,
+      "y": 17.8,
+      "px": 265,
+      "py": 97,
+      "pr": 13.6,
+      "conf": 0.74,
+      "top": [
+       [
+        0,
+        0.24
+       ],
+       [
+        1,
+        0.3
+       ],
+       [
+        9,
+        0.6
+       ]
+      ]
+     },
+     {
+      "id": 8,
+      "x": 60.3,
+      "y": 35.7,
+      "px": 799,
+      "py": 20,
+      "pr": 11.1,
+      "conf": 1,
+      "top": [
+       [
+        8,
+        0.38
+       ],
+       [
+        2,
+        1.74
+       ],
+       [
+        3,
+        1.95
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot041-after.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 73.7,
+      "y": 5.8,
+      "px": 1039,
+      "py": 160,
+      "pr": 15,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.15
+       ],
+       [
+        1,
+        0.4
+       ],
+       [
+        9,
+        0.4
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 42,
+   "t": 1791862536412,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 8,
+   "agree": null,
+   "objAt": [
+    70,
+    32.3
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": 0,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot042-before.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 8.6,
+    "balls": [
+     {
+      "id": 0,
+      "x": 73.7,
+      "y": 5.9,
+      "px": 1039,
+      "py": 160,
+      "pr": 15,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.07
+       ],
+       [
+        9,
+        0.19
+       ],
+       [
+        7,
+        0.31
+       ]
+      ]
+     },
+     {
+      "id": 8,
+      "x": 70,
+      "y": 32.3,
+      "px": 897,
+      "py": 32,
+      "pr": 11.4,
+      "conf": 1,
+      "top": [
+       [
+        8,
+        0
+       ],
+       [
+        0,
+        0.88
+       ],
+       [
+        3,
+        2.49
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot042-after.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 2.7,
+      "y": 9.8,
+      "px": 164,
+      "py": 142,
+      "pr": 15,
+      "conf": 0.87,
+      "top": [
+       [
+        0,
+        0.12
+       ],
+       [
+        1,
+        0.42
+       ],
+       [
+        9,
+        0.62
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 43,
+   "t": 1791862543181,
+   "rack": 1,
+   "target": null,
+   "via": null,
+   "vis": null,
+   "agree": null,
+   "objAt": null,
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 0,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot043-before.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 3.4,
+    "balls": [
+     {
+      "id": 0,
+      "x": 2.7,
+      "y": 9.8,
+      "px": 164,
+      "py": 142,
+      "pr": 14.9,
+      "conf": 0.87,
+      "top": [
+       [
+        0,
+        0.16
+       ],
+       [
+        1,
+        0.42
+       ],
+       [
+        9,
+        0.45
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot043-after.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 2.7,
+      "y": 9.8,
+      "px": 164,
+      "py": 142,
+      "pr": 15,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.12
+       ],
+       [
+        1,
+        0.4
+       ],
+       [
+        9,
+        0.48
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 44,
+   "t": 1791862554231,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 7,
+   "agree": null,
+   "objAt": [
+    3,
+    12.7
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 0,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot044-before.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 3.7,
+    "balls": [
+     {
+      "id": 9,
+      "x": 66,
+      "y": 31.2,
+      "px": 862,
+      "py": 37,
+      "pr": 11.6,
+      "conf": 0.69,
+      "top": [
+       [
+        9,
+        0.34
+       ],
+       [
+        1,
+        0.77
+       ],
+       [
+        5,
+        1.28
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 2.7,
+      "y": 9.9,
+      "px": 165,
+      "py": 142,
+      "pr": 14.9,
+      "conf": 0.9,
+      "top": [
+       [
+        0,
+        0.32
+       ],
+       [
+        1,
+        0.7
+       ],
+       [
+        9,
+        0.88
+       ]
+      ]
+     },
+     {
+      "id": 7,
+      "x": 3,
+      "y": 12.7,
+      "px": 183,
+      "py": 125,
+      "pr": 14.4,
+      "conf": 0.74,
+      "top": [
+       [
+        7,
+        0.3
+       ],
+       [
+        9,
+        0.51
+       ],
+       [
+        0,
+        0.53
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot044-after.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 9,
+      "x": 66,
+      "y": 31.2,
+      "px": 862,
+      "py": 37,
+      "pr": 11.6,
+      "conf": 0.9,
+      "top": [
+       [
+        9,
+        0.35
+       ],
+       [
+        1,
+        0.74
+       ],
+       [
+        5,
+        1.25
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 34.3,
+      "y": 16.7,
+      "px": 556,
+      "py": 101,
+      "pr": 13.6,
+      "conf": 0.95,
+      "top": [
+       [
+        0,
+        0.06
+       ],
+       [
+        1,
+        0.39
+       ],
+       [
+        9,
+        0.52
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 45,
+   "t": 1791862565096,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 9,
+   "agree": null,
+   "objAt": [
+    66,
+    31.2
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": 10,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot045-before.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 9.6,
+    "balls": [
+     {
+      "id": 9,
+      "x": 66,
+      "y": 31.2,
+      "px": 862,
+      "py": 37,
+      "pr": 11.6,
+      "conf": 0.9,
+      "top": [
+       [
+        9,
+        0.38
+       ],
+       [
+        1,
+        0.82
+       ],
+       [
+        5,
+        1.32
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 34.3,
+      "y": 16.7,
+      "px": 556,
+      "py": 101,
+      "pr": 13.6,
+      "conf": 0.95,
+      "top": [
+       [
+        0,
+        0.07
+       ],
+       [
+        1,
+        0.4
+       ],
+       [
+        9,
+        0.52
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot045-after.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 65.8,
+      "y": 6.5,
+      "px": 941,
+      "py": 157,
+      "pr": 15,
+      "conf": 0.81,
+      "top": [
+       [
+        0,
+        0.08
+       ],
+       [
+        1,
+        0.42
+       ],
+       [
+        9,
+        0.42
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 46,
+   "t": 1791862583837,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 9,
+   "agree": null,
+   "objAt": [
+    37.9,
+    23.9
+   ],
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": 5,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot046-before.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 5,
+    "balls": [
+     {
+      "id": 9,
+      "x": 37.9,
+      "y": 23.9,
+      "px": 596,
+      "py": 67,
+      "pr": 12.6,
+      "conf": 0.82,
+      "top": [
+       [
+        9,
+        0.24
+       ],
+       [
+        1,
+        0.58
+       ],
+       [
+        5,
+        1.09
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 65.8,
+      "y": 6.5,
+      "px": 941,
+      "py": 157,
+      "pr": 15,
+      "conf": 0.81,
+      "top": [
+       [
+        0,
+        0.1
+       ],
+       [
+        1,
+        0.44
+       ],
+       [
+        9,
+        0.46
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot046-after.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 9,
+      "x": 13.8,
+      "y": 35.7,
+      "px": 370,
+      "py": 21,
+      "pr": 11.4,
+      "conf": 0.68,
+      "top": [
+       [
+        9,
+        0.39
+       ],
+       [
+        1,
+        0.82
+       ],
+       [
+        13,
+        1.31
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 48.5,
+      "y": 27.5,
+      "px": 701,
+      "py": 51,
+      "pr": 12.1,
+      "conf": 0.97,
+      "top": [
+       [
+        0,
+        0.1
+       ],
+       [
+        9,
+        0.11
+       ],
+       [
+        7,
+        0.32
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 47,
+   "t": 1791862595368,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 9,
+   "agree": null,
+   "objAt": [
+    13.8,
+    35.7
+   ],
+   "drop": 1,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": 14,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot047-before.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 9.5,
+    "balls": [
+     {
+      "id": 9,
+      "x": 13.8,
+      "y": 35.7,
+      "px": 370,
+      "py": 21,
+      "pr": 11.4,
+      "conf": 0.68,
+      "top": [
+       [
+        9,
+        0.43
+       ],
+       [
+        1,
+        0.9
+       ],
+       [
+        13,
+        1.35
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 48.5,
+      "y": 27.5,
+      "px": 701,
+      "py": 51,
+      "pr": 12.1,
+      "conf": 0.97,
+      "top": [
+       [
+        0,
+        0.07
+       ],
+       [
+        9,
+        0.09
+       ],
+       [
+        7,
+        0.33
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot047-after.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 41.2,
+      "y": 4.7,
+      "px": 640,
+      "py": 171,
+      "pr": 15.6,
+      "conf": 0.89,
+      "top": [
+       [
+        0,
+        0.09
+       ],
+       [
+        1,
+        0.36
+       ],
+       [
+        9,
+        0.48
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 48,
+   "t": 1791862606882,
+   "rack": 1,
+   "target": null,
+   "vis": null,
+   "agree": null,
+   "objAt": null,
+   "drop": 2,
+   "scratch": false,
+   "mic": null,
+   "unseen": true,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot048-before.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 5.7,
+    "balls": [
+     {
+      "id": 4,
+      "x": 20,
+      "y": 36.3,
+      "px": 430,
+      "py": 19,
+      "pr": 11.3,
+      "conf": 0.53,
+      "top": [
+       [
+        9,
+        0.26
+       ],
+       [
+        1,
+        0.73
+       ],
+       [
+        5,
+        0.85
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 41.2,
+      "y": 4.7,
+      "px": 639,
+      "py": 171,
+      "pr": 15.5,
+      "conf": 0.89,
+      "top": [
+       [
+        0,
+        0.13
+       ],
+       [
+        1,
+        0.4
+       ],
+       [
+        9,
+        0.47
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot048-after.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 0,
+    "balls": [
+     {
+      "id": 4,
+      "x": 20,
+      "y": 36.4,
+      "px": 430,
+      "py": 18,
+      "pr": 11.3,
+      "conf": 0.53,
+      "top": [
+       [
+        9,
+        0.24
+       ],
+       [
+        1,
+        0.75
+       ],
+       [
+        5,
+        0.77
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 42.7,
+      "y": 21.1,
+      "px": 647,
+      "py": 79,
+      "pr": 12.9,
+      "conf": 0.93,
+      "top": [
+       [
+        0,
+        0.11
+       ],
+       [
+        9,
+        0.34
+       ],
+       [
+        7,
+        0.41
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 49,
+   "t": 1791862625899,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 9,
+   "agree": null,
+   "objAt": [
+    20,
+    36.4
+   ],
+   "drop": 0,
+   "scratch": false,
+   "mic": {
+    "clicks": 1,
+    "strike": null,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": true,
+   "before": {
+    "file": "shot049-before.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 9.1,
+    "balls": [
+     {
+      "id": 9,
+      "x": 20,
+      "y": 36.3,
+      "px": 430,
+      "py": 19,
+      "pr": 11.3,
+      "conf": 1,
+      "top": [
+       [
+        9,
+        0.2
+       ],
+       [
+        1,
+        0.7
+       ],
+       [
+        5,
+        0.82
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 42.8,
+      "y": 21.2,
+      "px": 647,
+      "py": 79,
+      "pr": 12.9,
+      "conf": 0.93,
+      "top": [
+       [
+        0,
+        0.15
+       ],
+       [
+        1,
+        0.42
+       ],
+       [
+        9,
+        0.46
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot049-after.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 9,
+      "x": 6.6,
+      "y": 19.8,
+      "px": 253,
+      "py": 87,
+      "pr": 13.3,
+      "conf": 0.67,
+      "top": [
+       [
+        9,
+        0.29
+       ],
+       [
+        1,
+        0.69
+       ],
+       [
+        5,
+        0.78
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 13.4,
+      "y": 5.9,
+      "px": 284,
+      "py": 166,
+      "pr": 15.6,
+      "conf": 0.93,
+      "top": [
+       [
+        0,
+        0.09
+       ],
+       [
+        1,
+        0.36
+       ],
+       [
+        9,
+        0.52
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 50,
+   "t": 1791862636533,
+   "rack": 1,
+   "target": null,
+   "vis": null,
+   "agree": null,
+   "objAt": null,
+   "drop": 1,
+   "scratch": true,
+   "mic": null,
+   "unseen": true,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot050-before.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 9.3,
+    "balls": [
+     {
+      "id": 9,
+      "x": 6.5,
+      "y": 19.8,
+      "px": 253,
+      "py": 87,
+      "pr": 13.3,
+      "conf": 0.67,
+      "top": [
+       [
+        9,
+        0.35
+       ],
+       [
+        1,
+        0.71
+       ],
+       [
+        5,
+        0.8
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 13.4,
+      "y": 6.1,
+      "px": 284,
+      "py": 165,
+      "pr": 15.6,
+      "conf": 0.93,
+      "top": [
+       [
+        0,
+        0.06
+       ],
+       [
+        1,
+        0.27
+       ],
+       [
+        9,
+        0.29
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot050-after.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 0,
+    "balls": [
+     {
+      "id": 9,
+      "x": 13.8,
+      "y": 24.9,
+      "px": 347,
+      "py": 64,
+      "pr": 12.6,
+      "conf": 0.81,
+      "top": [
+       [
+        9,
+        0.22
+       ],
+       [
+        1,
+        0.63
+       ],
+       [
+        5,
+        0.99
+       ]
+      ]
+     },
+     {
+      "id": 1,
+      "x": 33.4,
+      "y": 10.5,
+      "px": 543,
+      "py": 136,
+      "pr": 14.6,
+      "conf": 0.54,
+      "top": [
+       [
+        7,
+        0.16
+       ],
+       [
+        0,
+        0.24
+       ],
+       [
+        9,
+        0.28
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "shot": 51,
+   "t": 1791862655168,
+   "rack": 1,
+   "target": null,
+   "via": "track",
+   "vis": 9,
+   "agree": null,
+   "objAt": [
+    13.8,
+    24.8
+   ],
+   "drop": 2,
+   "scratch": false,
+   "mic": {
+    "clicks": 2,
+    "strike": 7,
+    "contact": null,
+    "lag": 0,
+    "cap": true,
+    "ball": null
+   },
+   "unseen": false,
+   "doubt": false,
+   "settleTimeout": false,
+   "truthUnsure": true,
+   "steady": false,
+   "before": {
+    "file": "shot051-before.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 9.3,
+    "balls": [
+     {
+      "id": 9,
+      "x": 13.8,
+      "y": 24.8,
+      "px": 347,
+      "py": 64,
+      "pr": 12.6,
+      "conf": 0.81,
+      "top": [
+       [
+        9,
+        0.23
+       ],
+       [
+        1,
+        0.69
+       ],
+       [
+        5,
+        0.94
+       ]
+      ]
+     },
+     {
+      "id": 0,
+      "x": 33.4,
+      "y": 10.4,
+      "px": 544,
+      "py": 136,
+      "pr": 14.6,
+      "conf": 1,
+      "top": [
+       [
+        0,
+        0.05
+       ],
+       [
+        9,
+        0.24
+       ],
+       [
+        7,
+        0.3
+       ]
+      ]
+     }
+    ]
+   },
+   "after": {
+    "file": "shot051-after.jpg",
+    "crop": [
+     0,
+     271,
+     1254,
+     280
+    ],
+    "scale": 1,
+    "w": 1254,
+    "h": 280,
+    "ageS": 0.1,
+    "balls": [
+     {
+      "id": 0,
+      "x": 31.8,
+      "y": 17.9,
+      "px": 529,
+      "py": 95,
+      "pr": 13.4,
+      "conf": 0.88,
+      "top": [
+       [
+        0,
+        0.13
+       ],
+       [
+        1,
+        0.39
+       ],
+       [
+        9,
+        0.47
+       ]
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,73 @@
+{
+  "balls": [
+    {
+      "checked": true,
+      "id": "amve58nb8",
+      "moved": false,
+      "num": 9,
+      "partial": false,
+      "proposedNum": null,
+      "r": 12.7,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 438.4,
+      "y": 283.8
+    },
+    {
+      "checked": true,
+      "id": "amve58svt",
+      "moved": false,
+      "num": 8,
+      "partial": false,
+      "proposedNum": null,
+      "r": 11.3,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 819.4,
+      "y": 214.5
+    },
+    {
+      "checked": true,
+      "id": "amve58v9d",
+      "moved": false,
+      "num": 7,
+      "partial": false,
+      "proposedNum": null,
+      "r": 11.3,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 863.2,
+      "y": 209.9
+    },
+    {
+      "checked": true,
+      "id": "amve58zaa",
+      "moved": false,
+      "num": 0,
+      "partial": false,
+      "proposedNum": null,
+      "r": 11.3,
+      "renumbered": false,
+      "resized": false,
+      "src": "added",
+      "unknown": false,
+      "x": 762.2,
+      "y": 270.5
+    }
+  ],
+  "checkedBy": "person",
+  "file": "shot012.mp4",
+  "h": 720,
+  "image": "images/2026-10-16_evening_V2.3.3__shot012-last.jpg",
+  "removed": [],
+  "session": "2026-10-16_evening_V2.3.3",
+  "status": "done",
+  "updated": "2026-10-18T18:13:31.373Z",
+  "w": 1280
+}

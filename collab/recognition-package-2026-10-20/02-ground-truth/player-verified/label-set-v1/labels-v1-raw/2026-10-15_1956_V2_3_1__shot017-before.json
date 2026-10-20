@@ -1,0 +1,178 @@
+{
+  "balls": [
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p1",
+      "moved": true,
+      "num": 6,
+      "partial": false,
+      "proposedNum": 6,
+      "r": 10.2,
+      "renumbered": false,
+      "resized": true,
+      "src": "proposed",
+      "unknown": false,
+      "x": 793.9,
+      "y": 39.6
+    },
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p2",
+      "moved": true,
+      "num": 5,
+      "partial": false,
+      "proposedNum": 5,
+      "r": 10.6,
+      "renumbered": false,
+      "resized": true,
+      "src": "proposed",
+      "unknown": false,
+      "x": 425.2,
+      "y": 47.3
+    },
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p3",
+      "moved": true,
+      "num": 0,
+      "partial": true,
+      "proposedNum": 0,
+      "r": 11.9,
+      "renumbered": false,
+      "resized": true,
+      "src": "proposed",
+      "unknown": false,
+      "x": 375.1,
+      "y": 94.6
+    },
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p4",
+      "moved": true,
+      "num": 3,
+      "partial": false,
+      "proposedNum": 3,
+      "r": 12.3,
+      "renumbered": false,
+      "resized": true,
+      "src": "proposed",
+      "unknown": false,
+      "x": 388.6,
+      "y": 111.4
+    },
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p5",
+      "moved": true,
+      "num": 4,
+      "partial": false,
+      "proposedNum": 4,
+      "r": 13,
+      "renumbered": false,
+      "resized": false,
+      "src": "proposed",
+      "unknown": false,
+      "x": 1026.3,
+      "y": 97.4
+    },
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p6",
+      "moved": true,
+      "num": 7,
+      "partial": false,
+      "proposedNum": 7,
+      "r": 12.3,
+      "renumbered": false,
+      "resized": true,
+      "src": "proposed",
+      "unknown": false,
+      "x": 429.9,
+      "y": 111.9
+    },
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p7",
+      "moved": true,
+      "num": 9,
+      "partial": false,
+      "proposedNum": 9,
+      "r": 12.4,
+      "renumbered": false,
+      "resized": true,
+      "src": "proposed",
+      "unknown": false,
+      "x": 788.7,
+      "y": 126.2
+    },
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p8",
+      "moved": true,
+      "num": 8,
+      "partial": false,
+      "proposedNum": 8,
+      "r": 15,
+      "renumbered": false,
+      "resized": false,
+      "src": "proposed",
+      "unknown": false,
+      "x": 984.3,
+      "y": 165.6
+    }
+  ],
+  "checkedBy": "person",
+  "file": "shot017-before.jpg",
+  "h": 249,
+  "image": "images/2026-10-15_1956_V2.3.1__shot017-before.jpg",
+  "removed": [
+    {
+      "proposedNum": null,
+      "r": 11.2,
+      "x": 331,
+      "y": 22
+    },
+    {
+      "proposedNum": null,
+      "r": 11.5,
+      "x": 314,
+      "y": 33
+    },
+    {
+      "proposedNum": null,
+      "r": 11.5,
+      "x": 304,
+      "y": 32
+    },
+    {
+      "proposedNum": null,
+      "r": 11.5,
+      "x": 314,
+      "y": 34
+    },
+    {
+      "proposedNum": null,
+      "r": 11.6,
+      "x": 338,
+      "y": 35
+    },
+    {
+      "proposedNum": null,
+      "r": 11.2,
+      "x": 333,
+      "y": 21
+    }
+  ],
+  "session": "2026-10-15_1956_V2.3.1",
+  "status": "done",
+  "updated": "2026-10-18T22:12:12.807Z",
+  "w": 1247
+}

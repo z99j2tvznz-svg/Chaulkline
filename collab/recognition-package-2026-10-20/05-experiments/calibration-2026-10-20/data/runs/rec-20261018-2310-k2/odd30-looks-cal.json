@@ -1,0 +1,27 @@
+{
+ "summary": {
+  "ALL start": {
+   "N": 0,
+   "named": 0,
+   "rejected": 0,
+   "unnamed": 0,
+   "wrong": 0,
+   "absent": 0,
+   "extra": 0,
+   "right": 0,
+   "looks": 0
+  },
+  "ALL end": {
+   "N": 0,
+   "named": 0,
+   "rejected": 0,
+   "unnamed": 0,
+   "wrong": 0,
+   "absent": 0,
+   "extra": 0,
+   "right": 0,
+   "looks": 0
+  }
+ },
+ "rows": []
+}

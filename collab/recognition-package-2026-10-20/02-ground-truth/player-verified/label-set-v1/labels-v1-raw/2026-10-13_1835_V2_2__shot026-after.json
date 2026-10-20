@@ -1,0 +1,123 @@
+{
+  "balls": [
+    {
+      "bulk": true,
+      "checked": true,
+      "id": "p0",
+      "moved": true,
+      "num": 7,
+      "partial": false,
+      "proposedNum": 7,
+      "r": 9.6,
+      "renumbered": false,
+      "resized": true,
+      "src": "proposed",
+      "unknown": false,
+      "x": 1001.1,
+      "y": 84.2
+    },
+    {
+      "checked": true,
+      "id": "amve49nqu",
+      "moved": false,
+      "num": 8,
+      "partial": false,
+      "proposedNum": null,
+      "r": 9.6,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 524.5,
+      "y": 82.7
+    },
+    {
+      "checked": true,
+      "id": "amve49shp",
+      "moved": true,
+      "num": 9,
+      "partial": false,
+      "proposedNum": null,
+      "r": 12.1,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 382.6,
+      "y": 152.9
+    },
+    {
+      "checked": true,
+      "id": "amve4a0bb",
+      "moved": true,
+      "num": 5,
+      "partial": false,
+      "proposedNum": null,
+      "r": 12.1,
+      "renumbered": false,
+      "resized": false,
+      "src": "added",
+      "unknown": false,
+      "x": 274,
+      "y": 110.8
+    },
+    {
+      "checked": true,
+      "id": "amve4a3bn",
+      "moved": true,
+      "num": 6,
+      "partial": true,
+      "proposedNum": null,
+      "r": 9.6,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 252.1,
+      "y": 22.7
+    },
+    {
+      "checked": true,
+      "id": "amveai3nt",
+      "moved": true,
+      "num": 0,
+      "partial": false,
+      "proposedNum": null,
+      "r": 9.6,
+      "renumbered": false,
+      "resized": true,
+      "src": "added",
+      "unknown": false,
+      "x": 429.3,
+      "y": 19.5
+    }
+  ],
+  "checkedBy": "person",
+  "file": "shot026-after.jpg",
+  "h": 250,
+  "image": "images/2026-10-13_1835_V2.2__shot026-after.jpg",
+  "removed": [
+    {
+      "proposedNum": 2,
+      "r": 11.1,
+      "x": 519,
+      "y": 87
+    },
+    {
+      "proposedNum": 4,
+      "r": 13.3,
+      "x": 376,
+      "y": 156
+    },
+    {
+      "proposedNum": 5,
+      "r": 12.1,
+      "x": 267,
+      "y": 113
+    }
+  ],
+  "session": "2026-10-13_1835_V2.2",
+  "status": "done",
+  "updated": "2026-10-18T20:40:50.895Z",
+  "w": 1266
+}

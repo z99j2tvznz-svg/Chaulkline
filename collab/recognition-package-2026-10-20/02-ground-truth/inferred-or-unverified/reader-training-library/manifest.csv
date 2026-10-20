@@ -1,0 +1,2278 @@
+file,session,shot,pic,x,y,px,py,pr,app_id,app_conf,label,trust,note,proposed,reviewed
+real1_s001_b0.png,real1,1,before,16.1,30.6,306,25,9.5,6,0.78,6,app,,6,ok
+real1_s001_b1.png,real1,1,before,38.7,29.6,484,27,9.5,4,0.77,4,app,,4,ok
+real1_s001_b2.png,real1,1,before,64.2,25.1,688,39,9.7,1,0.72,1,app,,1,ok
+real1_s001_b3.png,real1,1,before,6.6,24.4,219,41,10,9,0.69,9,app,,9,ok
+real1_s001_b4.png,real1,1,before,19.6,15.8,318,67,10.7,5,0.71,5,app,,5,ok
+real1_s001_b5.png,real1,1,before,48.4,12.7,573,77,10.9,0,0.63,0,app,,0,ok
+real1_s001_b6.png,real1,1,before,33.9,10.8,442,84,11.1,7,0.3,7,app,,7,ok
+real1_s001_b7.png,real1,1,before,7.2,8.9,190,91,11.5,8,0.68,8,app,,8,ok
+real1_s001_b8.png,real1,1,before,52,4.7,616,105,11.7,3,0.74,3,app,,3,ok
+real1_s001_b9.png,real1,1,before,71.3,3.7,801,108,11.7,2,0.66,2,app,,2,ok
+real1_s001_a0.png,real1,1,after,16,30.7,306,25,9.5,6,0.9,6,app,,6,ok
+real1_s001_a1.png,real1,1,after,38.7,29.6,484,27,9.5,4,0.9,4,app,,4,ok
+real1_s001_a2.png,real1,1,after,6.5,24.6,219,41,10,9,0.9,9,app,,9,ok
+real1_s001_a3.png,real1,1,after,63.7,19.6,694,55,10.2,0,0.9,0,app,,0,ok
+real1_s001_a4.png,real1,1,after,19.6,15.9,317,67,10.7,5,0.9,5,app,,5,ok
+real1_s001_a5.png,real1,1,after,33.9,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s001_a6.png,real1,1,after,7.1,9,190,91,11.5,8,0.9,8,app,,8,ok
+real1_s001_a7.png,real1,1,after,52,4.7,616,105,11.7,3,0.9,3,app,,3,ok
+real1_s001_a8.png,real1,1,after,71.3,3.7,801,108,11.7,2,0.9,2,app,,2,ok
+real1_s002_b0.png,real1,2,before,16,30.7,306,25,9.5,6,0.9,6,app,,6,ok
+real1_s002_b1.png,real1,2,before,38.7,29.6,484,27,9.5,4,0.9,4,app,,4,ok
+real1_s002_b2.png,real1,2,before,6.5,24.6,219,41,10,9,0.9,9,app,,9,ok
+real1_s002_b3.png,real1,2,before,63.7,19.6,694,55,10.2,0,0.9,0,app,,0,ok
+real1_s002_b4.png,real1,2,before,19.6,15.8,317,67,10.7,5,0.9,5,app,,5,ok
+real1_s002_b5.png,real1,2,before,33.9,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s002_b6.png,real1,2,before,7.2,9,190,91,11.5,8,0.9,8,app,,8,ok
+real1_s002_b7.png,real1,2,before,52,4.7,616,105,11.7,3,0.9,3,app,,3,ok
+real1_s002_b8.png,real1,2,before,71.3,3.7,800,108,11.7,2,0.9,2,app,,2,ok
+real1_s002_a0.png,real1,2,after,16,30.8,306,24,9.5,6,0.9,6,app,,6,ok
+real1_s002_a1.png,real1,2,after,38.7,29.7,484,27,9.5,4,0.9,4,app,,4,ok
+real1_s002_a2.png,real1,2,after,6.5,24.6,219,41,10,9,0.9,9,app,,9,ok
+real1_s002_a3.png,real1,2,after,19.6,15.8,317,67,10.7,5,0.9,5,app,,5,ok
+real1_s002_a4.png,real1,2,after,33.9,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s002_a5.png,real1,2,after,7.1,9,190,91,11.5,8,0.9,8,app,,8,ok
+real1_s002_a6.png,real1,2,after,52.1,3.8,617,109,11.8,3,0.9,3,app,,3,ok
+real1_s002_a7.png,real1,2,after,51.5,6.7,607,98,11.5,0,0.24,0,app,,0,ok
+real1_s003_b0.png,real1,3,before,16,30.8,306,24,9.5,6,0.9,6,app,,6,ok
+real1_s003_b1.png,real1,3,before,38.7,29.8,484,27,9.5,4,0.9,4,app,,4,ok
+real1_s003_b2.png,real1,3,before,6.5,24.6,219,41,10,9,0.9,9,app,,9,ok
+real1_s003_b3.png,real1,3,before,19.6,15.8,317,67,10.7,5,0.9,5,app,,5,ok
+real1_s003_b4.png,real1,3,before,33.9,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s003_b5.png,real1,3,before,7.2,9,190,91,11.5,8,0.9,8,app,,8,ok
+real1_s003_b6.png,real1,3,before,52.1,3.8,617,109,11.8,3,0.9,3,app,,3,ok
+real1_s003_b7.png,real1,3,before,51.4,6.7,607,98,11.5,0,0.24,0,app,,0,ok
+real1_s003_a0.png,real1,3,after,16,30.7,306,25,9.5,6,0.9,6,app,,6,ok
+real1_s003_a1.png,real1,3,after,38.7,29.7,484,27,9.5,4,0.9,4,app,,4,ok
+real1_s003_a2.png,real1,3,after,73.8,28.8,755,29,9.4,3,0.72,3,app,,3,ok
+real1_s003_a3.png,real1,3,after,19.6,15.8,317,67,10.7,5,0.9,5,app,,5,ok
+real1_s003_a4.png,real1,3,after,33.8,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s003_a5.png,real1,3,after,7.1,9,190,91,11.5,8,0.9,8,app,,8,ok
+real1_s004_b0.png,real1,4,before,16,30.8,306,24,9.5,6,0.9,6,app,,6,ok
+real1_s004_b1.png,real1,4,before,38.7,29.8,484,27,9.5,4,0.9,4,app,,4,ok
+real1_s004_b2.png,real1,4,before,73.8,28.9,756,29,9.4,3,0.72,3,app,,3,ok
+real1_s004_b3.png,real1,4,before,33,19.1,436,57,10.4,0,0.93,0,app,,0,ok
+real1_s004_b4.png,real1,4,before,19.6,15.9,317,67,10.7,5,0.9,5,app,,5,ok
+real1_s004_b5.png,real1,4,before,33.8,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s004_b6.png,real1,4,before,7.1,9,190,91,11.5,8,0.9,8,app,,8,ok
+real1_s004_a0.png,real1,4,after,16,30.8,306,24,9.5,6,0.9,6,app,,6,ok
+real1_s004_a1.png,real1,4,after,38.7,29.7,484,27,9.5,4,0.9,4,app,,4,ok
+real1_s004_a2.png,real1,4,after,73.8,28.8,756,30,9.4,3,0.9,3,app,,3,ok
+real1_s004_a3.png,real1,4,after,19.6,15.8,317,67,10.7,5,0.9,5,app,,5,ok
+real1_s004_a4.png,real1,4,after,33.8,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s004_a5.png,real1,4,after,7.1,9,190,91,11.5,8,0.9,8,app,,8,ok
+real1_s004_a6.png,real1,4,after,74.7,7,822,96,11.3,0,0.78,0,app,,0,ok
+real1_s005_b0.png,real1,5,before,16,30.8,306,24,9.5,6,0.9,6,app,,6,ok
+real1_s005_b1.png,real1,5,before,38.7,29.8,484,27,9.5,4,0.9,4,app,,4,ok
+real1_s005_b2.png,real1,5,before,73.8,28.8,756,30,9.4,3,0.9,3,app,,3,ok
+real1_s005_b3.png,real1,5,before,19.6,15.9,317,67,10.7,5,0.9,5,app,,5,ok
+real1_s005_b4.png,real1,5,before,33.9,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s005_b5.png,real1,5,before,7.1,9,190,91,11.5,8,0.9,8,app,,8,ok
+real1_s005_b6.png,real1,5,before,74.7,7,822,96,11.3,0,0.78,0,app,,0,ok
+real1_s005_a0.png,real1,5,after,16,30.8,306,24,9.5,6,0.9,6,app,,6,ok
+real1_s005_a1.png,real1,5,after,38.7,29.8,484,27,9.5,4,0.9,4,app,,4,ok
+real1_s005_a2.png,real1,5,after,59,23.1,650,45,9.9,0,0.96,0,app,,0,ok
+real1_s005_a3.png,real1,5,after,19.6,15.9,317,67,10.7,5,0.9,5,app,,5,ok
+real1_s005_a4.png,real1,5,after,33.9,11,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s005_a5.png,real1,5,after,7.1,9,190,91,11.5,8,0.9,8,app,,8,ok
+real1_s006_b0.png,real1,6,before,16,30.8,306,24,9.5,6,0.9,6,app,,6,ok
+real1_s006_b1.png,real1,6,before,38.7,29.8,484,27,9.5,4,0.9,4,app,,4,ok
+real1_s006_b2.png,real1,6,before,59,23.1,650,45,9.9,0,0.96,0,app,,0,ok
+real1_s006_b3.png,real1,6,before,74.7,13.6,801,73,10.7,,0,nb,app,,?,fixed
+real1_s006_b4.png,real1,6,before,71.8,14.4,774,70,10.6,9,0.74,nb,app,,9,fixed
+real1_s006_b5.png,real1,6,before,74.6,18.4,787,58,10.2,1,0.41,nb,app,,1,fixed
+real1_s006_b6.png,real1,6,before,19.6,15.9,317,67,10.7,5,0.9,5,app,,5,ok
+real1_s006_b7.png,real1,6,before,33.8,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s006_b8.png,real1,6,before,7.1,9,190,91,11.5,8,0.9,8,app,,8,ok
+real1_s006_a0.png,real1,6,after,16,30.8,306,24,9.5,6,0.9,6,app,,6,ok
+real1_s006_a1.png,real1,6,after,44.6,30.1,529,26,9.5,0,0.96,0,app,,0,ok
+real1_s006_a2.png,real1,6,after,19.6,15.9,317,67,10.7,5,0.9,5,app,,5,ok
+real1_s006_a3.png,real1,6,after,33.8,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s006_a4.png,real1,6,after,7.1,9,189,91,11.5,8,0.9,8,app,,8,ok
+real1_s007_b0.png,real1,7,before,16,30.8,306,24,9.5,6,0.9,6,app,,6,ok
+real1_s007_b1.png,real1,7,before,44.6,30.2,529,26,9.5,0,0.96,0,app,,0,ok
+real1_s007_b2.png,real1,7,before,19.6,15.9,317,67,10.7,5,0.9,5,app,,5,ok
+real1_s007_b3.png,real1,7,before,33.8,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s007_b4.png,real1,7,before,7.1,9,189,91,11.5,8,0.9,8,app,,8,ok
+real1_s007_a0.png,real1,7,after,16,30.8,306,24,9.5,6,0.9,6,app,,6,ok
+real1_s007_a1.png,real1,7,after,40.2,29.4,496,28,9.5,0,0.96,0,app,,0,ok
+real1_s007_a2.png,real1,7,after,19.1,24,323,43,10,,0,8,app,,?,fixed
+real1_s007_a3.png,real1,7,after,33.8,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s007_a4.png,real1,7,after,7.5,9.7,195,88,11.4,8,0.9,5,app,,8,fixed
+real1_s008_b0.png,real1,8,before,16,30.8,306,24,9.5,6,0.9,6,app,,6,ok
+real1_s008_b1.png,real1,8,before,40.3,29.4,496,28,9.5,0,0.96,0,app,,0,ok
+real1_s008_b2.png,real1,8,before,19.1,24,323,43,10,,0,8,app,,?,fixed
+real1_s008_b3.png,real1,8,before,33.9,11,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s008_b4.png,real1,8,before,7.6,9.7,195,88,11.4,8,0.9,5,app,,8,fixed
+real1_s008_a0.png,real1,8,after,16,30.8,306,24,9.5,6,0.9,6,app,,6,ok
+real1_s008_a1.png,real1,8,after,19.1,24,323,43,10,8,0.47,8,app,,8,ok
+real1_s008_a2.png,real1,8,after,32.9,18.2,436,59,10.4,0,0.88,0,app,,0,ok
+real1_s008_a3.png,real1,8,after,33.8,11,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s009_b0.png,real1,9,before,16,30.8,306,24,9.5,6,0.9,6,app,,6,ok
+real1_s009_b1.png,real1,9,before,19.1,24,323,43,10,8,0.47,8,app,,8,ok
+real1_s009_b2.png,real1,9,before,32.9,18.2,436,59,10.4,0,0.88,0,app,,0,ok
+real1_s009_b3.png,real1,9,before,33.8,11,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s009_a0.png,real1,9,after,27.7,26,395,37,9.8,0,0.97,0,app,,0,ok
+real1_s009_a1.png,real1,9,after,19.1,24,323,42,10,8,0.9,8,app,,8,ok
+real1_s009_a2.png,real1,9,after,33.9,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s010_b0.png,real1,10,before,27.7,26,395,37,9.8,0,0.97,0,app,,0,ok
+real1_s010_b1.png,real1,10,before,19.1,24,323,42,10,8,0.9,8,app,,8,ok
+real1_s010_b2.png,real1,10,before,33.8,10.9,442,83,11.1,7,0.9,7,app,,7,ok
+real1_s010_a0.png,real1,10,after,19.1,24,323,42,10,8,0.9,8,app,,8,ok
+real1_s010_a1.png,real1,10,after,32.5,13.3,430,75,10.9,0,0.9,0,app,,0,ok
+real1_s011_b0.png,real1,11,before,19.1,24,323,42,10,8,0.9,8,app,,8,ok
+real1_s011_b1.png,real1,11,before,32.5,13.3,430,75,10.9,0,0.9,0,app,,0,ok
+real1_s011_a0.png,real1,11,after,21.1,32,347,21,9.4,0,0.87,0,app,,0,ok
+real1_s012_b0.png,real1,12,before,2.7,28.5,195,30,9.7,2,0.13,nb,app,,2,fixed
+real1_s012_b1.png,real1,12,before,5.9,29.4,223,28,9.7,1,0.16,nb,app,,1,fixed
+real1_s012_b2.png,real1,12,before,3.9,30.5,209,25,9.6,8,0.52,nb,app,,8,fixed
+real1_s012_b3.png,real1,12,before,21.1,32,347,21,9.4,0,0.87,0,app,,0,ok
+real1_s012_a0.png,real1,12,after,31.7,26.4,428,36,9.8,0,0.87,0,app,,0,ok
+real1_s013_b0.png,real1,13,before,9.4,30.7,253,25,9.6,9,0.4,nb,app,,9,fixed
+real1_s013_b1.png,real1,13,before,12,30.6,274,25,9.5,7,0.75,nb,app,,7,fixed
+real1_s013_b2.png,real1,13,before,11.4,27.2,264,34,9.8,1,0.68,nb,app,,1,fixed
+real1_s013_b3.png,real1,13,before,31.7,26.4,428,36,9.8,0,0.87,0,app,,0,ok
+real1_s013_a0.png,real1,13,after,20,30.9,337,24,9.5,4,0.47,5,app,,4,fixed
+real1_s013_a1.png,real1,13,after,13.9,27.2,285,34,9.8,0,0.94,0,app,,0,ok
+real1_s013_a2.png,real1,13,after,60,21.1,662,50,10.1,6,0.78,6,app,,6,ok
+real1_s013_a3.png,real1,13,after,25.2,17.4,368,62,10.6,,0,7,app,,?,fixed
+real1_s013_a4.png,real1,13,after,49.7,14.9,582,69,10.7,9,0.71,9,app,,9,ok
+real1_s013_a5.png,real1,13,after,4.5,9.9,167,87,11.4,1,0.81,1,app,,1,ok
+real1_s013_a6.png,real1,13,after,72.6,6.7,804,97,11.3,7,0.9,4,app,,7,fixed
+real1_s013_a7.png,real1,13,after,22.1,4.3,326,108,11.9,2,0.85,2,app,,2,ok
+real1_s014_b0.png,real1,14,before,4.3,31.1,214,23,9.5,8,0.8,8,app,,8,ok
+real1_s014_b1.png,real1,14,before,20,30.9,337,24,9.5,4,0.47,5,app,,4,fixed
+real1_s014_b2.png,real1,14,before,53.4,31.7,596,22,9.3,5,0.37,3,app,,5,fixed
+real1_s014_b3.png,real1,14,before,13.9,27.2,285,34,9.8,0,0.94,0,app,,0,ok
+real1_s014_b4.png,real1,14,before,60,21.1,662,51,10.1,6,0.78,6,app,,6,ok
+real1_s014_b5.png,real1,14,before,25.2,17.4,368,62,10.6,3,0.34,7,app,,3,fixed
+real1_s014_b6.png,real1,14,before,49.7,15,582,69,10.7,9,0.71,9,app,,9,ok
+real1_s014_b7.png,real1,14,before,4.5,9.9,167,87,11.4,1,0.81,1,app,,1,ok
+real1_s014_b8.png,real1,14,before,72.6,6.6,804,97,11.3,7,0.9,4,app,,7,fixed
+real1_s014_b9.png,real1,14,before,22.1,4.8,326,106,11.8,2,0.85,2,app,,2,ok
+real1_s014_a0.png,real1,14,after,4.3,31.1,214,23,9.5,8,0.9,8,app,,8,ok
+real1_s014_a1.png,real1,14,after,20,30.9,337,24,9.5,4,0.9,5,app,,4,fixed
+real1_s014_a2.png,real1,14,after,53.4,31.7,596,22,9.3,5,0.9,3,app,,5,fixed
+real1_s014_a3.png,real1,14,after,60.1,21.1,662,50,10.1,6,0.9,6,app,,6,ok
+real1_s014_a4.png,real1,14,after,25.2,17.4,368,62,10.6,3,0.9,7,app,,3,fixed
+real1_s014_a5.png,real1,14,after,49.7,15,582,69,10.7,9,0.9,9,app,,9,ok
+real1_s014_a6.png,real1,14,after,72.6,6.6,804,97,11.3,7,0.9,4,app,,7,fixed
+real1_s014_a7.png,real1,14,after,22,4.5,325,107,11.9,2,0.9,2,app,,2,ok
+real1_s014_a8.png,real1,14,after,11.7,3.5,221,112,12.1,0,0.6,0,app,,0,ok
+real1_s015_b0.png,real1,15,before,4.3,31.1,214,24,9.5,8,0.9,8,app,,8,ok
+real1_s015_b1.png,real1,15,before,20,30.9,337,24,9.5,4,0.9,5,app,,4,fixed
+real1_s015_b2.png,real1,15,before,53.4,31.6,596,22,9.3,5,0.9,3,app,,5,fixed
+real1_s015_b3.png,real1,15,before,60,21.1,662,51,10.1,6,0.9,6,app,,6,ok
+real1_s015_b4.png,real1,15,before,25.2,17.4,368,62,10.6,3,0.9,7,app,,3,fixed
+real1_s015_b5.png,real1,15,before,49.7,15,582,69,10.7,9,0.9,9,app,,9,ok
+real1_s015_b6.png,real1,15,before,72.6,6.6,803,97,11.3,7,0.9,4,app,,7,fixed
+real1_s015_b7.png,real1,15,before,22.1,4.5,325,107,11.9,2,0.9,2,app,,2,ok
+real1_s015_b8.png,real1,15,before,11.7,3.5,221,112,12.1,0,0.6,0,app,,0,ok
+real1_s015_a0.png,real1,15,after,4.3,31.1,214,24,9.5,8,0.9,8,app,,8,ok
+real1_s015_a1.png,real1,15,after,20,30.9,337,24,9.5,4,0.9,5,app,,4,fixed
+real1_s015_a2.png,real1,15,after,53.4,31.7,596,22,9.3,5,0.9,3,app,,5,fixed
+real1_s015_a3.png,real1,15,after,60,21.1,662,50,10.1,6,0.9,6,app,,6,ok
+real1_s015_a4.png,real1,15,after,25.2,17.4,368,62,10.6,3,0.9,7,app,,3,fixed
+real1_s015_a5.png,real1,15,after,49.7,15,582,69,10.7,9,0.9,9,app,,9,ok
+real1_s015_a6.png,real1,15,after,19.5,11,310,83,11.2,0,0.96,0,app,,0,ok
+real1_s015_a7.png,real1,15,after,72.6,6.6,804,97,11.4,7,0.9,4,app,,7,fixed
+real1_s016_b0.png,real1,16,before,20,30.9,337,24,9.5,4,0.9,5,app,,4,fixed
+real1_s016_b1.png,real1,16,before,19.5,11.1,311,83,11.2,0,0.96,0,app,,0,ok
+real1_s016_b2.png,real1,16,before,25.2,17.4,368,62,10.6,3,0.9,7,app,,3,fixed
+real1_s016_b3.png,real1,16,before,49.7,14.9,582,69,10.7,9,0.9,9,app,,9,ok
+real1_s016_b4.png,real1,16,before,72.6,6.6,804,97,11.3,7,0.9,4,app,,7,fixed
+real1_s016_b5.png,real1,16,before,60.1,21.1,662,50,10.1,6,0.9,6,app,,6,ok
+real1_s016_b6.png,real1,16,before,4.3,31.1,214,24,9.5,8,0.9,8,app,,8,ok
+real1_s016_b7.png,real1,16,before,53.4,31.7,596,22,9.3,5,0.9,3,app,,5,fixed
+real1_s016_b8.png,real1,16,before,5.9,3.9,164,110,12,,0,nb,app,,?,fixed
+real1_s016_b9.png,real1,16,before,2.6,3.7,130,111,12.1,,0,nb,app,,?,fixed
+real1_s016_a0.png,real1,16,after,4.3,31.1,214,23,9.5,8,0.9,8,app,,8,ok
+real1_s016_a1.png,real1,16,after,20,30.9,337,24,9.5,4,0.9,5,app,,4,fixed
+real1_s016_a2.png,real1,16,after,49.3,29.7,566,27,9.5,0,0.97,0,app,,0,ok
+real1_s016_a3.png,real1,16,after,60,21.1,662,51,10.1,6,0.9,6,app,,6,ok
+real1_s016_a4.png,real1,16,after,25.2,17.4,368,62,10.6,3,0.9,7,app,,3,fixed
+real1_s016_a5.png,real1,16,after,49.7,14.9,582,69,10.7,9,0.9,9,app,,9,ok
+real1_s016_a6.png,real1,16,after,31.4,10.3,420,85,11.2,5,0.4,3,app,,5,fixed
+real1_s016_a7.png,real1,16,after,72.6,6.6,804,97,11.3,7,0.9,4,app,,7,fixed
+real1_s017_b0.png,real1,17,before,4.3,31.1,214,23,9.5,8,0.9,8,app,,8,ok
+real1_s017_b1.png,real1,17,before,20,30.9,337,24,9.5,4,0.9,5,app,,4,fixed
+real1_s017_b2.png,real1,17,before,49.3,29.7,566,27,9.5,0,0.97,0,app,,0,ok
+real1_s017_b3.png,real1,17,before,60,21.1,662,50,10.1,6,0.9,6,app,,6,ok
+real1_s017_b4.png,real1,17,before,25.2,17.4,368,62,10.6,3,0.9,7,app,,3,fixed
+real1_s017_b5.png,real1,17,before,49.7,15,582,69,10.7,9,0.9,9,app,,9,ok
+real1_s017_b6.png,real1,17,before,31.4,10.3,420,85,11.2,5,0.4,3,app,,5,fixed
+real1_s017_b7.png,real1,17,before,72.6,6.6,803,97,11.3,7,0.9,4,app,,7,fixed
+real1_s017_a0.png,real1,17,after,4.3,31.1,214,23,9.5,8,0.9,8,app,,8,ok
+real1_s017_a1.png,real1,17,after,20,30.9,337,24,9.5,4,0.9,5,app,,4,fixed
+real1_s017_a2.png,real1,17,after,60,21.1,662,50,10.1,6,0.9,6,app,,6,ok
+real1_s017_a3.png,real1,17,after,25.2,17.4,368,62,10.6,3,0.9,7,app,,3,fixed
+real1_s017_a4.png,real1,17,after,49.7,15,582,69,10.7,9,0.9,9,app,,9,ok
+real1_s017_a5.png,real1,17,after,72.6,6.6,803,97,11.3,7,0.9,4,app,,7,fixed
+real1_s018_b0.png,real1,18,before,20,30.9,337,24,9.5,4,0.9,5,app,,4,fixed
+real1_s018_b1.png,real1,18,before,17.6,17.2,301,63,10.6,0,0.95,0,app,,0,ok
+real1_s018_b2.png,real1,18,before,25.2,17.4,368,62,10.6,3,0.9,7,app,,3,fixed
+real1_s018_b3.png,real1,18,before,49.7,15,582,69,10.7,9,0.9,9,app,,9,ok
+real1_s018_b4.png,real1,18,before,72.6,6.6,804,97,11.3,7,0.9,4,app,,7,fixed
+real1_s018_b5.png,real1,18,before,60.1,21.1,662,50,10.1,6,0.9,6,app,,6,ok
+real1_s018_b6.png,real1,18,before,4.3,31.1,214,24,9.5,8,0.9,8,app,,8,ok
+real1_s018_b7.png,real1,18,before,38.6,31.5,483,23,9.4,2,0.52,nb,app,,2,fixed
+real1_s018_b8.png,real1,18,before,33,30.6,439,25,9.5,1,0.28,nb,app,,1,fixed
+real1_s018_b9.png,real1,18,before,31.2,30.1,425,26,9.5,5,0.3,nb,app,,5,fixed
+real1_s018_a0.png,real1,18,after,4.3,31.1,214,24,9.5,8,0.9,8,app,,8,ok
+real1_s018_a1.png,real1,18,after,20,30.9,337,24,9.5,4,0.9,5,app,,4,fixed
+real1_s018_a2.png,real1,18,after,24.6,24.9,369,40,9.9,3,0.44,7,app,,3,fixed
+real1_s018_a3.png,real1,18,after,60.1,22.9,659,45,9.9,0,0.9,?,app,,0,fixed
+real1_s018_a4.png,real1,18,after,49.7,15,582,69,10.7,9,0.9,9,app,,9,ok
+real1_s018_a5.png,real1,18,after,72.6,6.6,803,97,11.4,7,0.9,4,app,,7,fixed
+real1_s019_b0.png,real1,19,before,4.3,31.1,214,23,9.5,8,0.9,8,app,,8,ok
+real1_s019_b1.png,real1,19,before,20,30.9,337,24,9.5,4,0.9,5,app,,4,fixed
+real1_s019_b2.png,real1,19,before,24.6,24.9,369,40,9.9,3,0.44,7,app,,3,fixed
+real1_s019_b3.png,real1,19,before,58.1,18.9,649,57,10.3,6,0.72,6,app,,6,ok
+real1_s019_b4.png,real1,19,before,60,24.6,656,41,9.8,0,0.9,?,app,,0,fixed
+real1_s019_b5.png,real1,19,before,49.7,15,582,69,10.7,9,0.9,9,app,,9,ok
+real1_s019_b6.png,real1,19,before,72.6,6.6,804,97,11.3,7,0.9,4,app,,7,fixed
+real1_s019_a0.png,real1,19,after,4.3,31.1,214,24,9.5,8,0.9,8,app,,8,ok
+real1_s019_a1.png,real1,19,after,20,30.9,337,24,9.5,4,0.9,5,app,,4,fixed
+real1_s019_a2.png,real1,19,after,24.6,24.9,369,40,9.9,3,0.9,7,app,,3,fixed
+real1_s019_a3.png,real1,19,after,58.1,18.7,649,57,10.3,6,0.9,6,app,,6,ok
+real1_s019_a4.png,real1,19,after,46.1,18.3,548,59,10.4,9,0.87,9,app,,9,ok
+real1_s019_a5.png,real1,19,after,48.6,12.8,574,76,10.9,0,0.97,0,app,,0,ok
+real1_s020_b0.png,real1,20,before,4.3,31.1,214,23,9.5,8,0.9,8,app,,8,ok
+real1_s020_b1.png,real1,20,before,20,30.9,337,24,9.5,4,0.9,5,app,,4,fixed
+real1_s020_b2.png,real1,20,before,24.6,24.9,369,40,9.9,3,0.9,7,app,,3,fixed
+real1_s020_b3.png,real1,20,before,58.1,18.7,649,57,10.3,6,0.9,6,app,,6,ok
+real1_s020_b4.png,real1,20,before,46.1,18.3,548,59,10.4,9,0.87,9,app,,9,ok
+real1_s020_b5.png,real1,20,before,48.6,12.8,574,76,10.9,0,0.97,0,app,,0,ok
+real1_s020_a0.png,real1,20,after,4.3,31.1,214,23,9.5,8,0.9,8,app,,8,ok
+real1_s020_a1.png,real1,20,after,24.6,24.9,369,40,9.9,3,0.9,7,app,,3,fixed
+real1_s020_a2.png,real1,20,after,58.1,18.7,649,57,10.3,6,0.9,6,app,,6,ok
+real1_s020_a3.png,real1,20,after,46.1,18.3,548,59,10.4,9,0.9,9,app,,9,ok
+real1_s020_a4.png,real1,20,after,37.5,3.3,476,111,11.9,0,0.86,0,app,,0,ok
+real1_s021_b0.png,real1,21,before,4.3,31.1,214,24,9.5,8,0.9,8,app,,8,ok
+real1_s021_b1.png,real1,21,before,24.6,24.9,369,40,9.9,3,0.9,7,app,,3,fixed
+real1_s021_b2.png,real1,21,before,58.1,18.7,649,57,10.3,6,0.9,6,app,,6,ok
+real1_s021_b3.png,real1,21,before,46.1,18.3,548,59,10.4,9,0.9,9,app,,9,ok
+real1_s021_b4.png,real1,21,before,37.5,3.3,476,111,11.9,0,0.86,0,app,,0,ok
+real1_s021_a0.png,real1,21,after,10.1,31.5,261,22,9.5,6,0.74,6,app,,6,ok
+real1_s021_a1.png,real1,21,after,14.9,26.7,292,35,9.8,8,0.78,8,app,,8,ok
+real1_s021_a2.png,real1,21,after,24.6,24.9,369,40,9.9,3,0.9,7,app,,3,fixed
+real1_s021_a3.png,real1,21,after,46.1,18.3,548,59,10.4,9,0.9,9,app,,9,ok
+real1_s021_a4.png,real1,21,after,60.5,10.2,684,85,11.1,0,0.97,0,app,,0,ok
+real1_s022_b0.png,real1,22,before,10.2,31.6,261,22,9.5,6,0.74,6,app,,6,ok
+real1_s022_b1.png,real1,22,before,38.2,28.7,479,30,9.6,0,0.93,0,app,,0,ok
+real1_s022_b2.png,real1,22,before,15,26.6,292,35,9.8,8,0.78,8,app,,8,ok
+real1_s022_b3.png,real1,22,before,24.6,24.9,369,40,9.9,3,0.9,7,app,,3,fixed
+real1_s022_b4.png,real1,22,before,46.1,18.3,548,59,10.4,9,0.9,9,app,,9,ok
+real1_s022_a0.png,real1,22,after,15,26.6,292,35,9.8,8,0.9,8,app,,8,ok
+real1_s022_a1.png,real1,22,after,24.6,24.9,369,40,9.9,3,0.9,7,app,,3,fixed
+real1_s022_a2.png,real1,22,after,46.1,18.3,549,59,10.4,9,0.9,9,app,,9,ok
+real1_s022_a3.png,real1,22,after,13.1,14.9,258,70,10.8,0,0.91,0,app,,0,ok
+real1_s023_b0.png,real1,23,before,15,26.6,292,35,9.8,8,0.9,8,app,,8,ok
+real1_s023_b1.png,real1,23,before,24.6,24.9,369,40,9.9,3,0.9,7,app,,3,fixed
+real1_s023_b2.png,real1,23,before,46.1,18.3,548,59,10.4,9,0.9,9,app,,9,ok
+real1_s023_b3.png,real1,23,before,13.1,14.9,258,70,10.8,0,0.91,0,app,,0,ok
+real1_s023_a0.png,real1,23,after,15,26.5,292,35,9.8,8,0.9,8,app,,8,ok
+real1_s023_a1.png,real1,23,after,23,23.9,355,43,10,0,0.9,0,app,,0,ok
+real1_s023_a2.png,real1,23,after,46.1,18.3,548,59,10.4,9,0.9,9,app,,9,ok
+real1_s024_b0.png,real1,24,before,14.9,26.8,292,35,9.8,8,0.9,8,app,,8,ok
+real1_s024_b1.png,real1,24,before,22.9,23.9,354,43,10,0,0.9,0,app,,0,ok
+real1_s024_b2.png,real1,24,before,46.1,18.3,549,59,10.4,9,0.9,9,app,,9,ok
+real1_s024_a0.png,real1,24,after,46.1,18.2,548,59,10.4,9,0.9,9,app,,9,ok
+real1_s024_a1.png,real1,24,after,30.1,18.6,412,58,10.4,0,0.99,0,app,,0,ok
+real1_s025_b0.png,real1,25,before,46.1,18.2,548,59,10.4,9,0.9,9,app,,9,ok
+real1_s025_b1.png,real1,25,before,30.1,18.6,412,58,10.4,0,0.99,0,app,,0,ok
+real1_s025_a0.png,real1,25,after,63.9,31.9,675,22,9.3,0,0.81,0,app,,0,ok
+real1_s025_a1.png,real1,25,after,19.4,9.9,308,87,11.3,9,0.73,9,app,,9,ok
+real1_s026_b0.png,real1,26,before,63.9,31.9,675,22,9.3,0,0.81,0,app,,0,ok
+real1_s026_b1.png,real1,26,before,19.4,9.9,308,87,11.3,9,0.73,9,app,,9,ok
+real1_s026_a0.png,real1,26,after,21.5,11.2,329,82,11.2,0,0.9,0,app,,0,ok
+real1_s027_b0.png,real1,27,before,14.1,30.9,287,25,9.5,8,0.54,8,app,,8,ok
+real1_s027_b1.png,real1,27,before,49.7,31,563,27,9.4,9,1,9,app,,9,ok
+real1_s027_b2.png,real1,27,before,62.1,31.4,657,26,9.3,0,0.74,0,app,,0,ok
+real1_s027_b3.png,real1,27,before,50,23.3,572,47,9.9,7,1,7,app,,7,ok
+real1_s027_b4.png,real1,27,before,14.1,11.3,257,84,11.1,3,1,3,app,,3,ok
+real1_s027_b5.png,real1,27,before,47,8.3,560,95,11.3,5,1,5,app,,5,ok
+real1_s027_b6.png,real1,27,before,36.5,6.4,461,102,11.5,6,0.69,6,app,,6,ok
+real1_s027_b7.png,real1,27,before,68.2,3.4,768,114,11.7,4,1,4,app,,4,ok
+real1_s027_a0.png,real1,27,after,14.1,30.9,287,25,9.5,8,0.9,8,app,,8,ok
+real1_s027_a1.png,real1,27,after,49.8,31,563,27,9.4,9,0.9,9,app,,9,ok
+real1_s027_a2.png,real1,27,after,42.5,25.2,510,41,9.8,0,0.13,7,app,,0,fixed
+real1_s027_a3.png,real1,27,after,50.6,22.4,578,50,10,7,0.9,0,app,,7,fixed
+real1_s027_a4.png,real1,27,after,14.1,11.3,257,84,11.1,3,0.9,3,app,,3,ok
+real1_s027_a5.png,real1,27,after,47,8.3,560,95,11.3,5,0.9,5,app,,5,ok
+real1_s027_a6.png,real1,27,after,36.4,6.4,461,102,11.5,6,0.9,6,app,,6,ok
+real1_s027_a7.png,real1,27,after,68.3,3.4,769,114,11.7,4,0.9,4,app,,4,ok
+real1_s028_b0.png,real1,28,before,14,31,286,25,9.5,8,0.9,8,app,,8,ok
+real1_s028_b1.png,real1,28,before,49.7,31.2,563,26,9.4,9,0.9,9,app,,9,ok
+real1_s028_b2.png,real1,28,before,42.5,25.5,510,41,9.8,7,1,7,app,,7,ok
+real1_s028_b3.png,real1,28,before,50.6,22.6,577,49,10,0,1,0,app,,0,ok
+real1_s028_b4.png,real1,28,before,14,11.5,256,83,11.1,3,0.9,3,app,,3,ok
+real1_s028_b5.png,real1,28,before,47,8.5,559,94,11.3,5,0.9,5,app,,5,ok
+real1_s028_b6.png,real1,28,before,36.4,6.6,461,101,11.5,6,0.9,6,app,,6,ok
+real1_s028_b7.png,real1,28,before,68.3,3.5,768,114,11.7,4,0.9,4,app,,4,ok
+real1_s028_a0.png,real1,28,after,14,31,286,25,9.5,8,0.9,8,app,,8,ok
+real1_s028_a1.png,real1,28,after,42.5,25.5,510,41,9.8,7,0.9,7,app,,7,ok
+real1_s028_a2.png,real1,28,after,60.9,26.1,656,40,9.7,0,0.95,0,app,,0,ok
+real1_s028_a3.png,real1,28,after,47,8.5,559,94,11.3,5,0.9,5,app,,5,ok
+real1_s028_a4.png,real1,28,after,36.4,6.6,461,101,11.5,6,0.9,6,app,,6,ok
+real1_s028_a5.png,real1,28,after,68.3,3.5,768,114,11.7,4,0.9,4,app,,4,ok
+real1_s029_b0.png,real1,29,before,14,31,286,25,9.5,8,0.9,8,app,,8,ok
+real1_s029_b1.png,real1,29,before,52.9,29.3,589,31,9.5,9,0.71,9,app,,9,ok
+real1_s029_b2.png,real1,29,before,42.5,25.5,510,41,9.8,7,0.9,7,app,,7,ok
+real1_s029_b3.png,real1,29,before,60.9,26.1,656,40,9.7,0,0.95,0,app,,0,ok
+real1_s029_b4.png,real1,29,before,47,8.5,559,94,11.3,5,0.9,5,app,,5,ok
+real1_s029_b5.png,real1,29,before,36.4,6.6,461,101,11.5,6,0.9,6,app,,6,ok
+real1_s029_b6.png,real1,29,before,68.2,3.5,768,114,11.7,4,0.9,4,app,,4,ok
+real1_s029_a0.png,real1,29,after,14,31,286,25,9.5,8,0.9,8,app,,8,ok
+real1_s029_a1.png,real1,29,after,52.9,29.3,589,31,9.5,9,0.9,9,app,,9,ok
+real1_s029_a2.png,real1,29,after,42.5,25.5,510,41,9.8,7,0.9,7,app,,7,ok
+real1_s029_a3.png,real1,29,after,47,8.5,559,94,11.3,5,0.9,5,app,,5,ok
+real1_s029_a4.png,real1,29,after,53.2,8.5,616,95,11.3,0,0.83,0,app,,0,ok
+real1_s029_a5.png,real1,29,after,36.4,6.6,461,101,11.5,6,0.9,6,app,,6,ok
+real1_s030_b0.png,real1,30,before,14,31,286,25,9.5,8,0.9,8,app,,8,ok
+real1_s030_b1.png,real1,30,before,52.9,29.3,589,31,9.5,9,0.9,9,app,,9,ok
+real1_s030_b2.png,real1,30,before,42.5,25.5,510,41,9.8,7,0.9,7,app,,7,ok
+real1_s030_b3.png,real1,30,before,47,8.5,559,94,11.3,5,0.9,5,app,,5,ok
+real1_s030_b4.png,real1,30,before,53.2,8.4,616,95,11.3,0,0.83,0,app,,0,ok
+real1_s030_b5.png,real1,30,before,36.4,6.6,461,101,11.5,6,0.9,6,app,,6,ok
+real1_s030_a0.png,real1,30,after,14,31,286,25,9.5,8,0.9,8,app,,8,ok
+real1_s030_a1.png,real1,30,after,50.7,31.5,570,26,9.3,0,0.83,0,app,,0,ok
+real1_s030_a2.png,real1,30,after,42.5,25.4,510,41,9.8,7,0.9,7,app,,7,ok
+real1_s030_a3.png,real1,30,after,74.7,18.8,783,61,10.2,6,0.7,6,app,,6,ok
+real1_s031_b0.png,real1,31,before,14,31,286,25,9.5,8,0.9,8,app,,8,ok
+real1_s031_b1.png,real1,31,before,50.7,31.4,571,26,9.3,9,1,?,app,,9,fixed
+real1_s031_b2.png,real1,31,before,42.5,25.6,510,41,9.8,7,0.9,7,app,,7,ok
+real1_s031_b3.png,real1,31,before,74.7,18.9,783,61,10.2,6,0.7,6,app,,6,ok
+real1_s031_b4.png,real1,31,before,62.4,37.4,651,12,8.9,0,1,0,app,,0,ok
+real1_s031_a0.png,real1,31,after,14.1,31.2,287,25,9.5,8,0.9,8,app,,8,ok
+real1_s031_a1.png,real1,31,after,50.9,31.6,572,25,9.3,9,0.9,?,app,,9,fixed
+real1_s031_a2.png,real1,31,after,42.7,25.9,511,40,9.8,7,0.9,7,app,,7,ok
+real1_s031_a3.png,real1,31,after,74.8,19,784,61,10.2,6,0.9,6,app,,6,ok
+real1_s031_a4.png,real1,31,after,4.6,9.2,162,91,11.4,0,0.98,0,app,,0,ok
+real1_s032_b0.png,real1,32,before,14.2,30.9,294,25,9.6,8,0.9,8,app,,8,ok
+real1_s032_b1.png,real1,32,before,50.6,31.2,579,26,9.4,9,0.9,?,app,,9,fixed
+real1_s032_b2.png,real1,32,before,2.2,24.3,185,42,10.1,2,0.9,5,app,,2,fixed
+real1_s032_b3.png,real1,32,before,42.4,25.3,518,41,9.9,7,0.9,7,app,,7,ok
+real1_s032_b4.png,real1,32,before,74.6,18.5,792,61,10.3,6,0.9,6,app,,6,ok
+real1_s032_b5.png,real1,32,before,4.8,9.1,170,91,11.5,0,0.98,0,app,,0,ok
+real1_s032_a0.png,real1,32,after,14.2,30.8,294,25,9.6,8,0.9,8,app,,8,ok
+real1_s032_a1.png,real1,32,after,42.9,30.8,520,26,9.5,0,0.9,0,app,,0,ok
+real1_s032_a2.png,real1,32,after,49.5,30.2,571,28,9.5,7,0.71,7,app,,7,ok
+real1_s032_a3.png,real1,32,after,74.5,18.5,792,61,10.3,6,0.9,6,app,,6,ok
+real1_s033_b0.png,real1,33,before,14.1,30.9,294,25,9.6,8,0.9,8,app,,8,ok
+real1_s033_b1.png,real1,33,before,49.5,30.3,571,28,9.5,7,0.71,7,app,,7,ok
+real1_s033_b2.png,real1,33,before,74.6,18.5,792,61,10.3,6,0.9,6,app,,6,ok
+real1_s033_b3.png,real1,33,before,41.9,10.8,520,85,11.2,0,0.94,0,app,,0,ok
+real1_s033_a0.png,real1,33,after,14.1,30.9,294,25,9.6,8,0.9,8,app,,8,ok
+real1_s033_a1.png,real1,33,after,49.5,30.3,571,28,9.5,7,0.9,7,app,,7,ok
+real1_s033_a2.png,real1,33,after,34.1,25.9,451,39,9.9,0,0.99,0,app,,0,ok
+real1_s034_b0.png,real1,34,before,14.1,30.9,294,25,9.6,8,0.9,8,app,,8,ok
+real1_s034_b1.png,real1,34,before,49.5,30.4,571,28,9.5,7,0.9,7,app,,7,ok
+real1_s034_b2.png,real1,34,before,34.1,25.9,451,39,9.9,0,0.99,0,app,,0,ok
+real1_s034_a0.png,real1,34,after,14.2,30.9,294,25,9.6,8,0.9,8,app,,8,ok
+real1_s034_a1.png,real1,34,after,41.2,28.9,507,31,9.6,0,0.93,0,app,,0,ok
+real1_s035_b0.png,real1,35,before,14.1,30.9,294,25,9.6,8,0.9,8,app,,8,ok
+real1_s035_b1.png,real1,35,before,41.2,28.9,507,31,9.6,0,0.93,0,app,,0,ok
+real2_s001_b0.png,real2,1,before,13.4,33.4,371,31,11.5,8,0.51,8,app,,8,ok
+real2_s001_b1.png,real2,1,before,65.5,30.9,868,48,11.4,9,0.78,9,app,,9,ok
+real2_s001_b2.png,real2,1,before,29,27.1,517,57,12.1,7,0.75,7,app,,7,ok
+real2_s001_b3.png,real2,1,before,27.7,16,491,107,13.5,6,0.54,6,app,,6,ok
+real2_s001_b4.png,real2,1,before,58.2,15.9,830,110,13.3,5,0.92,5,app,,5,ok
+real2_s001_b5.png,real2,1,before,19.2,11.3,382,131,14.4,3,0.81,3,app,,3,ok
+real2_s001_b6.png,real2,1,before,55.9,8.1,822,152,14.5,4,0.66,4,app,,4,ok
+real2_s001_b7.png,real2,1,before,68.9,7.2,979,159,14.5,1,0.87,1,app,,1,ok
+real2_s001_b8.png,real2,1,before,41.1,2.9,647,184,15.6,0,0.73,0,app,,0,ok
+real2_s001_a0.png,real2,1,after,13.4,33.3,371,32,11.5,8,0.9,8,app,,8,ok
+real2_s001_a1.png,real2,1,after,65.5,30.8,868,48,11.4,9,0.9,9,app,,9,ok
+real2_s001_a2.png,real2,1,after,29,27,517,58,12.1,7,0.9,7,app,,7,ok
+real2_s001_a3.png,real2,1,after,27.8,15.9,491,107,13.6,6,0.9,6,app,,6,ok
+real2_s001_a4.png,real2,1,after,58.2,15.9,829,111,13.3,5,0.9,5,app,,5,ok
+real2_s001_a5.png,real2,1,after,19.2,11.2,382,131,14.4,3,0.9,3,app,,3,ok
+real2_s001_a6.png,real2,1,after,55.9,8.2,822,152,14.5,4,0.9,4,app,,4,ok
+real2_s001_a7.png,real2,1,after,68.9,7.2,979,159,14.5,1,0.9,1,app,,1,ok
+real2_s002_b0.png,real2,2,before,19.4,11,382,131,14.6,3,0.9,3,app,,3,ok
+real2_s002_b1.png,real2,2,before,58.4,15.3,830,111,13.6,5,0.9,5,app,,5,ok
+real2_s002_b2.png,real2,2,before,68.8,6.8,979,160,14.9,1,0.9,1,app,,1,ok
+real2_s002_b3.png,real2,2,before,62.8,18.7,868,95,13.1,0,0.71,0,app,,0,ok
+real2_s002_b4.png,real2,2,before,65.9,29.9,869,48,11.7,9,0.9,9,app,,9,ok
+real2_s002_b5.png,real2,2,before,56,7.7,822,153,14.8,4,0.9,4,app,,4,ok
+real2_s002_b6.png,real2,2,before,13.7,32.9,371,32,11.6,8,0.9,8,app,,8,ok
+real2_s002_b7.png,real2,2,before,29.4,26.5,517,58,12.3,7,0.9,7,app,,7,ok
+real2_s002_b8.png,real2,2,before,28.1,15.6,491,107,13.8,6,0.9,6,app,,6,ok
+real2_s002_b9.png,real2,2,before,58.2,31.2,793,42,11.6,2,0.17,nb,app,,2,fixed
+real2_s002_a0.png,real2,2,after,13.7,32.9,372,32,11.6,8,0.9,8,app,,8,ok
+real2_s002_a1.png,real2,2,after,65.9,29.9,868,48,11.7,9,0.9,9,app,,9,ok
+real2_s002_a2.png,real2,2,after,29.5,26.5,517,58,12.3,7,0.9,7,app,,7,ok
+real2_s002_a3.png,real2,2,after,28.1,15.6,491,107,13.8,6,0.9,6,app,,6,ok
+real2_s002_a4.png,real2,2,after,16.9,14.8,362,110,14,3,0.73,3,app,,3,ok
+real2_s002_a5.png,real2,2,after,58.4,15.3,830,111,13.6,5,0.9,5,app,,5,ok
+real2_s002_a6.png,real2,2,after,56,7.7,822,153,14.8,4,0.9,4,app,,4,ok
+real2_s002_a7.png,real2,2,after,8.1,5.6,221,163,15.7,0,0.73,0,app,,0,ok
+real2_s003_b0.png,real2,3,before,13.7,33,371,31,11.6,8,0.9,8,app,,8,ok
+real2_s003_b1.png,real2,3,before,65.9,29.9,869,48,11.7,9,0.9,9,app,,9,ok
+real2_s003_b2.png,real2,3,before,29.5,26.5,517,58,12.3,7,0.9,7,app,,7,ok
+real2_s003_b3.png,real2,3,before,28.1,15.5,491,107,13.8,6,0.9,6,app,,6,ok
+real2_s003_b4.png,real2,3,before,16.9,14.8,362,110,14,3,0.73,3,app,,3,ok
+real2_s003_b5.png,real2,3,before,58.4,15.3,830,111,13.6,5,0.9,5,app,,5,ok
+real2_s003_b6.png,real2,3,before,56,7.7,822,153,14.8,4,0.9,4,app,,4,ok
+real2_s003_a0.png,real2,3,after,4.8,33.2,287,30,11.6,0,0.33,?,app,,0,fixed
+real2_s003_a1.png,real2,3,after,14.4,33.5,379,29,11.6,8,0.9,0,app,,8,fixed
+real2_s003_a2.png,real2,3,after,65.9,29.9,869,48,11.7,9,0.9,9,app,,9,ok
+real2_s003_a3.png,real2,3,after,29.4,26.5,517,58,12.3,7,0.9,7,app,,7,ok
+real2_s003_a4.png,real2,3,after,28.1,15.6,491,107,13.8,6,0.9,6,app,,6,ok
+real2_s003_a5.png,real2,3,after,16.9,14.8,362,110,14,3,0.9,3,app,,3,ok
+real2_s003_a6.png,real2,3,after,58.4,15.3,830,111,13.6,5,0.9,5,app,,5,ok
+real2_s003_a7.png,real2,3,after,56,7.7,822,153,14.8,4,0.9,4,app,,4,ok
+real2_s004_b0.png,real2,4,before,4.8,33.2,287,30,11.6,8,0.42,8,app,,8,ok
+real2_s004_b1.png,real2,4,before,65.9,30,868,48,11.7,9,0.75,9,app,,9,ok
+real2_s004_b2.png,real2,4,before,29.4,26.6,517,57,12.3,7,0.9,7,app,,7,ok
+real2_s004_b3.png,real2,4,before,28,15.6,491,107,13.8,6,0.9,6,app,,6,ok
+real2_s004_b4.png,real2,4,before,58.4,15.5,830,110,13.6,5,0.9,5,app,,5,ok
+real2_s004_b5.png,real2,4,before,41.6,10.9,646,134,14.4,0,1,0,app,,0,ok
+real2_s004_b6.png,real2,4,before,56,7.8,822,152,14.8,4,0.9,4,app,,4,ok
+real2_s004_a0.png,real2,4,after,4.9,32.6,286,32,11.7,8,0.9,8,app,,8,ok
+real2_s004_a1.png,real2,4,after,48.9,29.1,708,49,11.9,0,0.83,0,app,,0,ok
+real2_s004_a2.png,real2,4,after,65.7,29.2,868,50,11.8,9,0.9,9,app,,9,ok
+real2_s004_a3.png,real2,4,after,29.5,26,517,60,12.3,7,0.9,7,app,,7,ok
+real2_s004_a4.png,real2,4,after,28.1,15.1,491,109,13.8,6,0.9,6,app,,6,ok
+real2_s004_a5.png,real2,4,after,58.3,14.9,830,113,13.7,5,0.9,5,app,,5,ok
+real2_s005_b0.png,real2,5,before,4.8,33.2,286,29,11.6,8,0.9,8,app,,8,ok
+real2_s005_b1.png,real2,5,before,49,29.9,708,46,11.8,0,0.83,0,app,,0,ok
+real2_s005_b2.png,real2,5,before,66,30.2,869,47,11.6,9,0.9,9,app,,9,ok
+real2_s005_b3.png,real2,5,before,29.4,26.7,517,57,12.2,7,0.9,7,app,,7,ok
+real2_s005_b4.png,real2,5,before,28,15.8,491,106,13.7,6,0.9,6,app,,6,ok
+real2_s005_b5.png,real2,5,before,58.5,15.6,830,110,13.6,5,0.9,5,app,,5,ok
+real2_s005_a0.png,real2,5,after,66,30.2,869,47,11.6,9,0.9,9,app,,9,ok
+real2_s005_a1.png,real2,5,after,3.6,26.1,252,57,12.5,8,0.44,8,app,,8,ok
+real2_s005_a2.png,real2,5,after,29.4,26.8,517,57,12.2,7,0.9,7,app,,7,ok
+real2_s005_a3.png,real2,5,after,28,15.8,491,106,13.7,6,0.9,6,app,,6,ok
+real2_s005_a4.png,real2,5,after,42.8,7.9,662,151,14.9,0,0.89,0,app,,0,ok
+real2_s006_b0.png,real2,6,before,66,30.2,869,47,11.6,9,0.9,9,app,,9,ok
+real2_s006_b1.png,real2,6,before,3.6,26.2,252,56,12.5,8,0.44,8,app,,8,ok
+real2_s006_b2.png,real2,6,before,29.4,26.7,517,57,12.2,7,0.9,7,app,,7,ok
+real2_s006_b3.png,real2,6,before,28,15.7,491,107,13.8,6,0.9,6,app,,6,ok
+real2_s006_b4.png,real2,6,before,42.8,7.9,662,151,14.9,0,0.89,0,app,,0,ok
+real2_s006_b5.png,real2,6,before,58.3,2.1,867,190,15.9,4,0.45,nb,app,,4,fixed
+real2_s006_a0.png,real2,6,after,66,30.2,869,47,11.6,9,0.9,9,app,,9,ok
+real2_s006_a1.png,real2,6,after,3.6,26.2,252,56,12.5,8,0.9,8,app,,8,ok
+real2_s006_a2.png,real2,6,after,29.4,26.8,517,57,12.2,7,0.9,7,app,,7,ok
+real2_s006_a3.png,real2,6,after,26,15.5,468,108,13.8,0,0.9,0,app,,0,ok
+real2_s007_b0.png,real2,7,before,66.1,30.2,869,49,11.6,9,0.9,9,app,,9,ok
+real2_s007_b1.png,real2,7,before,3.8,25.8,252,58,12.6,8,0.9,8,app,,8,ok
+real2_s007_b2.png,real2,7,before,29.4,26.5,516,59,12.3,7,0.9,7,app,,7,ok
+real2_s007_b3.png,real2,7,before,26,15.4,468,109,13.8,0,0.9,0,app,,0,ok
+real2_s007_a0.png,real2,7,after,65.9,29.9,869,49,11.7,9,0.9,9,app,,9,ok
+real2_s007_a1.png,real2,7,after,3.8,25.7,252,58,12.5,8,0.9,8,app,,8,ok
+real2_s007_a2.png,real2,7,after,6.7,13.4,237,117,14.2,0,0.9,0,app,,0,ok
+real2_s008_b0.png,real2,8,before,65.9,29.9,869,49,11.7,9,0.9,9,app,,9,ok
+real2_s008_b1.png,real2,8,before,3.1,3.9,146,174,16,7,0.18,nb,app,,7,fixed
+real2_s008_a0.png,real2,8,after,65.9,29.9,869,49,11.7,9,0.9,9,app,,9,ok
+real2_s008_a1.png,real2,8,after,4.9,4.8,175,169,15.8,,0,0,app,,?,fixed
+real2_s009_b0.png,real2,9,before,65.9,29.9,869,49,11.7,9,0.9,9,app,,9,ok
+real2_s009_b1.png,real2,9,before,3.1,3.9,146,174,16,7,0.18,nb,app,,7,fixed
+real2_s009_a0.png,real2,9,after,65.9,29.9,869,49,11.7,9,0.9,9,app,,9,ok
+real2_s009_a1.png,real2,9,after,28.3,14,492,116,14,0,0.82,0,app,,0,ok
+real2_s010_b0.png,real2,10,before,65.9,29.9,869,49,11.7,9,0.9,9,app,,9,ok
+real2_s010_b1.png,real2,10,before,28.3,14,492,116,14,0,0.82,0,app,,0,ok
+real2_s010_a0.png,real2,10,after,64.1,29.3,854,51,11.8,0,0.9,0,app,,0,ok
+real2_s011_b0.png,real2,11,before,41,31.8,631,39,11.6,5,0.43,7,app,,5,fixed
+real2_s011_b1.png,real2,11,before,7.9,26.1,297,58,12.4,8,0.2,8,app,,8,ok
+real2_s011_b2.png,real2,11,before,70.2,22,935,82,12.6,9,0.67,9,app,,9,ok
+real2_s011_b3.png,real2,11,before,15.5,17.4,353,97,13.5,3,0.78,3,app,,3,ok
+real2_s011_b4.png,real2,11,before,26.2,13,467,121,14.1,2,0.71,4,app,,2,fixed
+real2_s011_b5.png,real2,11,before,59.2,11.4,850,133,14.2,7,0.39,5,app,,7,fixed
+real2_s011_b6.png,real2,11,before,43.3,6.7,670,159,15.1,4,0.73,6,app,,4,fixed
+real2_s011_b7.png,real2,11,before,15,7,316,155,15.2,6,0.23,nb,app,,6,fixed
+real2_s011_b8.png,real2,11,before,5.6,6.1,192,160,15.5,0,0.94,nb,app,,0,fixed
+real2_s011_b9.png,real2,11,before,56.8,1.1,852,198,16.1,1,0.75,1,app,,1,ok
+real2_s011_a0.png,real2,11,after,41,31.4,631,40,11.6,5,0.43,7,app,,5,fixed
+real2_s011_a1.png,real2,11,after,8.4,25.2,299,61,12.5,8,0.2,8,app,,8,ok
+real2_s011_a2.png,real2,11,after,70.2,21.9,935,82,12.6,9,0.67,9,app,,9,ok
+real2_s011_a3.png,real2,11,after,15.5,17.4,354,98,13.5,3,0.78,3,app,,3,ok
+real2_s011_a4.png,real2,11,after,26.3,12.4,467,124,14.2,2,0.71,4,app,,2,fixed
+real2_s011_a5.png,real2,11,after,59.2,11.3,850,133,14.2,7,0.39,5,app,,7,fixed
+real2_s011_a6.png,real2,11,after,43.3,6.7,670,159,15.1,4,0.73,6,app,,4,fixed
+real2_s011_a7.png,real2,11,after,46.1,1.6,710,193,16,0,0.69,0,app,,0,ok
+real2_s011_a8.png,real2,11,after,56.8,1.1,852,198,16.1,1,0.78,1,app,,1,ok
+real2_s012_b0.png,real2,12,before,41,31.5,631,40,11.6,5,0.43,7,app,,5,fixed
+real2_s012_b1.png,real2,12,before,8.3,25.2,298,61,12.5,8,0.2,8,app,,8,ok
+real2_s012_b2.png,real2,12,before,70.2,21.9,935,82,12.6,9,0.67,9,app,,9,ok
+real2_s012_b3.png,real2,12,before,15.5,17.4,353,97,13.5,3,0.78,3,app,,3,ok
+real2_s012_b4.png,real2,12,before,26.3,12.4,467,124,14.2,2,0.71,4,app,,2,fixed
+real2_s012_b5.png,real2,12,before,59.2,11.4,850,133,14.2,7,0.39,5,app,,7,fixed
+real2_s012_b6.png,real2,12,before,43.3,6.7,670,159,15.1,4,0.73,6,app,,4,fixed
+real2_s012_b7.png,real2,12,before,46.1,1.6,710,193,16,0,0.69,0,app,,0,ok
+real2_s012_b8.png,real2,12,before,56.9,1.1,852,198,16.1,1,0.78,1,app,,1,ok
+real2_s012_a0.png,real2,12,after,8.1,25.2,296,61,12.5,8,0.9,8,app,,8,ok
+real2_s012_a1.png,real2,12,after,70.4,22,937,82,12.6,9,0.9,9,app,,9,ok
+real2_s012_a2.png,real2,12,after,15.4,17.4,352,97,13.5,3,0.9,3,app,,3,ok
+real2_s012_a3.png,real2,12,after,72.3,12.2,996,130,13.9,0,0.92,0,app,,0,ok
+real2_s012_a4.png,real2,12,after,59.3,11.3,851,133,14.2,7,0.39,5,app,,7,fixed
+real2_s013_b0.png,real2,13,before,40.8,31,631,43,11.7,5,0.55,7,app,,5,fixed
+real2_s013_b1.png,real2,13,before,8.6,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s013_b2.png,real2,13,before,69.9,21.8,935,84,12.6,9,0.9,9,app,,9,ok
+real2_s013_b3.png,real2,13,before,15.7,17.3,353,99,13.6,3,0.9,3,app,,3,ok
+real2_s013_b4.png,real2,13,before,26.3,12.4,467,126,14.3,2,0.9,4,app,,2,fixed
+real2_s013_b5.png,real2,13,before,71.9,12.2,994,131,13.9,0,0.92,0,app,,0,ok
+real2_s013_b6.png,real2,13,before,59,11.3,850,135,14.2,7,0.39,5,app,,7,fixed
+real2_s013_b7.png,real2,13,before,43.2,6.7,669,161,15.1,4,0.73,6,app,,4,fixed
+real2_s013_a0.png,real2,13,after,16.8,31.6,398,38,11.8,0,0.96,0,app,,0,ok
+real2_s013_a1.png,real2,13,after,40.8,31.1,631,43,11.7,5,0.9,7,app,,5,fixed
+real2_s013_a2.png,real2,13,after,8.7,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s013_a3.png,real2,13,after,69.8,21.9,935,83,12.6,9,0.9,9,app,,9,ok
+real2_s013_a4.png,real2,13,after,15.7,17.3,353,99,13.6,3,0.9,3,app,,3,ok
+real2_s013_a5.png,real2,13,after,26.3,12.5,467,126,14.2,2,0.9,4,app,,2,fixed
+real2_s013_a6.png,real2,13,after,59,11.3,850,135,14.2,7,0.9,5,app,,7,fixed
+real2_s013_a7.png,real2,13,after,43.2,6.7,669,161,15.1,4,0.9,6,app,,4,fixed
+real2_s014_b0.png,real2,14,before,16.8,31.6,398,38,11.8,0,0.96,0,app,,0,ok
+real2_s014_b1.png,real2,14,before,40.8,31.1,631,43,11.7,5,0.9,7,app,,5,fixed
+real2_s014_b2.png,real2,14,before,8.6,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s014_b3.png,real2,14,before,69.8,21.9,935,83,12.6,9,0.9,9,app,,9,ok
+real2_s014_b4.png,real2,14,before,15.7,17.3,353,99,13.6,3,0.9,3,app,,3,ok
+real2_s014_b5.png,real2,14,before,26.3,12.5,466,126,14.2,2,0.9,4,app,,2,fixed
+real2_s014_b6.png,real2,14,before,59,11.3,850,135,14.2,7,0.9,5,app,,7,fixed
+real2_s014_b7.png,real2,14,before,43.2,6.7,669,161,15.1,4,0.9,6,app,,4,fixed
+real2_s014_a0.png,real2,14,after,40.8,31.1,631,43,11.7,5,0.9,7,app,,5,fixed
+real2_s014_a1.png,real2,14,after,8.6,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s014_a2.png,real2,14,after,35.8,22.2,581,78,12.8,0,0.83,0,app,,0,ok
+real2_s014_a3.png,real2,14,after,69.9,21.9,935,83,12.6,9,0.9,9,app,,9,ok
+real2_s014_a4.png,real2,14,after,26.3,12.4,466,126,14.3,2,0.9,4,app,,2,fixed
+real2_s014_a5.png,real2,14,after,59,11.3,850,135,14.2,7,0.9,5,app,,7,fixed
+real2_s014_a6.png,real2,14,after,43.2,6.7,669,161,15.1,4,0.9,6,app,,4,fixed
+real2_s015_b0.png,real2,15,before,59,11.3,850,135,14.2,7,0.9,5,app,,7,fixed
+real2_s015_b1.png,real2,15,before,69.9,21.9,935,83,12.6,9,0.9,9,app,,9,ok
+real2_s015_b2.png,real2,15,before,8.6,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s015_b3.png,real2,15,before,43.2,6.7,669,161,15.1,4,0.9,6,app,,4,fixed
+real2_s015_b4.png,real2,15,before,26.3,12.4,466,126,14.3,2,0.9,4,app,,2,fixed
+real2_s015_b5.png,real2,15,before,35.8,22.2,581,78,12.8,0,0.83,0,app,,0,ok
+real2_s015_b6.png,real2,15,before,40.8,31.1,631,43,11.7,5,0.9,7,app,,5,fixed
+real2_s015_b7.png,real2,15,before,46.7,33.9,685,33,11.4,3,0.14,nb,app,,3,fixed
+real2_s015_b8.png,real2,15,before,51.4,35.3,728,29,11.2,6,0.3,nb,app,,6,fixed
+real2_s015_b9.png,real2,15,before,48,31.1,700,43,11.6,1,0.32,nb,app,,1,fixed
+real2_s015_a0.png,real2,15,after,40.8,31.1,631,42,11.7,5,0.9,7,app,,5,fixed
+real2_s015_a1.png,real2,15,after,8.6,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s015_a2.png,real2,15,after,69.9,21.9,935,83,12.6,9,0.9,9,app,,9,ok
+real2_s015_a3.png,real2,15,after,46.8,17.5,701,101,13.3,0,0.84,0,app,,0,ok
+real2_s015_a4.png,real2,15,after,59,11.3,850,135,14.2,7,0.9,5,app,,7,fixed
+real2_s015_a5.png,real2,15,after,43.2,6.7,669,161,15.1,4,0.9,6,app,,4,fixed
+real2_s016_b0.png,real2,16,before,40.8,31.2,631,42,11.7,5,0.9,7,app,,5,fixed
+real2_s016_b1.png,real2,16,before,8.6,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s016_b2.png,real2,16,before,69.9,21.9,935,83,12.6,9,0.9,9,app,,9,ok
+real2_s016_b3.png,real2,16,before,46.8,17.5,701,102,13.3,0,0.84,0,app,,0,ok
+real2_s016_b4.png,real2,16,before,59,11.3,850,135,14.2,7,0.9,5,app,,7,fixed
+real2_s016_b5.png,real2,16,before,43.2,6.7,669,161,15.1,4,0.9,6,app,,4,fixed
+real2_s016_a0.png,real2,16,after,40.8,31.1,631,42,11.7,5,0.9,7,app,,5,fixed
+real2_s016_a1.png,real2,16,after,53.8,29.2,758,51,11.8,0,0.93,0,app,,0,ok
+real2_s016_a2.png,real2,16,after,8.6,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s016_a3.png,real2,16,after,69.8,21.8,935,84,12.6,9,0.9,9,app,,9,ok
+real2_s016_a4.png,real2,16,after,43.2,6.7,669,161,15.1,4,0.9,6,app,,4,fixed
+real2_s017_b0.png,real2,17,before,40.8,31.1,631,42,11.7,5,0.9,7,app,,5,fixed
+real2_s017_b1.png,real2,17,before,53.8,29.2,758,51,11.8,0,0.93,0,app,,0,ok
+real2_s017_b2.png,real2,17,before,8.6,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s017_b3.png,real2,17,before,69.9,21.9,935,83,12.6,9,0.9,9,app,,9,ok
+real2_s017_b4.png,real2,17,before,43.2,6.7,669,161,15.1,4,0.9,6,app,,4,fixed
+real2_s017_a0.png,real2,17,after,40.8,31.1,631,43,11.7,5,0.9,7,app,,5,fixed
+real2_s017_a1.png,real2,17,after,8.6,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s017_a2.png,real2,17,after,69.9,21.9,935,83,12.6,9,0.9,9,app,,9,ok
+real2_s017_a3.png,real2,17,after,47.8,16.8,713,105,13.4,0,0.87,0,app,,0,ok
+real2_s018_b0.png,real2,18,before,40.8,31,630,43,11.7,5,0.9,7,app,,5,fixed
+real2_s018_b1.png,real2,18,before,8.6,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s018_b2.png,real2,18,before,69.9,21.9,935,83,12.6,9,0.9,9,app,,9,ok
+real2_s018_b3.png,real2,18,before,47.8,16.7,713,106,13.4,0,0.87,0,app,,0,ok
+real2_s018_b4.png,real2,18,before,74.8,8.7,1044,151,14.4,1,0.58,nb,app,,1,fixed
+real2_s018_b5.png,real2,18,before,74.6,4.6,1063,176,15.2,,0,nb,app,,?,fixed
+real2_s018_b6.png,real2,18,before,72.4,6.3,1027,165,14.9,,0,nb,app,,?,fixed
+real2_s018_b7.png,real2,18,before,73.9,1.1,1074,200,15.8,3,0.24,nb,app,,3,fixed
+real2_s018_b8.png,real2,18,before,53.2,1.6,805,196,16,7,0.37,nb,app,,7,fixed
+real2_s018_b9.png,real2,18,before,55.5,4,828,180,15.5,4,0.38,nb,app,,4,fixed
+real2_s018_a0.png,real2,18,after,8.6,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s018_a1.png,real2,18,after,69.8,21.8,935,84,12.6,9,0.9,9,app,,9,ok
+real2_s018_a2.png,real2,18,after,29.3,19.7,509,89,13.1,0,0.84,0,app,,0,ok
+real2_s019_b0.png,real2,19,before,8.6,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s019_b1.png,real2,19,before,69.9,21.9,935,83,12.6,9,0.9,9,app,,9,ok
+real2_s019_b2.png,real2,19,before,29.3,19.7,509,89,13.1,0,0.84,0,app,,0,ok
+real2_s019_a0.png,real2,19,after,3.1,33.9,269,28,11.6,0,0.9,?,app,,0,fixed
+real2_s019_a1.png,real2,19,after,8.6,25.1,298,63,12.6,8,0.9,8,app,,8,ok
+real2_s019_a2.png,real2,19,after,69.9,21.8,935,83,12.6,9,0.9,9,app,,9,ok
+real2_s020_b0.png,real2,20,before,8.5,25.4,299,61,12.5,8,0.9,8,app,,8,ok
+real2_s020_b1.png,real2,20,before,70,21.9,934,81,12.6,9,1,9,app,,9,ok
+real2_s020_b2.png,real2,20,before,25.5,10.9,454,133,14.5,0,1,0,app,,0,ok
+real2_s020_a0.png,real2,20,after,70.1,21.8,935,82,12.6,9,0.9,9,app,,9,ok
+real2_s020_a1.png,real2,20,after,59.8,2,887,192,15.9,0,0.91,0,app,,0,ok
+real2_s021_b0.png,real2,21,before,27.7,28.2,499,52,12.1,1,0.91,1,app,,1,ok
+real2_s021_b1.png,real2,21,before,55.7,27.7,774,56,12,7,0.59,7,app,,7,ok
+real2_s021_b2.png,real2,21,before,6.1,25.1,272,63,12.7,2,0.83,5,app,,2,fixed
+real2_s021_b3.png,real2,21,before,72.2,22.6,948,79,12.5,0,0.93,0,app,,0,ok
+real2_s021_b4.png,real2,21,before,35.6,19.1,575,92,13.2,4,0.72,4,app,,4,ok
+real2_s021_b5.png,real2,21,before,27.1,16.2,480,106,13.8,8,0.48,8,app,,8,ok
+real2_s021_b6.png,real2,21,before,17.1,10.9,353,133,14.7,3,0.77,3,app,,3,ok
+real2_s021_b7.png,real2,21,before,56.4,10.2,819,140,14.4,9,0.83,9,app,,9,ok
+real2_s021_b8.png,real2,21,before,42.3,1.3,660,197,16.3,6,0.87,6,app,,6,ok
+real2_s021_a0.png,real2,21,after,27.7,28.2,499,52,12.1,1,0.9,1,app,,1,ok
+real2_s021_a1.png,real2,21,after,55.7,27.8,773,56,12,7,0.9,7,app,,7,ok
+real2_s021_a2.png,real2,21,after,6.1,25,272,63,12.7,2,0.9,5,app,,2,fixed
+real2_s021_a3.png,real2,21,after,44,23.2,663,74,12.6,0,0.9,0,app,,0,ok
+real2_s021_a4.png,real2,21,after,35.6,19.2,575,92,13.2,4,0.9,4,app,,4,ok
+real2_s021_a5.png,real2,21,after,27.1,16.2,480,106,13.8,8,0.9,8,app,,8,ok
+real2_s021_a6.png,real2,21,after,17.1,10.9,353,133,14.7,3,0.9,3,app,,3,ok
+real2_s021_a7.png,real2,21,after,56.4,10.2,819,140,14.4,9,0.9,9,app,,9,ok
+real2_s021_a8.png,real2,21,after,42.2,1.3,660,196,16.3,6,0.9,6,app,,6,ok
+real2_s022_b0.png,real2,22,before,27.6,28.9,500,48,12,1,0.9,1,app,,1,ok
+real2_s022_b1.png,real2,22,before,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s022_b2.png,real2,22,before,5.9,25.6,273,60,12.5,2,0.9,5,app,,2,fixed
+real2_s022_b3.png,real2,22,before,43.9,23.8,663,71,12.5,0,0.9,0,app,,0,ok
+real2_s022_b4.png,real2,22,before,35.5,19.7,576,89,13.1,4,0.9,4,app,,4,ok
+real2_s022_b5.png,real2,22,before,27,16.7,481,102,13.6,8,0.9,8,app,,8,ok
+real2_s022_b6.png,real2,22,before,17,11.3,353,130,14.5,3,0.9,3,app,,3,ok
+real2_s022_b7.png,real2,22,before,56.4,10.7,819,137,14.3,9,0.9,9,app,,9,ok
+real2_s022_b8.png,real2,22,before,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s022_a0.png,real2,22,after,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s022_a1.png,real2,22,after,5.9,25.6,273,60,12.5,2,0.9,5,app,,2,fixed
+real2_s022_a2.png,real2,22,after,65,22,882,81,12.6,0,0.9,0,app,,0,ok
+real2_s022_a3.png,real2,22,after,35.5,19.7,576,88,13.1,4,0.9,4,app,,4,ok
+real2_s022_a4.png,real2,22,after,27,16.7,481,102,13.6,8,0.9,8,app,,8,ok
+real2_s022_a5.png,real2,22,after,17,11.3,353,130,14.5,3,0.9,3,app,,3,ok
+real2_s022_a6.png,real2,22,after,56.4,10.7,819,137,14.3,9,0.9,9,app,,9,ok
+real2_s022_a7.png,real2,22,after,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s023_b0.png,real2,23,before,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s023_b1.png,real2,23,before,5.9,25.6,272,59,12.5,2,0.9,5,app,,2,fixed
+real2_s023_b2.png,real2,23,before,65,22,882,81,12.6,0,0.9,0,app,,0,ok
+real2_s023_b3.png,real2,23,before,35.5,19.7,576,88,13.1,4,0.9,4,app,,4,ok
+real2_s023_b4.png,real2,23,before,27,16.7,481,102,13.6,8,0.9,8,app,,8,ok
+real2_s023_b5.png,real2,23,before,17,11.3,353,130,14.5,3,0.9,3,app,,3,ok
+real2_s023_b6.png,real2,23,before,56.4,10.7,819,137,14.3,9,0.9,9,app,,9,ok
+real2_s023_b7.png,real2,23,before,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s023_a0.png,real2,23,after,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s023_a1.png,real2,23,after,10.6,25.5,321,60,12.5,0,0.9,0,app,,0,ok
+real2_s023_a2.png,real2,23,after,35.5,19.7,576,89,13.1,4,0.9,4,app,,4,ok
+real2_s023_a3.png,real2,23,after,27,16.7,481,102,13.6,8,0.9,8,app,,8,ok
+real2_s023_a4.png,real2,23,after,6.7,13.9,238,115,14.2,2,0.77,5,app,,2,fixed
+real2_s023_a5.png,real2,23,after,17,11.3,353,130,14.5,3,0.9,3,app,,3,ok
+real2_s023_a6.png,real2,23,after,56.4,10.7,819,137,14.3,9,0.9,9,app,,9,ok
+real2_s023_a7.png,real2,23,after,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s024_b0.png,real2,24,before,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s024_b1.png,real2,24,before,10.6,25.6,321,60,12.5,0,0.9,0,app,,0,ok
+real2_s024_b2.png,real2,24,before,35.5,19.7,576,88,13.1,4,0.9,4,app,,4,ok
+real2_s024_b3.png,real2,24,before,27,16.7,481,102,13.6,8,0.9,8,app,,8,ok
+real2_s024_b4.png,real2,24,before,6.6,13.9,238,115,14.2,2,0.77,5,app,,2,fixed
+real2_s024_b5.png,real2,24,before,17,11.3,353,130,14.5,3,0.9,3,app,,3,ok
+real2_s024_b6.png,real2,24,before,56.4,10.7,819,137,14.3,9,0.9,9,app,,9,ok
+real2_s024_b7.png,real2,24,before,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s024_a0.png,real2,24,after,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s024_a1.png,real2,24,after,65.3,23.6,880,74,12.4,0,0.91,0,app,,0,ok
+real2_s024_a2.png,real2,24,after,35.5,20.4,576,85,13,4,0.9,4,app,,4,ok
+real2_s024_a3.png,real2,24,after,27,16.7,481,102,13.6,8,0.9,8,app,,8,ok
+real2_s024_a4.png,real2,24,after,6.7,13.9,238,115,14.2,2,0.9,5,app,,2,fixed
+real2_s024_a5.png,real2,24,after,17,11.3,353,130,14.5,3,0.9,3,app,,3,ok
+real2_s024_a6.png,real2,24,after,56.4,10.7,819,136,14.3,9,0.9,9,app,,9,ok
+real2_s024_a7.png,real2,24,after,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s025_b0.png,real2,25,before,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s025_b1.png,real2,25,before,65.3,23.6,880,74,12.4,0,0.91,0,app,,0,ok
+real2_s025_b2.png,real2,25,before,35.5,20.2,576,86,13,4,0.9,4,app,,4,ok
+real2_s025_b3.png,real2,25,before,27,16.7,481,102,13.6,8,0.9,8,app,,8,ok
+real2_s025_b4.png,real2,25,before,6.7,13.9,238,115,14.2,2,0.9,5,app,,2,fixed
+real2_s025_b5.png,real2,25,before,17,11.3,353,130,14.5,3,0.9,3,app,,3,ok
+real2_s025_b6.png,real2,25,before,56.4,10.7,819,136,14.3,9,0.9,9,app,,9,ok
+real2_s025_b7.png,real2,25,before,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s025_a0.png,real2,25,after,11,30.9,339,39,11.9,0,0.83,0,app,,0,ok
+real2_s025_a1.png,real2,25,after,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s025_a2.png,real2,25,after,35.5,19.7,576,89,13.1,4,0.9,4,app,,4,ok
+real2_s025_a3.png,real2,25,after,27,16.7,481,102,13.6,8,0.9,8,app,,8,ok
+real2_s025_a4.png,real2,25,after,6.7,13.9,238,115,14.2,2,0.9,5,app,,2,fixed
+real2_s025_a5.png,real2,25,after,17,11.3,353,130,14.5,3,0.9,3,app,,3,ok
+real2_s025_a6.png,real2,25,after,56.4,10.7,819,137,14.3,9,0.9,9,app,,9,ok
+real2_s025_a7.png,real2,25,after,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s026_b0.png,real2,26,before,17,11.3,353,130,14.5,3,0.9,3,app,,3,ok
+real2_s026_b1.png,real2,26,before,6.6,13.9,238,115,14.2,2,0.9,5,app,,2,fixed
+real2_s026_b2.png,real2,26,before,56.4,10.7,819,136,14.3,9,0.9,9,app,,9,ok
+real2_s026_b3.png,real2,26,before,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s026_b4.png,real2,26,before,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s026_b5.png,real2,26,before,35.5,19.7,576,88,13.1,4,0.9,4,app,,4,ok
+real2_s026_b6.png,real2,26,before,27,16.7,481,102,13.6,8,0.9,8,app,,8,ok
+real2_s026_b7.png,real2,26,before,26.1,21.5,476,79,12.9,0,0.87,0,app,,0,ok
+real2_s026_b8.png,real2,26,before,35.9,32.7,582,35,11.5,5,0.3,nb,app,,5,fixed
+real2_s026_b9.png,real2,26,before,37.9,32,602,38,11.6,1,0.52,nb,app,,1,fixed
+real2_s026_a0.png,real2,26,after,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s026_a1.png,real2,26,after,35.5,19.7,576,89,13.1,4,0.9,4,app,,4,ok
+real2_s026_a2.png,real2,26,after,45.8,18.7,688,94,13.2,0,0.86,0,app,,0,ok
+real2_s026_a3.png,real2,26,after,27,16.7,481,102,13.6,8,0.9,8,app,,8,ok
+real2_s026_a4.png,real2,26,after,6.6,13.9,238,115,14.2,2,0.9,5,app,,2,fixed
+real2_s026_a5.png,real2,26,after,56.4,10.7,819,136,14.3,9,0.9,9,app,,9,ok
+real2_s026_a6.png,real2,26,after,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s027_a0.png,real2,27,after,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s027_a1.png,real2,27,after,28.2,19.6,497,88,13.2,8,0.32,8,app,,8,ok
+real2_s027_a2.png,real2,27,after,22.8,18.1,436,95,13.4,0,0.92,0,app,,0,ok
+real2_s027_a3.png,real2,27,after,6.6,13.9,238,115,14.2,2,0.9,5,app,,2,fixed
+real2_s027_a4.png,real2,27,after,56.4,10.7,819,136,14.3,9,0.9,9,app,,9,ok
+real2_s027_a5.png,real2,27,after,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s028_b0.png,real2,28,before,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s028_b1.png,real2,28,before,28.2,19.6,497,88,13.2,8,0.32,8,app,,8,ok
+real2_s028_b2.png,real2,28,before,22.8,18.2,436,94,13.4,0,0.92,0,app,,0,ok
+real2_s028_b3.png,real2,28,before,6.6,13.9,238,115,14.2,2,0.9,5,app,,2,fixed
+real2_s028_b4.png,real2,28,before,56.4,10.7,819,137,14.3,9,0.9,9,app,,9,ok
+real2_s028_b5.png,real2,28,before,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s028_a0.png,real2,28,after,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s028_a1.png,real2,28,after,27.9,20.2,495,86,13.1,8,0.9,8,app,,8,ok
+real2_s028_a2.png,real2,28,after,56.4,10.7,819,136,14.3,9,0.9,9,app,,9,ok
+real2_s028_a3.png,real2,28,after,35.5,8.1,574,150,14.9,0,0.77,0,app,,0,ok
+real2_s028_a4.png,real2,28,after,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s029_b0.png,real2,29,before,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s029_b1.png,real2,29,before,27.9,20.2,495,86,13.1,8,0.9,8,app,,8,ok
+real2_s029_b2.png,real2,29,before,56.4,10.7,819,137,14.3,9,0.9,9,app,,9,ok
+real2_s029_b3.png,real2,29,before,35.5,8.1,574,150,14.9,0,0.77,0,app,,0,ok
+real2_s029_b4.png,real2,29,before,42.3,1.6,661,193,16.1,6,0.9,6,app,,6,ok
+real2_s029_a0.png,real2,29,after,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s029_a1.png,real2,29,after,3.6,27,253,53,12.4,0,0.92,0,app,,0,ok
+real2_s029_a2.png,real2,29,after,27.9,20.2,495,86,13.1,8,0.9,8,app,,8,ok
+real2_s029_a3.png,real2,29,after,56.4,10.7,819,136,14.3,9,0.9,9,app,,9,ok
+real2_s030_b0.png,real2,30,before,55.6,28.5,774,53,11.9,7,0.9,7,app,,7,ok
+real2_s030_b1.png,real2,30,before,3.6,27,253,54,12.4,0,0.92,0,app,,0,ok
+real2_s030_b2.png,real2,30,before,27.9,20.2,495,86,13.1,8,0.9,8,app,,8,ok
+real2_s030_b3.png,real2,30,before,56.4,10.7,819,137,14.3,9,0.9,9,app,,9,ok
+real2_s030_a0.png,real2,30,after,27.9,20.2,495,86,13.1,8,0.9,8,app,,8,ok
+real2_s030_a1.png,real2,30,after,56.4,10.7,819,136,14.3,9,0.9,9,app,,9,ok
+real2_s030_a2.png,real2,30,after,34,5.2,553,169,15.5,0,0.85,0,app,,0,ok
+real2_s031_b0.png,real2,31,before,28,19.8,494,87,13.2,8,0.9,8,app,,8,ok
+real2_s031_b1.png,real2,31,before,56.3,10.4,819,137,14.4,9,0.9,9,app,,9,ok
+real2_s031_b2.png,real2,31,before,34,4.7,552,172,15.6,0,0.85,0,app,,0,ok
+real2_s031_a0.png,real2,31,after,56.4,10.3,819,138,14.4,9,0.9,9,app,,9,ok
+real2_s031_a1.png,real2,31,after,63.5,1.4,938,195,16,0,0.89,0,app,,0,ok
+real2_s032_b0.png,real2,32,before,56.3,10.3,819,138,14.4,9,0.9,9,app,,9,ok
+real2_s032_b1.png,real2,32,before,63.6,1.6,938,194,15.9,0,0.89,0,app,,0,ok
+real2_s032_a0.png,real2,32,after,42.3,22.3,647,77,12.7,9,0.69,9,app,,9,ok
+real2_s032_a1.png,real2,32,after,46.9,20.7,696,84,12.9,0,0.92,0,app,,0,ok
+real2_s033_b0.png,real2,33,before,9.6,31.1,325,38,11.9,7,0.91,0,app,,7,fixed
+real2_s033_b1.png,real2,33,before,46.9,20.5,697,85,12.9,0,0.96,?,app,,0,fixed
+real2_s033_a0.png,real2,33,after,25,31,476,40,11.8,,0,?,app,,?,ok
+real2_s033_a1.png,real2,33,after,49.1,26.7,712,59,12.2,0,0.93,0,app,,0,ok
+real2_s034_b0.png,real2,34,before,33.5,28.6,557,50,12,9,0.76,nb,app,,9,fixed
+real2_s034_b1.png,real2,34,before,49.1,26.7,712,59,12.2,0,0.93,0,app,,0,ok
+real2_s034_a0.png,real2,34,after,45.6,13.6,689,119,14,0,0.84,0,app,,0,ok
+real2_s035_b0.png,real2,35,before,24.6,27.3,467,54,12.2,3,0.73,3,app,,3,ok
+real2_s035_b1.png,real2,35,before,40.5,28.8,626,50,12,4,0.5,4,app,,4,ok
+real2_s035_b2.png,real2,35,before,8.1,26.8,298,55,12.4,1,0.87,1,app,,1,ok
+real2_s035_b3.png,real2,35,before,60.8,25.4,831,65,12.2,5,0.76,7,app,,5,fixed
+real2_s035_b4.png,real2,35,before,70.2,22.2,934,79,12.6,9,0.78,9,app,,9,ok
+real2_s035_b5.png,real2,35,before,12.6,15,311,110,14,0,0.91,0,app,,0,ok
+real2_s035_b6.png,real2,35,before,24.7,13.7,448,118,14.1,2,0.7,5,app,,2,fixed
+real2_s035_b7.png,real2,35,before,7.7,12.5,243,124,14.4,8,0.6,8,app,,8,ok
+real2_s035_b8.png,real2,35,before,20.5,6.8,383,158,15.3,6,0.79,6,app,,6,ok
+real2_s035_a0.png,real2,35,after,24.5,27.5,466,53,12.2,3,0.9,3,app,,3,ok
+real2_s035_a1.png,real2,35,after,40.4,28.9,625,49,11.9,4,0.9,4,app,,4,ok
+real2_s035_a2.png,real2,35,after,8.1,26.9,298,55,12.4,1,0.9,1,app,,1,ok
+real2_s035_a3.png,real2,35,after,60.7,25.5,830,65,12.2,5,0.9,7,app,,5,fixed
+real2_s035_a4.png,real2,35,after,70.1,22.3,933,79,12.6,9,0.9,9,app,,9,ok
+real2_s035_a5.png,real2,35,after,12.5,15,310,110,14,0,0.9,0,app,,0,ok
+real2_s035_a6.png,real2,35,after,24.6,13.8,448,117,14.1,2,0.9,5,app,,2,fixed
+real2_s035_a7.png,real2,35,after,7.6,12.6,243,123,14.4,8,0.9,8,app,,8,ok
+real2_s035_a8.png,real2,35,after,20.5,6.8,382,158,15.3,6,0.9,6,app,,6,ok
+real2_s036_b0.png,real2,36,before,8.1,26.9,301,55,12.5,1,0.9,1,app,,1,ok
+real2_s036_b1.png,real2,36,before,24.4,27.6,469,54,12.2,3,0.9,3,app,,3,ok
+real2_s036_b2.png,real2,36,before,40.3,29.2,628,50,12,4,0.9,4,app,,4,ok
+real2_s036_b3.png,real2,36,before,60.7,25.8,833,66,12.2,7,1,7,app,,7,ok
+real2_s036_b4.png,real2,36,before,70.2,22.7,937,80,12.5,9,0.9,9,app,,9,ok
+real2_s036_b5.png,real2,36,before,12.6,14.9,313,111,14.1,0,0.9,0,app,,0,ok
+real2_s036_b6.png,real2,36,before,24.5,13.7,451,118,14.2,5,1,5,app,,5,ok
+real2_s036_b7.png,real2,36,before,7.7,12.5,246,123,14.5,8,0.9,8,app,,8,ok
+real2_s036_b8.png,real2,36,before,20.4,6.8,385,158,15.4,6,0.9,6,app,,6,ok
+real2_s036_a0.png,real2,36,after,20.3,30.9,433,41,11.9,0,0.94,0,app,,0,ok
+real2_s036_a1.png,real2,36,after,24.4,27.6,469,54,12.2,3,0.9,3,app,,3,ok
+real2_s036_a2.png,real2,36,after,40.3,28.8,628,51,12,4,0.9,4,app,,4,ok
+real2_s036_a3.png,real2,36,after,60.6,25.8,833,66,12.2,7,1,7,app,,7,ok
+real2_s036_a4.png,real2,36,after,70.1,22.6,937,81,12.5,9,0.9,9,app,,9,ok
+real2_s036_a5.png,real2,36,after,24.6,13.7,451,118,14.2,5,1,5,app,,5,ok
+real2_s036_a6.png,real2,36,after,7.7,12.5,246,123,14.5,8,0.9,8,app,,8,ok
+real2_s036_a7.png,real2,36,after,20.4,6.8,385,158,15.4,6,0.9,6,app,,6,ok
+real2_s036_a8.png,real2,36,after,54.6,7.3,811,158,15,2,0.9,2,app,,2,ok
+real2_s037_b0.png,real2,37,before,24.6,13.7,451,118,14.2,5,1,5,app,,5,ok
+real2_s037_b1.png,real2,37,before,60.7,25.8,833,66,12.2,7,1,7,app,,7,ok
+real2_s037_b2.png,real2,37,before,24.4,27.6,469,54,12.2,3,0.9,3,app,,3,ok
+real2_s037_b3.png,real2,37,before,70.1,22.7,937,80,12.5,9,0.9,9,app,,9,ok
+real2_s037_b4.png,real2,37,before,7.7,12.5,246,123,14.5,8,0.9,8,app,,8,ok
+real2_s037_b5.png,real2,37,before,20.4,6.8,385,158,15.4,6,0.9,6,app,,6,ok
+real2_s037_b6.png,real2,37,before,40.3,29.2,628,50,12,4,0.9,4,app,,4,ok
+real2_s037_b7.png,real2,37,before,13.1,35.9,373,22,11.4,2,0.49,nb,app,,2,fixed
+real2_s037_b8.png,real2,37,before,17.1,26.3,393,58,12.5,0,0.71,nb,app,,0,fixed
+real2_s037_b9.png,real2,37,before,16.7,30,395,44,12,1,0.48,nb,app,,1,fixed
+real2_s037_a0.png,real2,37,after,24.4,27.6,469,54,12.2,3,0.9,3,app,,3,ok
+real2_s037_a1.png,real2,37,after,40.3,29.2,628,50,12,4,0.9,4,app,,4,ok
+real2_s037_a2.png,real2,37,after,60.7,25.8,833,66,12.2,7,1,7,app,,7,ok
+real2_s037_a3.png,real2,37,after,70.1,22.7,937,80,12.5,9,0.9,9,app,,9,ok
+real2_s037_a4.png,real2,37,after,34.4,16.9,566,103,13.6,0,0.81,0,app,,0,ok
+real2_s037_a5.png,real2,37,after,24.6,13.8,451,118,14.2,5,1,5,app,,5,ok
+real2_s037_a6.png,real2,37,after,7.7,12.5,246,123,14.5,8,0.9,8,app,,8,ok
+real2_s037_a7.png,real2,37,after,20.4,6.8,385,158,15.4,6,0.9,6,app,,6,ok
+real2_s038_b0.png,real2,38,before,24.4,27.6,469,54,12.2,3,0.9,3,app,,3,ok
+real2_s038_b1.png,real2,38,before,40.3,29.2,628,50,12,4,0.9,4,app,,4,ok
+real2_s038_b2.png,real2,38,before,60.7,25.8,833,66,12.2,7,1,7,app,,7,ok
+real2_s038_b3.png,real2,38,before,70.1,22.7,937,80,12.5,9,0.9,9,app,,9,ok
+real2_s038_b4.png,real2,38,before,34.4,16.9,566,103,13.6,0,0.81,0,app,,0,ok
+real2_s038_b5.png,real2,38,before,24.6,13.8,451,118,14.2,5,1,5,app,,5,ok
+real2_s038_b6.png,real2,38,before,7.7,12.5,246,123,14.5,8,0.9,8,app,,8,ok
+real2_s038_b7.png,real2,38,before,20.4,6.8,385,158,15.4,6,0.9,6,app,,6,ok
+real2_s038_a0.png,real2,38,after,24.4,27.6,469,54,12.2,3,0.9,3,app,,3,ok
+real2_s038_a1.png,real2,38,after,40.3,29.2,628,50,12,4,0.9,4,app,,4,ok
+real2_s038_a2.png,real2,38,after,60.7,25.9,833,66,12.2,7,0.9,7,app,,7,ok
+real2_s038_a3.png,real2,38,after,70.1,22.8,937,80,12.5,9,0.9,9,app,,9,ok
+real2_s038_a4.png,real2,38,after,24.6,13.9,451,117,14.2,5,0.9,5,app,,5,ok
+real2_s038_a5.png,real2,38,after,39.8,14.5,627,116,13.9,0,0.86,0,app,,0,ok
+real2_s038_a6.png,real2,38,after,7.7,12.5,246,123,14.5,8,0.9,8,app,,8,ok
+real2_s038_a7.png,real2,38,after,20.4,6.8,385,158,15.4,6,0.9,6,app,,6,ok
+real2_s039_b0.png,real2,39,before,24.5,13.9,451,118,14.2,5,0.9,5,app,,5,ok
+real2_s039_b1.png,real2,39,before,70.1,22.7,937,80,12.5,9,0.9,9,app,,9,ok
+real2_s039_b2.png,real2,39,before,24.4,27.6,469,54,12.2,3,0.9,3,app,,3,ok
+real2_s039_b3.png,real2,39,before,20.4,6.8,385,158,15.4,6,0.9,6,app,,6,ok
+real2_s039_b4.png,real2,39,before,7.7,12.5,246,123,14.5,8,0.9,8,app,,8,ok
+real2_s039_b5.png,real2,39,before,60.7,25.9,833,66,12.2,7,0.9,7,app,,7,ok
+real2_s039_b6.png,real2,39,before,39.8,14.6,627,115,13.9,0,0.86,0,app,,0,ok
+real2_s039_b7.png,real2,39,before,40.3,29.2,628,50,12,4,0.9,4,app,,4,ok
+real2_s039_b8.png,real2,39,before,63.8,8.7,917,150,14.6,1,0.3,nb,app,,1,fixed
+real2_s039_b9.png,real2,39,before,68.6,1.2,1010,200,16,2,0.42,nb,app,,2,fixed
+real2_s039_a0.png,real2,39,after,40.3,29.1,628,50,12,4,0.9,4,app,,4,ok
+real2_s039_a1.png,real2,39,after,60.6,25.8,833,66,12.2,7,0.9,7,app,,7,ok
+real2_s039_a2.png,real2,39,after,70.1,22.6,936,81,12.5,9,0.9,9,app,,9,ok
+real2_s039_a3.png,real2,39,after,24.6,13.7,451,118,14.2,5,0.9,5,app,,5,ok
+real2_s039_a4.png,real2,39,after,7.7,12.5,246,123,14.5,8,0.9,8,app,,8,ok
+real2_s039_a5.png,real2,39,after,41,12.5,642,127,14.2,0,0.93,0,app,,0,ok
+real2_s039_a6.png,real2,39,after,20.4,6.8,385,158,15.4,6,0.9,6,app,,6,ok
+real2_s040_a0.png,real2,40,after,42.3,25.8,650,63,12.3,0,0.94,0,app,,0,ok
+real2_s040_a1.png,real2,40,after,60.7,25.9,833,66,12.2,7,0.9,7,app,,7,ok
+real2_s040_a2.png,real2,40,after,70.2,22.8,937,80,12.5,9,0.9,9,app,,9,ok
+real2_s040_a3.png,real2,40,after,24.6,13.8,451,118,14.2,5,0.9,5,app,,5,ok
+real2_s040_a4.png,real2,40,after,7.7,12.5,246,123,14.5,8,0.9,8,app,,8,ok
+real2_s040_a5.png,real2,40,after,20.4,6.8,385,158,15.4,6,0.9,6,app,,6,ok
+real2_s041_b0.png,real2,41,before,42.3,25.6,650,64,12.4,0,0.94,0,app,,0,ok
+real2_s041_b1.png,real2,41,before,60.7,25.9,833,65,12.2,7,0.9,7,app,,7,ok
+real2_s041_b2.png,real2,41,before,70.2,22.7,937,80,12.5,9,0.9,9,app,,9,ok
+real2_s041_b3.png,real2,41,before,24.5,13.9,451,118,14.2,5,0.9,5,app,,5,ok
+real2_s041_b4.png,real2,41,before,7.7,12.5,246,123,14.5,8,0.9,8,app,,8,ok
+real2_s041_b5.png,real2,41,before,20.4,6.8,385,158,15.4,6,0.9,6,app,,6,ok
+real2_s041_a0.png,real2,41,after,60.7,26,833,65,12.2,7,0.9,7,app,,7,ok
+real2_s041_a1.png,real2,41,after,70.1,22.7,937,80,12.5,9,0.9,9,app,,9,ok
+real2_s041_a2.png,real2,41,after,34.9,18.7,573,94,13.3,0,0.87,0,app,,0,ok
+real2_s041_a3.png,real2,41,after,7.7,12.5,245,123,14.5,8,0.9,8,app,,8,ok
+real2_s041_a4.png,real2,41,after,20.4,6.8,385,158,15.4,6,0.9,6,app,,6,ok
+real2_s042_b0.png,real2,42,before,60.7,26,833,65,12.2,7,0.9,7,app,,7,ok
+real2_s042_b1.png,real2,42,before,70.1,22.7,936,80,12.5,9,0.9,9,app,,9,ok
+real2_s042_b2.png,real2,42,before,34.9,18.8,573,94,13.3,0,0.87,0,app,,0,ok
+real2_s042_b3.png,real2,42,before,7.7,12.5,246,123,14.5,8,0.9,8,app,,8,ok
+real2_s042_b4.png,real2,42,before,20.4,6.8,385,158,15.4,6,0.9,6,app,,6,ok
+real2_s042_a0.png,real2,42,after,60.7,25.9,833,65,12.2,7,0.9,7,app,,7,ok
+real2_s042_a1.png,real2,42,after,70.1,22.7,936,80,12.5,9,0.9,9,app,,9,ok
+real2_s042_a2.png,real2,42,after,7.7,12.5,246,123,14.5,8,0.9,8,app,,8,ok
+real2_s042_a3.png,real2,42,after,36.9,11,594,135,14.5,0,0.85,0,app,,0,ok
+real2_s043_a0.png,real2,43,after,70.2,22.7,937,80,12.5,9,0.9,9,app,,9,ok
+real2_s043_a1.png,real2,43,after,7.7,12.5,245,123,14.5,8,0.9,8,app,,8,ok
+real2_s043_a2.png,real2,43,after,15.1,1.1,296,196,16.7,0,0.89,0,app,,0,ok
+real2_s044_b0.png,real2,44,before,70.1,22.4,937,80,12.8,9,0.9,9,app,,9,ok
+real2_s044_b1.png,real2,44,before,52.8,21.7,759,82,13,0,0.94,0,app,,0,ok
+real2_s044_a0.png,real2,44,after,38.1,27.2,603,57,12.3,0,0.95,0,app,,0,ok
+real2_s045_b0.png,real2,45,before,26.2,27.8,488,55,12.2,1,0.77,1,app,,1,ok
+real2_s045_b1.png,real2,45,before,53,28.2,754,57,12,4,0.76,4,app,,4,ok
+real2_s045_b2.png,real2,45,before,12.3,25.5,340,63,12.5,8,0.36,8,app,,8,ok
+real2_s045_b3.png,real2,45,before,62.8,24.4,859,74,12.3,5,0.95,7,app,,5,fixed
+real2_s045_b4.png,real2,45,before,36.8,23.3,594,76,12.7,0,0.97,0,app,,0,ok
+real2_s045_b5.png,real2,45,before,30.7,17.8,525,101,13.4,3,0.8,3,app,,3,ok
+real2_s045_b6.png,real2,45,before,16.6,11.1,348,135,14.6,2,0.67,5,app,,2,fixed
+real2_s045_b7.png,real2,45,before,28.1,4.9,480,175,15.6,6,0.84,6,app,,6,ok
+real2_s045_b8.png,real2,45,before,56.4,4.4,841,180,15.4,7,0.59,9,app,,7,fixed
+real2_s045_a0.png,real2,45,after,53,28.3,754,57,11.9,4,0.9,4,app,,4,ok
+real2_s045_a1.png,real2,45,after,38.6,27.5,612,58,12.1,0,0.91,0,app,,0,ok
+real2_s045_a2.png,real2,45,after,12.3,25.5,340,63,12.5,8,0.9,8,app,,8,ok
+real2_s045_a3.png,real2,45,after,62.8,24.4,859,74,12.3,5,0.9,7,app,,5,fixed
+real2_s045_a4.png,real2,45,after,30.7,17.8,525,101,13.4,3,0.9,3,app,,3,ok
+real2_s045_a5.png,real2,45,after,16.6,11.1,348,135,14.6,2,0.9,5,app,,2,fixed
+real2_s045_a6.png,real2,45,after,28.1,4.9,480,174,15.6,6,0.9,6,app,,6,ok
+real2_s045_a7.png,real2,45,after,56.4,4.4,841,180,15.4,7,0.9,9,app,,7,fixed
+real2_s046_b0.png,real2,46,before,53,28.3,754,57,11.9,4,0.9,4,app,,4,ok
+real2_s046_b1.png,real2,46,before,38.6,27.5,612,58,12.1,0,0.91,0,app,,0,ok
+real2_s046_b2.png,real2,46,before,12.3,25.5,340,63,12.5,8,0.9,8,app,,8,ok
+real2_s046_b3.png,real2,46,before,62.8,24.4,859,74,12.3,5,0.9,7,app,,5,fixed
+real2_s046_b4.png,real2,46,before,30.7,17.8,525,101,13.4,3,0.9,3,app,,3,ok
+real2_s046_b5.png,real2,46,before,16.6,11.1,348,135,14.6,2,0.9,5,app,,2,fixed
+real2_s046_b6.png,real2,46,before,28.1,4.9,480,175,15.6,6,0.9,6,app,,6,ok
+real2_s046_b7.png,real2,46,before,56.4,4.5,841,180,15.4,7,0.9,9,app,,7,fixed
+real2_s046_a0.png,real2,46,after,13.1,32.2,365,36,11.7,0,0.92,0,app,,0,ok
+real2_s046_a1.png,real2,46,after,53,28.4,754,56,11.9,4,0.9,4,app,,4,ok
+real2_s046_a2.png,real2,46,after,12.2,25.5,340,63,12.5,8,0.9,8,app,,8,ok
+real2_s046_a3.png,real2,46,after,62.8,24.4,859,74,12.3,5,0.9,7,app,,5,fixed
+real2_s046_a4.png,real2,46,after,30.7,17.8,525,101,13.4,3,0.9,3,app,,3,ok
+real2_s046_a5.png,real2,46,after,16.5,11.1,348,135,14.6,2,0.9,5,app,,2,fixed
+real2_s046_a6.png,real2,46,after,28.1,4.9,480,175,15.6,6,0.9,6,app,,6,ok
+real2_s046_a7.png,real2,46,after,56.4,4.4,841,180,15.4,7,0.9,9,app,,7,fixed
+real2_s047_b0.png,real2,47,before,13.2,32.2,365,36,11.7,0,0.92,0,app,,0,ok
+real2_s047_b1.png,real2,47,before,53,28.3,754,57,11.9,4,0.9,4,app,,4,ok
+real2_s047_b2.png,real2,47,before,12.3,25.5,340,63,12.5,8,0.9,8,app,,8,ok
+real2_s047_b3.png,real2,47,before,62.8,24.4,859,74,12.3,5,0.9,7,app,,5,fixed
+real2_s047_b4.png,real2,47,before,30.7,17.8,525,101,13.4,3,0.9,3,app,,3,ok
+real2_s047_b5.png,real2,47,before,16.5,11.1,348,135,14.6,2,0.9,5,app,,2,fixed
+real2_s047_b6.png,real2,47,before,28.1,4.9,480,174,15.6,6,0.9,6,app,,6,ok
+real2_s047_b7.png,real2,47,before,56.4,4.5,841,180,15.4,7,0.9,9,app,,7,fixed
+real2_s047_a0.png,real2,47,after,53,28.4,754,56,11.9,4,0.9,4,app,,4,ok
+real2_s047_a1.png,real2,47,after,12.2,25.5,340,63,12.5,8,0.9,8,app,,8,ok
+real2_s047_a2.png,real2,47,after,34,24.9,565,68,12.5,0,0.9,0,app,,0,ok
+real2_s047_a3.png,real2,47,after,62.8,24.4,859,74,12.3,5,0.9,7,app,,5,fixed
+real2_s047_a4.png,real2,47,after,16.5,11.1,348,135,14.6,2,0.9,5,app,,2,fixed
+real2_s047_a5.png,real2,47,after,28.1,4.9,480,175,15.6,6,0.9,6,app,,6,ok
+real2_s047_a6.png,real2,47,after,56.4,4.5,841,180,15.4,7,0.9,9,app,,7,fixed
+real2_s048_b0.png,real2,48,before,53,28.3,754,57,11.9,4,0.9,4,app,,4,ok
+real2_s048_b1.png,real2,48,before,12.3,25.5,340,63,12.5,8,0.9,8,app,,8,ok
+real2_s048_b2.png,real2,48,before,34,24.9,565,68,12.5,0,0.9,0,app,,0,ok
+real2_s048_b3.png,real2,48,before,62.8,24.4,859,74,12.3,5,0.9,7,app,,5,fixed
+real2_s048_b4.png,real2,48,before,16.5,11.1,348,135,14.6,2,0.9,5,app,,2,fixed
+real2_s048_b5.png,real2,48,before,28.1,4.9,480,174,15.6,6,0.9,6,app,,6,ok
+real2_s048_b6.png,real2,48,before,56.4,4.5,841,180,15.4,7,0.9,9,app,,7,fixed
+real2_s048_a0.png,real2,48,after,12.3,25.5,340,63,12.5,8,0.9,8,app,,8,ok
+real2_s048_a1.png,real2,48,after,62.8,24.4,859,74,12.3,5,0.9,7,app,,5,fixed
+real2_s048_a2.png,real2,48,after,43,23.6,658,75,12.6,0,0.92,0,app,,0,ok
+real2_s048_a3.png,real2,48,after,16.5,11.1,348,135,14.6,2,0.9,5,app,,2,fixed
+real2_s048_a4.png,real2,48,after,28.1,4.9,480,175,15.6,6,0.9,6,app,,6,ok
+real2_s048_a5.png,real2,48,after,56.4,4.4,841,180,15.4,7,0.9,9,app,,7,fixed
+real2_s049_b0.png,real2,49,before,12.2,25.5,340,63,12.5,8,0.9,8,app,,8,ok
+real2_s049_b1.png,real2,49,before,62.8,24.4,859,74,12.3,5,0.9,7,app,,5,fixed
+real2_s049_b2.png,real2,49,before,43,23.7,658,75,12.6,0,0.92,0,app,,0,ok
+real2_s049_b3.png,real2,49,before,16.5,11.1,348,135,14.6,2,0.9,5,app,,2,fixed
+real2_s049_b4.png,real2,49,before,28.1,4.9,480,175,15.6,6,0.9,6,app,,6,ok
+real2_s049_b5.png,real2,49,before,56.4,4.4,841,180,15.4,7,0.9,9,app,,7,fixed
+real2_s049_a0.png,real2,49,after,49.5,29.5,719,52,11.8,2,0.85,5,app,,2,fixed
+real2_s049_a1.png,real2,49,after,12.2,25.6,340,63,12.5,8,0.9,8,app,,8,ok
+real2_s049_a2.png,real2,49,after,62.8,24.4,859,74,12.3,5,0.9,7,app,,5,fixed
+real2_s049_a3.png,real2,49,after,28.1,4.9,480,175,15.6,6,0.9,6,app,,6,ok
+real2_s049_a4.png,real2,49,after,56.4,4.5,841,180,15.4,7,0.9,9,app,,7,fixed
+real2_s049_a5.png,real2,49,after,24.5,3.7,430,182,15.9,0,0.77,0,app,,0,ok
+real2_s050_b0.png,real2,50,before,49.5,29.5,719,52,11.8,2,0.85,5,app,,2,fixed
+real2_s050_b1.png,real2,50,before,12.2,25.5,340,63,12.5,8,0.9,8,app,,8,ok
+real2_s050_b2.png,real2,50,before,34.6,25.4,572,66,12.4,0,0.97,0,app,,0,ok
+real2_s050_b3.png,real2,50,before,62.8,24.4,859,74,12.3,5,0.9,7,app,,5,fixed
+real2_s050_b4.png,real2,50,before,28.1,4.9,480,175,15.6,6,0.9,6,app,,6,ok
+real2_s050_b5.png,real2,50,before,56.4,4.5,841,180,15.4,7,0.9,9,app,,7,fixed
+real2_s050_a0.png,real2,50,after,12.2,25.6,340,62,12.5,8,0.9,8,app,,8,ok
+real2_s050_a1.png,real2,50,after,62.8,24.4,859,74,12.3,5,0.9,7,app,,5,fixed
+real2_s050_a2.png,real2,50,after,45.8,18,692,102,13.3,0,0.84,0,app,,0,ok
+real2_s050_a3.png,real2,50,after,28.1,4.9,480,175,15.6,6,0.9,6,app,,6,ok
+real2_s050_a4.png,real2,50,after,56.4,4.5,841,180,15.4,7,0.9,9,app,,7,fixed
+real2_s051_b0.png,real2,51,before,12.2,25.6,340,63,12.5,8,0.9,8,app,,8,ok
+real2_s051_b1.png,real2,51,before,62.8,24.4,859,74,12.3,5,0.9,7,app,,5,fixed
+real2_s051_b2.png,real2,51,before,45.8,18,692,102,13.3,0,0.84,0,app,,0,ok
+real2_s051_b3.png,real2,51,before,28.1,4.9,480,175,15.6,6,0.9,6,app,,6,ok
+real2_s051_b4.png,real2,51,before,56.4,4.5,841,180,15.4,7,0.9,9,app,,7,fixed
+real2_s051_a0.png,real2,51,after,12.2,25.7,340,62,12.5,8,0.9,8,app,,8,ok
+real2_s051_a1.png,real2,51,after,62.8,24.4,859,74,12.3,5,0.9,7,app,,5,fixed
+real2_s051_a2.png,real2,51,after,35.2,14.2,574,119,13.9,0,0.94,0,app,,0,ok
+real2_s051_a3.png,real2,51,after,56.4,4.5,841,180,15.4,7,0.9,9,app,,7,fixed
+real2_s052_b0.png,real2,52,before,12.2,25.5,340,61,12.5,8,0.9,8,app,,8,ok
+real2_s052_b1.png,real2,52,before,63.1,24.5,859,72,12.3,5,0.9,7,app,,5,fixed
+real2_s052_b2.png,real2,52,before,35.4,14,575,118,13.9,0,0.94,0,app,,0,ok
+real2_s052_b3.png,real2,52,before,56.6,4.3,841,178,15.5,7,0.9,9,app,,7,fixed
+real2_s052_a0.png,real2,52,after,12.2,25.5,340,61,12.5,8,0.9,8,app,,8,ok
+real2_s052_a1.png,real2,52,after,57.6,20.4,811,90,12.9,0,0.95,0,app,,0,ok
+real2_s052_a2.png,real2,52,after,25.3,8.6,448,147,14.9,5,0.7,7,app,,5,fixed
+real2_s052_a3.png,real2,52,after,56.6,4.3,841,178,15.5,7,0.9,9,app,,7,fixed
+real2_s053_b0.png,real2,53,before,12.2,25.5,340,61,12.5,8,0.9,8,app,,8,ok
+real2_s053_b1.png,real2,53,before,74.7,23,980,80,12.5,,0,nb,app,,?,fixed
+real2_s053_b2.png,real2,53,before,70.5,23.3,936,79,12.5,3,0.13,nb,app,,3,fixed
+real2_s053_b3.png,real2,53,before,74.5,26.9,964,64,12,9,0.29,nb,app,,9,fixed
+real2_s053_b4.png,real2,53,before,72.2,22.1,958,84,12.6,1,0.47,nb,app,,1,fixed
+real2_s053_b5.png,real2,53,before,72.6,27.2,944,62,12,,0,nb,app,,?,fixed
+real2_s053_b6.png,real2,53,before,74.2,24,971,76,12.3,4,0.13,nb,app,,4,fixed
+real2_s053_b7.png,real2,53,before,57.5,20.4,811,90,12.9,0,0.95,0,app,,0,ok
+real2_s053_b8.png,real2,53,before,25.3,8.6,448,147,14.9,5,0.7,7,app,,5,fixed
+real2_s053_b9.png,real2,53,before,56.6,4.3,841,178,15.5,7,0.9,9,app,,7,fixed
+real2_s053_a0.png,real2,53,after,7.2,28.9,298,46,12.1,5,0.41,7,app,,5,fixed
+real2_s053_a1.png,real2,53,after,12.2,25.5,340,61,12.5,8,0.9,8,app,,8,ok
+real2_s053_a2.png,real2,53,after,28.5,18.9,501,92,13.3,,0,0,app,,?,fixed
+real2_s053_a3.png,real2,53,after,56.6,4.3,841,178,15.5,7,0.9,9,app,,7,fixed
+real2_s054_b0.png,real2,54,before,7.2,28.9,298,47,12.1,5,0.41,7,app,,5,fixed
+real2_s054_b1.png,real2,54,before,12.2,25.5,340,61,12.5,8,0.9,8,app,,8,ok
+real2_s054_b2.png,real2,54,before,10.6,14.9,290,110,14,3,0.49,0,app,,3,fixed
+real2_s054_b3.png,real2,54,before,56.6,4.3,842,178,15.5,7,0.9,9,app,,7,fixed
+real2_s054_a0.png,real2,54,after,12.2,25.5,340,61,12.5,8,0.9,8,app,,8,ok
+real2_s054_a1.png,real2,54,after,25.2,19.7,465,88,13.2,,0,0,app,,?,fixed
+real2_s054_a2.png,real2,54,after,56.6,4.3,841,178,15.5,7,0.9,9,app,,7,fixed
+real2_s055_b0.png,real2,55,before,22.1,32.5,452,33,11.9,0,0.9,0,app,,0,ok
+real2_s055_b1.png,real2,55,before,55.8,4,841,177,16.1,4,0.45,9,app,,4,fixed
+real2_s055_a0.png,real2,55,after,68.4,16.7,944,104,13.7,0,0.96,0,app,,0,ok
+real2_s055_a1.png,real2,55,after,37.9,9.8,607,139,15.1,4,0.45,9,app,,4,fixed
+real2_s056_b0.png,real2,56,before,68.5,16.7,944,104,13.7,0,0.96,0,app,,0,ok
+real2_s056_b1.png,real2,56,before,37.9,9.8,607,139,15.1,4,0.45,9,app,,4,fixed
+real2_s056_a0.png,real2,56,after,41.7,21.3,645,80,13.2,0,0.92,0,app,,0,ok
+real2_s056_a1.png,real2,56,after,3.1,2.8,136,181,16.8,4,0.44,9,app,,4,fixed
+real3_s001_b0.png,real3,1,before,68.7,30.1,892,43,11.5,1,0.89,1,app,,1,ok
+real3_s001_b1.png,real3,1,before,57.6,19.1,809,90,12.9,0,0.75,0,app,,0,ok
+real3_s001_a0.png,real3,1,after,61.8,25.5,837,62,12.1,,0,0,app,,?,fixed
+real3_s002_b0.png,real3,2,before,66.5,28.4,875,50,11.7,1,0.9,1,app,,1,ok
+real3_s002_a0.png,real3,2,after,66.4,28.4,875,50,11.7,1,0.9,1,app,,1,ok
+real3_s003_b0.png,real3,3,before,66.4,28.4,875,50,11.7,1,0.9,1,app,,1,ok
+real3_s003_b1.png,real3,3,before,48.3,14.3,716,115,13.7,0,0.95,0,app,,0,ok
+real3_s003_a0.png,real3,3,after,53.1,24.6,753,66,12.3,0,0.96,0,app,,0,ok
+real3_s004_b0.png,real3,4,before,53.1,24.6,752,66,12.3,0,0.96,0,app,,0,ok
+real3_s004_b1.png,real3,4,before,41.7,16.5,641,103,13.4,1,0.75,1,app,,1,ok
+real3_s004_a0.png,real3,4,after,45.1,20,676,86,12.9,0,0.87,0,app,,0,ok
+real3_s004_a1.png,real3,4,after,41.9,9.8,647,140,14.4,1,0.92,1,app,,1,ok
+real3_s005_b0.png,real3,5,before,54.1,35.4,746,24,11.1,2,0.15,nb,app,,2,fixed
+real3_s005_b1.png,real3,5,before,48.5,30.8,700,41,11.6,,0,nb,app,,?,fixed
+real3_s005_b2.png,real3,5,before,52.2,30.9,735,40,11.5,7,0.84,nb,app,,7,fixed
+real3_s005_b3.png,real3,5,before,50.1,35.2,711,25,11.1,4,0.39,nb,app,,4,fixed
+real3_s005_b4.png,real3,5,before,50.4,30.7,718,41,11.6,9,0.76,nb,app,,9,fixed
+real3_s005_b5.png,real3,5,before,52.2,35.5,730,24,11.1,5,0.64,nb,app,,5,fixed
+real3_s005_b6.png,real3,5,before,45.1,20,676,86,12.9,0,0.87,0,app,,0,ok
+real3_s005_b7.png,real3,5,before,41.9,9.8,647,140,14.4,1,0.92,1,app,,1,ok
+real3_s005_a0.png,real3,5,after,34.4,18,561,96,13.2,0,0.91,0,app,,0,ok
+real3_s006_b0.png,real3,6,before,26.7,36.4,493,19,11.2,1,0.68,1,app,,1,ok
+real3_s006_b1.png,real3,6,before,46.4,31.8,677,36,11.6,0,0.97,0,app,,0,ok
+real3_s006_a0.png,real3,6,after,36.8,10,584,139,14.6,0,0.86,0,app,,0,ok
+real3_s007_b0.png,real3,7,before,36.8,10,583,140,14.6,0,0.86,0,app,,0,ok
+real3_s007_a0.png,real3,7,after,46.3,27.1,680,54,12.1,0,0.93,0,app,,0,ok
+real3_s008_b0.png,real3,8,before,5.4,35.3,292,23,11.4,8,0.67,nb,app,,8,fixed
+real3_s008_b1.png,real3,8,before,20.3,32.2,428,34,11.6,7,0.82,nb,app,,7,fixed
+real3_s008_b2.png,real3,8,before,11.7,35.9,353,21,11.3,2,0.63,nb,app,,2,fixed
+real3_s008_b3.png,real3,8,before,17.9,35.3,410,23,11.3,9,0.52,nb,app,,9,fixed
+real3_s008_b4.png,real3,8,before,8.1,35.4,319,22,11.4,3,0.15,nb,app,,3,fixed
+real3_s008_b5.png,real3,8,before,15,36,385,20,11.3,1,0.4,nb,app,,1,fixed
+real3_s008_b6.png,real3,8,before,46.3,27.2,680,54,12.1,0,0.93,0,app,,0,ok
+real3_s008_a0.png,real3,8,after,3.9,17.5,217,98,13.6,0,0.93,0,app,,0,ok
+real3_s009_b0.png,real3,9,before,3.9,17.6,217,98,13.6,0,0.93,0,app,,0,ok
+real3_s009_a0.png,real3,9,after,6.7,13.9,234,118,14.2,0,0.92,0,app,,0,ok
+real3_s009_a1.png,real3,9,after,39.7,4.7,620,173,15.5,,0,2,app,,?,fixed
+real3_s010_b0.png,real3,10,before,6.7,13.9,234,118,14.1,0,0.92,0,app,,0,ok
+real3_s010_a0.png,real3,10,after,75.3,18.2,998,95,13.1,0,0.74,0,app,,0,ok
+real3_s011_b0.png,real3,11,before,74.9,16.4,1002,103,13.3,1,0.73,nb,app,,1,fixed
+real3_s011_b1.png,real3,11,before,75.2,18.1,998,95,13.1,0,0.74,nb,app,,0,fixed
+real3_s011_a0.png,real3,11,after,56.6,13.4,810,120,13.9,0,0.84,0,app,,0,ok
+real3_s012_b0.png,real3,12,before,56.6,13.4,810,120,13.9,0,0.84,0,app,,0,ok
+real3_s012_a0.png,real3,12,after,36.1,8.3,575,150,14.9,0,0.94,0,app,,0,ok
+real3_s013_b0.png,real3,13,before,48,33.3,691,31,11.4,7,0.9,0,app,,7,fixed
+real3_s013_a0.png,real3,13,after,48,33.3,691,31,11.4,7,0.9,0,app,,7,fixed
+real3_s014_b0.png,real3,14,before,46.5,26.7,682,56,12.1,9,0.96,0,app,,9,fixed
+real3_s014_a0.png,real3,14,after,46.4,26.6,682,57,12.2,9,0.96,0,app,,9,fixed
+real3_s015_b0.png,real3,15,before,46.4,26.7,682,57,12.2,0,1,0,app,,0,ok
+real3_s015_a0.png,real3,15,after,18.8,12.2,372,127,14.3,0,0.95,0,app,,0,ok
+real3_s016_b0.png,real3,16,before,18.8,12.2,372,127,14.3,0,0.95,0,app,,0,ok
+real3_s016_b1.png,real3,16,before,2.9,5.6,147,169,15.6,8,0.46,nb,app,,8,fixed
+real3_s016_b2.png,real3,16,before,5.4,7.2,188,158,15.3,1,0.42,nb,app,,1,fixed
+real3_s016_b3.png,real3,16,before,3.1,8.4,165,151,15.1,4,0.32,nb,app,,4,fixed
+real3_s016_a0.png,real3,16,after,47.3,22.4,694,75,12.7,0,0.9,0,app,,0,ok
+real3_s017_b0.png,real3,17,before,47.3,22.4,694,75,12.7,0,0.9,0,app,,0,ok
+real3_s017_a0.png,real3,17,after,53.1,20.3,758,85,12.9,0,0.94,0,app,,0,ok
+real3_s018_b0.png,real3,18,before,53.1,20.4,758,84,12.9,0,0.94,0,app,,0,ok
+real3_s018_b1.png,real3,18,before,70.9,7,1000,157,14.9,3,1,3,app,,3,ok
+real3_s018_a0.png,real3,18,after,43.2,27,649,55,12.1,0,0.96,0,app,,0,ok
+real3_s019_b0.png,real3,19,before,43.2,27.1,649,55,12.1,0,0.96,0,app,,0,ok
+real3_s019_b1.png,real3,19,before,31.4,18.8,526,92,13.2,3,1,3,app,,3,ok
+real3_s019_a0.png,real3,19,after,39.5,22.8,613,73,12.7,0,0.92,0,app,,0,ok
+real3_s019_a1.png,real3,19,after,6.7,2.4,181,191,16.3,3,0.58,3,app,,3,ok
+real3_s020_b0.png,real3,20,before,39.5,22.8,613,73,12.7,0,0.92,0,app,,0,ok
+real3_s020_b1.png,real3,20,before,6.8,2.4,181,191,16.3,3,0.58,3,app,,3,ok
+real3_s020_a0.png,real3,20,after,55.2,4,817,177,15.5,0,0.9,0,app,,0,ok
+real3_s021_b0.png,real3,21,before,41,32.6,626,33,11.5,0,0.95,0,app,,0,ok
+real3_s021_b1.png,real3,21,before,16.5,36.5,400,18,11.2,3,1,3,app,,3,ok
+real3_s021_a0.png,real3,21,after,23,13.4,424,120,14.1,0,0.94,0,app,,0,ok
+real3_s022_b0.png,real3,22,before,71.9,33.7,910,29,11.3,4,0.56,4,app,,4,ok
+real3_s022_b1.png,real3,22,before,23,13.5,425,120,14.1,0,0.94,0,app,,0,ok
+real3_s022_a0.png,real3,22,after,52.1,26.9,738,56,12.1,0,0.95,0,app,,0,ok
+real3_s023_b0.png,real3,23,before,71.7,35,905,25,11.1,1,0.44,nb,app,,1,fixed
+real3_s023_b1.png,real3,23,before,74.7,32.1,941,36,11.4,8,0.16,nb,app,,8,fixed
+real3_s023_b2.png,real3,23,before,72.8,32.8,922,33,11.3,9,0.71,nb,app,,9,fixed
+real3_s023_b3.png,real3,23,before,52.1,26.9,738,56,12.1,0,0.95,0,app,,0,ok
+real3_s023_b4.png,real3,23,before,36.6,20.1,583,86,13,4,0.78,4,app,,4,ok
+real3_s023_a0.png,real3,23,after,26.2,35.7,488,21,11.2,0,0.74,0,app,,0,ok
+real3_s023_a1.png,real3,23,after,5,19.8,239,87,13.3,4,0.59,4,app,,4,ok
+real3_s024_b0.png,real3,24,before,26.1,35.7,488,21,11.2,0,0.74,0,app,,0,ok
+real3_s024_b1.png,real3,24,before,5,19.8,238,87,13.3,4,0.59,4,app,,4,ok
+real3_s024_a0.png,real3,24,after,56,23.7,782,69,12.5,0,0.98,0,app,,0,ok
+real3_s025_b0.png,real3,25,before,21.5,36.2,445,20,11.2,4,1,4,app,,4,ok
+real3_s025_b1.png,real3,25,before,56,23.8,782,69,12.5,0,0.98,0,app,,0,ok
+real3_s025_a0.png,real3,25,after,34.4,5.8,553,166,15.3,0,0.9,0,app,,0,ok
+real3_s026_b0.png,real3,26,before,57.4,23.6,796,70,12.5,4,1,4,app,,4,ok
+real3_s026_b1.png,real3,26,before,34.2,5.5,552,168,15.5,0,0.9,0,app,,0,ok
+real3_s026_a0.png,real3,26,after,52.4,26.7,741,56,12.1,0,0.9,0,app,,0,ok
+real3_s027_b0.png,real3,27,before,52.4,26.7,741,56,12.1,0,0.9,0,app,,0,ok
+real3_s027_b1.png,real3,27,before,69.8,7,986,156,14.8,5,0.9,5,app,,5,ok
+real3_s027_a0.png,real3,27,after,17.3,3.2,327,185,16.2,0,0.91,0,app,,0,ok
+real3_s028_b0.png,real3,28,before,37.4,24.8,592,64,12.4,5,1,5,app,,5,ok
+real3_s028_b1.png,real3,28,before,17.3,3.1,327,185,16.2,0,0.91,0,app,,0,ok
+real3_s028_a0.png,real3,28,after,7.5,34.9,311,24,11.5,0,0.85,0,app,,0,ok
+real3_s029_b0.png,real3,29,before,19.7,36.2,428,20,11.3,5,1,5,app,,5,ok
+real3_s029_b1.png,real3,29,before,39.2,30.5,609,41,11.7,0,0.93,0,app,,0,ok
+real3_s029_a0.png,real3,29,after,31.6,2.6,516,188,16.1,0,0.92,0,app,,0,ok
+real3_s030_b0.png,real3,30,before,8.4,30.3,307,41,12,6,0.49,6,app,,6,ok
+real3_s030_b1.png,real3,30,before,35.9,13.5,575,119,14,0,1,0,app,,0,ok
+real3_s030_a0.png,real3,30,after,34.7,16.7,562,102,13.5,0,0.94,0,app,,0,ok
+real3_s031_b0.png,real3,31,before,49.3,19.5,720,88,13,5,0.87,6,app,,5,fixed
+real3_s031_b1.png,real3,31,before,34.6,16.7,562,103,13.6,0,0.94,0,app,,0,ok
+real3_s031_a0.png,real3,31,after,49.3,19.3,720,89,13.1,5,0.9,6,app,,5,fixed
+real3_s031_a1.png,real3,31,after,34.7,16.4,562,104,13.6,0,0.9,0,app,,0,ok
+real3_s032_b0.png,real3,32,before,49.3,19.5,720,88,13,6,1,6,app,,6,ok
+real3_s032_b1.png,real3,32,before,34.6,16.8,562,102,13.5,0,0.9,0,app,,0,ok
+real3_s032_a0.png,real3,32,after,61.8,4.9,899,169,15.2,0,0.9,0,app,,0,ok
+real3_s033_b0.png,real3,33,before,24.9,35.8,476,21,11.3,6,1,6,app,,6,ok
+real3_s033_b1.png,real3,33,before,61.8,4.7,899,171,15.3,0,0.9,0,app,,0,ok
+real3_s033_a0.png,real3,33,after,16.1,11.8,339,129,14.5,0,0.92,0,app,,0,ok
+real3_s034_b0.png,real3,34,before,16.1,11.8,339,130,14.5,0,0.92,0,app,,0,ok
+real3_s034_a0.png,real3,34,after,16.1,12,340,129,14.5,0,0.9,0,app,,0,ok
+real3_s035_b0.png,real3,35,before,7.4,30.1,294,42,12.2,7,0.23,7,app,,7,ok
+real3_s035_b1.png,real3,35,before,30.8,15.2,516,111,14,0,0.92,0,app,,0,ok
+real3_s035_a0.png,real3,35,after,45,21,672,81,13,0,0.89,0,app,,0,ok
+real3_s036_b0.png,real3,36,before,45,21,672,80,13,0,0.89,0,app,,0,ok
+real3_s036_b1.png,real3,36,before,26.6,14.9,466,112,14.1,7,0.43,7,app,,7,ok
+real3_s036_a0.png,real3,36,after,19.8,16.5,391,104,13.9,0,0.9,0,app,,0,ok
+real3_s037_b0.png,real3,37,before,53.3,35.8,738,21,11.2,7,0.8,7,app,,7,ok
+real3_s037_b1.png,real3,37,before,19.8,16.6,391,104,13.9,0,0.9,0,app,,0,ok
+real3_s037_b2.png,real3,37,before,2.7,7.2,145,161,15.8,8,0.44,nb,app,,8,fixed
+real3_s037_b3.png,real3,37,before,7.1,10.3,217,141,15.1,1,0.64,nb,app,,1,fixed
+real3_s037_b4.png,real3,37,before,4.3,11.3,186,134,15,9,0.69,nb,app,,9,fixed
+real3_s037_b5.png,real3,37,before,6.8,7.7,201,157,15.6,4,0.19,nb,app,,4,fixed
+real3_s037_b6.png,real3,37,before,3.8,8.7,167,150,15.5,3,0.32,nb,app,,3,fixed
+real3_s037_a0.png,real3,37,after,62.8,21.8,857,76,12.8,0,0.96,0,app,,0,ok
+real3_s038_b0.png,real3,38,before,62.8,21.1,857,77,12.9,0,0.96,0,app,,0,ok
+real3_s038_b1.png,real3,38,before,7.4,6.8,210,160,15.8,8,0.86,8,app,,8,ok
+real3_s038_a0.png,real3,38,after,55.5,2.1,832,186,16.3,0,0.91,0,app,,0,ok
+real3_s039_b0.png,real3,39,before,30.9,19.3,520,88,13.2,8,0.35,8,app,,8,ok
+real3_s039_b1.png,real3,39,before,55.9,2.4,832,186,15.8,0,0.91,0,app,,0,ok
+real3_s039_a0.png,real3,39,after,25.4,35,478,24,11.3,0,0.9,0,app,,0,ok
+real3_s039_a1.png,real3,39,after,26.7,10.3,462,137,14.6,8,0.49,8,app,,8,ok
+real3_s040_b0.png,real3,40,before,25.4,35,478,24,11.3,0,0.9,0,app,,0,ok
+real3_s040_b1.png,real3,40,before,26.7,10.3,462,137,14.6,8,0.49,8,app,,8,ok
+real3_s040_a0.png,real3,40,after,44.3,10.1,673,137,14.5,0,0.88,0,app,,0,ok
+real3_s041_b0.png,real3,41,before,36.2,23,578,71,12.7,0,1,0,app,,0,ok
+real3_s041_b1.png,real3,41,before,2.7,17.8,202,97,13.6,3,0.28,nb,app,,3,fixed
+real3_s041_b2.png,real3,41,before,5.7,22,251,77,13,4,0.4,nb,app,,4,fixed
+real3_s041_b3.png,real3,41,before,3.2,21.3,221,80,13.1,7,0.76,nb,app,,7,fixed
+real3_s041_b4.png,real3,41,before,5.5,19.3,239,90,13.4,9,0.52,nb,app,,9,fixed
+real3_s041_b5.png,real3,41,before,8.3,17.8,265,97,13.6,1,0.74,nb,app,,1,fixed
+real3_s041_b6.png,real3,41,before,60.3,35.7,799,20,11.1,8,1,8,app,,8,ok
+real3_s041_a0.png,real3,41,after,73.7,5.8,1039,160,15,0,0.9,0,app,,0,ok
+real3_s042_b0.png,real3,42,before,73.7,5.9,1039,160,15,0,0.9,0,app,,0,ok
+real3_s042_b1.png,real3,42,before,70,32.3,897,32,11.4,8,1,8,app,,8,ok
+real3_s042_a0.png,real3,42,after,2.7,9.8,164,142,15,0,0.87,0,app,,0,ok
+real3_s043_b0.png,real3,43,before,2.7,9.8,164,142,14.9,0,0.87,0,app,,0,ok
+real3_s043_a0.png,real3,43,after,2.7,9.8,164,142,15,0,0.9,0,app,,0,ok
+real3_s044_b0.png,real3,44,before,66,31.2,862,37,11.6,9,0.69,9,app,,9,ok
+real3_s044_b1.png,real3,44,before,2.7,9.9,165,142,14.9,0,0.9,nb,app,,0,fixed
+real3_s044_b2.png,real3,44,before,3,12.7,183,125,14.4,7,0.74,nb,app,,7,fixed
+real3_s044_a0.png,real3,44,after,66,31.2,862,37,11.6,9,0.9,9,app,,9,ok
+real3_s044_a1.png,real3,44,after,34.3,16.7,556,101,13.6,0,0.95,0,app,,0,ok
+real3_s045_b0.png,real3,45,before,66,31.2,862,37,11.6,9,0.9,9,app,,9,ok
+real3_s045_b1.png,real3,45,before,34.3,16.7,556,101,13.6,0,0.95,0,app,,0,ok
+real3_s045_a0.png,real3,45,after,65.8,6.5,941,157,15,0,0.81,0,app,,0,ok
+real3_s046_b0.png,real3,46,before,37.9,23.9,596,67,12.6,9,0.82,9,app,,9,ok
+real3_s046_b1.png,real3,46,before,65.8,6.5,941,157,15,0,0.81,0,app,,0,ok
+real3_s046_a0.png,real3,46,after,13.8,35.7,370,21,11.4,9,0.68,9,app,,9,ok
+real3_s046_a1.png,real3,46,after,48.5,27.5,701,51,12.1,0,0.97,0,app,,0,ok
+real3_s047_b0.png,real3,47,before,13.8,35.7,370,21,11.4,9,0.68,9,app,,9,ok
+real3_s047_b1.png,real3,47,before,48.5,27.5,701,51,12.1,0,0.97,0,app,,0,ok
+real3_s047_a0.png,real3,47,after,41.2,4.7,640,171,15.6,0,0.89,0,app,,0,ok
+real3_s048_b0.png,real3,48,before,20,36.3,430,19,11.3,4,0.53,9,app,,4,fixed
+real3_s048_b1.png,real3,48,before,41.2,4.7,639,171,15.5,0,0.89,0,app,,0,ok
+real3_s048_a0.png,real3,48,after,20,36.4,430,18,11.3,4,0.53,9,app,,4,fixed
+real3_s048_a1.png,real3,48,after,42.7,21.1,647,79,12.9,0,0.93,0,app,,0,ok
+real3_s049_b0.png,real3,49,before,20,36.3,430,19,11.3,9,1,9,app,,9,ok
+real3_s049_b1.png,real3,49,before,42.8,21.2,647,79,12.9,0,0.93,0,app,,0,ok
+real3_s049_a0.png,real3,49,after,6.6,19.8,253,87,13.3,9,0.67,9,app,,9,ok
+real3_s049_a1.png,real3,49,after,13.4,5.9,284,166,15.6,0,0.93,0,app,,0,ok
+real3_s050_b0.png,real3,50,before,6.5,19.8,253,87,13.3,9,0.67,9,app,,9,ok
+real3_s050_b1.png,real3,50,before,13.4,6.1,284,165,15.6,0,0.93,0,app,,0,ok
+real3_s050_a0.png,real3,50,after,13.8,24.9,347,64,12.6,9,0.81,9,app,,9,ok
+real3_s050_a1.png,real3,50,after,33.4,10.5,543,136,14.6,1,0.54,0,app,,1,fixed
+real3_s051_b0.png,real3,51,before,13.8,24.8,347,64,12.6,9,0.81,9,app,,9,ok
+real3_s051_b1.png,real3,51,before,33.4,10.4,544,136,14.6,0,1,0,app,,0,ok
+real3_s051_a0.png,real3,51,after,31.8,17.9,529,95,13.4,0,0.88,0,app,,0,ok
+real4_s001_b0.png,real4,1,before,30.5,32.2,556,38,11.9,0,0.93,0,drill,,0,ok
+real4_s001_b1.png,real4,1,before,10.4,10.6,293,144,15.1,1,1,1,sure,on ring,1,ok
+real4_s001_a0.png,real4,1,after,16.5,23,399,77,13.1,0,0.84,0,drill,,0,ok
+real4_s002_b0.png,real4,2,before,29.6,29.5,545,49,12.2,1,1,1,sure,on ring,1,ok
+real4_s002_b1.png,real4,2,before,57.5,23.7,837,77,12.8,0,1,0,drill,,0,ok
+real4_s002_b2.png,real4,2,before,75.1,15.9,1056,118,13.9,,0,nb,drill,extra blob,nb,ok
+real4_s002_b3.png,real4,2,before,70.5,18.3,994,105,13.5,,0,nb,drill,extra blob,nb,ok
+real4_s002_b4.png,real4,2,before,74.7,21.4,1027,89,13.1,,0,nb,drill,extra blob,nb,ok
+real4_s002_b5.png,real4,2,before,72.4,18,1016,106,13.6,,0,nb,drill,extra blob,nb,ok
+real4_s002_b6.png,real4,2,before,73.7,23.2,1008,81,12.8,,0,nb,drill,extra blob,nb,ok
+real4_s002_b7.png,real4,2,before,74.2,17.5,1038,109,13.6,,0,nb,drill,extra blob,nb,ok
+real4_s002_a0.png,real4,2,after,21.7,33.6,472,32,11.8,0,0.85,0,drill,,0,ok
+real4_s003_b0.png,real4,3,before,48.5,33.1,730,36,11.7,0,1,0,drill,,0,ok
+real4_s003_b1.png,real4,3,before,41.3,8.1,677,163,15.4,1,1,1,sure,on ring,1,ok
+real4_s003_a0.png,real4,3,after,46.9,31.6,717,42,11.9,0,0.89,0,drill,,0,ok
+real4_s004_b0.png,real4,4,before,47,31.6,717,42,11.9,0,0.89,0,app,,0,ok
+real4_s004_a0.png,real4,4,after,33.8,24.5,587,71,12.8,0,0.84,0,app,,0,ok
+real4_s005_b0.png,real4,5,before,2.8,23,251,76,13.1,2,0.77,nb,drill,,2,fixed
+real4_s005_b1.png,real4,5,before,9.8,22,324,81,13.3,,0,nb,drill,extra blob,nb,ok
+real4_s005_b2.png,real4,5,before,5.3,25.5,287,64,12.8,,0,nb,drill,extra blob,nb,ok
+real4_s005_b3.png,real4,5,before,3.1,26.5,267,60,12.7,,0,nb,drill,extra blob,nb,ok
+real4_s005_b4.png,real4,5,before,7.4,24.9,307,67,12.9,,0,nb,drill,extra blob,nb,ok
+real4_s005_b5.png,real4,5,before,33.8,24.5,587,71,12.8,0,0.84,0,drill,,0,ok
+real4_s005_a0.png,real4,5,after,59.5,29.4,844,52,12.1,0,0.9,0,drill,,0,ok
+real4_s006_b0.png,real4,6,before,42.4,28,675,57,12.4,0,1,0,drill,,0,ok
+real4_s006_b1.png,real4,6,before,66.7,10,986,152,14.9,2,1,2,sure,on ring,2,ok
+real4_s006_a0.png,real4,6,after,40.4,6.5,667,173,15.7,0,0.91,0,drill,,0,ok
+real4_s007_b0.png,real4,7,before,14.1,32.9,396,34,11.9,2,1,2,sure,on ring,2,ok
+real4_s007_b1.png,real4,7,before,40.4,6.5,667,173,15.7,0,0.91,0,drill,,0,ok
+real4_s008_b0.png,real4,8,before,13.6,31.7,389,39,12,2,1,2,sure,on ring,2,ok
+real4_s008_b1.png,real4,8,before,42,24.6,673,72,12.8,0,0.88,0,drill,,0,ok
+real4_s008_a0.png,real4,8,after,20.9,16.4,436,111,14,0,0.94,0,drill,,0,ok
+real4_s009_b0.png,real4,9,before,47.7,31.3,725,43,11.9,3,1,3,sure,on ring,3,ok
+real4_s009_b1.png,real4,9,before,5.9,20.3,275,89,13.5,,0,nb,drill,extra blob,nb,ok
+real4_s009_b2.png,real4,9,before,2.8,19,235,96,13.7,,0,nb,drill,extra blob,nb,ok
+real4_s009_b3.png,real4,9,before,3,22.4,251,79,13.2,,0,nb,drill,extra blob,nb,ok
+real4_s009_b4.png,real4,9,before,4.9,19,259,96,13.7,,0,nb,drill,extra blob,nb,ok
+real4_s009_b5.png,real4,9,before,19.9,23.6,438,74,13,0,0.93,0,drill,,0,ok
+real4_s009_a0.png,real4,9,after,55,29.9,799,50,12.1,0,0.9,0,drill,,0,ok
+real4_s010_b0.png,real4,10,before,29.5,33.2,547,34,11.8,0,1,0,drill,,0,ok
+real4_s010_b1.png,real4,10,before,36.4,8.5,615,160,15.3,3,1,3,sure,on ring,3,ok
+real4_s010_a0.png,real4,10,after,44.3,36.7,688,23,11.4,0,0.58,0,drill,,0,ok
+real4_s011_b0.png,real4,11,before,56.3,32.9,808,39,11.9,3,1,3,sure,on ring,3,ok
+real4_s011_b1.png,real4,11,before,25.8,26.6,502,63,12.6,0,1,0,drill,,0,ok
+real4_s011_a0.png,real4,11,after,53.4,33.3,779,37,11.8,0,0.9,0,drill,,0,ok
+real4_s012_b0.png,real4,12,before,53.5,32.7,779,41,11.9,0,1,0,drill,,0,ok
+real4_s012_b1.png,real4,12,before,69.8,10.1,1029,160,15,4,1,4,sure,on ring,4,ok
+real4_s012_a0.png,real4,12,after,63.8,22.4,910,89,13.1,0,0.95,0,drill,,0,ok
+real4_s013_b0.png,real4,13,before,20.5,30.9,444,46,12.2,4,1,4,sure,on ring,4,ok
+real4_s013_b1.png,real4,13,before,48.3,16.7,749,119,14,0,0.9,0,drill,,0,ok
+real4_s013_a0.png,real4,13,after,30.9,27.9,549,60,12.5,0,0.94,0,drill,,0,ok
+real4_s014_b0.png,real4,14,before,28.4,30.4,524,49,12.2,0,0.95,0,drill,,0,ok
+real4_s014_b1.png,real4,14,before,12.8,12.8,319,140,14.7,4,1,4,sure,on ring,4,ok
+real4_s014_a0.png,real4,14,after,21.1,19.1,433,104,13.7,0,0.89,0,drill,,0,ok
+real4_s015_b0.png,real4,15,before,48.8,29.5,734,54,12.3,0,0.96,0,drill,,0,ok
+real4_s015_b1.png,real4,15,before,42.2,10.7,683,155,15,5,1,5,sure,on ring,5,ok
+real4_s015_a0.png,real4,15,after,44.1,13.9,703,135,14.5,0,0.9,0,drill,,0,ok
+real4_s016_b0.png,real4,16,before,58.7,34.2,827,37,11.7,5,1,5,sure,on ring,5,ok
+real4_s016_b1.png,real4,16,before,43.9,13.9,702,136,14.4,0,0.9,0,drill,,0,ok
+real4_s016_a0.png,real4,16,after,29.2,31.4,537,46,12.1,,0,nb,drill,extra blob,nb,ok
+real4_s016_a1.png,real4,16,after,31.8,35.8,564,28,11.6,,0,nb,drill,extra blob,nb,ok
+real4_s016_a2.png,real4,16,after,31.1,29,555,56,12.4,,0,nb,drill,extra blob,nb,ok
+real4_s016_a3.png,real4,16,after,29.7,35.8,543,28,11.7,0,0.95,nb,drill,,0,fixed
+real4_s016_a4.png,real4,16,after,31.1,32.4,556,42,12,,0,nb,drill,extra blob,nb,ok
+real4_s016_a5.png,real4,16,after,58.6,33.9,827,38,11.8,,0,5,drill,extra blob,nb,fixed
+real4_s016_a6.png,real4,16,after,30.7,23.9,549,80,13,,0,0,drill,extra blob,nb,fixed
+real4_s017_b0.png,real4,17,before,58.6,33.9,827,38,11.8,5,1,5,sure,on ring,5,ok
+real4_s017_b1.png,real4,17,before,10.4,20.1,314,98,13.7,,0,nb,drill,extra blob,nb,ok
+real4_s017_b2.png,real4,17,before,2.5,21.5,228,90,13.5,,0,nb,drill,extra blob,nb,ok
+real4_s017_b3.png,real4,17,before,6.4,22.4,276,85,13.3,,0,nb,drill,extra blob,nb,ok
+real4_s017_b4.png,real4,17,before,2.8,24.1,242,76,13.1,,0,nb,drill,extra blob,nb,ok
+real4_s017_b5.png,real4,17,before,4.9,21.4,256,90,13.5,,0,nb,drill,extra blob,nb,ok
+real4_s017_b6.png,real4,17,before,8.7,21.2,298,92,13.5,,0,nb,drill,extra blob,nb,ok
+real4_s017_b7.png,real4,17,before,30.8,23.9,549,80,13,0,0.98,0,drill,,0,ok
+real4_s017_a0.png,real4,17,after,69.3,24.6,961,81,12.8,0,0.88,0,drill,,0,ok
+real4_s018_b0.png,real4,18,before,46.5,29.1,713,57,12.3,0,1,0,drill,,0,ok
+real4_s018_b1.png,real4,18,before,66,8.8,988,172,15.2,5,1,5,sure,on ring,5,ok
+real4_s018_a0.png,real4,18,after,54,9.6,835,165,15.1,0,0.96,0,drill,,0,ok
+real4_s019_b0.png,real4,19,before,22.7,30.5,465,48,12.3,6,1,6,sure,on ring,6,ok
+real4_s019_b1.png,real4,19,before,51.4,21.4,776,94,13.3,0,0.95,0,drill,,0,ok
+real4_s019_a0.png,real4,19,after,21.5,33.8,457,34,11.9,0,0.9,0,drill,,0,ok
+real4_s020_b0.png,real4,20,before,5.6,36.9,305,21,11.6,6,0.2,nb,app,,6,fixed
+real4_s020_b1.png,real4,20,before,21.5,33.8,457,34,11.9,0,0.9,0,app,,0,ok
+real4_s020_a0.png,real4,20,after,31.7,29.4,558,54,12.4,0,0.9,0,app,,0,ok
+real4_s020_a1.png,real4,20,after,10.8,10.1,283,158,15.2,6,1,6,app,,6,ok
+real4_s021_b0.png,real4,21,before,31.7,29.4,558,54,12.4,0,0.9,0,drill,,0,ok
+real4_s021_b1.png,real4,21,before,10.8,10.2,283,158,15.2,6,1,6,sure,on ring,6,ok
+real4_s021_a0.png,real4,21,after,15.8,16.6,364,118,14.1,0,0.83,0,drill,,0,ok
+real4_s022_b0.png,real4,22,before,28,32.2,521,41,12.1,6,1,6,sure,on ring,6,ok
+real4_s022_b1.png,real4,22,before,2.3,24.8,235,73,13,,0,nb,drill,extra blob,nb,ok
+real4_s022_b2.png,real4,22,before,7.8,22.7,288,84,13.3,,0,nb,drill,extra blob,nb,ok
+real4_s022_b3.png,real4,22,before,4,26.3,258,66,12.8,,0,nb,drill,extra blob,nb,ok
+real4_s022_b4.png,real4,22,before,6.2,22.1,268,88,13.4,,0,nb,drill,extra blob,nb,ok
+real4_s022_b5.png,real4,22,before,6.2,26.1,281,68,12.8,,0,nb,drill,extra blob,nb,ok
+real4_s022_b6.png,real4,22,before,4.2,23,249,83,13.3,,0,nb,drill,extra blob,nb,ok
+real4_s022_b7.png,real4,22,before,15.8,16.6,364,118,14.1,0,0.83,0,drill,,0,ok
+real4_s022_a0.png,real4,22,after,28,32.2,521,42,12.1,6,0.9,6,drill,,6,ok
+real4_s023_b0.png,real4,23,before,29.2,31.2,534,46,12.2,6,1,6,sure,on ring,6,ok
+real4_s023_b1.png,real4,23,before,57.4,22.6,839,88,13.2,0,0.93,0,drill,,0,ok
+real4_s023_a0.png,real4,23,after,38.6,29.6,630,53,12.3,0,0.93,0,drill,,0,ok
+real4_s024_b0.png,real4,24,before,64.4,34.8,880,34,11.7,7,1,7,sure,on ring,7,ok
+real4_s024_b1.png,real4,24,before,38.6,29.6,630,53,12.3,0,0.93,0,drill,,0,ok
+real4_s024_a0.png,real4,24,after,59.2,31.7,836,46,12,0,0.9,0,drill,,0,ok
+real4_s025_b0.png,real4,25,before,59.2,31.6,836,46,12,0,0.9,0,app,,0,ok
+real4_s025_a0.png,real4,25,after,53,31.7,774,45,12.1,0,1,0,app,,0,ok
+real4_s025_a1.png,real4,25,after,68.6,14.2,994,135,14.3,7,0.52,7,app,,7,ok
+real4_s026_b0.png,real4,26,before,53,31.6,774,46,12.1,0,1,0,drill,,0,ok
+real4_s026_b1.png,real4,26,before,70,8.7,1039,171,15.2,7,1,7,sure,on ring,7,ok
+real4_s026_a0.png,real4,26,after,64.8,19.1,932,107,13.6,0,0.91,0,drill,,0,ok
+real4_s027_b0.png,real4,27,before,15.9,35.5,413,25,11.6,7,1,7,sure,on ring,7,ok
+real4_s027_b1.png,real4,27,before,65.3,19,932,101,13.5,0,0.91,0,drill,,0,ok
+real4_s027_a0.png,real4,27,after,46.4,23.7,717,77,12.9,0,0.93,0,drill,,0,ok
+real4_s028_b0.png,real4,28,before,18.7,34.5,439,29,11.7,7,1,7,sure,on ring,7,ok
+real4_s028_b1.png,real4,28,before,46.4,23.6,717,77,12.9,0,0.93,0,drill,,0,ok
+real4_s028_b2.png,real4,28,before,75,15,1057,124,14,,0,nb,drill,extra blob,nb,ok
+real4_s028_b3.png,real4,28,before,72.1,15.8,1020,119,13.9,,0,nb,drill,extra blob,nb,ok
+real4_s028_b4.png,real4,28,before,74.7,18.4,1037,106,13.5,,0,nb,drill,extra blob,nb,ok
+real4_s028_a0.png,real4,28,after,31,22.2,552,83,13.1,0,0.92,0,drill,,0,ok
+real4_s029_b0.png,real4,29,before,51.7,36.4,754,24,11.4,,0,nb,drill,extra blob,nb,ok
+real4_s029_b1.png,real4,29,before,42.4,34.3,667,32,11.6,,0,nb,drill,extra blob,nb,ok
+real4_s029_b2.png,real4,29,before,47.2,35.3,713,28,11.5,,0,nb,drill,extra blob,nb,ok
+real4_s029_b3.png,real4,29,before,45.1,35.4,692,28,11.5,,0,nb,drill,extra blob,nb,ok
+real4_s029_b4.png,real4,29,before,49.6,35.8,735,27,11.5,,0,nb,drill,extra blob,nb,ok
+real4_s029_b5.png,real4,29,before,43.7,32.7,681,38,11.8,,0,nb,drill,extra blob,nb,ok
+real4_s029_b6.png,real4,29,before,29.2,25.1,534,69,12.8,0,0.96,0,drill,,0,ok
+real4_s029_b7.png,real4,29,before,7.7,7.1,240,168,15.7,8,1,8,sure,on ring,8,ok
+real4_s029_a0.png,real4,29,after,2.8,21.6,241,83,13.4,0,0.87,0,drill,,0,ok
+real4_s030_b0.png,real4,30,before,49.8,28.6,746,55,12.3,8,1,8,sure,on ring,8,ok
+real4_s030_b1.png,real4,30,before,8.5,20,299,92,13.6,,0,nb,drill,extra blob,nb,ok
+real4_s030_b2.png,real4,30,before,2.7,20.5,236,89,13.5,,0,nb,drill,extra blob,nb,ok
+real4_s030_b3.png,real4,30,before,4.7,22.2,264,80,13.3,,0,nb,drill,extra blob,nb,ok
+real4_s030_b4.png,real4,30,before,5.7,18.5,262,100,13.8,,0,nb,drill,extra blob,nb,ok
+real4_s030_b5.png,real4,30,before,4.9,18.3,252,101,13.8,,0,nb,drill,extra blob,nb,ok
+real4_s030_b6.png,real4,30,before,22.5,22.3,460,82,13.2,0,0.99,0,drill,,0,ok
+real4_s030_a0.png,real4,30,after,47.9,23.1,734,80,13,0,0.9,0,drill,,0,ok
+real4_s031_b0.png,real4,31,before,29.3,34.3,541,30,11.7,0,0.92,0,drill,,0,ok
+real4_s031_b1.png,real4,31,before,35.2,9,597,158,15.2,8,1,8,sure,on ring,8,ok
+real4_s031_a0.png,real4,31,after,26.7,34.8,517,28,11.6,0,0.88,0,drill,,0,ok
+real4_s032_b0.png,real4,32,before,47.7,30.6,722,47,12,0,1,0,drill,,0,ok
+real4_s032_b1.png,real4,32,before,67.1,9.2,992,158,15,9,1,9,sure,on ring,9,ok
+real4_s032_a0.png,real4,32,after,54,7.1,836,171,15.5,0,0.91,0,drill,,0,ok
+real4_s033_b0.png,real4,33,before,13.4,35.8,390,23,11.6,9,1,9,sure,on ring,9,ok
+real4_s033_b1.png,real4,33,before,41.5,26.6,663,63,12.5,0,1,0,drill,,0,ok
+real4_s033_a0.png,real4,33,after,20.2,28.1,444,55,12.4,0,0.91,0,drill,,0,ok
+real4_s034_b0.png,real4,34,before,26,29.8,505,48,12.2,0,0.94,0,drill,,0,ok
+real4_s034_b1.png,real4,34,before,9.4,9.7,272,151,15.2,9,1,9,sure,on ring,9,ok
+real4_s034_a0.png,real4,34,after,23.6,15.4,461,118,14.2,0,0.97,0,drill,,0,ok
+real5_s001_b0.png,real5,1,before,68.9,36.2,912,27,11.4,9,0.74,nb,app,,9,fixed
+real5_s001_b1.png,real5,1,before,66.9,35.7,895,29,11.4,7,0.7,nb,app,,7,fixed
+real5_s001_b2.png,real5,1,before,23.5,15.5,458,118,14.2,0,0.93,0,app,,0,ok
+real5_s001_b3.png,real5,1,before,62.8,9.6,935,156,15,5,0.89,5,app,,5,ok
+real5_s001_a0.png,real5,1,after,13.5,30.2,377,46,12.3,4,0.9,7,app,,4,fixed
+real5_s001_a1.png,real5,1,after,34.7,30.1,591,48,12.2,6,0.9,6,app,,6,ok
+real5_s001_a2.png,real5,1,after,59.7,28.6,843,56,12.2,3,0.9,3,app,,3,ok
+real5_s001_a3.png,real5,1,after,2.7,22.1,237,81,13.4,,0,5,app,,?,fixed
+real5_s001_a4.png,real5,1,after,71.9,20.5,995,95,13.2,,0,8,app,,?,fixed
+real5_s001_a5.png,real5,1,after,23.5,15.5,458,118,14.2,0,0.9,0,app,,0,ok
+real5_s001_a6.png,real5,1,after,41.2,15,665,122,14.2,,0,4,app,,?,fixed
+real5_s001_a7.png,real5,1,after,19,13,398,132,14.7,2,0.9,2,app,,2,ok
+real5_s001_a8.png,real5,1,after,62.8,9.5,935,156,15,5,0.9,5,app,,5,ok
+real5_s001_a9.png,real5,1,after,31.8,2.5,546,204,16.6,,0,?,app,,?,ok
+real5_s002_b0.png,real5,2,before,13.6,30.2,377,46,12.3,4,0.9,7,app,,4,fixed
+real5_s002_b1.png,real5,2,before,34.7,30.1,591,48,12.2,6,0.9,6,app,,6,ok
+real5_s002_b2.png,real5,2,before,59.7,28.6,843,56,12.2,3,0.9,3,app,,3,ok
+real5_s002_b3.png,real5,2,before,2.7,22.1,237,81,13.4,1,0.62,1,app,,1,ok
+real5_s002_b4.png,real5,2,before,71.9,20.5,995,95,13.2,8,0.81,8,app,,8,ok
+real5_s002_b5.png,real5,2,before,23.6,15.4,458,118,14.3,0,0.9,0,app,,0,ok
+real5_s002_b6.png,real5,2,before,41.2,15,665,122,14.2,7,0.63,4,app,,7,fixed
+real5_s002_b7.png,real5,2,before,19,13,398,132,14.7,2,0.9,2,app,,2,ok
+real5_s002_b8.png,real5,2,before,62.8,9.5,935,156,15,5,0.9,5,app,,5,ok
+real5_s002_b9.png,real5,2,before,31.8,2.5,546,204,16.6,9,0.88,?,app,,9,fixed
+real5_s002_a0.png,real5,2,after,13.5,30.2,377,46,12.3,4,0.9,7,app,,4,fixed
+real5_s002_a1.png,real5,2,after,34.7,30.1,591,48,12.2,6,0.9,6,app,,6,ok
+real5_s002_a2.png,real5,2,after,59.7,28.6,843,56,12.2,3,0.9,3,app,,3,ok
+real5_s002_a3.png,real5,2,after,2.7,22.1,237,81,13.4,1,0.9,1,app,,1,ok
+real5_s002_a4.png,real5,2,after,71.9,20.5,995,94,13.2,8,0.9,8,app,,8,ok
+real5_s002_a5.png,real5,2,after,23.5,15.4,458,118,14.2,0,0.9,0,app,,0,ok
+real5_s002_a6.png,real5,2,after,41.2,15,665,122,14.2,7,0.9,4,app,,7,fixed
+real5_s002_a7.png,real5,2,after,19,13,398,132,14.7,2,0.9,2,app,,2,ok
+real5_s002_a8.png,real5,2,after,62.8,9.5,935,156,15,5,0.9,5,app,,5,ok
+real5_s002_a9.png,real5,2,after,31.8,2.5,546,204,16.6,9,0.9,?,app,,9,fixed
+real5_s003_b0.png,real5,3,before,13.5,30.2,377,46,12.3,4,0.9,7,app,,4,fixed
+real5_s003_b1.png,real5,3,before,34.7,30.1,591,48,12.2,6,0.9,6,app,,6,ok
+real5_s003_b2.png,real5,3,before,59.7,28.6,843,56,12.2,3,0.9,3,app,,3,ok
+real5_s003_b3.png,real5,3,before,2.7,22.1,237,81,13.4,1,0.9,1,app,,1,ok
+real5_s003_b4.png,real5,3,before,71.9,20.5,995,95,13.2,8,0.9,8,app,,8,ok
+real5_s003_b5.png,real5,3,before,23.5,15.4,458,118,14.2,0,0.9,0,app,,0,ok
+real5_s003_b6.png,real5,3,before,41.2,15,665,122,14.2,7,0.9,4,app,,7,fixed
+real5_s003_b7.png,real5,3,before,19,13,398,132,14.7,2,0.9,2,app,,2,ok
+real5_s003_b8.png,real5,3,before,62.8,9.5,935,156,15,5,0.9,5,app,,5,ok
+real5_s003_b9.png,real5,3,before,31.8,2.5,546,204,16.6,9,0.9,?,app,,9,fixed
+real5_s003_a0.png,real5,3,after,13.6,30.3,377,45,12.2,4,0.9,7,app,,4,fixed
+real5_s003_a1.png,real5,3,after,11.4,29.9,354,47,12.3,1,0.86,1,app,,1,ok
+real5_s003_a2.png,real5,3,after,34.7,30.1,591,48,12.2,6,0.9,6,app,,6,ok
+real5_s003_a3.png,real5,3,after,59.7,28.6,843,56,12.2,3,0.9,3,app,,3,ok
+real5_s003_a4.png,real5,3,after,71.9,20.5,995,95,13.2,8,0.9,8,app,,8,ok
+real5_s003_a5.png,real5,3,after,7.2,18.8,276,99,13.8,0,0.87,0,app,,0,ok
+real5_s003_a6.png,real5,3,after,41.2,15,665,121,14.2,7,0.9,4,app,,7,fixed
+real5_s003_a7.png,real5,3,after,19,13,398,132,14.7,2,0.9,2,app,,2,ok
+real5_s003_a8.png,real5,3,after,62.8,9.5,935,156,15,5,0.9,5,app,,5,ok
+real5_s003_a9.png,real5,3,after,31.8,2.5,546,204,16.6,9,0.9,?,app,,9,fixed
+real5_s004_b0.png,real5,4,before,13.7,30,378,47,12.3,4,0.9,7,app,,4,fixed
+real5_s004_b1.png,real5,4,before,34.7,29.8,591,50,12.2,6,0.9,6,app,,6,ok
+real5_s004_b2.png,real5,4,before,59.6,28.4,843,58,12.3,3,0.9,3,app,,3,ok
+real5_s004_b3.png,real5,4,before,8.1,27,312,60,12.7,1,0.92,1,app,,1,ok
+real5_s004_b4.png,real5,4,before,71.8,20.3,995,97,13.2,8,0.9,8,app,,8,ok
+real5_s004_b5.png,real5,4,before,41.2,14.9,665,123,14.2,7,0.9,4,app,,7,fixed
+real5_s004_b6.png,real5,4,before,11.7,13.1,308,132,14.7,0,0.83,0,app,,0,ok
+real5_s004_b7.png,real5,4,before,19,12.8,398,134,14.7,2,0.9,2,app,,2,ok
+real5_s004_b8.png,real5,4,before,62.7,9.4,935,158,15,5,0.9,5,app,,5,ok
+real5_s004_b9.png,real5,4,before,31.8,2.4,546,206,16.6,9,0.9,?,app,,9,fixed
+real5_s004_a0.png,real5,4,after,40.3,33.6,645,35,11.8,,0,0,app,,?,fixed
+real5_s004_a1.png,real5,4,after,13.8,29.9,378,48,12.3,4,0.9,7,app,,4,fixed
+real5_s004_a2.png,real5,4,after,34.7,29.7,591,50,12.2,6,0.9,6,app,,6,ok
+real5_s004_a3.png,real5,4,after,59.6,28.3,843,58,12.3,3,0.9,3,app,,3,ok
+real5_s004_a4.png,real5,4,after,71.8,20.2,995,97,13.3,8,0.9,8,app,,8,ok
+real5_s004_a5.png,real5,4,after,41.2,14.9,665,123,14.2,7,0.9,4,app,,7,fixed
+real5_s004_a6.png,real5,4,after,19,12.8,398,134,14.7,2,0.9,2,app,,2,ok
+real5_s004_a7.png,real5,4,after,62.7,9.4,935,158,15,5,0.9,5,app,,5,ok
+real5_s004_a8.png,real5,4,after,31.8,2.4,546,206,16.6,9,0.9,?,app,,9,fixed
+real5_s005_b0.png,real5,5,before,48.3,36.3,720,26,11.4,0,0.93,0,app,,0,ok
+real5_s005_b1.png,real5,5,before,13.7,30,378,47,12.3,4,0.9,7,app,,4,fixed
+real5_s005_b2.png,real5,5,before,34.7,29.8,591,50,12.2,6,0.9,6,app,,6,ok
+real5_s005_b3.png,real5,5,before,59.6,28.4,843,58,12.3,3,0.9,3,app,,3,ok
+real5_s005_b4.png,real5,5,before,71.8,20.3,995,97,13.2,8,0.9,8,app,,8,ok
+real5_s005_b5.png,real5,5,before,41.2,14.9,665,123,14.2,7,0.9,4,app,,7,fixed
+real5_s005_b6.png,real5,5,before,19,12.9,398,134,14.7,2,0.9,2,app,,2,ok
+real5_s005_b7.png,real5,5,before,62.7,9.4,935,158,15,5,0.9,5,app,,5,ok
+real5_s005_b8.png,real5,5,before,31.8,2.4,546,206,16.6,9,0.9,?,app,,9,fixed
+real5_s005_a0.png,real5,5,after,13.8,30,378,47,12.3,4,0.9,7,app,,4,fixed
+real5_s005_a1.png,real5,5,after,34.7,29.8,591,50,12.2,6,0.9,6,app,,6,ok
+real5_s005_a2.png,real5,5,after,59.7,28.4,843,58,12.3,3,0.9,3,app,,3,ok
+real5_s005_a3.png,real5,5,after,71.8,20.3,995,97,13.2,8,0.9,8,app,,8,ok
+real5_s005_a4.png,real5,5,after,41.2,14.9,665,123,14.2,7,0.9,4,app,,7,fixed
+real5_s005_a5.png,real5,5,after,62.7,9.4,935,158,15,5,0.9,5,app,,5,ok
+real5_s005_a6.png,real5,5,after,41,9.3,666,157,15.2,2,0.62,2,app,,2,ok
+real5_s005_a7.png,real5,5,after,63.8,5.4,965,185,15.7,9,0.78,9,app,,9,ok
+real5_s006_b0.png,real5,6,before,13.7,30,378,47,12.3,4,0.9,7,app,,4,fixed
+real5_s006_b1.png,real5,6,before,34.7,29.8,591,50,12.2,6,0.9,6,app,,6,ok
+real5_s006_b2.png,real5,6,before,59.7,28.4,843,58,12.3,3,0.9,3,app,,3,ok
+real5_s006_b3.png,real5,6,before,71.8,20.3,995,96,13.2,8,0.9,8,app,,8,ok
+real5_s006_b4.png,real5,6,before,41.2,14.9,665,123,14.2,7,0.9,4,app,,7,fixed
+real5_s006_b5.png,real5,6,before,62.7,9.4,935,158,15,5,0.9,5,app,,5,ok
+real5_s006_b6.png,real5,6,before,40.9,9.2,666,158,15.2,2,0.62,2,app,,2,ok
+real5_s006_b7.png,real5,6,before,63.8,5.4,965,185,15.7,9,0.78,9,app,,9,ok
+real5_s006_b8.png,real5,6,before,33.2,4.3,567,192,16.2,0,0.79,0,app,,0,ok
+real5_s006_b9.png,real5,6,before,4,1.5,154,212,17.1,1,0.3,nb,app,,1,fixed
+real5_s006_a0.png,real5,6,after,13.7,30,378,47,12.3,4,0.9,7,app,,4,fixed
+real5_s006_a1.png,real5,6,after,34.7,29.8,591,50,12.2,6,0.9,6,app,,6,ok
+real5_s006_a2.png,real5,6,after,59.7,28.4,843,58,12.3,3,0.9,3,app,,3,ok
+real5_s006_a3.png,real5,6,after,71.8,20.3,995,96,13.2,8,0.9,8,app,,8,ok
+real5_s006_a4.png,real5,6,after,41.2,14.9,665,123,14.2,7,0.9,4,app,,7,fixed
+real5_s006_a5.png,real5,6,after,62.7,9.4,935,158,15,5,0.9,5,app,,5,ok
+real5_s006_a6.png,real5,6,after,40.8,7.7,665,168,15.5,0,0.9,0,app,,0,ok
+real5_s006_a7.png,real5,6,after,63.8,5.4,965,185,15.7,9,0.9,9,app,,9,ok
+real5_s007_a0.png,real5,7,after,52,27.2,768,63,12.4,,0,0,app,,?,fixed
+real5_s007_a1.png,real5,7,after,51.3,31.6,755,44,11.9,3,0.93,3,app,,3,ok
+real5_s007_a2.png,real5,7,after,34.7,29.9,591,50,12.2,6,0.9,6,app,,6,ok
+real5_s007_a3.png,real5,7,after,71.8,20.3,995,96,13.2,8,0.9,8,app,,8,ok
+real5_s007_a4.png,real5,7,after,41.2,14.8,665,124,14.2,7,0.9,4,app,,7,fixed
+real5_s007_a5.png,real5,7,after,62.7,9.4,935,158,15,5,0.9,5,app,,5,ok
+real5_s007_a6.png,real5,7,after,63.8,5.5,965,184,15.7,9,0.9,9,app,,9,ok
+real5_s008_a0.png,real5,8,after,13.7,30,378,47,12.3,4,0.9,7,app,,4,fixed
+real5_s008_a1.png,real5,8,after,34.7,29.8,591,50,12.2,6,0.9,6,app,,6,ok
+real5_s008_a2.png,real5,8,after,50.1,28.2,747,58,12.3,0,0.96,0,app,,0,ok
+real5_s008_a3.png,real5,8,after,71.8,20.3,995,96,13.2,8,0.9,8,app,,8,ok
+real5_s008_a4.png,real5,8,after,41.2,14.8,665,124,14.2,7,0.9,4,app,,7,fixed
+real5_s008_a5.png,real5,8,after,62.7,9.4,935,158,15,5,0.9,5,app,,5,ok
+real5_s008_a6.png,real5,8,after,63.8,5.5,965,184,15.7,9,0.9,9,app,,9,ok
+real5_s009_a0.png,real5,9,after,13.8,29.9,378,48,12.3,4,0.9,7,app,,4,fixed
+real5_s009_a1.png,real5,9,after,34.7,29.7,591,50,12.2,6,0.9,6,app,,6,ok
+real5_s009_a2.png,real5,9,after,50.1,28.1,747,58,12.3,0,0.9,0,app,,0,ok
+real5_s009_a3.png,real5,9,after,71.8,20.2,995,97,13.2,8,0.9,8,app,,8,ok
+real5_s009_a4.png,real5,9,after,41.2,14.9,665,123,14.2,7,0.9,4,app,,7,fixed
+real5_s009_a5.png,real5,9,after,62.7,9.4,934,158,15,5,0.9,5,app,,5,ok
+real5_s009_a6.png,real5,9,after,63.8,5.5,965,184,15.7,9,0.9,9,app,,9,ok
+real5_s010_b0.png,real5,10,before,13.7,30.1,378,47,12.3,7,1,7,app,,7,ok
+real5_s010_b1.png,real5,10,before,34.7,29.9,590,50,12.2,6,0.9,6,app,,6,ok
+real5_s010_b2.png,real5,10,before,50,28.3,747,58,12.3,0,0.9,0,app,,0,ok
+real5_s010_b3.png,real5,10,before,71.8,20.3,995,96,13.2,8,0.9,8,app,,8,ok
+real5_s010_b4.png,real5,10,before,41.2,14.9,665,123,14.2,4,1,4,app,,4,ok
+real5_s010_b5.png,real5,10,before,62.7,9.5,935,157,15,5,0.9,5,app,,5,ok
+real5_s010_b6.png,real5,10,before,63.8,5.6,965,184,15.7,9,0.9,9,app,,9,ok
+real5_s010_a0.png,real5,10,after,13.7,30.1,378,47,12.3,7,0.9,7,app,,7,ok
+real5_s010_a1.png,real5,10,after,34.7,29.9,590,50,12.2,6,0.9,6,app,,6,ok
+real5_s010_a2.png,real5,10,after,71.8,20.3,995,96,13.2,8,0.9,8,app,,8,ok
+real5_s010_a3.png,real5,10,after,62.7,9.5,935,157,15,5,0.9,5,app,,5,ok
+real5_s010_a4.png,real5,10,after,30.8,7.4,538,170,15.6,0,0.76,0,app,,0,ok
+real5_s010_a5.png,real5,10,after,63.8,5.6,965,184,15.7,9,0.9,9,app,,9,ok
+real5_s011_b0.png,real5,11,before,13.7,30.1,378,47,12.3,7,0.9,7,app,,7,ok
+real5_s011_b1.png,real5,11,before,34.7,29.9,590,50,12.2,6,0.9,6,app,,6,ok
+real5_s011_b2.png,real5,11,before,71.8,20.3,995,96,13.2,8,0.9,8,app,,8,ok
+real5_s011_b3.png,real5,11,before,62.7,9.5,935,157,15,5,0.9,5,app,,5,ok
+real5_s011_b4.png,real5,11,before,30.8,7.4,538,169,15.6,0,0.76,0,app,,0,ok
+real5_s011_b5.png,real5,11,before,63.8,5.6,965,183,15.7,9,0.9,9,app,,9,ok
+real5_s011_a0.png,real5,11,after,63.9,32.4,875,42,11.8,8,0.8,8,app,,8,ok
+real5_s011_a1.png,real5,11,after,13.7,30.1,378,47,12.3,7,0.9,7,app,,7,ok
+real5_s011_a2.png,real5,11,after,34.7,29.9,590,49,12.2,6,0.9,6,app,,6,ok
+real5_s011_a3.png,real5,11,after,70,27.8,949,61,12.3,0,0.91,0,app,,0,ok
+real5_s011_a4.png,real5,11,after,63.8,5.6,965,183,15.7,9,0.9,9,app,,9,ok
+real5_s012_b0.png,real5,12,before,63.9,32.4,875,42,11.8,8,0.8,8,app,,8,ok
+real5_s012_b1.png,real5,12,before,13.7,30.1,378,47,12.3,7,0.9,7,app,,7,ok
+real5_s012_b2.png,real5,12,before,34.7,29.9,590,50,12.2,6,0.9,6,app,,6,ok
+real5_s012_b3.png,real5,12,before,70,27.7,949,62,12.3,0,0.91,0,app,,0,ok
+real5_s012_b4.png,real5,12,before,63.8,5.6,965,184,15.7,9,0.9,9,app,,9,ok
+real5_s012_a0.png,real5,12,after,2.4,32.8,271,35,12,6,0.76,6,app,,6,ok
+real5_s012_a1.png,real5,12,after,63.9,32.5,875,42,11.8,8,0.9,8,app,,8,ok
+real5_s012_a2.png,real5,12,after,13.7,30.1,378,47,12.3,7,0.9,7,app,,7,ok
+real5_s012_a3.png,real5,12,after,25.8,11.5,479,142,14.9,0,0.92,0,app,,0,ok
+real5_s012_a4.png,real5,12,after,63.8,5.6,965,183,15.7,9,0.9,9,app,,9,ok
+real5_s013_a0.png,real5,13,after,16.4,33.9,413,32,11.8,0,0.9,0,app,,0,ok
+real5_s013_a1.png,real5,13,after,63.9,32.4,875,42,11.8,8,0.9,8,app,,8,ok
+real5_s013_a2.png,real5,13,after,26.9,24.7,507,72,12.9,7,0.66,7,app,,7,ok
+real5_s013_a3.png,real5,13,after,63.8,5.6,965,184,15.7,9,0.9,9,app,,9,ok
+real5_s014_b0.png,real5,14,before,16.4,33.9,413,32,11.8,0,0.9,0,app,,0,ok
+real5_s014_b1.png,real5,14,before,63.9,32.4,875,42,11.8,8,0.9,8,app,,8,ok
+real5_s014_b2.png,real5,14,before,26.9,24.7,508,72,12.9,7,0.66,7,app,,7,ok
+real5_s014_b3.png,real5,14,before,63.8,5.6,965,183,15.7,9,0.9,9,app,,9,ok
+real5_s014_a0.png,real5,14,after,45.1,31.8,693,42,11.9,7,0.7,7,app,,7,ok
+real5_s014_a1.png,real5,14,after,63.9,32.5,875,42,11.8,8,0.9,8,app,,8,ok
+real5_s014_a2.png,real5,14,after,18.7,31.2,431,43,12.1,0,0.95,0,app,,0,ok
+real5_s014_a3.png,real5,14,after,63.8,5.6,965,184,15.7,9,0.9,9,app,,9,ok
+real5_s015_b0.png,real5,15,before,2.7,30.5,266,44,12.3,2,0.54,nb,app,,2,fixed
+real5_s015_b1.png,real5,15,before,3.6,32.2,281,37,12.1,4,0.19,nb,app,,4,fixed
+real5_s015_b2.png,real5,15,before,45.1,31.8,693,42,11.9,7,0.7,7,app,,7,ok
+real5_s015_b3.png,real5,15,before,63.9,32.4,875,42,11.8,8,0.9,8,app,,8,ok
+real5_s015_b4.png,real5,15,before,18.7,31.1,431,43,12.1,0,0.95,nb,app,,0,fixed
+real5_s015_b5.png,real5,15,before,63.8,5.6,965,184,15.7,9,0.9,9,app,,9,ok
+real5_s015_a0.png,real5,15,after,63.9,32.5,875,42,11.8,8,0.9,8,app,,8,ok
+real5_s015_a1.png,real5,15,after,42,25.7,666,69,12.7,0,0.97,0,app,,0,ok
+real5_s015_a2.png,real5,15,after,63.8,5.6,965,183,15.7,9,0.9,9,app,,9,ok
+real5_s016_a0.png,real5,16,after,41.2,25.9,658,68,12.7,0,0.9,0,app,,0,ok
+real5_s016_a1.png,real5,16,after,63.8,5.6,965,184,15.7,9,0.9,9,app,,9,ok
+real5_s017_b0.png,real5,17,before,41.2,25.9,658,68,12.7,0,0.9,0,app,,0,ok
+real5_s017_b1.png,real5,17,before,63.8,5.6,965,183,15.7,9,0.9,9,app,,9,ok
+real5_s017_a0.png,real5,17,after,42.4,19.3,676,99,13.5,0,0.97,0,app,,0,ok
+real5_s017_a1.png,real5,17,after,75,7.9,1093,168,15.2,9,0.6,9,app,,9,ok
+real5_s018_b0.png,real5,18,before,42.4,19.4,675,99,13.5,0,0.97,0,app,,0,ok
+real5_s018_b1.png,real5,18,before,75,7.9,1093,168,15.2,9,0.6,9,app,,9,ok
+real5_s018_a0.png,real5,18,after,70.4,10.4,1023,152,14.8,9,0.64,9,app,,9,ok
+real5_s018_a1.png,real5,18,after,34.6,8.6,587,161,15.4,0,0.92,0,app,,0,ok
+real5_s019_a0.png,real5,19,after,12.8,5.1,294,185,16.2,0,0.9,0,app,,0,ok
+real5_s020_b0.png,real5,20,before,54.6,31.1,788,46,12,7,0.75,7,app,,7,ok
+real5_s020_b1.png,real5,20,before,27.8,29.8,521,49,12.2,6,0.8,6,app,,6,ok
+real5_s020_b2.png,real5,20,before,41.6,28.6,661,56,12.3,1,0.95,1,app,,1,ok
+real5_s020_b3.png,real5,20,before,65.4,26.4,907,67,12.5,8,0.8,8,app,,8,ok
+real5_s020_b4.png,real5,20,before,16.5,21.9,389,84,13.3,4,0.93,4,app,,4,ok
+real5_s020_b5.png,real5,20,before,68.5,17.9,969,109,13.6,3,1,3,app,,3,ok
+real5_s020_b6.png,real5,20,before,53.1,17.7,798,108,13.7,2,1,2,app,,2,ok
+real5_s020_b7.png,real5,20,before,30.7,10.3,538,151,15.1,9,0.52,9,app,,9,ok
+real5_s020_b8.png,real5,20,before,59.7,6.1,911,180,15.6,5,0.86,5,app,,5,ok
+real5_s020_b9.png,real5,20,before,12.8,5.2,295,184,16.2,0,0.9,0,app,,0,ok
+real5_s020_a0.png,real5,20,after,54.6,31.1,788,46,12,7,0.9,7,app,,7,ok
+real5_s020_a1.png,real5,20,after,27.8,29.8,521,49,12.2,6,0.9,6,app,,6,ok
+real5_s020_a2.png,real5,20,after,41.6,28.6,661,56,12.3,1,0.9,1,app,,1,ok
+real5_s020_a3.png,real5,20,after,65.4,26.4,907,67,12.5,8,0.9,8,app,,8,ok
+real5_s020_a4.png,real5,20,after,16.5,21.9,389,84,13.3,4,0.9,4,app,,4,ok
+real5_s020_a5.png,real5,20,after,68.5,17.9,969,108,13.6,3,0.9,3,app,,3,ok
+real5_s020_a6.png,real5,20,after,46.5,17.2,723,111,13.8,0,0.9,0,app,,0,ok
+real5_s020_a7.png,real5,20,after,53.1,17.8,798,108,13.7,2,0.9,2,app,,2,ok
+real5_s020_a8.png,real5,20,after,30.7,10.3,538,150,15.1,9,0.9,9,app,,9,ok
+real5_s020_a9.png,real5,20,after,59.8,6.1,911,179,15.6,5,0.9,5,app,,5,ok
+real5_s021_b0.png,real5,21,before,54.6,31.1,788,46,12,7,0.9,7,app,,7,ok
+real5_s021_b1.png,real5,21,before,27.8,29.8,521,49,12.2,6,0.9,6,app,,6,ok
+real5_s021_b2.png,real5,21,before,41.6,28.6,661,56,12.3,1,0.9,1,app,,1,ok
+real5_s021_b3.png,real5,21,before,65.4,26.4,907,67,12.5,8,0.9,8,app,,8,ok
+real5_s021_b4.png,real5,21,before,16.5,21.9,389,84,13.3,4,0.9,4,app,,4,ok
+real5_s021_b5.png,real5,21,before,68.5,17.9,969,109,13.6,3,0.9,3,app,,3,ok
+real5_s021_b6.png,real5,21,before,46.5,17.1,724,111,13.8,0,0.9,0,app,,0,ok
+real5_s021_b7.png,real5,21,before,53.1,17.8,798,108,13.7,2,0.9,2,app,,2,ok
+real5_s021_b8.png,real5,21,before,30.7,10.3,538,151,15.1,9,0.9,9,app,,9,ok
+real5_s021_b9.png,real5,21,before,59.7,6.1,911,180,15.6,5,0.9,5,app,,5,ok
+real5_s021_a0.png,real5,21,after,54.6,31.1,788,46,12,7,0.9,7,app,,7,ok
+real5_s021_a1.png,real5,21,after,27.8,29.8,521,49,12.2,6,0.9,6,app,,6,ok
+real5_s021_a2.png,real5,21,after,65.4,26.4,907,67,12.5,8,0.9,8,app,,8,ok
+real5_s021_a3.png,real5,21,after,40.6,25.1,653,71,12.8,0,0.9,0,app,,0,ok
+real5_s021_a4.png,real5,21,after,16.5,21.9,389,84,13.3,4,0.9,4,app,,4,ok
+real5_s021_a5.png,real5,21,after,68.5,17.9,969,108,13.6,3,0.9,3,app,,3,ok
+real5_s021_a6.png,real5,21,after,53.2,17.8,798,108,13.7,2,0.9,2,app,,2,ok
+real5_s021_a7.png,real5,21,after,30.7,10.3,538,150,15.1,9,0.9,9,app,,9,ok
+real5_s021_a8.png,real5,21,after,59.7,6.1,911,180,15.6,5,0.9,5,app,,5,ok
+real5_s022_b0.png,real5,22,before,59.7,6.1,911,179,15.6,5,0.9,5,app,,5,ok
+real5_s022_b1.png,real5,22,before,30.7,10.3,538,151,15.1,9,0.9,9,app,,9,ok
+real5_s022_b2.png,real5,22,before,68.5,18,969,108,13.6,3,0.9,3,app,,3,ok
+real5_s022_b3.png,real5,22,before,53.1,17.8,798,108,13.7,2,0.9,2,app,,2,ok
+real5_s022_b4.png,real5,22,before,16.5,21.9,389,84,13.3,4,0.9,4,app,,4,ok
+real5_s022_b5.png,real5,22,before,54.6,31.1,788,46,12,7,0.9,7,app,,7,ok
+real5_s022_b6.png,real5,22,before,65.4,26.4,907,67,12.5,8,0.9,8,app,,8,ok
+real5_s022_b7.png,real5,22,before,40.6,25.1,653,71,12.8,0,0.9,0,app,,0,ok
+real5_s022_b8.png,real5,22,before,23.2,36.6,483,22,11.5,1,0.3,nb,app,,1,fixed
+real5_s022_b9.png,real5,22,before,27.8,29.9,521,49,12.2,6,0.9,6,app,,6,ok
+real5_s022_a0.png,real5,22,after,54.6,31.1,788,46,12,7,0.9,7,app,,7,ok
+real5_s022_a1.png,real5,22,after,27.8,29.8,521,49,12.2,6,0.9,6,app,,6,ok
+real5_s022_a2.png,real5,22,after,58.5,26.5,836,66,12.5,0,0.92,0,app,,0,ok
+real5_s022_a3.png,real5,22,after,65.4,26.4,907,67,12.5,8,0.9,8,app,,8,ok
+real5_s022_a4.png,real5,22,after,16.5,21.9,389,84,13.3,4,0.9,4,app,,4,ok
+real5_s022_a5.png,real5,22,after,68.5,17.9,969,108,13.6,3,0.9,3,app,,3,ok
+real5_s022_a6.png,real5,22,after,30.7,10.3,538,150,15.1,9,0.9,9,app,,9,ok
+real5_s022_a7.png,real5,22,after,59.7,6.1,911,180,15.6,5,0.9,5,app,,5,ok
+real5_s023_a0.png,real5,23,after,54.6,31.1,788,46,12,7,0.9,7,app,,7,ok
+real5_s023_a1.png,real5,23,after,27.8,29.8,521,49,12.2,6,0.9,6,app,,6,ok
+real5_s023_a2.png,real5,23,after,65.4,26.4,906,67,12.5,8,0.9,8,app,,8,ok
+real5_s023_a3.png,real5,23,after,16.5,21.9,389,84,13.3,4,0.9,4,app,,4,ok
+real5_s023_a4.png,real5,23,after,23,14.8,450,123,14.4,0,0.96,0,app,,0,ok
+real5_s023_a5.png,real5,23,after,30.7,10.3,538,150,15.1,9,0.9,9,app,,9,ok
+real5_s023_a6.png,real5,23,after,59.7,6.1,910,179,15.6,5,0.9,5,app,,5,ok
+real5_s024_b0.png,real5,24,before,54.6,31.1,788,46,12,7,0.9,7,app,,7,ok
+real5_s024_b1.png,real5,24,before,27.8,29.8,521,49,12.2,6,0.9,6,app,,6,ok
+real5_s024_b2.png,real5,24,before,65.4,26.4,907,67,12.5,8,0.9,8,app,,8,ok
+real5_s024_b3.png,real5,24,before,16.5,21.9,389,84,13.3,4,0.9,4,app,,4,ok
+real5_s024_b4.png,real5,24,before,23,14.8,450,123,14.4,0,0.96,0,app,,0,ok
+real5_s024_b5.png,real5,24,before,30.7,10.3,538,150,15.1,9,0.9,9,app,,9,ok
+real5_s024_b6.png,real5,24,before,59.8,6.1,911,179,15.6,5,0.9,5,app,,5,ok
+real5_s024_a0.png,real5,24,after,54.6,31.1,788,46,12,7,0.9,7,app,,7,ok
+real5_s024_a1.png,real5,24,after,27.8,29.8,521,49,12.2,6,0.9,6,app,,6,ok
+real5_s024_a2.png,real5,24,after,65.4,26.4,907,67,12.5,8,0.9,8,app,,8,ok
+real5_s024_a3.png,real5,24,after,30.7,10.1,538,152,15.1,9,0.9,9,app,,9,ok
+real5_s024_a4.png,real5,24,after,29.6,13.3,528,132,14.6,0,0.87,0,app,,0,ok
+real5_s024_a5.png,real5,24,after,59.8,6.1,911,180,15.6,5,0.83,5,app,,5,ok
+real5_s025_b0.png,real5,25,before,54.4,31,788,46,12,7,0.9,7,app,,7,ok
+real5_s025_b1.png,real5,25,before,27.7,29.8,521,49,12.3,6,0.9,6,app,,6,ok
+real5_s025_b2.png,real5,25,before,65.2,26.3,907,67,12.5,8,0.9,8,app,,8,ok
+real5_s025_b3.png,real5,25,before,30.8,10.2,539,151,15.1,9,0.9,9,app,,9,ok
+real5_s025_b4.png,real5,25,before,29.6,13.3,527,132,14.6,0,0.87,0,app,,0,ok
+real5_s025_b5.png,real5,25,before,59.6,6.1,911,179,15.7,5,0.83,5,app,,5,ok
+real5_s025_a0.png,real5,25,after,54.4,30.9,788,46,12,7,0.9,7,app,,7,ok
+real5_s025_a1.png,real5,25,after,27.7,29.8,521,49,12.3,6,0.9,6,app,,6,ok
+real5_s025_a2.png,real5,25,after,65.2,26.3,907,67,12.5,8,0.9,8,app,,8,ok
+real5_s025_a3.png,real5,25,after,57.9,13.9,863,130,14.3,0,0.93,0,app,,0,ok
+real5_s025_a4.png,real5,25,after,30.7,10.3,538,150,15.1,9,0.9,9,app,,9,ok
+real5_s026_b0.png,real5,26,before,54.4,31,788,46,12,7,0.9,7,app,,7,ok
+real5_s026_b1.png,real5,26,before,27.7,29.8,521,49,12.3,6,0.9,6,app,,6,ok
+real5_s026_b2.png,real5,26,before,65.2,26.3,906,67,12.5,8,0.9,8,app,,8,ok
+real5_s026_b3.png,real5,26,before,57.9,13.9,863,130,14.3,0,0.93,0,app,,0,ok
+real5_s026_b4.png,real5,26,before,30.7,10.3,538,150,15.1,9,0.9,9,app,,9,ok
+real5_s026_a0.png,real5,26,after,54.4,31,787,46,12,7,0.9,7,app,,7,ok
+real5_s026_a1.png,real5,26,after,35,26.6,594,64,12.6,0,0.94,0,app,,0,ok
+real5_s026_a2.png,real5,26,after,65.2,26.3,907,67,12.5,8,0.9,8,app,,8,ok
+real5_s026_a3.png,real5,26,after,30.7,10.3,538,151,15.1,9,0.9,9,app,,9,ok
+real5_s027_b0.png,real5,27,before,54.4,31,788,46,12,7,0.9,7,app,,7,ok
+real5_s027_b1.png,real5,27,before,35,26.6,594,64,12.6,0,0.94,0,app,,0,ok
+real5_s027_b2.png,real5,27,before,65.2,26.3,907,67,12.5,8,0.9,8,app,,8,ok
+real5_s027_b3.png,real5,27,before,30.7,10.3,538,150,15.1,9,0.9,9,app,,9,ok
+real5_s027_a0.png,real5,27,after,65.2,26.3,907,67,12.5,8,0.9,8,app,,8,ok
+real5_s027_a1.png,real5,27,after,57.3,21.1,838,91,13.3,0,0.97,0,app,,0,ok
+real5_s027_a2.png,real5,27,after,30.7,10.4,538,150,15.1,9,0.9,9,app,,9,ok
+real5_s028_a0.png,real5,28,after,54.5,23,804,81,13,0,0.83,0,app,,0,ok
+real5_s028_a1.png,real5,28,after,30.7,10.3,538,150,15.1,9,0.9,9,app,,9,ok
+real5_s029_b0.png,real5,29,before,74.8,30.3,990,50,12,2,0.51,nb,app,,2,fixed
+real5_s029_b1.png,real5,29,before,72.4,32.7,959,40,11.7,4,0.13,nb,app,,4,fixed
+real5_s029_b2.png,real5,29,before,73.9,31.8,976,44,11.8,7,0.74,nb,app,,7,fixed
+real5_s029_b3.png,real5,29,before,54.5,23.1,803,81,13,0,0.83,0,app,,0,ok
+real5_s029_b4.png,real5,29,before,30.7,10.3,538,150,15.1,9,0.9,9,app,,9,ok
+real5_s029_a0.png,real5,29,after,37.4,6.7,623,175,15.8,0,0.9,0,app,,0,ok
+real5_s030_b0.png,real5,30,before,33.1,28.6,575,55,12.4,4,0.73,4,app,,4,ok
+real5_s030_b1.png,real5,30,before,20,26.1,435,65,12.8,2,0.85,2,app,,2,ok
+real5_s030_b2.png,real5,30,before,39.2,21.9,640,86,13.2,6,0.9,6,app,,6,ok
+real5_s030_b3.png,real5,30,before,7.1,20.8,280,90,13.6,9,0.92,9,app,,9,ok
+real5_s030_b4.png,real5,30,before,53.8,21.1,800,91,13.3,1,0.9,1,app,,1,ok
+real5_s030_b5.png,real5,30,before,65.2,18.9,931,103,13.5,8,0.89,8,app,,8,ok
+real5_s030_b6.png,real5,30,before,66.8,9.2,988,159,15.1,3,0.79,3,app,,3,ok
+real5_s030_b7.png,real5,30,before,37.4,6.6,623,176,15.8,0,0.9,0,app,,0,ok
+real5_s030_b8.png,real5,30,before,16.1,5.4,337,183,16.2,5,0.93,5,app,,5,ok
+real5_s030_a0.png,real5,30,after,51.8,35.8,755,27,11.5,,0,7,app,,?,fixed
+real5_s030_a1.png,real5,30,after,33.1,28.6,575,54,12.4,4,0.9,4,app,,4,ok
+real5_s030_a2.png,real5,30,after,30.5,25.4,547,69,12.8,1,0.81,1,app,,1,ok
+real5_s030_a3.png,real5,30,after,20,26.2,435,64,12.8,2,0.9,2,app,,2,ok
+real5_s030_a4.png,real5,30,after,7.1,20.8,280,89,13.6,9,0.9,9,app,,9,ok
+real5_s030_a5.png,real5,30,after,65.3,18.9,931,103,13.5,8,0.9,8,app,,8,ok
+real5_s030_a6.png,real5,30,after,38.3,14.3,632,126,14.4,0,0.85,0,app,,0,ok
+real5_s030_a7.png,real5,30,after,30.3,11.8,535,141,14.9,6,0.81,6,app,,6,ok
+real5_s030_a8.png,real5,30,after,66.9,9.2,988,159,15.1,3,0.9,3,app,,3,ok
+real5_s030_a9.png,real5,30,after,16.1,5.4,338,183,16.2,5,0.9,5,app,,5,ok
+real5_s031_b0.png,real5,31,before,51.8,35.8,755,27,11.5,7,0.67,7,app,,7,ok
+real5_s031_b1.png,real5,31,before,33.1,28.6,575,54,12.4,4,0.9,4,app,,4,ok
+real5_s031_b2.png,real5,31,before,30.5,25.4,546,69,12.8,1,0.81,1,app,,1,ok
+real5_s031_b3.png,real5,31,before,20,26.2,435,64,12.8,2,0.9,2,app,,2,ok
+real5_s031_b4.png,real5,31,before,7.1,20.8,280,89,13.6,9,0.9,9,app,,9,ok
+real5_s031_b5.png,real5,31,before,47.3,20.6,729,93,13.4,0,0.89,0,app,,0,ok
+real5_s031_b6.png,real5,31,before,65.3,18.9,931,103,13.5,8,0.9,8,app,,8,ok
+real5_s031_b7.png,real5,31,before,30.3,11.8,535,141,14.9,6,0.81,6,app,,6,ok
+real5_s031_b8.png,real5,31,before,66.8,9.2,989,159,15.1,3,0.9,3,app,,3,ok
+real5_s031_b9.png,real5,31,before,16.1,5.4,338,183,16.2,5,0.9,5,app,,5,ok
+real5_s031_a0.png,real5,31,after,51.8,35.8,755,27,11.5,7,0.9,7,app,,7,ok
+real5_s031_a1.png,real5,31,after,33.1,28.6,575,54,12.4,4,0.9,4,app,,4,ok
+real5_s031_a2.png,real5,31,after,20,26.2,435,64,12.8,2,0.9,2,app,,2,ok
+real5_s031_a3.png,real5,31,after,7.1,20.8,280,89,13.6,9,0.9,9,app,,9,ok
+real5_s031_a4.png,real5,31,after,65.2,18.8,931,103,13.5,8,0.9,8,app,,8,ok
+real5_s031_a5.png,real5,31,after,33.4,17.9,575,106,13.9,0,0.87,0,app,,0,ok
+real5_s031_a6.png,real5,31,after,30.3,11.8,534,141,14.9,6,0.9,6,app,,6,ok
+real5_s031_a7.png,real5,31,after,66.9,9.2,988,159,15.1,3,0.9,3,app,,3,ok
+real5_s031_a8.png,real5,31,after,16.1,5.4,338,183,16.2,5,0.9,5,app,,5,ok
+real5_s032_a0.png,real5,32,after,51.8,35.8,755,27,11.5,7,0.9,7,app,,7,ok
+real5_s032_a1.png,real5,32,after,33.1,28.7,575,54,12.4,4,0.9,4,app,,4,ok
+real5_s032_a2.png,real5,32,after,7.1,20.9,280,89,13.6,9,0.9,9,app,,9,ok
+real5_s032_a3.png,real5,32,after,65.3,18.9,931,103,13.5,8,0.9,8,app,,8,ok
+real5_s032_a4.png,real5,32,after,30.3,11.8,535,141,14.9,6,0.9,6,app,,6,ok
+real5_s032_a5.png,real5,32,after,62.7,11.3,930,146,14.7,0,0.96,0,app,,0,ok
+real5_s032_a6.png,real5,32,after,66.9,9.2,988,159,15.1,3,0.9,3,app,,3,ok
+real5_s032_a7.png,real5,32,after,16.1,5.4,338,183,16.2,5,0.9,5,app,,5,ok
+real5_s033_b0.png,real5,33,before,51.8,35.8,755,27,11.5,7,0.9,7,app,,7,ok
+real5_s033_b1.png,real5,33,before,33.1,28.7,575,54,12.4,4,0.9,4,app,,4,ok
+real5_s033_b2.png,real5,33,before,7,20.9,280,89,13.6,9,0.9,9,app,,9,ok
+real5_s033_b3.png,real5,33,before,65.3,18.9,931,103,13.5,8,0.9,8,app,,8,ok
+real5_s033_b4.png,real5,33,before,47.3,16.9,734,112,13.9,0,0.88,0,app,,0,ok
+real5_s033_b5.png,real5,33,before,30.3,11.8,534,141,14.9,6,0.9,6,app,,6,ok
+real5_s033_b6.png,real5,33,before,16.1,5.4,337,183,16.2,5,0.9,5,app,,5,ok
+real5_s033_a0.png,real5,33,after,51.8,35.8,755,27,11.5,7,0.9,7,app,,7,ok
+real5_s033_a1.png,real5,33,after,35.6,22.1,600,85,13.2,0,0.83,0,app,,0,ok
+real5_s033_a2.png,real5,33,after,7,20.9,280,89,13.6,9,0.9,9,app,,9,ok
+real5_s033_a3.png,real5,33,after,65.3,18.9,931,103,13.5,8,0.9,8,app,,8,ok
+real5_s033_a4.png,real5,33,after,30.3,11.8,534,141,14.9,6,0.9,6,app,,6,ok
+real5_s033_a5.png,real5,33,after,16.1,5.4,337,183,16.2,5,0.9,5,app,,5,ok
+real5_s034_a0.png,real5,34,after,51.8,35.8,755,27,11.5,7,0.9,7,app,,7,ok
+real5_s034_a1.png,real5,34,after,17.7,21.7,402,85,13.4,0,0.87,0,app,,0,ok
+real5_s034_a2.png,real5,34,after,7,20.8,279,89,13.6,9,0.9,9,app,,9,ok
+real5_s034_a3.png,real5,34,after,65.3,18.8,931,103,13.5,8,0.9,8,app,,8,ok
+real5_s034_a4.png,real5,34,after,30.3,11.8,534,141,14.9,6,0.9,6,app,,6,ok
+real5_s035_b0.png,real5,35,before,51.8,35.8,755,27,11.5,7,0.9,7,app,,7,ok
+real5_s035_b1.png,real5,35,before,7.5,30.5,315,45,12.3,2,0.15,nb,app,,2,fixed
+real5_s035_b2.png,real5,35,before,3.3,31.8,276,39,12.2,3,0.14,nb,app,,3,fixed
+real5_s035_b3.png,real5,35,before,6,31.2,301,42,12.2,4,0.16,nb,app,,4,fixed
+real5_s035_b4.png,real5,35,before,4.6,33.6,294,32,12,,0,nb,app,,?,fixed
+real5_s035_b5.png,real5,35,before,17.7,21.8,402,85,13.4,0,0.87,0,app,,0,ok
+real5_s035_b6.png,real5,35,before,7,20.9,280,89,13.6,9,0.9,9,app,,9,ok
+real5_s035_b7.png,real5,35,before,65.3,18.9,931,103,13.5,8,0.9,8,app,,8,ok
+real5_s035_b8.png,real5,35,before,30.3,11.8,534,141,14.9,6,0.9,6,app,,6,ok
+real5_s035_a0.png,real5,35,after,51.8,35.8,755,27,11.5,7,0.66,7,app,,7,ok
+real5_s035_a1.png,real5,35,after,51,26.9,760,63,12.5,,0,0,app,,?,fixed
+real5_s035_a2.png,real5,35,after,65.3,18.9,931,102,13.5,8,0.9,8,app,,8,ok
+real5_s036_b0.png,real5,36,before,65.5,18.8,932,102,13.5,8,0.9,8,app,,8,ok
+real5_s036_b1.png,real5,36,before,35.8,32.3,601,38,11.9,0,0.97,0,app,,0,ok
+real5_s036_b2.png,real5,36,before,66.5,36.6,888,24,11.3,1,0.93,nb,app,,1,fixed
+real5_s036_b3.png,real5,36,before,52.9,36,762,25,11.5,7,0.66,7,app,,7,ok
+real5_s036_b4.png,real5,36,before,8.1,23.9,303,73,13.1,2,0.84,?,app,,2,fixed
+real5_s036_b5.png,real5,36,before,6.9,20.7,280,88,13.5,9,0.9,9,app,,9,ok
+real5_s036_b6.png,real5,36,before,2.5,31.8,270,38,12.1,4,0.15,nb,app,,4,fixed
+real5_s036_b7.png,real5,36,before,4.4,31.6,288,39,12.1,5,0.15,nb,app,,5,fixed
+real5_s036_b8.png,real5,36,before,10.8,28,343,54,12.5,,0,nb,app,,?,fixed
+real5_s036_b9.png,real5,36,before,6.4,31.4,308,40,12.1,,0,nb,app,,?,fixed
+real5_s036_a0.png,real5,36,after,58.7,27.7,834,59,12.4,0,0.97,0,app,,0,ok
+real5_s036_a1.png,real5,36,after,6.9,20.7,280,88,13.5,9,0.9,9,app,,9,ok
+real5_s036_a2.png,real5,36,after,65.5,18.8,932,102,13.5,8,0.9,8,app,,8,ok
+real5_s037_a0.png,real5,37,after,19.2,35,442,27,11.7,0,0.91,0,app,,0,ok
+real5_s037_a1.png,real5,37,after,6.9,20.6,279,89,13.5,9,0.9,9,app,,9,ok
+real1_s002_bn0.png,real1,2,before,58,34.3,638,14,9.1,,0,nb,redetect,new,?,reviewed
+real1_s002_bn1.png,real1,2,before,54.6,35.3,612,11,9.1,,0,nb,redetect,new,?,reviewed
+real1_s002_bn2.png,real1,2,before,56.1,34,625,15,9.2,,0,nb,redetect,new,?,reviewed
+real1_s003_an0.png,real1,3,after,7.5,35.1,250,8,9.4,,0,0,redetect,new,?,reviewed
+real1_s003_an1.png,real1,3,after,29.9,33.5,425,13,9.4,,0,9,redetect,new,?,reviewed
+real1_s004_bn0.png,real1,4,before,30.1,33.6,427,13,9.4,,0,9,redetect,new,?,reviewed
+real1_s005_an0.png,real1,5,after,30,33.6,427,13,9.4,,0,9,redetect,new,?,reviewed
+real1_s006_bn0.png,real1,6,before,29.9,33.5,426,14,9.4,,0,9,redetect,new,?,reviewed
+real1_s006_bn4.png,real1,6,before,74.9,13.1,816,75,10.6,,0,nb,redetect,new,?,reviewed
+real1_s006_bn7.png,real1,6,before,72.6,15.4,791,68,10.4,,0,nb,redetect,new,?,reviewed
+real1_s007_bn0.png,real1,7,before,30,33.6,426,13,9.4,,0,9,redetect,new,?,reviewed
+real1_s008_bn0.png,real1,8,before,56.9,35.5,629,11,9.1,,0,nb,redetect,new,?,reviewed
+real1_s008_bn1.png,real1,8,before,52.7,35.4,598,11,9.1,,0,nb,redetect,new,?,reviewed
+real1_s008_bn2.png,real1,8,before,54.6,34.7,613,13,9.1,,0,nb,redetect,new,?,reviewed
+real1_s008_bn3.png,real1,8,before,29.8,33.5,425,13,9.4,,0,9,redetect,new,?,reviewed
+real1_s008_an0.png,real1,8,after,29.6,33.6,423,13,9.4,,0,9,redetect,new,?,reviewed
+real1_s009_bn0.png,real1,9,before,30,33.6,426,13,9.4,,0,9,redetect,new,?,reviewed
+real1_s009_an0.png,real1,9,after,30.1,33.6,427,13,9.4,,0,9,redetect,new,?,reviewed
+real1_s010_bn0.png,real1,10,before,30,33.7,427,13,9.4,,0,9,redetect,new,?,reviewed
+real1_s010_an0.png,real1,10,after,29.8,33.5,425,13,9.4,,0,9,redetect,new,?,reviewed
+real1_s011_an0.png,real1,11,after,29.9,33.6,426,13,9.4,,0,9,redetect,new,?,reviewed
+real1_s012_bn1.png,real1,12,before,30.1,33.7,427,13,9.4,,0,9,redetect,new,?,reviewed
+real1_s013_bn1.png,real1,13,before,8.3,34,255,10,9.5,,0,nb,redetect,new,?,reviewed
+real1_s013_bn3.png,real1,13,before,10.1,34.4,270,9,9.5,,0,nb,redetect,new,?,reviewed
+real1_s013_bn4.png,real1,13,before,10.1,30.3,265,20,9.8,,0,nb,redetect,new,?,reviewed
+real1_s013_an0.png,real1,13,after,54.1,35.4,609,11,9.1,,0,3,redetect,new,?,reviewed
+real1_s018_bn1.png,real1,18,before,34.1,28.9,458,26,9.7,,0,nb,redetect,new,?,reviewed
+real1_s027_bn3.png,real1,27,before,68.6,22.9,733,52,9.8,,0,2,redetect,navy,?,reviewed
+real1_s030_an0.png,real1,30,after,2,25,179,40,10.2,,0,5,redetect,new,?,reviewed
+real1_s031_bn2.png,real1,31,before,2,24.8,180,41,10.2,,0,5,redetect,new,?,reviewed
+real2_s001_bn3.png,real2,1,before,10.2,16.1,288,95,14,,0,2,redetect,navy,?,reviewed
+real2_s001_an2.png,real2,1,after,10.2,16.1,288,95,13.9,,0,2,redetect,navy,?,reviewed
+real2_s002_bn5.png,real2,2,before,10.2,16.1,288,95,13.9,,0,2,redetect,navy,?,reviewed
+real2_s002_an2.png,real2,2,after,10.2,16.1,288,95,13.9,,0,2,redetect,navy,?,reviewed
+real2_s003_bn3.png,real2,3,before,10.2,16.2,288,95,13.9,,0,2,redetect,navy,?,reviewed
+real2_s003_bn8.png,real2,3,before,8.7,5,225,158,15.9,,0,0,redetect,new,?,reviewed
+real2_s004_an0.png,real2,4,after,73.6,33.7,939,31,11.5,,0,nb,redetect,new,?,reviewed
+real2_s005_an0.png,real2,5,after,73.9,33.6,942,29,11.5,,0,nb,redetect,new,?,reviewed
+real2_s006_an0.png,real2,6,after,74,33.6,942,29,11.5,,0,nb,redetect,new,?,reviewed
+real2_s008_bn0.png,real2,8,before,73.6,33.7,939,30,11.5,,0,nb,redetect,new,?,reviewed
+real2_s008_bn2.png,real2,8,before,5.5,4,179,167,16.2,,0,0,redetect,new,?,reviewed
+real2_s009_bn0.png,real2,9,before,73.6,33.7,939,30,11.5,,0,nb,redetect,new,?,reviewed
+real2_s009_bn2.png,real2,9,before,5.5,4,179,167,16.2,,0,0,redetect,new,?,reviewed
+real2_s009_an0.png,real2,9,after,74,33.5,943,31,11.5,,0,nb,redetect,new,?,reviewed
+real2_s011_bn2.png,real2,11,before,30.2,25.6,524,57,12.6,,0,2,redetect,navy,?,reviewed
+real2_s011_bn7.png,real2,11,before,30.7,7.5,514,147,15.4,,0,nb,redetect,new,?,reviewed
+real2_s011_bn9.png,real2,11,before,20.7,6.6,387,151,15.6,,0,nb,redetect,new,?,reviewed
+real2_s011_bn10.png,real2,11,before,12.9,6,284,155,15.7,,0,nb,redetect,new,?,reviewed
+real2_s011_an2.png,real2,11,after,30.2,25.5,524,57,12.6,,0,2,redetect,navy,?,reviewed
+real2_s012_bn2.png,real2,12,before,30.2,25.6,524,57,12.6,,0,2,redetect,navy,?,reviewed
+real2_s012_an0.png,real2,12,after,31.5,36.1,542,18,11.4,,0,nb,redetect,new,?,reviewed
+real2_s012_an1.png,real2,12,after,33.8,32.7,563,30,11.7,,0,nb,redetect,new,?,reviewed
+real2_s012_an2.png,real2,12,after,30,33.8,527,26,11.6,,0,nb,redetect,new,?,reviewed
+real2_s012_an3.png,real2,12,after,74.5,33.4,948,32,11.6,,0,nb,redetect,new,?,reviewed
+real2_s013_bn1.png,real2,13,before,30.2,25.6,524,59,12.6,,0,2,redetect,navy,?,reviewed
+real2_s014_an0.png,real2,14,after,74.2,33.5,945,33,11.5,,0,nb,redetect,new,?,reviewed
+real2_s019_bn0.png,real2,19,before,75,33.1,954,35,11.6,,0,nb,redetect,new,?,reviewed
+real2_s019_bn4.png,real2,19,before,74,2.3,1084,187,16.3,,0,nb,redetect,navy,?,reviewed
+real2_s020_bn0.png,real2,20,before,74.2,33.4,945,32,11.6,,0,nb,redetect,new,?,reviewed
+real2_s021_bn0.png,real2,21,before,74.2,33.4,945,33,11.6,,0,nb,redetect,new,?,reviewed
+real2_s021_bn9.png,real2,21,before,66.9,7.1,968,155,15.3,,0,2,redetect,navy,?,reviewed
+real2_s021_an8.png,real2,21,after,66.9,7,968,155,15.3,,0,2,redetect,navy,?,reviewed
+real2_s022_bn8.png,real2,22,before,66.9,7,968,152,15.3,,0,2,redetect,navy,?,reviewed
+real2_s022_an0.png,real2,22,after,2.9,33.3,267,24,11.7,,0,1,redetect,new,?,reviewed
+real2_s022_an8.png,real2,22,after,66.9,7,968,152,15.3,,0,2,redetect,navy,?,reviewed
+real2_s023_bn0.png,real2,23,before,2.9,33.3,267,24,11.7,,0,1,redetect,new,?,reviewed
+real2_s023_bn8.png,real2,23,before,66.9,7,968,152,15.3,,0,2,redetect,navy,?,reviewed
+real2_s023_an7.png,real2,23,after,66.9,7,968,152,15.3,,0,2,redetect,navy,?,reviewed
+real2_s024_bn7.png,real2,24,before,66.9,7.1,968,152,15.3,,0,2,redetect,navy,?,reviewed
+real2_s024_an7.png,real2,24,after,66.9,7.1,968,152,15.3,,0,2,redetect,navy,?,reviewed
+real2_s025_bn7.png,real2,25,before,66.9,7,968,152,15.3,,0,2,redetect,navy,?,reviewed
+real2_s033_bn1.png,real2,33,before,47.6,24.8,703,63,12.6,,0,0,redetect,new,?,reviewed
+real2_s033_an0.png,real2,33,after,74.2,33.5,945,32,11.5,,0,nb,redetect,new,?,reviewed
+real2_s034_bn0.png,real2,34,before,35.7,27,581,53,12.4,,0,9,redetect,new,?,reviewed
+real2_s035_an8.png,real2,35,after,54.2,7,809,153,15.4,,0,2,redetect,navy,?,reviewed
+real2_s036_bn9.png,real2,36,before,54.5,7.1,813,155,15.4,,0,2,redetect,navy,?,reviewed
+real2_s037_bn2.png,real2,37,before,15.8,27.8,380,50,12.3,,0,nb,redetect,new,?,reviewed
+real2_s037_bn4.png,real2,37,before,14.8,31.8,379,35,11.9,,0,nb,redetect,new,?,reviewed
+real2_s037_bn12.png,real2,37,before,54.4,7.1,813,155,15.4,,0,2,redetect,navy,?,reviewed
+real2_s037_an8.png,real2,37,after,54.4,7.1,813,155,15.4,,0,2,redetect,navy,?,reviewed
+real2_s038_bn8.png,real2,38,before,54.4,7.1,813,155,15.4,,0,2,redetect,navy,?,reviewed
+real2_s045_bn6.png,real2,45,before,54.6,13.6,798,121,14.2,,0,2,redetect,navy,?,reviewed
+real2_s045_an5.png,real2,45,after,54.6,13.6,798,121,14.2,,0,2,redetect,navy,?,reviewed
+real2_s046_bn5.png,real2,46,before,54.6,13.6,798,121,14.2,,0,2,redetect,navy,?,reviewed
+real2_s049_bn0.png,real2,49,before,73.2,33.6,935,37,11.5,,0,nb,redetect,new,?,reviewed
+real2_s050_bn0.png,real2,50,before,3,32.9,266,33,11.8,,0,nb,redetect,new,?,reviewed
+real2_s050_bn1.png,real2,50,before,3.4,27.4,253,53,12.4,,0,nb,redetect,new,?,reviewed
+real2_s050_bn6.png,real2,50,before,2.2,15.2,192,107,14.1,,0,nb,redetect,navy,?,reviewed
+real3_s001_an1.png,real3,1,after,49.9,18.3,724,96,13,,0,nb,redetect,new,?,reviewed
+real3_s001_an2.png,real3,1,after,45.2,6.7,683,160,14.8,,0,nb,redetect,new,?,reviewed
+real3_s007_bn0.png,real3,7,before,66.7,26.3,880,58,12,,0,2,redetect,navy,?,reviewed
+real3_s007_an1.png,real3,7,after,70.4,27.7,912,52,11.8,,0,2,redetect,navy,?,reviewed
+real3_s008_bn0.png,real3,8,before,15.7,36.8,395,19,11.1,,0,nb,redetect,new,?,reviewed
+real3_s008_bn4.png,real3,8,before,70.3,27.7,912,52,11.8,,0,2,redetect,navy,?,reviewed
+real3_s008_an1.png,real3,8,after,15,2.5,294,188,15.8,,0,2,redetect,navy,?,reviewed
+real3_s009_bn1.png,real3,9,before,15,2.5,294,188,15.8,,0,2,redetect,navy,?,reviewed
+real3_s010_bn1.png,real3,10,before,40.2,4.9,622,170,15.2,,0,2,redetect,navy,?,reviewed
+real3_s011_bn0.png,real3,11,before,48.1,21.6,702,78,12.6,,0,2,redetect,navy,?,reviewed
+real3_s011_bn2.png,real3,11,before,74.6,19,983,90,12.8,,0,nb,redetect,new,?,reviewed
+real3_s011_an0.png,real3,11,after,48.1,21.7,702,78,12.6,,0,2,redetect,navy,?,reviewed
+real3_s012_bn0.png,real3,12,before,48.1,21.7,702,78,12.6,,0,2,redetect,navy,?,reviewed
+real3_s013_bn0.png,real3,13,before,25.2,36.9,483,18,11,,0,2,redetect,navy,?,reviewed
+real3_s014_an0.png,real3,14,after,25.2,36.9,482,18,11,,0,2,redetect,navy,?,reviewed
+real3_s015_bn0.png,real3,15,before,25.3,36.8,483,19,11,,0,2,redetect,navy,?,reviewed
+real3_s016_bn0.png,real3,16,before,49.6,24.3,714,66,12.3,,0,2,redetect,navy,?,reviewed
+real3_s017_bn1.png,real3,17,before,67.1,2.7,964,182,15.4,,0,2,redetect,navy,?,reviewed
+real3_s035_bn2.png,real3,35,before,75.2,12.3,1017,126,13.8,,0,nb,redetect,new,?,reviewed
+real4_s004_bn1.png,real4,4,before,63.2,31.3,868,38,12,,0,2,redetect,navy,?,reviewed
+real4_s004_an0.png,real4,4,after,63.4,31,870,39,12,,0,2,redetect,navy,?,reviewed
+real4_s005_bn0.png,real4,5,before,63.4,31,870,39,12,,0,2,redetect,navy,?,reviewed
+real4_s007_an0.png,real4,7,after,14.9,31.3,391,38,12,,0,2,redetect,navy,?,reviewed
+real4_s022_bn3.png,real4,22,before,3.9,27.3,270,65,12.4,,0,nb,redetect,new,?,reviewed
+real4_s027_an0.png,real4,27,after,16.4,36.4,416,22,11.4,,0,7,redetect,new,?,reviewed
+real4_s030_bn4.png,real4,30,before,7.6,18.6,279,101,13.6,,0,nb,redetect,new,?,reviewed
+real4_s030_bn6.png,real4,30,before,3.2,23,247,79,13,,0,nb,redetect,new,?,reviewed
+real5_s001_bn0.png,real5,1,before,70.7,36.8,929,22,11.2,,0,nb,redetect,new,?,reviewed
+real5_s015_bn4.png,real5,15,before,20.3,31.2,451,40,12.1,,0,?,redetect,new,?,reviewed
+real5_s022_bn2.png,real5,22,before,25.6,33.6,507,31,11.8,,0,nb,redetect,new,?,reviewed
+real5_s030_bn0.png,real5,30,before,54.3,33.4,783,35,11.7,,0,7,redetect,new,?,reviewed
+real5_s035_bn1.png,real5,35,before,5.7,32.7,307,33,12,,0,nb,redetect,new,?,reviewed
+real5_s035_an1.png,real5,35,after,38,29.7,441,101,16.4,,0,nb,redetect,new,?,reviewed
+real5_s035_an2.png,real5,35,after,12.8,29.7,415,180,19,,0,nb,redetect,new,?,reviewed
+real5_s035_an3.png,real5,35,after,15.4,27.9,467,171,18.6,,0,nb,redetect,new,?,reviewed
+real5_s035_an4.png,real5,35,after,21.2,29.4,432,151,18,,0,nb,redetect,new,?,reviewed
+real5_s035_an5.png,real5,35,after,12.3,28.6,443,182,19,,0,nb,redetect,new,?,reviewed
+real5_s035_an6.png,real5,35,after,28.8,29.3,443,127,17.2,,0,nb,redetect,new,?,reviewed
+real5_s036_bn5.png,real5,36,before,8.3,30.7,328,40,12.2,,0,nb,redetect,new,?,reviewed
+real6_s001_b0.png,real6,1,before,85.5,45.2,885,16,8.3,2,0.33,8,app,pool hall,2,fixed
+real6_s001_b1.png,real6,1,before,42.8,42.1,599,26,9.1,5,0.59,5,app,pool hall,5,ok
+real6_s001_b2.png,real6,1,before,31.9,26.5,513,71,10.5,9,0.66,9,app,pool hall,9,ok
+real6_s001_b3.png,real6,1,before,69.5,24,823,73,10,4,0.61,4,app,pool hall,4,ok
+real6_s001_b4.png,real6,1,before,56,20.2,723,88,10.6,7,0.62,7,app,pool hall,7,ok
+real6_s001_b5.png,real6,1,before,18.4,13.4,375,124,12.2,6,0.72,6,app,pool hall,6,ok
+real6_s001_b6.png,real6,1,before,9.3,14,280,124,12.3,0,0.94,0,app,pool hall,0,ok
+real6_s001_b7.png,real6,1,before,74.8,7.7,913,130,11.4,8,0.41,2,app,pool hall,8,fixed
+real6_s001_b8.png,real6,1,before,54.9,6.8,736,140,12,3,0.76,3,app,pool hall,3,ok
+real6_s001_b9.png,real6,1,before,30.6,6.4,494,151,12.7,1,1,1,app,pool hall,1,ok
+real6_s001_a0.png,real6,1,after,85.5,45.2,885,16,8.3,2,0.9,8,app,pool hall,2,fixed
+real6_s001_a1.png,real6,1,after,42.8,42.2,598,26,9.1,5,0.9,5,app,pool hall,5,ok
+real6_s001_a2.png,real6,1,after,31.8,26.6,513,71,10.5,9,0.9,9,app,pool hall,9,ok
+real6_s001_a3.png,real6,1,after,69.5,24,823,73,10,4,0.9,4,app,pool hall,4,ok
+real6_s001_a4.png,real6,1,after,55.9,20.2,722,88,10.6,7,0.9,7,app,pool hall,7,ok
+real6_s001_a5.png,real6,1,after,18.3,13.4,374,124,12.2,6,0.9,6,app,pool hall,6,ok
+real6_s001_a6.png,real6,1,after,47.2,11.7,656,122,11.7,0,0.97,0,app,pool hall,0,ok
+real6_s001_a7.png,real6,1,after,74.8,7.7,913,130,11.4,8,0.9,2,app,pool hall,8,fixed
+real6_s001_a8.png,real6,1,after,54.8,6.9,735,140,12,3,0.9,3,app,pool hall,3,ok
+real6_s002_b0.png,real6,2,before,54.8,6.9,735,140,12,3,0.9,3,app,pool hall,3,ok
+real6_s002_b1.png,real6,2,before,18.3,13.4,373,124,12.2,6,0.9,6,app,pool hall,6,ok
+real6_s002_b2.png,real6,2,before,31.8,26.6,513,71,10.5,9,0.9,9,app,pool hall,9,ok
+real6_s002_b3.png,real6,2,before,42.8,42.2,598,26,9.1,5,0.9,5,app,pool hall,5,ok
+real6_s002_b4.png,real6,2,before,74.8,7.7,913,130,11.4,8,0.9,2,app,pool hall,8,fixed
+real6_s002_b5.png,real6,2,before,55.9,20.2,722,88,10.6,7,0.9,7,app,pool hall,7,ok
+real6_s002_b6.png,real6,2,before,69.5,24.1,823,73,10,4,0.9,4,app,pool hall,4,ok
+real6_s002_b7.png,real6,2,before,47.1,11.6,656,122,11.7,0,0.97,0,app,pool hall,0,ok
+real6_s002_b8.png,real6,2,before,85.5,45.4,885,15,8.3,2,0.9,8,app,pool hall,2,fixed
+real6_s002_b9.png,real6,2,before,2.6,23.8,238,87,11.4,1,0.36,nb,app,pool hall,1,fixed
+real6_s002_bn5.png,real6,2,before,8,25.4,292,77,11.3,,0,nb,redetect,pool hall,?,fixed
+real6_s002_bn6.png,real6,2,before,5.1,23,257,85,11.6,,0,nb,redetect,pool hall,?,fixed
+real6_s002_bn7.png,real6,2,before,6.9,23.6,276,83,11.5,,0,nb,redetect,pool hall,?,fixed
+real6_s002_a0.png,real6,2,after,85.6,45.6,885,15,8.3,2,0.9,8,app,pool hall,2,fixed
+real6_s002_a1.png,real6,2,after,42.7,42.2,598,26,9.1,5,0.9,5,app,pool hall,5,ok
+real6_s002_a2.png,real6,2,after,91,32.8,954,45,9,0,0.94,0,app,pool hall,0,ok
+real6_s002_a3.png,real6,2,after,31.8,26.6,512,71,10.5,9,0.9,9,app,pool hall,9,ok
+real6_s002_a4.png,real6,2,after,69.5,24,823,73,10,4,0.9,4,app,pool hall,4,ok
+real6_s002_a5.png,real6,2,after,56,20.3,722,88,10.6,7,0.9,7,app,pool hall,7,ok
+real6_s002_a6.png,real6,2,after,18.3,13.4,373,124,12.2,6,0.76,6,app,pool hall,6,ok
+real6_s002_a7.png,real6,2,after,54.8,6.8,735,140,12,3,0.9,3,app,pool hall,3,ok
+real6_s003_b0.png,real6,3,before,44.8,41.7,598,27,9.2,5,0.9,5,app,pool hall,5,ok
+real6_s003_b1.png,real6,3,before,11.1,41.7,345,32,9.5,0,0.94,0,app,pool hall,0,ok
+real6_s003_b2.png,real6,3,before,34,25.5,512,73,10.7,9,0.9,9,app,pool hall,9,ok
+real6_s003_b3.png,real6,3,before,71.2,22.6,824,75,10.5,4,0.9,4,app,pool hall,4,ok
+real6_s003_b4.png,real6,3,before,58.2,18.8,723,90,11,7,0.66,7,app,pool hall,7,ok
+real6_s003_b5.png,real6,3,before,20.7,12,373,125,12.4,6,0.76,6,app,pool hall,6,ok
+real6_s003_b6.png,real6,3,before,57.2,5.4,735,143,12.6,3,0.9,3,app,pool hall,3,ok
+real6_s003_bn0.png,real6,3,before,86,45.7,887,16,8.6,,0,8,redetect,pool hall,?,fixed
+real6_s003_a0.png,real6,3,after,85.6,44.3,878,17,8.7,0,0.95,0,app,pool hall,0,ok
+real6_s003_a1.png,real6,3,after,44.7,41.6,598,28,9.2,5,0.9,5,app,pool hall,5,ok
+real6_s003_a2.png,real6,3,after,34,25.5,512,73,10.7,9,0.9,9,app,pool hall,9,ok
+real6_s003_a3.png,real6,3,after,71.3,22.7,824,75,10.5,4,0.9,4,app,pool hall,4,ok
+real6_s003_a4.png,real6,3,after,58.2,18.8,722,90,11,7,0.9,7,app,pool hall,7,ok
+real6_s003_a5.png,real6,3,after,20.7,12.1,373,125,12.4,6,0.9,6,app,pool hall,6,ok
+real6_s004_b0.png,real6,4,before,85.7,44,879,18,8.7,0,0.95,0,app,pool hall,0,ok
+real6_s004_b1.png,real6,4,before,84.2,40.3,878,26,8.9,,0,0,app,pool hall,?,fixed
+real6_s004_b2.png,real6,4,before,44.8,41.8,598,27,9.2,5,0.9,5,app,pool hall,5,ok
+real6_s004_b3.png,real6,4,before,34,25.5,513,73,10.7,9,0.9,9,app,pool hall,9,ok
+real6_s004_b4.png,real6,4,before,71.2,22.8,823,75,10.5,4,0.9,4,app,pool hall,4,ok
+real6_s004_b5.png,real6,4,before,58.2,18.9,722,90,11,7,0.9,7,app,pool hall,7,ok
+real6_s004_b6.png,real6,4,before,20.8,11.9,373,126,12.4,6,0.9,6,app,pool hall,6,ok
+real6_s004_a0.png,real6,4,after,81.2,45.2,847,16,8.6,4,0.58,4,app,pool hall,4,ok
+real6_s004_a1.png,real6,4,after,44.9,41.8,600,27,9.2,5,0.9,5,app,pool hall,5,ok
+real6_s004_a2.png,real6,4,after,68.5,28.5,790,58,10,0,0.9,0,app,pool hall,0,ok
+real6_s004_a3.png,real6,4,after,34.2,25.6,514,73,10.6,9,0.9,9,app,pool hall,9,ok
+real6_s004_a4.png,real6,4,after,58.3,18.9,724,90,11,7,0.9,7,app,pool hall,7,ok
+real6_s004_a5.png,real6,4,after,20.8,11.9,374,126,12.4,6,0.9,6,app,pool hall,6,ok
+real6_s004_a6.png,real6,4,after,21.6,4.9,367,157,13.3,,0,3,app,pool hall,?,fixed
+real6_s004_an1.png,real6,4,after,85.6,45.7,884,16,8.6,,0,8,redetect,pool hall,?,fixed
+real6_s005_b0.png,real6,5,before,81.2,45.2,847,16,8.6,4,0.58,4,app,pool hall,4,ok
+real6_s005_b1.png,real6,5,before,87.1,46.8,882,12,8.5,2,0.44,8,app,pool hall,2,fixed
+real6_s005_b2.png,real6,5,before,44.9,41.8,600,27,9.2,5,0.9,5,app,pool hall,5,ok
+real6_s005_b3.png,real6,5,before,68.5,28.5,790,58,10,0,0.9,0,app,pool hall,0,ok
+real6_s005_b4.png,real6,5,before,34.2,25.5,514,73,10.6,9,0.9,9,app,pool hall,9,ok
+real6_s005_b5.png,real6,5,before,58.3,18.8,724,90,11,7,0.9,7,app,pool hall,7,ok
+real6_s005_b6.png,real6,5,before,20.9,11.9,374,126,12.4,6,0.9,6,app,pool hall,6,ok
+real6_s005_b7.png,real6,5,before,21.6,4.9,367,157,13.4,3,0.76,3,app,pool hall,3,ok
+real6_s005_a0.png,real6,5,after,81.1,45.2,846,16,8.6,4,0.9,4,app,pool hall,4,ok
+real6_s005_a1.png,real6,5,after,44.2,46.3,593,17,8.9,7,0.38,7,app,pool hall,7,ok
+real6_s005_a2.png,real6,5,after,45,41.8,600,27,9.2,5,0.9,5,app,pool hall,5,ok
+real6_s005_a3.png,real6,5,after,37,35.1,540,45,9.8,0,0.94,0,app,pool hall,0,ok
+real6_s005_a4.png,real6,5,after,34.2,25.5,514,73,10.7,9,0.9,9,app,pool hall,9,ok
+real6_s005_a5.png,real6,5,after,20.8,11.9,374,125,12.4,6,0.9,6,app,pool hall,6,ok
+real6_s005_a6.png,real6,5,after,24.4,1.9,392,171,13.8,3,0.7,3,app,pool hall,3,ok
+real6_s005_an1.png,real6,5,after,85.5,45.8,884,15,8.6,,0,8,redetect,pool hall,?,fixed
+real6_s006_b0.png,real6,6,before,81.2,45.2,846,16,8.6,4,0.9,4,app,pool hall,4,ok
+real6_s006_b1.png,real6,6,before,20.8,12,374,125,12.4,6,0.9,6,app,pool hall,6,ok
+real6_s006_b2.png,real6,6,before,24.4,1.9,392,171,13.8,3,0.7,3,app,pool hall,3,ok
+real6_s006_b3.png,real6,6,before,34.2,25.5,514,73,10.6,9,0.9,9,app,pool hall,9,ok
+real6_s006_b4.png,real6,6,before,37,35.1,540,45,9.8,0,0.94,0,app,pool hall,0,ok
+real6_s006_b5.png,real6,6,before,44.2,46.4,593,17,8.9,7,0.38,7,app,pool hall,7,ok
+real6_s006_b6.png,real6,6,before,45,41.8,600,27,9.2,5,0.9,5,app,pool hall,5,ok
+real6_s006_b7.png,real6,6,before,87,46.9,881,12,8.5,2,0.9,8,app,pool hall,2,fixed
+real6_s006_b8.png,real6,6,before,68.6,47.2,759,13,8.6,8,0.14,nb,app,pool hall,8,fixed
+real6_s006_bn1.png,real6,6,before,60.6,45.4,721,18,8.9,,0,nb,redetect,pool hall,?,fixed
+real6_s006_bn2.png,real6,6,before,63.5,45.8,740,17,8.8,,0,nb,redetect,pool hall,?,fixed
+real6_s006_a0.png,real6,6,after,81.1,45.2,846,16,8.6,4,0.9,4,app,pool hall,4,ok
+real6_s006_a1.png,real6,6,after,44.2,46.2,593,17,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s006_a2.png,real6,6,after,45,41.8,600,27,9.2,5,0.9,5,app,pool hall,5,ok
+real6_s006_a3.png,real6,6,after,13.9,41.5,366,32,9.5,0,0.94,0,app,pool hall,0,ok
+real6_s006_a4.png,real6,6,after,34.2,25.6,514,73,10.6,9,0.9,9,app,pool hall,9,ok
+real6_s006_a5.png,real6,6,after,38,19,545,94,11.3,3,0.28,3,app,pool hall,3,ok
+real6_s006_a6.png,real6,6,after,20.8,11.9,374,125,12.4,6,0.9,6,app,pool hall,6,ok
+real6_s006_an1.png,real6,6,after,85.5,45.6,885,16,8.6,,0,8,redetect,pool hall,?,fixed
+real6_s007_b0.png,real6,7,before,81.1,45.3,846,16,8.6,4,0.9,4,app,pool hall,4,ok
+real6_s007_b1.png,real6,7,before,44.1,46.3,593,17,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s007_b2.png,real6,7,before,13.8,41.4,366,32,9.5,0,0.94,0,app,pool hall,0,ok
+real6_s007_b3.png,real6,7,before,34.1,25.5,513,73,10.7,9,0.9,9,app,pool hall,9,ok
+real6_s007_b4.png,real6,7,before,37.9,18.9,545,94,11.3,3,0.28,3,app,pool hall,3,ok
+real6_s007_b5.png,real6,7,before,20.8,11.9,373,126,12.4,6,0.9,6,app,pool hall,6,ok
+real6_s007_bn1.png,real6,7,before,85.5,45.1,886,17,8.6,,0,8,redetect,pool hall,?,fixed
+real6_s007_bn2.png,real6,7,before,43.5,42.3,602,26,9.3,,0,?,redetect,pool hall,?,fixed
+real6_s007_a0.png,real6,7,after,81.1,45.3,846,15,8.6,4,0.9,4,app,pool hall,4,ok
+real6_s007_a1.png,real6,7,after,44.2,46.5,593,17,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s007_a2.png,real6,7,after,37.2,46.1,544,18,8.9,0,0.9,0,app,pool hall,0,ok
+real6_s007_a3.png,real6,7,after,34,25.6,513,73,10.6,9,0.9,9,app,pool hall,9,ok
+real6_s007_a4.png,real6,7,after,20.8,12.1,374,125,12.4,6,0.9,6,app,pool hall,6,ok
+real6_s007_an1.png,real6,7,after,85.5,46,884,15,8.6,,0,8,redetect,pool hall,?,fixed
+real6_s007_an6.png,real6,7,after,34.5,1.1,515,173,14,,0,3,redetect,pool hall,?,fixed
+real6_s008_b0.png,real6,8,before,81.1,45.3,846,16,8.6,4,0.9,4,app,pool hall,4,ok
+real6_s008_b1.png,real6,8,before,44.1,46.5,593,17,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s008_b2.png,real6,8,before,37.2,46.1,544,18,8.9,0,0.9,0,app,pool hall,0,ok
+real6_s008_b3.png,real6,8,before,34,25.6,513,73,10.6,9,0.9,9,app,pool hall,9,ok
+real6_s008_b4.png,real6,8,before,20.8,12.2,374,124,12.3,6,0.9,6,app,pool hall,6,ok
+real6_s008_bn1.png,real6,8,before,85.5,45.5,885,16,8.6,,0,8,redetect,pool hall,?,fixed
+real6_s008_bn5.png,real6,8,before,34.5,1.1,515,173,14.1,,0,3,redetect,pool hall,?,fixed
+real6_s008_a0.png,real6,8,after,81.2,45.3,847,15,8.6,4,0.9,4,app,pool hall,4,ok
+real6_s008_a1.png,real6,8,after,44.2,46.1,594,17,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s008_a2.png,real6,8,after,86.3,32.4,913,45,9.5,9,0.73,?,app,pool hall,9,fixed
+real6_s008_a3.png,real6,8,after,30,28.9,480,63,10.4,,0,3,app,pool hall,?,fixed
+real6_s008_a4.png,real6,8,after,34.2,25.4,514,73,10.7,0,0.9,9,app,pool hall,0,fixed
+real6_s008_an1.png,real6,8,after,85.6,45.7,885,16,8.6,,0,8,redetect,pool hall,?,fixed
+real6_s009_a0.png,real6,9,after,77.4,46.2,820,14,8.6,5,0.35,3,app,pool hall,5,fixed
+real6_s009_a1.png,real6,9,after,76.4,41.9,821,23,8.9,3,0.7,3,app,pool hall,3,ok
+real6_s009_a2.png,real6,9,after,86.5,45.7,880,14,8.6,,0,8,app,pool hall,?,fixed
+real6_s009_a3.png,real6,9,after,44,46.3,592,17,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s009_a4.png,real6,9,after,34,25.6,512,73,10.7,9,0.9,9,app,pool hall,9,ok
+real6_s010_b0.png,real6,10,before,77.4,46.1,820,14,8.6,5,0.35,3,app,pool hall,5,fixed
+real6_s010_b1.png,real6,10,before,76.4,41.9,822,23,8.9,3,0.7,3,app,pool hall,3,ok
+real6_s010_b2.png,real6,10,before,44,46.3,592,17,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s010_b3.png,real6,10,before,34,25.5,512,73,10.7,9,0.9,9,app,pool hall,9,ok
+real6_s010_b4.png,real6,10,before,96.4,8.4,1085,119,11.6,4,0.62,nb,app,pool hall,4,fixed
+real6_s010_b5.png,real6,10,before,95.1,3.1,1101,141,12.3,8,0.24,nb,app,pool hall,8,fixed
+real6_s010_bn2.png,real6,10,before,85.4,46,883,15,8.6,,0,8,redetect,pool hall,?,fixed
+real6_s010_a0.png,real6,10,after,44,46.4,592,17,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s010_a1.png,real6,10,after,2.8,27.9,244,71,10.8,0,0.94,0,app,pool hall,0,ok
+real6_s010_a2.png,real6,10,after,45.5,17.9,612,96,11.3,5,0.63,3,app,pool hall,5,fixed
+real6_s010_a3.png,real6,10,after,75.5,4.1,916,143,12.5,3,0.46,4,app,pool hall,3,fixed
+real6_s010_an0.png,real6,10,after,85.1,45.7,882,16,8.6,,0,8,redetect,pool hall,?,fixed
+real6_s011_b0.png,real6,11,before,44,46.4,592,17,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s011_b1.png,real6,11,before,2.8,27.9,244,71,10.8,0,0.94,0,app,pool hall,0,ok
+real6_s011_b2.png,real6,11,before,45.5,17.8,612,96,11.3,5,0.63,3,app,pool hall,5,fixed
+real6_s011_b3.png,real6,11,before,75.5,4.1,916,143,12.5,3,0.46,4,app,pool hall,3,fixed
+real6_s011_bn0.png,real6,11,before,85.5,45.9,883,15,8.6,,0,8,redetect,pool hall,?,fixed
+real6_s011_a0.png,real6,11,after,86.2,44.6,881,17,8.7,8,1,8,app,pool hall,8,ok
+real6_s011_a1.png,real6,11,after,43.9,46.3,591,18,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s011_a2.png,real6,11,after,64,28.6,755,59,10.1,4,0.73,4,app,pool hall,4,ok
+real6_s011_a3.png,real6,11,after,12.5,4.6,264,163,13.6,0,0.98,0,app,pool hall,0,ok
+real6_s012_b0.png,real6,12,before,44,46.4,592,17,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s012_b1.png,real6,12,before,2.8,27.9,244,71,10.8,0,0.94,0,app,pool hall,0,ok
+real6_s012_b2.png,real6,12,before,45.5,17.8,612,96,11.3,5,0.63,3,app,pool hall,5,fixed
+real6_s012_b3.png,real6,12,before,75.5,4.1,916,143,12.5,3,0.46,2,app,pool hall,3,fixed
+real6_s012_bn0.png,real6,12,before,85.4,45.8,883,15,8.6,,0,8,redetect,pool hall,?,fixed
+real6_s012_a0.png,real6,12,after,86.2,44.6,881,17,8.7,,0,8,app,pool hall,?,fixed
+real6_s012_a1.png,real6,12,after,44,46.2,591,18,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s012_a2.png,real6,12,after,48.2,41,623,30,9.2,0,0.94,0,app,pool hall,0,ok
+real6_s013_b0.png,real6,13,before,86.2,44.7,881,16,8.6,4,0.47,8,app,pool hall,4,fixed
+real6_s013_b1.png,real6,13,before,44,46.2,591,18,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s013_b2.png,real6,13,before,48.2,40.9,623,30,9.2,0,0.94,0,app,pool hall,0,ok
+real6_s013_a0.png,real6,13,after,86.3,44.8,881,16,8.6,4,0.9,8,app,pool hall,4,fixed
+real6_s013_a1.png,real6,13,after,9.7,27.9,304,72,10.7,0,0.94,0,app,pool hall,0,ok
+real6_s014_a0.png,real6,14,after,43.9,46.4,591,18,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s014_a1.png,real6,14,after,84.5,31.7,902,47,9.6,0,0.94,0,app,pool hall,0,ok
+real6_s015_b0.png,real6,15,before,43.9,46.3,591,18,8.9,7,0.9,7,app,pool hall,7,ok
+real6_s015_b1.png,real6,15,before,84.5,31.7,902,47,9.6,0,0.94,0,app,pool hall,0,ok
+real6_s015_a0.png,real6,15,after,27,1.5,418,173,13.8,7,0.69,7,app,pool hall,7,ok
+real6_s016_b0.png,real6,16,before,66.1,13.9,800,106,11.5,0,0.94,0,app,pool hall,0,ok
+real6_s016_b1.png,real6,16,before,27,1.6,418,173,13.8,7,0.69,7,app,pool hall,7,ok
+real6_s016_bn0.png,real6,16,before,96.5,37.6,977,33,9,,0,8,redetect,pool hall,?,fixed
+real6_s016_a0.png,real6,16,after,27,1.6,419,173,13.8,7,0.9,7,app,pool hall,7,ok
+real6_s016_an0.png,real6,16,after,80.8,8.2,927,30,10.5,,0,nb,redetect,pool hall,?,fixed
+real6_s016_an1.png,real6,16,after,68.5,6.8,964,44,11,,0,nb,redetect,pool hall,?,fixed
+real6_s016_an2.png,real6,16,after,78.8,6.8,949,32,10.5,,0,nb,redetect,pool hall,?,fixed
+real6_s016_an3.png,real6,16,after,66.5,8,950,47,11.1,,0,nb,redetect,pool hall,?,fixed
+real6_s016_an4.png,real6,16,after,15.3,3.7,1126,129,13.8,,0,nb,redetect,pool hall,?,fixed
+real6_s016_an5.png,real6,16,after,12.5,7.2,1072,136,14.1,,0,nb,redetect,pool hall,?,fixed
+real6_s016_an6.png,real6,16,after,14.4,8.3,1047,133,14,,0,nb,redetect,pool hall,?,fixed
+real6_s018_b0.png,real6,18,before,77.3,4.7,930,139,12.4,0,0.94,0,app,pool hall,0,ok
+real6_s018_a0.png,real6,18,after,60.9,23.3,738,75,10.6,0,0.94,0,app,pool hall,0,ok
+real6_s019_b0.png,real6,19,before,60.9,23.4,738,75,10.6,0,0.94,0,app,pool hall,0,ok
+real6_s019_a0.png,real6,19,after,60.9,23.4,738,75,10.6,0,0.9,0,app,pool hall,0,ok
+real6_s020_b0.png,real6,20,before,72.7,36.6,806,37,9.3,1,0.61,1,app,pool hall,1,ok
+real6_s020_b1.png,real6,20,before,84.8,35.4,894,38,9.3,4,0.77,4,app,pool hall,4,ok
+real6_s020_b2.png,real6,20,before,16.5,34.2,375,52,10.1,6,0.91,6,app,pool hall,6,ok
+real6_s020_b3.png,real6,20,before,60.9,23.4,738,75,10.6,0,0.9,0,app,pool hall,0,ok
+real6_s020_b4.png,real6,20,before,91.1,17.5,1000,87,10.8,7,1,7,app,pool hall,7,ok
+real6_s020_b5.png,real6,20,before,34.9,21.4,518,87,11.1,8,0.16,8,app,pool hall,8,ok
+real6_s020_b6.png,real6,20,before,8.9,16.4,265,112,12,5,1,5,app,pool hall,5,ok
+real6_s020_b7.png,real6,20,before,75.5,10.4,893,116,11.7,2,0.76,2,app,pool hall,2,ok
+real6_s020_b8.png,real6,20,before,66.3,3.8,828,147,12.7,3,0.72,3,app,pool hall,3,ok
+real6_s020_b9.png,real6,20,before,22.4,5.3,376,156,13.3,9,0.61,9,app,pool hall,9,ok
+real6_s020_a0.png,real6,20,after,84.8,36.1,894,38,9.1,4,0.9,4,app,pool hall,4,ok
+real6_s020_a1.png,real6,20,after,91.4,18.4,999,87,10.4,7,0.9,7,app,pool hall,7,ok
+real6_s020_a2.png,real6,20,after,75.6,11.4,894,116,11.3,2,0.9,2,app,pool hall,2,ok
+real6_s020_a3.png,real6,20,after,58.5,11.8,742,119,11.5,0,0.94,0,app,pool hall,0,ok
+real6_s020_a4.png,real6,20,after,66.1,4.8,829,146,12.2,3,0.9,3,app,pool hall,3,ok
+real6_s020_an1.png,real6,20,after,21.2,31.9,589,133,14.7,,0,nb,redetect,pool hall,?,fixed
+real6_s020_an2.png,real6,20,after,40.8,41.9,400,99,13.7,,0,nb,redetect,pool hall,?,fixed
+real6_s020_an3.png,real6,20,after,25.8,36.1,505,126,14.5,,0,nb,redetect,pool hall,?,fixed
+real6_s020_an4.png,real6,20,after,35.8,39.9,434,108,14,,0,nb,redetect,pool hall,?,fixed
+real6_s020_an5.png,real6,20,after,22.9,34.2,543,131,14.7,,0,nb,redetect,pool hall,?,fixed
+real6_s020_an6.png,real6,20,after,26.4,38,467,126,14.6,,0,nb,redetect,pool hall,?,fixed
+real6_s021_a0.png,real6,21,after,84.8,35.9,894,38,9.1,4,0.9,4,app,pool hall,4,ok
+real6_s021_a1.png,real6,21,after,16.5,34.2,376,53,10,6,0.9,6,app,pool hall,6,ok
+real6_s021_a2.png,real6,21,after,68,31.4,784,53,9.6,0,0.94,0,app,pool hall,0,ok
+real6_s021_a3.png,real6,21,after,91.4,18.3,1000,87,10.4,7,0.9,7,app,pool hall,7,ok
+real6_s021_a4.png,real6,21,after,34.4,22,518,88,10.9,2,0.4,8,app,pool hall,2,fixed
+real6_s021_a5.png,real6,21,after,8.5,16.7,266,113,11.9,5,0.9,5,app,pool hall,5,ok
+real6_s021_a6.png,real6,21,after,66.1,4.7,829,146,12.2,3,0.9,3,app,pool hall,3,ok
+real6_s021_a7.png,real6,21,after,21.4,6.7,377,153,12.9,9,0.21,9,app,pool hall,9,ok
+real6_s022_b0.png,real6,22,before,63,45.7,725,16,8.8,,0,nb,app,pool hall,?,fixed
+real6_s022_b1.png,real6,22,before,84.9,36.2,894,36,9.2,4,0.9,4,app,pool hall,4,ok
+real6_s022_b2.png,real6,22,before,16.6,33.8,375,52,10.1,6,0.9,6,app,pool hall,6,ok
+real6_s022_b3.png,real6,22,before,68.2,31.2,783,51,9.8,0,0.94,0,app,pool hall,0,ok
+real6_s022_b4.png,real6,22,before,91.3,18,1000,86,10.7,7,0.9,7,app,pool hall,7,ok
+real6_s022_b5.png,real6,22,before,34.8,21.5,518,86,11.1,2,0.4,8,app,pool hall,2,fixed
+real6_s022_b6.png,real6,22,before,9,16.2,266,112,12.1,5,0.9,5,app,pool hall,5,ok
+real6_s022_b7.png,real6,22,before,66.4,4.1,829,146,12.7,3,0.9,3,app,pool hall,3,ok
+real6_s022_b8.png,real6,22,before,22.2,6.3,376,150,13.2,9,0.21,9,app,pool hall,9,ok
+real6_s022_bn0.png,real6,22,before,62.7,46.5,733,15,8.8,,0,nb,redetect,pool hall,?,fixed
+real6_s022_a0.png,real6,22,after,84.8,36.2,893,36,9.2,4,0.9,4,app,pool hall,4,ok
+real6_s022_a1.png,real6,22,after,18.5,38.7,398,38,9.7,3,0.76,3,app,pool hall,3,ok
+real6_s022_a2.png,real6,22,after,16.6,33.8,375,51,10.1,6,0.9,6,app,pool hall,6,ok
+real6_s022_a3.png,real6,22,after,78.5,26.2,873,63,10.1,0,0.94,0,app,pool hall,0,ok
+real6_s022_a4.png,real6,22,after,91.2,17.8,999,86,10.7,7,0.9,7,app,pool hall,7,ok
+real6_s022_a5.png,real6,22,after,34.8,21.7,518,85,11.1,2,0.9,8,app,pool hall,2,fixed
+real6_s022_a6.png,real6,22,after,9,16.2,265,112,12.1,5,0.9,5,app,pool hall,5,ok
+real6_s022_a7.png,real6,22,after,22.2,6.4,376,150,13.2,9,0.9,9,app,pool hall,9,ok
+real6_s023_b0.png,real6,23,before,84.8,35.9,895,37,9.2,4,0.9,4,app,pool hall,4,ok
+real6_s023_b1.png,real6,23,before,30.5,33.5,490,51,10,0,0.94,0,app,pool hall,0,ok
+real6_s023_b2.png,real6,23,before,16.5,33,375,54,10.2,6,0.9,6,app,pool hall,6,ok
+real6_s023_b3.png,real6,23,before,91.2,18.2,999,86,10.7,7,0.68,7,app,pool hall,7,ok
+real6_s023_b4.png,real6,23,before,34.6,22,518,85,11,2,0.5,8,app,pool hall,2,fixed
+real6_s023_b5.png,real6,23,before,8.9,16.2,267,112,12.1,5,0.9,5,app,pool hall,5,ok
+real6_s023_b6.png,real6,23,before,22.2,6,377,153,13.2,9,0.9,9,app,pool hall,9,ok
+real6_s023_bn6.png,real6,23,before,96,7.2,1094,125,11.8,,0,3,redetect,pool hall,?,fixed
+real6_s023_a0.png,real6,23,after,84.8,36.1,895,37,9.2,4,0.9,4,app,pool hall,4,ok
+real6_s023_a1.png,real6,23,after,30.5,33.5,490,51,10,0,0.94,0,app,pool hall,0,ok
+real6_s023_a2.png,real6,23,after,16.5,33.5,376,53,10.2,6,0.9,6,app,pool hall,6,ok
+real6_s023_a3.png,real6,23,after,91,17.6,1000,88,10.7,7,0.68,7,app,pool hall,7,ok
+real6_s023_a4.png,real6,23,after,34.7,21.3,519,87,11.1,2,0.5,8,app,pool hall,2,fixed
+real6_s023_a5.png,real6,23,after,8.9,16.1,266,113,12.1,5,0.9,5,app,pool hall,5,ok
+real6_s023_a6.png,real6,23,after,22.1,6.2,377,152,13.2,9,0.9,9,app,pool hall,9,ok
+real6_s023_an6.png,real6,23,after,96,7.2,1094,124,11.8,,0,3,redetect,pool hall,?,fixed
+real6_s024_b0.png,real6,24,before,84.7,36,895,37,9.2,4,0.9,4,app,pool hall,4,ok
+real6_s024_b1.png,real6,24,before,30.5,33.5,490,51,10,0,0.94,0,app,pool hall,0,ok
+real6_s024_b2.png,real6,24,before,16.4,33.6,376,53,10.1,6,0.9,6,app,pool hall,6,ok
+real6_s024_b3.png,real6,24,before,91.1,17.7,1000,88,10.7,7,0.68,7,app,pool hall,7,ok
+real6_s024_b4.png,real6,24,before,34.7,21.4,519,87,11.1,2,0.5,8,app,pool hall,2,fixed
+real6_s024_b5.png,real6,24,before,8.9,16.1,266,113,12.1,5,0.9,5,app,pool hall,5,ok
+real6_s024_b6.png,real6,24,before,22.1,6.3,377,151,13.2,9,0.9,9,app,pool hall,9,ok
+real6_s024_bn6.png,real6,24,before,96,7.2,1094,124,11.8,,0,3,redetect,pool hall,?,fixed
+real6_s024_a0.png,real6,24,after,84.8,36.1,895,37,9.2,4,0.9,4,app,pool hall,4,ok
+real6_s024_a1.png,real6,24,after,16.4,33.6,375,53,10.1,6,0.9,6,app,pool hall,6,ok
+real6_s024_a2.png,real6,24,after,91.1,17.8,1000,87,10.7,,0,7,app,pool hall,?,fixed
+real6_s024_a3.png,real6,24,after,34.6,21.7,517,86,11.1,8,0.9,8,app,pool hall,8,ok
+real6_s024_a4.png,real6,24,after,8.9,16,266,113,12.1,5,0.9,5,app,pool hall,5,ok
+real6_s024_a5.png,real6,24,after,31.6,11,481,127,12.4,0,0.94,0,app,pool hall,0,ok
+real6_s024_a6.png,real6,24,after,22.1,6.2,376,152,13.2,9,0.9,9,app,pool hall,9,ok
+real6_s025_a0.png,real6,25,after,84.9,36.1,895,37,9.2,,0,4,app,pool hall,?,fixed
+real6_s025_a1.png,real6,25,after,16,33.8,373,54,10.1,6,0.9,6,app,pool hall,6,ok
+real6_s025_a2.png,real6,25,after,91.4,18,1001,87,10.6,7,0.9,7,app,pool hall,7,ok
+real6_s025_a3.png,real6,25,after,8.2,16.8,264,113,12,5,0.9,5,app,pool hall,5,ok
+real6_s025_a4.png,real6,25,after,91.3,2.2,1073,148,12.3,,0,0,app,pool hall,?,fixed
+real6_s026_a0.png,real6,26,after,91.1,17.8,1000,87,10.7,7,0.9,7,app,pool hall,7,ok
+real6_s026_a1.png,real6,26,after,35,21.5,519,87,11.1,2,0.9,8,app,pool hall,2,fixed
+real6_s026_a2.png,real6,26,after,9.2,16.1,267,113,12.1,5,0.9,5,app,pool hall,5,ok
+real6_s026_a3.png,real6,26,after,22.5,5.4,376,156,13.3,4,0.34,9,app,pool hall,4,fixed
+real6_s026_an0.png,real6,26,after,19.6,46.9,429,19,9.2,,0,0,redetect,pool hall,?,fixed
+real6_s027_b0.png,real6,27,before,91.6,18.2,1000,86,10.7,7,0.9,7,app,pool hall,7,ok
+real6_s027_b1.png,real6,27,before,35.2,21.8,518,86,11,9,0.14,8,app,pool hall,9,fixed
+real6_s027_b2.png,real6,27,before,22.5,6.1,378,152,13,4,0.34,9,app,pool hall,4,fixed
+real6_s027_a0.png,real6,27,after,34.7,22,517,84,11,9,0.14,8,app,pool hall,9,fixed
+real6_s027_a1.png,real6,27,after,91.3,18.1,999,85,10.7,7,0.9,7,app,pool hall,7,ok
+real6_s027_a2.png,real6,27,after,22.2,5.8,376,152,13.3,4,0.34,9,app,pool hall,4,fixed
+real6_s028_b0.png,real6,28,before,63.6,30.3,750,54,9.9,0,0.94,0,app,pool hall,0,ok
+real6_s028_b1.png,real6,28,before,91.3,18.1,999,85,10.7,7,0.9,7,app,pool hall,7,ok
+real6_s028_b2.png,real6,28,before,34.7,21.9,518,84,11.1,9,0.14,9,app,pool hall,9,ok
+real6_s028_b3.png,real6,28,before,22.2,5.5,376,154,13.3,4,0.34,9,app,pool hall,4,fixed
+real6_s028_a0.png,real6,28,after,26.3,39.8,461,34,9.5,,0,0,app,pool hall,?,fixed
+real6_s028_a1.png,real6,28,after,34.7,21.7,518,85,11.1,9,0.9,8,app,pool hall,9,fixed
+real6_s028_a2.png,real6,28,after,22.2,5.9,376,152,13.3,4,0.9,9,app,pool hall,4,fixed
+real6_s028_an2.png,real6,28,after,2.8,9.7,184,140,13.4,,0,nb,redetect,pool hall,?,fixed
+real6_s028_an3.png,real6,28,after,5.5,4.3,190,166,14.2,,0,nb,redetect,pool hall,?,fixed
+real6_s028_an4.png,real6,28,after,4.8,8.8,201,144,13.5,,0,nb,redetect,pool hall,?,fixed
+real6_s029_b0.png,real6,29,before,26.5,39.9,461,34,9.5,0,0.94,0,app,pool hall,0,ok
+real6_s029_b1.png,real6,29,before,34.8,21.9,518,84,11,9,0.9,8,app,pool hall,9,fixed
+real6_s029_b2.png,real6,29,before,22.3,5.9,376,152,13.2,4,0.9,9,app,pool hall,4,fixed
+real6_s029_a0.png,real6,29,after,36.4,14.2,529,112,11.9,0,0.94,0,app,pool hall,0,ok
+real6_s029_a1.png,real6,29,after,22.3,5.9,376,152,13.2,1,0.49,9,app,pool hall,1,fixed
+real6_s029_an0.png,real6,29,after,94.9,29.9,991,51,9.6,,0,nb,redetect,pool hall,?,fixed
+real6_s029_an1.png,real6,29,after,88.7,26.2,958,62,10,,0,nb,redetect,pool hall,?,fixed
+real6_s029_an2.png,real6,29,after,94.2,32.4,978,45,9.4,,0,nb,redetect,pool hall,?,fixed
+real6_s029_an3.png,real6,29,after,91.1,26.3,976,62,9.9,,0,nb,redetect,pool hall,?,fixed
+real6_s029_an4.png,real6,29,after,91.2,30.3,964,51,9.6,,0,nb,redetect,pool hall,?,fixed
+real6_s030_b0.png,real6,30,before,22.3,5.9,376,152,13.2,9,1,nb,app,pool hall,9,fixed
+real6_s031_b0.png,real6,31,before,25.4,36.1,449,43,9.9,7,1,7,app,pool hall,7,ok
+real6_s031_b1.png,real6,31,before,74.1,23.3,846,72,10.4,4,1,4,app,pool hall,4,ok
+real6_s031_b2.png,real6,31,before,42.6,32,585,51,10,9,1,9,app,pool hall,9,ok
+real6_s031_b3.png,real6,31,before,61.7,46.3,716,15,8.8,8,1,8,app,pool hall,8,ok
+real6_s031_b4.png,real6,31,before,17.9,3.9,322,162,13.7,5,1,5,app,pool hall,5,ok
+real6_s031_b5.png,real6,31,before,87.8,37,911,33,9.1,2,1,2,app,pool hall,2,ok
+real6_s031_b6.png,real6,31,before,36.9,4.9,530,150,13.2,6,0.63,6,app,pool hall,6,ok
+real6_s031_b7.png,real6,31,before,80.7,15.7,921,95,11.1,1,0.61,1,app,pool hall,1,ok
+real6_s031_b8.png,real6,31,before,14.2,34.6,356,48,10.1,3,0.77,3,app,pool hall,3,ok
+real6_s031_b9.png,real6,31,before,70.4,5.5,863,137,12.4,0,0.96,0,app,pool hall,0,ok
+real6_s031_bn4.png,real6,31,before,13.5,36.8,366,43,10.1,,0,3,redetect,pool hall,?,fixed
+real6_s031_bn7.png,real6,31,before,14.6,23.6,349,83,11.4,,0,nb,redetect,pool hall,?,fixed
+real6_s031_bn9.png,real6,31,before,15.2,15.1,335,113,12.4,,0,nb,redetect,pool hall,?,fixed
+real6_s031_a0.png,real6,31,after,89.2,37.8,920,33,8.9,1,0.61,1,app,pool hall,1,ok
+real6_s031_a1.png,real6,31,after,25.3,36.8,450,44,9.7,7,0.47,7,app,pool hall,7,ok
+real6_s031_a2.png,real6,31,after,14.1,35.4,357,50,9.9,3,0.9,3,app,pool hall,3,ok
+real6_s031_a3.png,real6,31,after,42.6,32.3,586,54,9.8,9,0.9,9,app,pool hall,9,ok
+real6_s031_a4.png,real6,31,after,74.1,24.1,846,73,10.1,4,0.9,4,app,pool hall,4,ok
+real6_s031_a5.png,real6,31,after,77.7,21.7,881,79,10.3,0,0.94,0,app,pool hall,0,ok
+real6_s031_a6.png,real6,31,after,36.2,7.2,531,146,12.5,,0,6,app,pool hall,?,fixed
+real6_s031_a7.png,real6,31,after,67.3,6.3,835,139,12.1,,0,nb,app,pool hall,?,fixed
+real6_s031_a8.png,real6,31,after,16.8,5.6,324,160,13.2,5,0.75,5,app,pool hall,5,ok
+real6_s031_an7.png,real6,31,after,55.6,2.7,738,157,13.2,,0,nb,redetect,pool hall,?,fixed
+real6_s031_an8.png,real6,31,after,58.3,2.5,765,157,13.2,,0,nb,redetect,pool hall,?,fixed
+real6_s032_a0.png,real6,32,after,83.4,38.4,879,32,8.9,0,0.9,0,app,pool hall,0,ok
+real6_s032_a1.png,real6,32,after,25.4,35.9,450,47,9.8,7,0.9,7,app,pool hall,7,ok
+real6_s032_a2.png,real6,32,after,14.2,35.2,357,50,10,3,0.9,3,app,pool hall,3,ok
+real6_s032_a3.png,real6,32,after,72.8,26.5,830,66,9.9,1,0.6,2,app,pool hall,1,fixed
+real6_s032_a4.png,real6,32,after,74.1,23.8,846,74,10.2,4,0.9,4,app,pool hall,4,ok
+real6_s032_a5.png,real6,32,after,36.2,5.9,531,152,12.7,6,0.9,6,app,pool hall,6,ok
+real6_s032_a6.png,real6,32,after,16.9,5.5,324,161,13.2,5,0.9,5,app,pool hall,5,ok
+real6_s032_an0.png,real6,32,after,60.4,46.5,718,18,8.8,,0,8,redetect,pool hall,?,fixed
+real6_s032_an4.png,real6,32,after,41.6,33,589,52,10,,0,9,redetect,pool hall,?,fixed
+real6_s033_a0.png,real6,33,after,61.9,46.5,717,16,8.6,1,0.9,8,app,pool hall,1,fixed
+real6_s033_a1.png,real6,33,after,25.3,36.7,450,44,9.7,7,0.9,7,app,pool hall,7,ok
+real6_s033_a2.png,real6,33,after,14.2,35.3,358,50,9.9,3,0.9,3,app,pool hall,3,ok
+real6_s033_a3.png,real6,33,after,42.5,32.7,586,53,9.8,9,0.9,4,app,pool hall,9,fixed
+real6_s033_a4.png,real6,33,after,74.1,23.9,846,73,10.1,4,0.9,4,app,pool hall,4,ok
+real6_s033_a5.png,real6,33,after,44.7,18.4,610,98,11.1,0,0.94,0,app,pool hall,0,ok
+real6_s033_a6.png,real6,33,after,36.2,5.9,531,152,12.7,6,0.9,6,app,pool hall,6,ok
+real6_s033_a7.png,real6,33,after,16.9,5.2,323,163,13.2,5,0.9,5,app,pool hall,5,ok
+real6_s033_an0.png,real6,33,after,64.9,7.4,962,50,11.1,,0,nb,redetect,pool hall,?,fixed
+real6_s033_an1.png,real6,33,after,83.8,2.1,1004,26,10.2,,0,nb,redetect,pool hall,?,fixed
+real6_s033_an2.png,real6,33,after,78.9,4.4,981,32,10.5,,0,nb,redetect,pool hall,?,fixed
+real6_s033_an3.png,real6,33,after,64.8,6.1,980,50,11.1,,0,nb,redetect,pool hall,?,fixed
+real6_s033_an4.png,real6,33,after,71.3,3.1,1011,41,10.7,,0,nb,redetect,pool hall,?,fixed
+real6_s033_an8.png,real6,33,after,52.7,6.1,1001,66,11.7,,0,nb,redetect,pool hall,?,fixed
+real6_s033_an9.png,real6,33,after,24.1,11.1,977,116,13.5,,0,nb,redetect,pool hall,?,fixed
+real6_s033_an10.png,real6,33,after,27.6,9.3,1000,109,13.2,,0,nb,redetect,pool hall,?,fixed
+real6_s033_an11.png,real6,33,after,36.9,9.7,975,92,12.6,,0,nb,redetect,pool hall,?,fixed
+real6_s033_an12.png,real6,33,after,38,8.1,999,90,12.5,,0,nb,redetect,pool hall,?,fixed
+real6_s034_a0.png,real6,34,after,61.8,46.4,717,16,8.6,1,0.9,8,app,pool hall,1,fixed
+real6_s034_a1.png,real6,34,after,25.3,36.7,450,44,9.7,7,0.9,7,app,pool hall,7,ok
+real6_s034_a2.png,real6,34,after,42.5,32.7,586,53,9.8,9,0.9,9,app,pool hall,9,ok
+real6_s034_a3.png,real6,34,after,74.1,23.8,846,74,10.2,4,0.9,4,app,pool hall,4,ok
+real6_s034_a4.png,real6,34,after,89.7,7.2,1033,128,11.5,0,0.97,0,app,pool hall,0,ok
+real6_s034_a5.png,real6,34,after,36.2,5.9,531,152,12.7,6,0.9,6,app,pool hall,6,ok
+real6_s034_a6.png,real6,34,after,16.9,5,323,163,13.2,5,0.9,5,app,pool hall,5,ok
+real6_s035_b0.png,real6,35,before,61.8,46.3,717,16,8.6,1,0.9,8,app,pool hall,1,fixed
+real6_s035_b1.png,real6,35,before,25.3,36.7,450,44,9.7,7,0.9,7,app,pool hall,7,ok
+real6_s035_b2.png,real6,35,before,42.5,32.7,586,53,9.8,9,0.9,9,app,pool hall,9,ok
+real6_s035_b3.png,real6,35,before,74.1,23.8,846,74,10.1,4,0.9,4,app,pool hall,4,ok
+real6_s035_b4.png,real6,35,before,89.7,7.2,1033,128,11.5,0,0.97,0,app,pool hall,0,ok
+real6_s035_b5.png,real6,35,before,36.2,5.9,531,152,12.7,6,0.9,6,app,pool hall,6,ok
+real6_s035_b6.png,real6,35,before,16.9,5.1,323,163,13.2,5,0.9,5,app,pool hall,5,ok
+real6_s035_a0.png,real6,35,after,61.9,46.5,717,16,8.6,1,0.9,8,app,pool hall,1,fixed
+real6_s035_a1.png,real6,35,after,25.4,36.7,451,44,9.7,7,0.9,7,app,pool hall,7,ok
+real6_s035_a2.png,real6,35,after,71.8,33.7,807,46,9.4,0,0.94,0,app,pool hall,0,ok
+real6_s035_a3.png,real6,35,after,42.5,32.6,586,53,9.8,9,0.9,9,app,pool hall,9,ok
+real6_s035_a4.png,real6,35,after,36.3,5.8,531,152,12.7,6,0.9,6,app,pool hall,6,ok
+real6_s035_a5.png,real6,35,after,16.9,5.1,323,163,13.2,5,0.9,5,app,pool hall,5,ok
+real6_s036_a0.png,real6,36,after,61.9,46.3,717,17,8.6,1,0.9,8,app,pool hall,1,fixed
+real6_s036_a1.png,real6,36,after,25.4,36.8,451,44,9.7,7,0.9,7,app,pool hall,7,ok
+real6_s036_a2.png,real6,36,after,42.5,32.7,586,53,9.8,9,0.9,9,app,pool hall,9,ok
+real6_s036_a3.png,real6,36,after,36.2,5.8,531,152,12.7,6,0.9,6,app,pool hall,6,ok
+real6_s036_a4.png,real6,36,after,18.3,5.6,340,160,13.1,0,0.9,0,app,pool hall,0,ok
+real6_s037_b0.png,real6,37,before,61.8,46.4,717,16,8.6,1,0.9,8,app,pool hall,1,fixed
+real6_s037_b1.png,real6,37,before,25.4,36.7,451,44,9.7,7,0.9,7,app,pool hall,7,ok
+real6_s037_b2.png,real6,37,before,42.5,32.7,586,53,9.8,9,0.9,9,app,pool hall,9,ok
+real6_s037_b3.png,real6,37,before,36.3,5.8,531,152,12.7,6,0.9,6,app,pool hall,6,ok
+real6_s037_b4.png,real6,37,before,6.1,3,193,178,13.8,3,0.36,nb,app,pool hall,3,fixed
+real6_s037_b5.png,real6,37,before,2.5,6.1,164,164,13.4,,0,nb,app,pool hall,?,fixed
+real6_s037_b6.png,real6,37,before,3.2,1.8,153,186,14.1,4,0.13,nb,app,pool hall,4,fixed
+real6_s037_b7.png,real6,37,before,4.6,3.2,176,178,13.8,2,0.16,nb,app,pool hall,2,fixed
+real6_s037_b8.png,real6,37,before,18.3,5.6,340,160,13.1,0,0.9,0,app,pool hall,0,ok
+real6_s037_a0.png,real6,37,after,25.4,36.8,451,44,9.7,7,0.9,7,app,pool hall,7,ok
+real6_s037_a1.png,real6,37,after,35,35.4,526,47,9.7,0,0.9,0,app,pool hall,0,ok
+real6_s037_a2.png,real6,37,after,42.5,32.7,586,53,9.8,9,0.9,9,app,pool hall,9,ok
+real6_s037_a3.png,real6,37,after,72.7,13.1,864,110,11.2,6,0.83,6,app,pool hall,6,ok
+real6_s037_an0.png,real6,37,after,60.5,46.5,718,18,8.8,,0,8,redetect,pool hall,?,fixed
+real6_s038_b0.png,real6,38,before,61.8,46.3,716,17,8.6,1,0.9,8,app,pool hall,1,fixed
+real6_s038_b1.png,real6,38,before,25.4,36.7,451,44,9.7,7,0.9,7,app,pool hall,7,ok
+real6_s038_b2.png,real6,38,before,35,35.4,526,47,9.7,0,0.9,0,app,pool hall,0,ok
+real6_s038_b3.png,real6,38,before,42.5,32.7,586,53,9.8,9,0.9,9,app,pool hall,9,ok
+real6_s038_b4.png,real6,38,before,72.7,13.1,864,110,11.2,6,0.83,6,app,pool hall,6,ok
+real6_s038_a0.png,real6,38,after,7,38.8,305,41,9.8,0,0.8,0,app,pool hall,0,ok
+real6_s039_a0.png,real6,39,after,17.6,42.2,397,30,9.5,,0,0,app,pool hall,?,fixed
+real6_s039_a1.png,real6,39,after,4.8,41,295,35,9.7,,0,nb,app,pool hall,?,fixed
+real6_s039_a2.png,real6,39,after,2.7,41.3,279,34,9.7,0,0.9,nb,app,pool hall,0,fixed
+real6_s039_a3.png,real6,39,after,42.6,32.1,586,53,10,,0,9,app,pool hall,?,fixed
+real6_s039_an0.png,real6,39,after,60.6,46.6,719,16,8.8,,0,8,redetect,pool hall,?,fixed
+real6_s039_an2.png,real6,39,after,6.9,42.9,325,29,9.7,,0,nb,redetect,pool hall,?,fixed
+real6_s040_b0.png,real6,40,before,17.7,42.1,398,30,9.5,7,0.82,0,app,pool hall,7,fixed
+real6_s040_b1.png,real6,40,before,4.8,41,295,35,9.7,9,0.46,nb,app,pool hall,9,fixed
+real6_s040_b2.png,real6,40,before,2.7,41.2,279,34,9.7,0,0.9,nb,app,pool hall,0,fixed
+real6_s040_b3.png,real6,40,before,42.6,32,586,53,10,1,0.41,9,app,pool hall,1,fixed
+real6_s040_bn0.png,real6,40,before,60.6,46.5,719,17,8.8,,0,8,redetect,pool hall,?,fixed
+real6_s040_a0.png,real6,40,after,51.8,43.4,650,23,9,,0,0,app,pool hall,?,fixed
+real6_s040_a1.png,real6,40,after,42.6,32.2,586,53,10,1,0.41,9,app,pool hall,1,fixed
+real6_s041_b0.png,real6,41,before,51.8,43.4,650,23,9,0,0.94,0,app,pool hall,0,ok
+real6_s041_b1.png,real6,41,before,42.6,32.2,586,52,10,9,1,9,app,pool hall,9,ok
+real6_s041_b2.png,real6,41,before,37.4,27.7,544,66,10.5,,1,nb,app,pool hall,?,fixed
+real6_s041_a0.png,real6,41,after,90.8,36,936,36,9.2,0,0.94,0,app,pool hall,0,ok
+real6_s041_a1.png,real6,41,after,3.1,4.3,155,169,14,9,0.72,9,app,pool hall,9,ok
+real6_s042_b0.png,real6,42,before,90.8,36,936,36,9.2,0,0.94,0,app,pool hall,0,ok
+real6_s042_b1.png,real6,42,before,3.1,4.3,155,168,14,9,0.72,9,app,pool hall,9,ok
+real6_s042_a0.png,real6,42,after,64.9,20.3,779,84,10.8,0,0.94,0,app,pool hall,0,ok
+real6_s043_b0.png,real6,43,before,90.8,36,936,36,9.2,0,0.94,0,app,pool hall,0,ok
+real6_s043_b1.png,real6,43,before,3.1,4.3,155,168,14,9,0.72,9,app,pool hall,9,ok
+real6_s043_a0.png,real6,43,after,56,35.6,687,42,9.6,0,0.94,0,app,pool hall,0,ok

@@ -1,0 +1,42 @@
+
+independent before: 68 looks, 278/404 balls named; unnamed spots 42, misnamed 17, undetected at least 84; whole table named now 20, with continuity ceiling 20
+  unnamed spots by group: {"5b earlier identity contradicted by a clear read elsewhere":30,"4 never reliably identified":9,"5a earlier identity not on the table":1,"1 identified earlier, stationary":2}
+  misnamed spots by group: {"5a earlier identity not on the table":13,"4 never reliably identified":4}
+  tracker already holds a sure, missing number by clip end (unnamed spots): 6
+  balls with no spot in the look 67 (explainable by spots the look rejected as not a ball 22, flickering 18); tracker still following: {"trackedSureMissing":2,"trackedSureOther":1,"trackedNoName":9}
+  why: {"unnamed: contradicted by a clear read of that number elsewhere":30,"unnamed: never reliably identified":9,"misnamed: earlier identity not on the table":13,"misnamed: never reliably identified":4,"unnamed: earlier identity not on the table":1,"unnamed: identified earlier, stationary":2}
+   2026-10-16_evening_V2.3.3         {"looks":29,"fails":3,"g1":0,"g2":0,"g3":0,"g4":1,"g5":2,"fullNow":19,"fullIfContinuity":19}
+   2026-10-17_2151_V2.3.3_firstspot  {"looks":27,"fails":32,"g1":0,"g2":0,"g3":0,"g4":7,"g5":25,"fullNow":0,"fullIfContinuity":0}
+   2026-10-17_1500_V2.3.3_otherside  {"looks":12,"fails":7,"g1":2,"g2":0,"g3":0,"g4":1,"g5":4,"fullNow":1,"fullIfContinuity":1}
+
+independent after: 58 looks, 224/312 balls named; unnamed spots 37, misnamed 11, undetected at least 52; whole table named now 24, with continuity ceiling 25
+  unnamed spots by group: {"2 moved, unbroken track":3,"5a earlier identity not on the table":4,"4 never reliably identified":9,"5b earlier identity contradicted by a clear read elsewhere":19,"3 lost or ambiguous":1,"1 identified earlier, stationary":1}
+  misnamed spots by group: {"5b earlier identity contradicted by a clear read elsewhere":2,"5a earlier identity not on the table":5,"1 identified earlier, stationary":1,"4 never reliably identified":3}
+  tracker already holds a sure, missing number by clip end (unnamed spots): 3
+  balls with no spot in the look 42 (explainable by spots the look rejected as not a ball 19, flickering 7); tracker still following: {"trackedSureMissing":6,"trackedSureOther":2,"trackedNoName":8}
+  why: {"unnamed: moved on one unbroken track":3,"unnamed: earlier identity not on the table":4,"unnamed: never reliably identified (no track at the spot)":1,"misnamed: contradicted by a clear read of that number elsewhere":2,"unnamed: contradicted by a clear read of that number elsewhere":19,"unnamed: never reliably identified (no shot found)":2,"unnamed: never reliably identified (stationary)":5,"unnamed: track began after the shot (chain broken)":1,"misnamed: earlier identity not on the table":5,"misnamed: identified earlier, stationary":1,"unnamed: identified earlier, stationary":1,"unnamed: never reliably identified (moved, one unbroken track)":1,"misnamed: never reliably identified (no shot found)":2,"misnamed: never reliably identified (no track at the spot)":1}
+   2026-10-16_evening_V2.3.3         {"looks":27,"fails":4,"g1":0,"g2":2,"g3":0,"g4":1,"g5":1,"fullNow":22,"fullIfContinuity":23}
+   2026-10-17_2151_V2.3.3_firstspot  {"looks":24,"fails":30,"g1":1,"g2":1,"g3":1,"g4":8,"g5":19,"fullNow":0,"fullIfContinuity":0}
+   2026-10-17_1500_V2.3.3_otherside  {"looks":7,"fails":3,"g1":0,"g2":0,"g3":0,"g4":0,"g5":3,"fullNow":2,"fullIfContinuity":2}
+
+continuous before: 68 looks, 278/404 balls named; unnamed spots 42, misnamed 17, undetected at least 84; whole table named now 20, with continuity ceiling 20
+  unnamed spots by group: {"5b earlier identity contradicted by a clear read elsewhere":29,"1 identified earlier, stationary":3,"4 never reliably identified":8,"5a earlier identity not on the table":1,"3 lost or ambiguous":1}
+  misnamed spots by group: {"5a earlier identity not on the table":12,"4 never reliably identified":4,"3 lost or ambiguous":1}
+  tracker already holds a sure, missing number by clip end (unnamed spots): 6
+  balls with no spot in the look 67 (explainable by spots the look rejected as not a ball 22, flickering 18); tracker still following: {"trackedSureMissing":2,"trackedSureOther":1,"trackedNoName":9}
+  why: {"unnamed: contradicted by a clear read of that number elsewhere":29,"unnamed: identified earlier, stationary":3,"misnamed: earlier identity not on the table":12,"unnamed: never reliably identified":8,"misnamed: never reliably identified":4,"unnamed: earlier identity not on the table":1,"misnamed: two earlier identities disagree":1,"unnamed: two earlier identities disagree":1}
+   2026-10-16_evening_V2.3.3         {"looks":29,"fails":3,"g1":1,"g2":0,"g3":0,"g4":0,"g5":2,"fullNow":19,"fullIfContinuity":19}
+   2026-10-17_2151_V2.3.3_firstspot  {"looks":27,"fails":32,"g1":0,"g2":0,"g3":0,"g4":7,"g5":25,"fullNow":0,"fullIfContinuity":0}
+   2026-10-17_1500_V2.3.3_otherside  {"looks":12,"fails":7,"g1":2,"g2":0,"g3":1,"g4":1,"g5":3,"fullNow":1,"fullIfContinuity":1}
+
+continuous after: 58 looks, 224/312 balls named; unnamed spots 37, misnamed 11, undetected at least 52; whole table named now 24, with continuity ceiling 25
+  unnamed spots by group: {"2 moved, unbroken track":3,"5a earlier identity not on the table":4,"4 never reliably identified":9,"5b earlier identity contradicted by a clear read elsewhere":19,"3 lost or ambiguous":1,"1 identified earlier, stationary":1}
+  misnamed spots by group: {"5b earlier identity contradicted by a clear read elsewhere":2,"5a earlier identity not on the table":5,"1 identified earlier, stationary":1,"4 never reliably identified":3}
+  tracker already holds a sure, missing number by clip end (unnamed spots): 3
+  balls with no spot in the look 42 (explainable by spots the look rejected as not a ball 19, flickering 7); tracker still following: {"trackedSureMissing":6,"trackedSureOther":2,"trackedNoName":8}
+  why: {"unnamed: moved on one unbroken track":3,"unnamed: earlier identity not on the table":4,"unnamed: never reliably identified (no track at the spot)":1,"misnamed: contradicted by a clear read of that number elsewhere":2,"unnamed: contradicted by a clear read of that number elsewhere":19,"unnamed: never reliably identified (no shot found)":2,"unnamed: never reliably identified (stationary)":5,"unnamed: track began after the shot (chain broken)":1,"misnamed: earlier identity not on the table":5,"misnamed: identified earlier, stationary":1,"unnamed: identified earlier, stationary":1,"unnamed: never reliably identified (moved, one unbroken track)":1,"misnamed: never reliably identified (no shot found)":2,"misnamed: never reliably identified (no track at the spot)":1}
+   2026-10-16_evening_V2.3.3         {"looks":27,"fails":4,"g1":0,"g2":2,"g3":0,"g4":1,"g5":1,"fullNow":22,"fullIfContinuity":23}
+   2026-10-17_2151_V2.3.3_firstspot  {"looks":24,"fails":30,"g1":1,"g2":1,"g3":1,"g4":8,"g5":19,"fullNow":0,"fullIfContinuity":0}
+   2026-10-17_1500_V2.3.3_otherside  {"looks":7,"fails":3,"g1":0,"g2":0,"g3":0,"g4":0,"g5":3,"fullNow":2,"fullIfContinuity":2}
+
+after looks skipped as not settled: {"independent":10,"continuous":10}
