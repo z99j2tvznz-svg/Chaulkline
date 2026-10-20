@@ -1,5 +1,7 @@
 # Ball-recognition benchmark (isolated, 2026-10-20)
 
+Results: [REPORT.md](REPORT.md).
+
 An independent, reproducible comparison of the frozen number reader against two challenger recognisers, run on
 GitHub Actions (`.github/workflows/recognition-benchmark.yml`). It reads `collab/recognition-package-2026-10-20`
 (published at commit 9652277) and the frozen v0.6 scorer inside it; it changes nothing in the package, the app or v0.6.
