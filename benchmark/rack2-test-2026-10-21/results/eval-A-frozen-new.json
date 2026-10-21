@@ -186,8 +186,8 @@
   "inferred": 0,
   "notConfirmed": 2,
   "wrongShot": 2,
-  "pidRight": 4,
-  "pidWrong": 1,
+  "pidRight": 5,
+  "pidWrong": 0,
   "pidUnknown": 0,
   "fabricated": 0,
   "perBall": [
@@ -245,7 +245,7 @@
    {
     "ball": 8,
     "shot": 12,
-    "truthPocket": "P6",
+    "truthPocket": "P1",
     "result": "observed entry",
     "pid": "P1",
     "camera": "far-left corner",

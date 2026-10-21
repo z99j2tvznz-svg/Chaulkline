@@ -9,7 +9,7 @@ the exact size in the meta file. Video, motion file and detections are in projec
 - each rack on its own (the detections cut at 168 s and 196 s, the way the per-shot harness cuts clips for evaluation);
 - the whole recording as one rack (the runner's native mode).
 
-Truth: `truth/` (checked by eye by Claude, not reviewed by the player; first ball judged at 1-3 fps only). Logs and
+Truth: `truth/` (checked by eye by Claude, reconciled with the player's account in RECONCILIATION.md; first ball judged at 1-3 fps only). Logs and
 scores: `results/`. Input "B" = Challenger B number + frozen not-a-ball (the Cycle 3 default); "frozen" = frozen reader.
 Scoring script: `../perception-cycle3/tools/eval-rack.js`.
 
@@ -25,7 +25,7 @@ Scoring script: `../perception-cycle3/tools/eval-rack.js`.
 | Same, frozen reader | 12 / 1 / 0 | 0 / 3 / 10 | 0 / 11 / 1 |
 | Same, Cycle 2 baseline (B input) | 12 / 1 / 0 | 0 / 3 / 10 | 0 / 12 / 0 |
 | Potted balls: observed / not confirmed / credited to another shot | 9 / 0 / 0 | 5 / 2 / 2 | 3 / 5 / 0 |
-| P-ID given: right / wrong | 9 / 0 | 4 / 1 | 3 / 0 |
+| P-ID given: right / wrong | 9 / 0 | 5 / 0 (was 4 / 1 before the truth fix) | 3 / 0 |
 | Pockets made up | 0 | 0 | 0 |
 
 Whole recording as one rack: 26 shots found; rack 2A's 13 and 11 of rack 2B's 12, plus 13 false shots in the re-rack.
@@ -46,7 +46,7 @@ wrong.
 4. **The last shot of rack 2B (the 9, ~361 s) was not found.** The recording ends 7 s after the 9 drops, with a cue and
    a glove laid on the table.
 5. **One false shot** (74.3 s): the player's body over the table.
-6. **One wrong P-ID**: the 8 in rack 2A (dropped from the far side jaws, given far-left corner P1; truth far side P6).
+6. ~~One wrong P-ID~~: withdrawn. The truth was wrong: the 8 in rack 2A went into P1, as the system said (see RECONCILIATION.md).
 7. **Two racks in one recording** are not handled at all by the native runner (see above).
 
 ## Unknowns
@@ -57,6 +57,6 @@ wrong.
 
 ## Conclusion
 Rack 1's 13 / 13 does not carry over. On two new racks from the same table and camera spot, 0 of 25 tables are fully
-right. The parts that worked: shot finding (24 / 25), the pack count and foot end (both racks), P-IDs where given (7 / 8),
+right. The parts that worked: shot finding (24 / 25), the pack count and foot end (both racks), P-IDs where given (8 / 8),
 no pockets made up, and on rack 2B nothing confidently wrong. The parts that failed are break pots of unread pack balls,
 a ball resting in the jaws, and multi-rack recordings.

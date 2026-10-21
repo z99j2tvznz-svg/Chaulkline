@@ -241,7 +241,7 @@
    {
     "ball": 8,
     "shot": 12,
-    "truthPocket": "P6",
+    "truthPocket": "P1",
     "result": "observed entry",
     "pid": "unknown (orientation not known)",
     "camera": "far-left corner",
