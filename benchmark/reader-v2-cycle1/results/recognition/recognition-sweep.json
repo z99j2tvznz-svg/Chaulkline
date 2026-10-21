@@ -1,0 +1,1661 @@
+{
+ "B": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 714,
+   "conf_wrong": 1,
+   "unsure": 5,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 10,
+   "nll": 0.0905
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 692,
+   "conf_wrong": 5,
+   "unsure": 16,
+   "rejected_ball": 8,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.103
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 713,
+   "conf_wrong": 1,
+   "unsure": 6,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 10,
+   "nll": 0.0906
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1408,
+   "conf_wrong": 48,
+   "unsure": 77,
+   "rejected_ball": 50,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.22
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 95,
+   "conf_wrong": 3,
+   "unsure": 5,
+   "rejected_ball": 3,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2152
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 8,
+   "conf_wrong": 0,
+   "unsure": 54,
+   "rejected_ball": 50,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 1.7239
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 314,
+   "conf_wrong": 43,
+   "unsure": 73,
+   "rejected_ball": 50,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.6403
+  }
+ },
+ "base0": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 714,
+   "conf_wrong": 1,
+   "unsure": 5,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 10,
+   "nll": 0.0914
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 689,
+   "conf_wrong": 6,
+   "unsure": 18,
+   "rejected_ball": 8,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1062
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 713,
+   "conf_wrong": 1,
+   "unsure": 6,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 10,
+   "nll": 0.0924
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1397,
+   "conf_wrong": 47,
+   "unsure": 88,
+   "rejected_ball": 51,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2213
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 95,
+   "conf_wrong": 3,
+   "unsure": 5,
+   "rejected_ball": 3,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2166
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 8,
+   "conf_wrong": 0,
+   "unsure": 53,
+   "rejected_ball": 51,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 1.7132
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 303,
+   "conf_wrong": 42,
+   "unsure": 84,
+   "rejected_ball": 51,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.6435
+  }
+ },
+ "base1": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 715,
+   "conf_wrong": 3,
+   "unsure": 2,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 12,
+   "nll": 0.0962
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 685,
+   "conf_wrong": 4,
+   "unsure": 17,
+   "rejected_ball": 15,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1145
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 717,
+   "conf_wrong": 2,
+   "unsure": 1,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.0952
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1430,
+   "conf_wrong": 50,
+   "unsure": 103,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2175
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 96,
+   "conf_wrong": 2,
+   "unsure": 8,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2074
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 47,
+   "conf_wrong": 0,
+   "unsure": 65,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 1.153
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 370,
+   "conf_wrong": 30,
+   "unsure": 80,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.5395
+  }
+ },
+ "base2": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 715,
+   "conf_wrong": 1,
+   "unsure": 4,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 12,
+   "nll": 0.1069
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 689,
+   "conf_wrong": 3,
+   "unsure": 18,
+   "rejected_ball": 11,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1216
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 717,
+   "conf_wrong": 1,
+   "unsure": 2,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 13,
+   "nll": 0.1108
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1435,
+   "conf_wrong": 55,
+   "unsure": 93,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1406
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 97,
+   "conf_wrong": 3,
+   "unsure": 6,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1355
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 40,
+   "conf_wrong": 0,
+   "unsure": 72,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.5771
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 363,
+   "conf_wrong": 45,
+   "unsure": 72,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.3302
+  }
+ },
+ "baseens": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 717,
+   "conf_wrong": 1,
+   "unsure": 2,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.0949
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 689,
+   "conf_wrong": 4,
+   "unsure": 19,
+   "rejected_ball": 9,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1079
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 717,
+   "conf_wrong": 1,
+   "unsure": 2,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.0963
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1433,
+   "conf_wrong": 35,
+   "unsure": 110,
+   "rejected_ball": 5,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1737
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 95,
+   "conf_wrong": 2,
+   "unsure": 9,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1694
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 30,
+   "conf_wrong": 0,
+   "unsure": 77,
+   "rejected_ball": 5,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.9979
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 350,
+   "conf_wrong": 30,
+   "unsure": 95,
+   "rejected_ball": 5,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.4471
+  }
+ },
+ "touch0": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 716,
+   "conf_wrong": 1,
+   "unsure": 3,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.0878
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 709,
+   "conf_wrong": 1,
+   "unsure": 8,
+   "rejected_ball": 3,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.0744
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 716,
+   "conf_wrong": 2,
+   "unsure": 2,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.0854
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1433,
+   "conf_wrong": 30,
+   "unsure": 76,
+   "rejected_ball": 44,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1847
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 95,
+   "conf_wrong": 2,
+   "unsure": 7,
+   "rejected_ball": 2,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1812
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 43,
+   "conf_wrong": 0,
+   "unsure": 25,
+   "rejected_ball": 44,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.9346
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 371,
+   "conf_wrong": 30,
+   "unsure": 35,
+   "rejected_ball": 44,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.4617
+  }
+ },
+ "touch1": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 715,
+   "conf_wrong": 1,
+   "unsure": 4,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 14,
+   "nll": 0.1057
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 702,
+   "conf_wrong": 2,
+   "unsure": 14,
+   "rejected_ball": 3,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.0779
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 712,
+   "conf_wrong": 1,
+   "unsure": 7,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 13,
+   "nll": 0.1065
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1450,
+   "conf_wrong": 50,
+   "unsure": 83,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2032
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 97,
+   "conf_wrong": 3,
+   "unsure": 6,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1975
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 47,
+   "conf_wrong": 0,
+   "unsure": 65,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.9826
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 370,
+   "conf_wrong": 45,
+   "unsure": 65,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.5232
+  }
+ },
+ "touch2": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 715,
+   "conf_wrong": 2,
+   "unsure": 3,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 14,
+   "nll": 0.1052
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 701,
+   "conf_wrong": 2,
+   "unsure": 15,
+   "rejected_ball": 3,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.0787
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 715,
+   "conf_wrong": 3,
+   "unsure": 2,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 14,
+   "nll": 0.1092
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1422,
+   "conf_wrong": 68,
+   "unsure": 88,
+   "rejected_ball": 5,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1794
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 95,
+   "conf_wrong": 5,
+   "unsure": 6,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.173
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 52,
+   "conf_wrong": 0,
+   "unsure": 55,
+   "rejected_ball": 5,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.8456
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 375,
+   "conf_wrong": 30,
+   "unsure": 70,
+   "rejected_ball": 5,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.382
+  }
+ },
+ "touchens": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 717,
+   "conf_wrong": 1,
+   "unsure": 2,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.0926
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 705,
+   "conf_wrong": 2,
+   "unsure": 13,
+   "rejected_ball": 1,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.0742
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 716,
+   "conf_wrong": 1,
+   "unsure": 3,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.0931
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1435,
+   "conf_wrong": 35,
+   "unsure": 108,
+   "rejected_ball": 5,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1785
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 97,
+   "conf_wrong": 2,
+   "unsure": 7,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1747
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 47,
+   "conf_wrong": 0,
+   "unsure": 60,
+   "rejected_ball": 5,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.9102
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 370,
+   "conf_wrong": 30,
+   "unsure": 75,
+   "rejected_ball": 5,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.4381
+  }
+ },
+ "far0": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 715,
+   "conf_wrong": 3,
+   "unsure": 1,
+   "rejected_ball": 2,
+   "nonballs": 50,
+   "nonball_accepted": 9,
+   "nll": 0.0924
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 689,
+   "conf_wrong": 5,
+   "unsure": 12,
+   "rejected_ball": 15,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1103
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 713,
+   "conf_wrong": 2,
+   "unsure": 4,
+   "rejected_ball": 2,
+   "nonballs": 50,
+   "nonball_accepted": 9,
+   "nll": 0.091
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1448,
+   "conf_wrong": 33,
+   "unsure": 92,
+   "rejected_ball": 10,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1916
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 98,
+   "conf_wrong": 2,
+   "unsure": 5,
+   "rejected_ball": 1,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1867
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 30,
+   "conf_wrong": 0,
+   "unsure": 72,
+   "rejected_ball": 10,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 1.2598
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 351,
+   "conf_wrong": 33,
+   "unsure": 86,
+   "rejected_ball": 10,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.552
+  }
+ },
+ "far1": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 716,
+   "conf_wrong": 2,
+   "unsure": 2,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 10,
+   "nll": 0.0805
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 694,
+   "conf_wrong": 2,
+   "unsure": 12,
+   "rejected_ball": 13,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1034
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 716,
+   "conf_wrong": 1,
+   "unsure": 3,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.0829
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1394,
+   "conf_wrong": 43,
+   "unsure": 126,
+   "rejected_ball": 20,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2361
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 93,
+   "conf_wrong": 2,
+   "unsure": 10,
+   "rejected_ball": 1,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2276
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 47,
+   "conf_wrong": 0,
+   "unsure": 45,
+   "rejected_ball": 20,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 1.24
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 370,
+   "conf_wrong": 30,
+   "unsure": 60,
+   "rejected_ball": 20,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.5843
+  }
+ },
+ "far2": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 715,
+   "conf_wrong": 2,
+   "unsure": 3,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.112
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 673,
+   "conf_wrong": 5,
+   "unsure": 24,
+   "rejected_ball": 19,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1255
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 713,
+   "conf_wrong": 2,
+   "unsure": 5,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.1128
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1396,
+   "conf_wrong": 61,
+   "unsure": 121,
+   "rejected_ball": 5,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1727
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 94,
+   "conf_wrong": 4,
+   "unsure": 8,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1672
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 46,
+   "conf_wrong": 0,
+   "unsure": 61,
+   "rejected_ball": 5,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.7784
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 342,
+   "conf_wrong": 33,
+   "unsure": 100,
+   "rejected_ball": 5,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.3855
+  }
+ },
+ "farens": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 716,
+   "conf_wrong": 1,
+   "unsure": 3,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.0889
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 692,
+   "conf_wrong": 3,
+   "unsure": 9,
+   "rejected_ball": 17,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1056
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 715,
+   "conf_wrong": 1,
+   "unsure": 4,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.0902
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1434,
+   "conf_wrong": 35,
+   "unsure": 105,
+   "rejected_ball": 9,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1834
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 97,
+   "conf_wrong": 2,
+   "unsure": 6,
+   "rejected_ball": 1,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1795
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 47,
+   "conf_wrong": 0,
+   "unsure": 56,
+   "rejected_ball": 9,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 1.0279
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 367,
+   "conf_wrong": 30,
+   "unsure": 74,
+   "rejected_ball": 9,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.4666
+  }
+ },
+ "crop260": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 717,
+   "conf_wrong": 2,
+   "unsure": 1,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 10,
+   "nll": 0.0784
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 713,
+   "conf_wrong": 4,
+   "unsure": 3,
+   "rejected_ball": 1,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.057
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 717,
+   "conf_wrong": 1,
+   "unsure": 2,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 10,
+   "nll": 0.0794
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1418,
+   "conf_wrong": 55,
+   "unsure": 91,
+   "rejected_ball": 19,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1886
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 95,
+   "conf_wrong": 4,
+   "unsure": 6,
+   "rejected_ball": 1,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1856
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 28,
+   "conf_wrong": 0,
+   "unsure": 65,
+   "rejected_ball": 19,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.9646
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 315,
+   "conf_wrong": 55,
+   "unsure": 91,
+   "rejected_ball": 19,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.5608
+  }
+ },
+ "crop261": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 717,
+   "conf_wrong": 2,
+   "unsure": 1,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.0915
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 703,
+   "conf_wrong": 2,
+   "unsure": 10,
+   "rejected_ball": 6,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.0719
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 717,
+   "conf_wrong": 2,
+   "unsure": 1,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 12,
+   "nll": 0.0949
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1457,
+   "conf_wrong": 84,
+   "unsure": 42,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2422
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 99,
+   "conf_wrong": 6,
+   "unsure": 1,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.238
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 47,
+   "conf_wrong": 39,
+   "unsure": 26,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 1.6969
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 368,
+   "conf_wrong": 84,
+   "unsure": 28,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.7162
+  }
+ },
+ "crop262": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 717,
+   "conf_wrong": 1,
+   "unsure": 2,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 13,
+   "nll": 0.0997
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 707,
+   "conf_wrong": 1,
+   "unsure": 5,
+   "rejected_ball": 8,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.0682
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 716,
+   "conf_wrong": 2,
+   "unsure": 2,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 13,
+   "nll": 0.1054
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1469,
+   "conf_wrong": 60,
+   "unsure": 54,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1675
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 99,
+   "conf_wrong": 4,
+   "unsure": 3,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1657
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 67,
+   "conf_wrong": 5,
+   "unsure": 40,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.5148
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 387,
+   "conf_wrong": 50,
+   "unsure": 43,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.4428
+  }
+ },
+ "crop26ens": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 717,
+   "conf_wrong": 1,
+   "unsure": 2,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.0853
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 708,
+   "conf_wrong": 1,
+   "unsure": 7,
+   "rejected_ball": 5,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.0623
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 717,
+   "conf_wrong": 1,
+   "unsure": 2,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.0887
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1441,
+   "conf_wrong": 30,
+   "unsure": 112,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.176
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 97,
+   "conf_wrong": 2,
+   "unsure": 7,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1741
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 42,
+   "conf_wrong": 0,
+   "unsure": 70,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.839
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 350,
+   "conf_wrong": 30,
+   "unsure": 100,
+   "rejected_ball": 0,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.4983
+  }
+ },
+ "px480": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 698,
+   "conf_wrong": 3,
+   "unsure": 18,
+   "rejected_ball": 2,
+   "nonballs": 50,
+   "nonball_accepted": 13,
+   "nll": 0.1183
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 673,
+   "conf_wrong": 7,
+   "unsure": 24,
+   "rejected_ball": 17,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1581
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 709,
+   "conf_wrong": 3,
+   "unsure": 7,
+   "rejected_ball": 2,
+   "nonballs": 50,
+   "nonball_accepted": 9,
+   "nll": 0.1086
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1359,
+   "conf_wrong": 64,
+   "unsure": 55,
+   "rejected_ball": 105,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.292
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 90,
+   "conf_wrong": 5,
+   "unsure": 4,
+   "rejected_ball": 7,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2871
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 7,
+   "conf_wrong": 0,
+   "unsure": 0,
+   "rejected_ball": 105,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 2.358
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 301,
+   "conf_wrong": 26,
+   "unsure": 48,
+   "rejected_ball": 105,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.7943
+  }
+ },
+ "px481": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 701,
+   "conf_wrong": 3,
+   "unsure": 16,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.1163
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 679,
+   "conf_wrong": 2,
+   "unsure": 16,
+   "rejected_ball": 24,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1378
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 714,
+   "conf_wrong": 2,
+   "unsure": 4,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.1111
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1403,
+   "conf_wrong": 82,
+   "unsure": 76,
+   "rejected_ball": 22,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2971
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 94,
+   "conf_wrong": 5,
+   "unsure": 6,
+   "rejected_ball": 1,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2886
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 41,
+   "conf_wrong": 5,
+   "unsure": 44,
+   "rejected_ball": 22,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 1.7247
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 345,
+   "conf_wrong": 37,
+   "unsure": 76,
+   "rejected_ball": 22,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.7362
+  }
+ },
+ "px482": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 708,
+   "conf_wrong": 3,
+   "unsure": 9,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.1041
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 672,
+   "conf_wrong": 5,
+   "unsure": 22,
+   "rejected_ball": 22,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1421
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 709,
+   "conf_wrong": 5,
+   "unsure": 6,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 11,
+   "nll": 0.1145
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1371,
+   "conf_wrong": 85,
+   "unsure": 112,
+   "rejected_ball": 15,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.297
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 91,
+   "conf_wrong": 6,
+   "unsure": 8,
+   "rejected_ball": 1,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2918
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 42,
+   "conf_wrong": 0,
+   "unsure": 55,
+   "rejected_ball": 15,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 1.6049
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 350,
+   "conf_wrong": 45,
+   "unsure": 70,
+   "rejected_ball": 15,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.7048
+  }
+ },
+ "px48ens": {
+  "dev": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 708,
+   "conf_wrong": 2,
+   "unsure": 10,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 10,
+   "nll": 0.1075
+  },
+  "dev_touch": {
+   "pictures": 721,
+   "balls": 721,
+   "right": 676,
+   "conf_wrong": 4,
+   "unsure": 23,
+   "rejected_ball": 18,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.1356
+  },
+  "dev_far": {
+   "pictures": 771,
+   "balls": 721,
+   "right": 711,
+   "conf_wrong": 2,
+   "unsure": 7,
+   "rejected_ball": 1,
+   "nonballs": 50,
+   "nonball_accepted": 10,
+   "nll": 0.1073
+  },
+  "test": {
+   "pictures": 1583,
+   "balls": 1583,
+   "right": 1368,
+   "conf_wrong": 68,
+   "unsure": 107,
+   "rejected_ball": 40,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2704
+  },
+  "test_per_ball": {
+   "pictures": 106,
+   "balls": 106,
+   "right": 92,
+   "conf_wrong": 5,
+   "unsure": 7,
+   "rejected_ball": 2,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.2657
+  },
+  "test_touching": {
+   "pictures": 112,
+   "balls": 112,
+   "right": 21,
+   "conf_wrong": 0,
+   "unsure": 51,
+   "rejected_ball": 40,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 1.7282
+  },
+  "test_far_spot": {
+   "pictures": 480,
+   "balls": 480,
+   "right": 313,
+   "conf_wrong": 30,
+   "unsure": 97,
+   "rejected_ball": 40,
+   "nonballs": 0,
+   "nonball_accepted": 0,
+   "nll": 0.6692
+  }
+ }
+}

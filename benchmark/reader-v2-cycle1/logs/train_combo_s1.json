@@ -1,0 +1,174 @@
+{
+ "name": "combo",
+ "seed": 1,
+ "options": {
+  "p_touch": 0.3,
+  "side_frac": 0.8125
+ },
+ "epochs": [
+  {
+   "epoch": 1,
+   "loss": 2.4009
+  },
+  {
+   "epoch": 2,
+   "loss": 2.1658
+  },
+  {
+   "epoch": 3,
+   "loss": 1.934
+  },
+  {
+   "epoch": 4,
+   "loss": 1.6966
+  },
+  {
+   "epoch": 5,
+   "loss": 1.5233
+  },
+  {
+   "epoch": 6,
+   "loss": 1.3103
+  },
+  {
+   "epoch": 7,
+   "loss": 1.1259
+  },
+  {
+   "epoch": 8,
+   "loss": 0.9361
+  },
+  {
+   "epoch": 9,
+   "loss": 0.8871
+  },
+  {
+   "epoch": 10,
+   "loss": 0.8321
+  },
+  {
+   "epoch": 11,
+   "loss": 0.6642
+  },
+  {
+   "epoch": 12,
+   "loss": 0.6539
+  },
+  {
+   "epoch": 13,
+   "loss": 0.6437
+  },
+  {
+   "epoch": 14,
+   "loss": 0.556
+  },
+  {
+   "epoch": 15,
+   "loss": 0.5738
+  },
+  {
+   "epoch": 16,
+   "loss": 0.5195
+  },
+  {
+   "epoch": 17,
+   "loss": 0.4923
+  },
+  {
+   "epoch": 18,
+   "loss": 0.4282
+  },
+  {
+   "epoch": 19,
+   "loss": 0.3812
+  },
+  {
+   "epoch": 20,
+   "loss": 0.3529
+  },
+  {
+   "epoch": 21,
+   "loss": 0.3662
+  },
+  {
+   "epoch": 22,
+   "loss": 0.3898
+  },
+  {
+   "epoch": 23,
+   "loss": 0.3585
+  },
+  {
+   "epoch": 24,
+   "loss": 0.3048
+  },
+  {
+   "epoch": 25,
+   "loss": 0.3126
+  },
+  {
+   "epoch": 26,
+   "loss": 0.2899
+  },
+  {
+   "epoch": 27,
+   "loss": 0.2765
+  },
+  {
+   "epoch": 28,
+   "loss": 0.2492
+  },
+  {
+   "epoch": 29,
+   "loss": 0.2879
+  },
+  {
+   "epoch": 30,
+   "loss": 0.2461
+  },
+  {
+   "epoch": 31,
+   "loss": 0.2464
+  },
+  {
+   "epoch": 32,
+   "loss": 0.2403
+  },
+  {
+   "epoch": 33,
+   "loss": 0.2294
+  },
+  {
+   "epoch": 34,
+   "loss": 0.2278
+  },
+  {
+   "epoch": 35,
+   "loss": 0.2003
+  },
+  {
+   "epoch": 36,
+   "loss": 0.2077
+  },
+  {
+   "epoch": 37,
+   "loss": 0.2257
+  },
+  {
+   "epoch": 38,
+   "loss": 0.2227
+  },
+  {
+   "epoch": 39,
+   "loss": 0.1942
+  },
+  {
+   "epoch": 40,
+   "loss": 0.2083
+  }
+ ],
+ "temperature": 0.7491535384383406,
+ "dev_nll": 0.09355080224117227,
+ "seconds": 301.7,
+ "parameters": 65715
+}

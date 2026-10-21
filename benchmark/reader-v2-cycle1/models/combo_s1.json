@@ -1,0 +1,10 @@
+{
+ "temperature": 0.7491535384383406,
+ "side_frac": 0.8125,
+ "px": 40,
+ "options": {
+  "p_touch": 0.3,
+  "side_frac": 0.8125
+ },
+ "seed": 1
+}

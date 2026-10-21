@@ -1,0 +1,174 @@
+{
+ "name": "combo",
+ "seed": 2,
+ "options": {
+  "p_touch": 0.3,
+  "side_frac": 0.8125
+ },
+ "epochs": [
+  {
+   "epoch": 1,
+   "loss": 2.48
+  },
+  {
+   "epoch": 2,
+   "loss": 2.1952
+  },
+  {
+   "epoch": 3,
+   "loss": 1.9159
+  },
+  {
+   "epoch": 4,
+   "loss": 1.671
+  },
+  {
+   "epoch": 5,
+   "loss": 1.4739
+  },
+  {
+   "epoch": 6,
+   "loss": 1.2601
+  },
+  {
+   "epoch": 7,
+   "loss": 1.11
+  },
+  {
+   "epoch": 8,
+   "loss": 0.9468
+  },
+  {
+   "epoch": 9,
+   "loss": 0.8102
+  },
+  {
+   "epoch": 10,
+   "loss": 0.7696
+  },
+  {
+   "epoch": 11,
+   "loss": 0.6969
+  },
+  {
+   "epoch": 12,
+   "loss": 0.6433
+  },
+  {
+   "epoch": 13,
+   "loss": 0.558
+  },
+  {
+   "epoch": 14,
+   "loss": 0.5116
+  },
+  {
+   "epoch": 15,
+   "loss": 0.4985
+  },
+  {
+   "epoch": 16,
+   "loss": 0.4653
+  },
+  {
+   "epoch": 17,
+   "loss": 0.4914
+  },
+  {
+   "epoch": 18,
+   "loss": 0.507
+  },
+  {
+   "epoch": 19,
+   "loss": 0.3947
+  },
+  {
+   "epoch": 20,
+   "loss": 0.4062
+  },
+  {
+   "epoch": 21,
+   "loss": 0.4172
+  },
+  {
+   "epoch": 22,
+   "loss": 0.3714
+  },
+  {
+   "epoch": 23,
+   "loss": 0.3133
+  },
+  {
+   "epoch": 24,
+   "loss": 0.3232
+  },
+  {
+   "epoch": 25,
+   "loss": 0.3232
+  },
+  {
+   "epoch": 26,
+   "loss": 0.3161
+  },
+  {
+   "epoch": 27,
+   "loss": 0.3028
+  },
+  {
+   "epoch": 28,
+   "loss": 0.3346
+  },
+  {
+   "epoch": 29,
+   "loss": 0.2662
+  },
+  {
+   "epoch": 30,
+   "loss": 0.2875
+  },
+  {
+   "epoch": 31,
+   "loss": 0.2667
+  },
+  {
+   "epoch": 32,
+   "loss": 0.2322
+  },
+  {
+   "epoch": 33,
+   "loss": 0.2435
+  },
+  {
+   "epoch": 34,
+   "loss": 0.222
+  },
+  {
+   "epoch": 35,
+   "loss": 0.2159
+  },
+  {
+   "epoch": 36,
+   "loss": 0.2215
+  },
+  {
+   "epoch": 37,
+   "loss": 0.24
+  },
+  {
+   "epoch": 38,
+   "loss": 0.2449
+  },
+  {
+   "epoch": 39,
+   "loss": 0.2156
+  },
+  {
+   "epoch": 40,
+   "loss": 0.2113
+  }
+ ],
+ "temperature": 0.6869768237290445,
+ "dev_nll": 0.08809073450248923,
+ "seconds": 295.4,
+ "parameters": 65715
+}

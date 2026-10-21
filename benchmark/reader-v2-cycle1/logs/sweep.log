@@ -1,0 +1,15 @@
+base 1 T 0.667 dev nll 0.0962 262.8 s
+far 0 T 0.667 dev nll 0.0924 284.9 s
+far 1 T 0.648 dev nll 0.0805 188.3 s
+base 2 T 0.639 dev nll 0.1069 220.2 s
+far 2 T 0.687 dev nll 0.112 141.4 s
+touch 0 T 0.677 dev nll 0.0878 133.6 s
+touch 1 T 0.749 dev nll 0.1057 136.6 s
+px48 0 T 0.648 dev nll 0.1183 210.3 s
+touch 2 T 0.697 dev nll 0.1052 140.5 s
+crop26 0 T 0.677 dev nll 0.0784 131.2 s
+px48 1 T 0.667 dev nll 0.1163 203.0 s
+crop26 1 T 0.677 dev nll 0.0915 133.4 s
+px48 2 T 0.621 dev nll 0.1041 206.0 s
+crop26 2 T 0.677 dev nll 0.0997 130.4 s
+SWEEPDONE
