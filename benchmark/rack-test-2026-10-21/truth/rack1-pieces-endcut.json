@@ -1,0 +1,291 @@
+{
+ "about": "Rack 1 of the R0.7 continuous test (2026-10-21 05:26 UTC, iPhone 16 Pro Max, low side, home 7 ft, 9-ball). Checked by eye by Claude from the video (1 fps overview, 4-6 fps around every shot, 60 fps at the foul). First ball hit was checked frame by frame only for shots A, D (4 fps) and F (60 fps); for the others it is the lowest ball and looked legal at 4-6 fps. Times are seconds from the start of the recording; 'at' = cue strike. The player announced a possible foul without saying which; the foul below was found independently.",
+ "racks": [
+  {
+   "name": "rack1",
+   "start": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "clips": [
+    "clip001",
+    "clip002",
+    "clip003",
+    "clip004",
+    "clip005",
+    "clip006",
+    "clip007",
+    "clip008",
+    "clip009",
+    "clip010",
+    "clip011",
+    "clip012",
+    "clip013"
+   ]
+  }
+ ],
+ "clips": {
+  "clip001": {
+   "shot": true,
+   "at": 11.7,
+   "more": [],
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "first": 1,
+   "fouls": [],
+   "truthShots": [
+    "break"
+   ],
+   "verify": {
+    "shot": "yes (checked by eye, frame by frame)",
+    "made": "yes (checked by eye)",
+    "state": "yes (every still table checked by eye)"
+   }
+  },
+  "clip002": {
+   "shot": true,
+   "at": 38.1,
+   "more": [],
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "first": 1,
+   "fouls": [],
+   "truthShots": [
+    "A"
+   ],
+   "verify": {
+    "shot": "yes (checked by eye, frame by frame)",
+    "made": "yes (checked by eye)",
+    "state": "yes (every still table checked by eye)"
+   }
+  },
+  "clip003": {
+   "shot": true,
+   "at": 55.1,
+   "more": [],
+   "made": [
+    1
+   ],
+   "offTable": false,
+   "scratch": false,
+   "first": 1,
+   "fouls": [],
+   "truthShots": [
+    "B"
+   ],
+   "verify": {
+    "shot": "yes (checked by eye, frame by frame)",
+    "made": "yes (checked by eye)",
+    "state": "yes (every still table checked by eye)"
+   }
+  },
+  "clip004": {
+   "shot": true,
+   "at": 71.4,
+   "more": [],
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "first": 2,
+   "fouls": [],
+   "truthShots": [
+    "C"
+   ],
+   "verify": {
+    "shot": "yes (checked by eye, frame by frame)",
+    "made": "yes (checked by eye)",
+    "state": "yes (every still table checked by eye)"
+   }
+  },
+  "clip005": {
+   "shot": true,
+   "at": 84.9,
+   "more": [],
+   "made": [],
+   "offTable": false,
+   "scratch": false,
+   "first": 2,
+   "fouls": [],
+   "truthShots": [
+    "D"
+   ],
+   "verify": {
+    "shot": "yes (checked by eye, frame by frame)",
+    "made": "yes (checked by eye)",
+    "state": "yes (every still table checked by eye)"
+   }
+  },
+  "clip006": {
+   "shot": true,
+   "at": 99.6,
+   "more": [],
+   "made": [
+    2
+   ],
+   "offTable": false,
+   "scratch": false,
+   "first": 2,
+   "fouls": [],
+   "truthShots": [
+    "E"
+   ],
+   "verify": {
+    "shot": "yes (checked by eye, frame by frame)",
+    "made": "yes (checked by eye)",
+    "state": "yes (every still table checked by eye)"
+   }
+  },
+  "clip007": {
+   "shot": true,
+   "at": 114,
+   "more": [],
+   "made": [
+    5
+   ],
+   "offTable": false,
+   "scratch": false,
+   "first": 5,
+   "fouls": [
+    "wrong ball first: the cue ball (kicked off the near rail) contacts the 5 at 114.82 s before the 3, the lowest ball; the 5 goes in the far side pocket"
+   ],
+   "truthShots": [
+    "F"
+   ],
+   "verify": {
+    "shot": "yes (checked by eye, frame by frame)",
+    "made": "yes (checked by eye)",
+    "state": "yes (every still table checked by eye)"
+   }
+  },
+  "clip008": {
+   "shot": true,
+   "at": 130.9,
+   "more": [],
+   "made": [
+    3
+   ],
+   "offTable": false,
+   "scratch": false,
+   "first": 3,
+   "fouls": [],
+   "truthShots": [
+    "G"
+   ],
+   "verify": {
+    "shot": "yes (checked by eye, frame by frame)",
+    "made": "yes (checked by eye)",
+    "state": "yes (every still table checked by eye)"
+   }
+  },
+  "clip009": {
+   "shot": true,
+   "at": 144.9,
+   "more": [],
+   "made": [
+    4
+   ],
+   "offTable": false,
+   "scratch": false,
+   "first": 4,
+   "fouls": [],
+   "truthShots": [
+    "H"
+   ],
+   "verify": {
+    "shot": "yes (checked by eye, frame by frame)",
+    "made": "yes (checked by eye)",
+    "state": "yes (every still table checked by eye)"
+   }
+  },
+  "clip010": {
+   "shot": true,
+   "at": 160.4,
+   "more": [],
+   "made": [
+    6
+   ],
+   "offTable": false,
+   "scratch": false,
+   "first": 6,
+   "fouls": [],
+   "truthShots": [
+    "I"
+   ],
+   "verify": {
+    "shot": "yes (checked by eye, frame by frame)",
+    "made": "yes (checked by eye)",
+    "state": "yes (every still table checked by eye)"
+   }
+  },
+  "clip011": {
+   "shot": true,
+   "at": 174.6,
+   "more": [],
+   "made": [
+    7
+   ],
+   "offTable": false,
+   "scratch": false,
+   "first": 7,
+   "fouls": [],
+   "truthShots": [
+    "J"
+   ],
+   "verify": {
+    "shot": "yes (checked by eye, frame by frame)",
+    "made": "yes (checked by eye)",
+    "state": "yes (every still table checked by eye)"
+   }
+  },
+  "clip012": {
+   "shot": true,
+   "at": 187.7,
+   "more": [],
+   "made": [
+    8
+   ],
+   "offTable": false,
+   "scratch": false,
+   "first": 8,
+   "fouls": [],
+   "truthShots": [
+    "K"
+   ],
+   "verify": {
+    "shot": "yes (checked by eye, frame by frame)",
+    "made": "yes (checked by eye)",
+    "state": "yes (every still table checked by eye)"
+   }
+  },
+  "clip013": {
+   "shot": true,
+   "at": 199.6,
+   "more": [],
+   "made": [
+    9
+   ],
+   "offTable": false,
+   "scratch": false,
+   "first": 9,
+   "fouls": [],
+   "truthShots": [
+    "L"
+   ],
+   "verify": {
+    "shot": "yes (checked by eye, frame by frame)",
+    "made": "yes (checked by eye)",
+    "state": "yes (every still table checked by eye)"
+   }
+  }
+ }
+}
