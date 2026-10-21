@@ -1,0 +1,265 @@
+{
+ "start": {
+  "truth": 10,
+  "established": 2,
+  "namedAtStart": 2,
+  "wronglyEstablished": 0,
+  "countCheck": null
+ },
+ "shots": {
+  "real": 13,
+  "found": 13,
+  "missed": 0,
+  "false": 1,
+  "firstRight": 8,
+  "firstNone": 2,
+  "firstWrong": 1
+ },
+ "tables": {
+  "correct": 0,
+  "unresolved": 3,
+  "wrong": 10,
+  "perShot": [
+   {
+    "shot": 1,
+    "id": "A-break",
+    "result": "wrong",
+    "open": [
+     "2 on the table, left unconfirmed",
+     "5 on the table, left unconfirmed"
+    ],
+    "wrong": [
+     "4 gone, called on the table",
+     "7 on the table, called gone"
+    ]
+   },
+   {
+    "shot": 2,
+    "id": "A1",
+    "result": "wrong",
+    "open": [
+     "4 gone, left unconfirmed",
+     "5 on the table, left unconfirmed"
+    ],
+    "wrong": [
+     "7 on the table, called gone"
+    ]
+   },
+   {
+    "shot": 3,
+    "id": "A2",
+    "result": "wrong",
+    "open": [
+     "0 on the table, left unconfirmed",
+     "4 gone, left unconfirmed",
+     "5 on the table, left unconfirmed",
+     "8 on the table, left unconfirmed"
+    ],
+    "wrong": [
+     "7 on the table, called gone"
+    ]
+   },
+   {
+    "shot": 4,
+    "id": "A3",
+    "result": "wrong",
+    "open": [
+     "4 gone, left unconfirmed",
+     "5 on the table, left unconfirmed",
+     "9 on the table, left unconfirmed"
+    ],
+    "wrong": [
+     "7 on the table, called gone"
+    ]
+   },
+   {
+    "shot": 5,
+    "id": "A4",
+    "result": "wrong",
+    "open": [
+     "4 gone, left unconfirmed",
+     "5 on the table, left unconfirmed"
+    ],
+    "wrong": [
+     "7 on the table, called gone"
+    ]
+   },
+   {
+    "shot": 6,
+    "id": "A5",
+    "result": "wrong",
+    "open": [
+     "4 gone, left unconfirmed"
+    ],
+    "wrong": [
+     "7 on the table, called gone"
+    ]
+   },
+   {
+    "shot": 7,
+    "id": "A6",
+    "result": "wrong",
+    "open": [
+     "4 gone, left unconfirmed"
+    ],
+    "wrong": [
+     "7 on the table, called gone"
+    ]
+   },
+   {
+    "shot": 8,
+    "id": "A7",
+    "result": "wrong",
+    "open": [
+     "3 gone, left unconfirmed",
+     "4 gone, left unconfirmed"
+    ],
+    "wrong": [
+     "7 on the table, called gone"
+    ]
+   },
+   {
+    "shot": 9,
+    "id": "A8",
+    "result": "wrong",
+    "open": [
+     "3 gone, left unconfirmed",
+     "4 gone, left unconfirmed",
+     "5 gone, left unconfirmed"
+    ],
+    "wrong": [
+     "7 on the table, called gone"
+    ]
+   },
+   {
+    "shot": 10,
+    "id": "A9",
+    "result": "wrong",
+    "open": [
+     "3 gone, left unconfirmed",
+     "4 gone, left unconfirmed",
+     "5 gone, left unconfirmed"
+    ],
+    "wrong": [
+     "7 on the table, called gone"
+    ]
+   },
+   {
+    "shot": 11,
+    "id": "A10",
+    "result": "unresolved",
+    "open": [
+     "4 gone, left unconfirmed",
+     "5 gone, left unconfirmed"
+    ],
+    "wrong": []
+   },
+   {
+    "shot": 12,
+    "id": "A11",
+    "result": "unresolved",
+    "open": [
+     "4 gone, left unconfirmed",
+     "5 gone, left unconfirmed"
+    ],
+    "wrong": []
+   },
+   {
+    "shot": 13,
+    "id": "A12",
+    "result": "unresolved",
+    "open": [
+     "4 gone, left unconfirmed",
+     "5 gone, left unconfirmed"
+    ],
+    "wrong": []
+   }
+  ]
+ },
+ "pockets": {
+  "made": 9,
+  "observed": 5,
+  "inferred": 0,
+  "notConfirmed": 2,
+  "wrongShot": 2,
+  "pidRight": 0,
+  "pidWrong": 0,
+  "pidUnknown": 5,
+  "fabricated": 0,
+  "perBall": [
+   {
+    "ball": 4,
+    "shot": 1,
+    "truthPocket": "P2",
+    "result": "not confirmed"
+   },
+   {
+    "ball": 1,
+    "shot": 2,
+    "truthPocket": "P5",
+    "result": "observed entry",
+    "pid": "unknown (orientation not known)",
+    "camera": "far-right corner",
+    "conf": "medium"
+   },
+   {
+    "ball": 2,
+    "shot": 5,
+    "truthPocket": "P5",
+    "result": "observed entry",
+    "pid": "unknown (orientation not known)",
+    "camera": "far-right corner",
+    "conf": "high"
+   },
+   {
+    "ball": 3,
+    "shot": 8,
+    "truthPocket": "P6",
+    "result": "confirmed in another shot"
+   },
+   {
+    "ball": 5,
+    "shot": 9,
+    "truthPocket": "P5",
+    "result": "not confirmed"
+   },
+   {
+    "ball": 6,
+    "shot": 10,
+    "truthPocket": "P4",
+    "result": "observed entry",
+    "pid": "unknown (orientation not known)",
+    "camera": "near-right corner",
+    "conf": "medium"
+   },
+   {
+    "ball": 7,
+    "shot": 11,
+    "truthPocket": "P3",
+    "result": "confirmed in another shot"
+   },
+   {
+    "ball": 8,
+    "shot": 12,
+    "truthPocket": "P6",
+    "result": "observed entry",
+    "pid": "unknown (orientation not known)",
+    "camera": "far-left corner",
+    "conf": "medium"
+   },
+   {
+    "ball": 9,
+    "shot": 13,
+    "truthPocket": "P2",
+    "result": "observed entry",
+    "pid": "unknown (orientation not known)",
+    "camera": "near-left corner",
+    "conf": "medium"
+   }
+  ]
+ },
+ "hidden": {
+  "carried": 0,
+  "right": 0
+ }
+}

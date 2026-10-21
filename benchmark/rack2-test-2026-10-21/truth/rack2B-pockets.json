@@ -1,0 +1,50 @@
+{
+ "about": "Pockets by eye (Claude), camera view, with P-IDs from the approved rule: the rack is at the camera-left end in both racks, so the foot end is camera-left, same as rack 1 (P1 far-left, P2 near-left, P3 near side, P4 near-right, P5 far-right, P6 far side). conf = how sure the by-eye pocket is.",
+ "pockets": [
+  {
+   "ball": 3,
+   "pocket": "P2",
+   "conf": "high"
+  },
+  {
+   "ball": 4,
+   "pocket": "P2",
+   "conf": "high"
+  },
+  {
+   "ball": 1,
+   "pocket": "P6",
+   "conf": "high"
+  },
+  {
+   "ball": 8,
+   "pocket": "P3",
+   "conf": "high"
+  },
+  {
+   "ball": 2,
+   "pocket": "P4",
+   "conf": "high"
+  },
+  {
+   "ball": 5,
+   "pocket": "P5",
+   "conf": "high"
+  },
+  {
+   "ball": 6,
+   "pocket": "P2",
+   "conf": "high"
+  },
+  {
+   "ball": 7,
+   "pocket": "P2",
+   "conf": "high"
+  },
+  {
+   "ball": 9,
+   "pocket": "P4",
+   "conf": "medium"
+  }
+ ]
+}
