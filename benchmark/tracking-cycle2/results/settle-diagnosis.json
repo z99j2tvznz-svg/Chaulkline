@@ -1,0 +1,747 @@
+[
+ {
+  "session": "v04-oct16",
+  "clip": "shot009",
+  "seconds": 9.3,
+  "shots": [
+   6.53
+  ],
+  "lookFrames": 31,
+  "movingFrames": 18,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 0.33,
+  "tracks": [
+   {
+    "id": 3,
+    "ball": 0,
+    "at": [
+     14,
+     1.9
+    ],
+    "netLast1s": 5.96,
+    "pathLast1s": 6.39,
+    "netLast03s": 1.73,
+    "framesMoving": 18
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "v04-oct16",
+  "clip": "shot027",
+  "seconds": 13,
+  "shots": [
+   9.8
+  ],
+  "lookFrames": 31,
+  "movingFrames": 31,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 0.03,
+  "tracks": [
+   {
+    "id": 5,
+    "ball": 0,
+    "at": [
+     43.6,
+     26.4
+    ],
+    "netLast1s": 14.95,
+    "pathLast1s": 15.01,
+    "netLast03s": 4.18,
+    "framesMoving": 31
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "v04-firstspot",
+  "clip": "shot019",
+  "seconds": 7.5,
+  "shots": [
+   4.57
+  ],
+  "lookFrames": 31,
+  "movingFrames": 31,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 0.03,
+  "tracks": [
+   {
+    "id": 1,
+    "ball": 0,
+    "at": [
+     60.6,
+     6.2
+    ],
+    "netLast1s": 11.82,
+    "pathLast1s": 11.84,
+    "netLast03s": 3.15,
+    "framesMoving": 31
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "v04-firstspot",
+  "clip": "shot020",
+  "seconds": 11.87,
+  "shots": [
+   8.77
+  ],
+  "lookFrames": 31,
+  "movingFrames": 29,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 0,
+  "tracks": [
+   {
+    "id": 1,
+    "ball": 3,
+    "at": [
+     60.4,
+     13.1
+    ],
+    "netLast1s": 7.23,
+    "pathLast1s": 7.28,
+    "netLast03s": 1.95,
+    "framesMoving": 29
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "v04-firstspot",
+  "clip": "shot021",
+  "seconds": 17.67,
+  "shots": [
+   5.77,
+   16.07
+  ],
+  "lookFrames": 31,
+  "movingFrames": 31,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 6,
+  "tracks": [
+   {
+    "id": 1,
+    "ball": 3,
+    "at": [
+     69.9,
+     30.9
+    ],
+    "netLast1s": 19.35,
+    "pathLast1s": 19.67,
+    "netLast03s": 5.2,
+    "framesMoving": 31
+   },
+   {
+    "id": 6,
+    "ball": 0,
+    "at": [
+     43,
+     2.1
+    ],
+    "netLast1s": 24.24,
+    "pathLast1s": 25.47,
+    "netLast03s": 3.94,
+    "framesMoving": 28
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "v04-otherside",
+  "clip": "shot004",
+  "seconds": 18.6,
+  "shots": [
+   5.8,
+   14.23
+  ],
+  "lookFrames": 31,
+  "movingFrames": 29,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 5.1,
+  "tracks": [
+   {
+    "id": 10,
+    "ball": 3,
+    "at": [
+     65.7,
+     23.6
+    ],
+    "netLast1s": 12.26,
+    "pathLast1s": 12.54,
+    "netLast03s": 3.48,
+    "framesMoving": 29
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "v04-otherside",
+  "clip": "shot006",
+  "seconds": 6.83,
+  "shots": [
+   5.13
+  ],
+  "lookFrames": 31,
+  "movingFrames": 22,
+  "secondsStillAtEnd": 0.03,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 0.23,
+  "tracks": [
+   {
+    "id": 4,
+    "ball": 0,
+    "at": [
+     56.2,
+     28
+    ],
+    "netLast1s": 6.34,
+    "pathLast1s": 6.5,
+    "netLast03s": 1.88,
+    "framesMoving": 22
+   },
+   {
+    "id": 7,
+    "ball": 4,
+    "at": [
+     76.7,
+     32.3
+    ],
+    "netLast1s": 2.34,
+    "pathLast1s": 5.79,
+    "netLast03s": 0,
+    "framesMoving": 4
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "v04-otherside",
+  "clip": "shot008",
+  "seconds": 7.9,
+  "shots": [
+   4.5
+  ],
+  "lookFrames": 31,
+  "movingFrames": 31,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 0.03,
+  "tracks": [
+   {
+    "id": 4,
+    "ball": 0,
+    "at": [
+     57.5,
+     11.4
+    ],
+    "netLast1s": 10.71,
+    "pathLast1s": 10.84,
+    "netLast03s": 2.62,
+    "framesMoving": 31
+   },
+   {
+    "id": 6,
+    "ball": 6,
+    "at": [
+     71.9,
+     26.6
+    ],
+    "netLast1s": 12.32,
+    "pathLast1s": 20,
+    "netLast03s": 3.32,
+    "framesMoving": 28
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "v04-otherside",
+  "clip": "shot011",
+  "seconds": 6.4,
+  "shots": [
+   3.77
+  ],
+  "lookFrames": 31,
+  "movingFrames": 31,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 0,
+  "tracks": [
+   {
+    "id": 3,
+    "ball": 0,
+    "at": [
+     59.3,
+     10.3
+    ],
+    "netLast1s": 12.23,
+    "pathLast1s": 12.3,
+    "netLast03s": 3.07,
+    "framesMoving": 31
+   },
+   {
+    "id": 4,
+    "ball": 6,
+    "at": [
+     10.9,
+     20.6
+    ],
+    "netLast1s": 18.25,
+    "pathLast1s": 18.31,
+    "netLast03s": 4.64,
+    "framesMoving": 31
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "v04-otherside",
+  "clip": "shot013",
+  "seconds": 8.23,
+  "shots": [
+   5.57
+  ],
+  "lookFrames": 30,
+  "movingFrames": 30,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 0.97,
+  "longestStillAfterShot": 0,
+  "tracks": [
+   {
+    "id": 2,
+    "ball": 0,
+    "at": [
+     24.8,
+     1.1
+    ],
+    "netLast1s": 17.51,
+    "pathLast1s": 17.52,
+    "netLast03s": 4.54,
+    "framesMoving": 30
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "rec-20261018-2310",
+  "clip": "clip011",
+  "seconds": 20,
+  "shots": [
+   2.6,
+   11.67,
+   17.4
+  ],
+  "lookFrames": 31,
+  "movingFrames": 31,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 3.8,
+  "tracks": [
+   {
+    "id": 6,
+    "ball": 0,
+    "at": [
+     38.2,
+     33.1
+    ],
+    "netLast1s": 12.51,
+    "pathLast1s": 16.24,
+    "netLast03s": 2.14,
+    "framesMoving": 31
+   },
+   {
+    "id": 3,
+    "ball": 9,
+    "at": [
+     49.4,
+     22.3
+    ],
+    "netLast1s": 19.1,
+    "pathLast1s": 19.46,
+    "netLast03s": 6.79,
+    "framesMoving": 23
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "rec-20261018-2310",
+  "clip": "clip012",
+  "seconds": 19.97,
+  "shots": [
+   2,
+   8.33,
+   15.77
+  ],
+  "lookFrames": 31,
+  "movingFrames": 14,
+  "secondsStillAtEnd": 0.43,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 5.5,
+  "tracks": [
+   {
+    "id": 3,
+    "ball": 0,
+    "at": [
+     61.3,
+     29.2
+    ],
+    "netLast1s": 5.55,
+    "pathLast1s": 5.67,
+    "netLast03s": 1.15,
+    "framesMoving": 14
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "rec-20261018-2310",
+  "clip": "clip013",
+  "seconds": 20,
+  "shots": [
+   2.3,
+   9.33,
+   17.33
+  ],
+  "lookFrames": 31,
+  "movingFrames": 30,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 0.97,
+  "longestStillAfterShot": 4.2,
+  "tracks": [
+   {
+    "id": 3,
+    "ball": 0,
+    "at": [
+     28.5,
+     11.2
+    ],
+    "netLast1s": 9.13,
+    "pathLast1s": 9.17,
+    "netLast03s": 2.42,
+    "framesMoving": 30
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "rec-20261018-2310",
+  "clip": "clip016",
+  "seconds": 20,
+  "shots": [
+   11.93,
+   15.2,
+   19.2
+  ],
+  "lookFrames": 31,
+  "movingFrames": 19,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 0.6,
+  "longestStillAfterShot": 3.03,
+  "tracks": [
+   {
+    "id": 4,
+    "ball": 3,
+    "at": [
+     61,
+     3.5
+    ],
+    "netLast1s": 35.27,
+    "pathLast1s": 36.24,
+    "netLast03s": 13.23,
+    "framesMoving": 19
+   },
+   {
+    "id": 10,
+    "ball": 0,
+    "at": [
+     21.1,
+     8.4
+    ],
+    "netLast1s": 8.09,
+    "pathLast1s": 22.97,
+    "netLast03s": 4.92,
+    "framesMoving": 15
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "rec-20261018-2310",
+  "clip": "clip018",
+  "seconds": 20,
+  "shots": [
+   2.3,
+   8.57,
+   14.97
+  ],
+  "lookFrames": 31,
+  "movingFrames": 31,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 5.43,
+  "tracks": [
+   {
+    "id": 7,
+    "ball": 6,
+    "at": [
+     15,
+     34.6
+    ],
+    "netLast1s": 9.07,
+    "pathLast1s": 9.32,
+    "netLast03s": 2.17,
+    "framesMoving": 31
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "rec-20261018-2310",
+  "clip": "clip019",
+  "seconds": 20,
+  "shots": [
+   1,
+   9.4,
+   17.9
+  ],
+  "lookFrames": 31,
+  "movingFrames": 31,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 5.43,
+  "tracks": [
+   {
+    "id": 2,
+    "ball": 8,
+    "at": [
+     55.8,
+     34.2
+    ],
+    "netLast1s": 7.73,
+    "pathLast1s": 8.44,
+    "netLast03s": 1.06,
+    "framesMoving": 25
+   },
+   {
+    "id": 3,
+    "ball": 0,
+    "at": [
+     65.3,
+     33.3
+    ],
+    "netLast1s": 7.56,
+    "pathLast1s": 15.22,
+    "netLast03s": 3.17,
+    "framesMoving": 26
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "rec-20261018-2310",
+  "clip": "clip021",
+  "seconds": 19.97,
+  "shots": [
+   2.6,
+   10.63,
+   17.97
+  ],
+  "lookFrames": 31,
+  "movingFrames": 29,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 6.47,
+  "tracks": [
+   {
+    "id": 5,
+    "ball": 0,
+    "at": [
+     13.5,
+     22.2
+    ],
+    "netLast1s": 5.68,
+    "pathLast1s": 18.51,
+    "netLast03s": 4.58,
+    "framesMoving": 29
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "rec-20261018-2310",
+  "clip": "clip023",
+  "seconds": 20,
+  "shots": [
+   1.57,
+   7.6,
+   14.5,
+   19.7
+  ],
+  "lookFrames": 31,
+  "movingFrames": 4,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 0.1,
+  "longestStillAfterShot": 3.63,
+  "tracks": [
+   {
+    "id": 2,
+    "ball": 0,
+    "at": [
+     73.6,
+     12.1
+    ],
+    "netLast1s": 13.44,
+    "pathLast1s": 14.07,
+    "netLast03s": 13.48,
+    "framesMoving": 4
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "rec-20261018-2310",
+  "clip": "clip024",
+  "seconds": 20,
+  "shots": [
+   2.1,
+   9.8,
+   16.37
+  ],
+  "lookFrames": 31,
+  "movingFrames": 31,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 3.37,
+  "tracks": [
+   {
+    "id": 1,
+    "ball": 4,
+    "at": [
+     11.7,
+     21.3
+    ],
+    "netLast1s": 7.87,
+    "pathLast1s": 8,
+    "netLast03s": 1.88,
+    "framesMoving": 27
+   },
+   {
+    "id": 2,
+    "ball": 0,
+    "at": [
+     53.8,
+     16.2
+    ],
+    "netLast1s": 16.47,
+    "pathLast1s": 18.48,
+    "netLast03s": 4.43,
+    "framesMoving": 31
+   },
+   {
+    "id": 4,
+    "ball": 9,
+    "at": [
+     43.7,
+     27.4
+    ],
+    "netLast1s": 9.35,
+    "pathLast1s": 9.41,
+    "netLast03s": 2.94,
+    "framesMoving": 26
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "rec-20261018-2310",
+  "clip": "clip025",
+  "seconds": 20,
+  "shots": [
+   1.23,
+   8.63,
+   17.13
+  ],
+  "lookFrames": 31,
+  "movingFrames": 31,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 1,
+  "longestStillAfterShot": 3.53,
+  "tracks": [
+   {
+    "id": 1,
+    "ball": 0,
+    "at": [
+     13.2,
+     6.6
+    ],
+    "netLast1s": 9.27,
+    "pathLast1s": 9.39,
+    "netLast03s": 2.29,
+    "framesMoving": 31
+   },
+   {
+    "id": 2,
+    "ball": 4,
+    "at": [
+     7.7,
+     31.1
+    ],
+    "netLast1s": 7.17,
+    "pathLast1s": 7.34,
+    "netLast03s": 1.42,
+    "framesMoving": 21
+   }
+  ],
+  "madeAfterClip": []
+ },
+ {
+  "session": "rec-20261018-2310",
+  "clip": "clip026",
+  "seconds": 20,
+  "shots": [
+   1.9,
+   8.03,
+   18.93
+  ],
+  "lookFrames": 31,
+  "movingFrames": 27,
+  "secondsStillAtEnd": 0,
+  "firstMovingInLook": 0.87,
+  "longestStillAfterShot": 5.27,
+  "tracks": [
+   {
+    "id": 1,
+    "ball": null,
+    "at": [
+     47.9,
+     35
+    ],
+    "netLast1s": 43.91,
+    "pathLast1s": 46.37,
+    "netLast03s": 2.29,
+    "framesMoving": 25
+   },
+   {
+    "id": 4,
+    "ball": null,
+    "at": [
+     66.8,
+     36.6
+    ],
+    "netLast1s": 18.91,
+    "pathLast1s": 19.63,
+    "netLast03s": 15.21,
+    "framesMoving": 10
+   }
+  ],
+  "madeAfterClip": []
+ }
+]

@@ -1,0 +1,425 @@
+{
+ "checkpoint": {
+  "primary_blocker": [
+   [
+    "table still moving at clip end (settled-table selection)",
+    19
+   ],
+   [
+    "absence rule: spot count did not fall by the missing balls",
+    8
+   ],
+   [
+    "false shot",
+    6
+   ],
+   [
+    "uncertain identity: unnamed spot in the after look",
+    6
+   ],
+   [
+    "uncertain identity: unnamed spot in the before look",
+    6
+   ],
+   [
+    "ball on the table missing from the after look (blocks the absence rule)",
+    5
+   ],
+   [
+    "missed shot",
+    5
+   ],
+   [
+    "wrong identity: a spot named as a ball that is gone",
+    4
+   ],
+   [
+    "absence rule: no track seen rolling away from the spot",
+    2
+   ],
+   [
+    "ball on the table left unconfirmed",
+    1
+   ]
+  ],
+  "clips_with_blocker": [
+   [
+    "table still moving at clip end (settled-table selection)",
+    21
+   ],
+   [
+    "absence rule: spot count did not fall by the missing balls",
+    12
+   ],
+   [
+    "uncertain identity: unnamed spot in the after look",
+    11
+   ],
+   [
+    "uncertain identity: unnamed spot in the before look",
+    10
+   ],
+   [
+    "wrong identity: a spot named as a ball that is gone",
+    7
+   ],
+   [
+    "false shot",
+    6
+   ],
+   [
+    "ball on the table missing from the after look (blocks the absence rule)",
+    6
+   ],
+   [
+    "missed shot",
+    5
+   ],
+   [
+    "made ball not named before the shot",
+    5
+   ],
+   [
+    "absence rule: no track seen rolling away from the spot",
+    2
+   ],
+   [
+    "false pocket: ball missing from the after look",
+    1
+   ],
+   [
+    "ball on the table left unconfirmed",
+    1
+   ]
+  ],
+  "identity_and_missing_subcauses": [
+   [
+    "uncertain identity: unnamed spot in the after look",
+    "reader unsure (too few confident frames)",
+    10
+   ],
+   [
+    "uncertain identity: unnamed spot in the before look",
+    "reader unsure (too few confident frames)",
+    7
+   ],
+   [
+    "ball on the table missing from the after look (blocks the absence rule)",
+    "no spot where it sat before (moved, hidden, or not detected",
+    6
+   ],
+   [
+    "uncertain identity: unnamed spot in the before look",
+    "number taken by a surer spot",
+    5
+   ],
+   [
+    "uncertain identity: unnamed spot in the after look",
+    "number taken by a surer spot",
+    4
+   ],
+   [
+    "ball on the table missing from the after look (blocks the absence rule)",
+    "spot still there: reader says \"not a ball\" (rejected)",
+    2
+   ],
+   [
+    "ball on the table missing from the after look (blocks the absence rule)",
+    "spot still there, read as another number: [(0, 31)]",
+    1
+   ]
+  ],
+  "real_racks": [
+   {
+    "session": "v04-oct16",
+    "rack": "rack 1",
+    "shots": 11,
+    "right": 7,
+    "blockers": {
+     "false shot": 1,
+     "table still moving at clip end (settled-table selection)": 1,
+     "ball on the table missing from the after look (blocks the absence rule)": 1,
+     "absence rule: no track seen rolling away from the spot": 1
+    }
+   },
+   {
+    "session": "v04-oct16",
+    "rack": "rack 2",
+    "shots": 13,
+    "right": 6,
+    "blockers": {
+     "wrong identity: a spot named as a ball that is gone": 2,
+     "table still moving at clip end (settled-table selection)": 1,
+     "false shot": 1,
+     "false pocket: ball missing from the after look": 1,
+     "missed shot": 2,
+     "absence rule: spot count did not fall by the missing balls": 1
+    }
+   },
+   {
+    "session": "v04-firstspot",
+    "rack": "rack 1",
+    "shots": 11,
+    "right": 0,
+    "blockers": {
+     "absence rule: spot count did not fall by the missing balls": 3,
+     "uncertain identity: unnamed spot in the after look": 5,
+     "uncertain identity: unnamed spot in the before look": 5,
+     "ball on the table missing from the after look (blocks the absence rule)": 2,
+     "made ball not named before the shot": 3,
+     "missed shot": 1,
+     "ball on the table left unconfirmed": 1
+    }
+   },
+   {
+    "session": "v04-firstspot",
+    "rack": "rack 2",
+    "shots": 15,
+    "right": 3,
+    "blockers": {
+     "false shot": 1,
+     "uncertain identity: unnamed spot in the after look": 3,
+     "uncertain identity: unnamed spot in the before look": 3,
+     "made ball not named before the shot": 2,
+     "wrong identity: a spot named as a ball that is gone": 2,
+     "table still moving at clip end (settled-table selection)": 3,
+     "absence rule: spot count did not fall by the missing balls": 2,
+     "ball on the table missing from the after look (blocks the absence rule)": 2,
+     "missed shot": 2
+    }
+   },
+   {
+    "session": "v04-otherside",
+    "rack": "rack 1",
+    "shots": 9,
+    "right": 4,
+    "blockers": {
+     "false shot": 1,
+     "wrong identity: a spot named as a ball that is gone": 2,
+     "table still moving at clip end (settled-table selection)": 5,
+     "uncertain identity: unnamed spot in the before look": 1
+    }
+   }
+  ]
+ },
+ "continuous": {
+  "primary_blocker": [
+   [
+    "table still moving at clip end (settled-table selection)",
+    19
+   ],
+   [
+    "absence rule: spot count did not fall by the missing balls",
+    12
+   ],
+   [
+    "ball on the table left unconfirmed",
+    10
+   ],
+   [
+    "false shot",
+    6
+   ],
+   [
+    "uncertain identity: unnamed spot in the after look",
+    6
+   ],
+   [
+    "uncertain identity: unnamed spot in the before look",
+    6
+   ],
+   [
+    "missed shot",
+    5
+   ],
+   [
+    "ball on the table missing from the after look (blocks the absence rule)",
+    4
+   ],
+   [
+    "wrong identity: a spot named as a ball that is gone",
+    4
+   ],
+   [
+    "absence rule: no track seen rolling away from the spot",
+    2
+   ],
+   [
+    "false pocket: ball missing from the after look",
+    1
+   ]
+  ],
+  "clips_with_blocker": [
+   [
+    "table still moving at clip end (settled-table selection)",
+    21
+   ],
+   [
+    "absence rule: spot count did not fall by the missing balls",
+    17
+   ],
+   [
+    "uncertain identity: unnamed spot in the after look",
+    11
+   ],
+   [
+    "ball on the table left unconfirmed",
+    10
+   ],
+   [
+    "uncertain identity: unnamed spot in the before look",
+    10
+   ],
+   [
+    "ball on the table missing from the after look (blocks the absence rule)",
+    7
+   ],
+   [
+    "wrong identity: a spot named as a ball that is gone",
+    7
+   ],
+   [
+    "false shot",
+    6
+   ],
+   [
+    "uncertainty carried from an earlier shot",
+    6
+   ],
+   [
+    "missed shot",
+    5
+   ],
+   [
+    "made ball not named before the shot",
+    5
+   ],
+   [
+    "absence rule: no track seen rolling away from the spot",
+    2
+   ],
+   [
+    "false pocket: ball missing from the after look",
+    1
+   ]
+  ],
+  "identity_and_missing_subcauses": [
+   [
+    "uncertain identity: unnamed spot in the after look",
+    "reader unsure (too few confident frames)",
+    10
+   ],
+   [
+    "ball on the table missing from the after look (blocks the absence rule)",
+    "no spot where it sat before (moved, hidden, or not detected",
+    7
+   ],
+   [
+    "uncertain identity: unnamed spot in the before look",
+    "reader unsure (too few confident frames)",
+    7
+   ],
+   [
+    "uncertain identity: unnamed spot in the before look",
+    "number taken by a surer spot",
+    5
+   ],
+   [
+    "uncertain identity: unnamed spot in the after look",
+    "number taken by a surer spot",
+    4
+   ],
+   [
+    "ball on the table missing from the after look (blocks the absence rule)",
+    "spot still there: reader says \"not a ball\" (rejected)",
+    2
+   ],
+   [
+    "ball on the table missing from the after look (blocks the absence rule)",
+    "spot still there, read as another number: [(0, 31)]",
+    1
+   ]
+  ],
+  "real_racks": [
+   {
+    "session": "v04-oct16",
+    "rack": "rack 1",
+    "shots": 11,
+    "right": 5,
+    "blockers": {
+     "false shot": 1,
+     "table still moving at clip end (settled-table selection)": 1,
+     "uncertainty carried from an earlier shot": 1,
+     "ball on the table missing from the after look (blocks the absence rule)": 1,
+     "absence rule: no track seen rolling away from the spot": 1,
+     "absence rule: spot count did not fall by the missing balls": 2
+    }
+   },
+   {
+    "session": "v04-oct16",
+    "rack": "rack 2",
+    "shots": 13,
+    "right": 0,
+    "blockers": {
+     "wrong identity: a spot named as a ball that is gone": 2,
+     "ball on the table left unconfirmed": 5,
+     "table still moving at clip end (settled-table selection)": 1,
+     "false shot": 1,
+     "ball on the table missing from the after look (blocks the absence rule)": 1,
+     "missed shot": 2,
+     "absence rule: spot count did not fall by the missing balls": 3
+    }
+   },
+   {
+    "session": "v04-firstspot",
+    "rack": "rack 1",
+    "shots": 11,
+    "right": 0,
+    "blockers": {
+     "absence rule: spot count did not fall by the missing balls": 3,
+     "uncertain identity: unnamed spot in the after look": 5,
+     "uncertain identity: unnamed spot in the before look": 5,
+     "ball on the table missing from the after look (blocks the absence rule)": 2,
+     "made ball not named before the shot": 3,
+     "uncertainty carried from an earlier shot": 3,
+     "missed shot": 1,
+     "false pocket: ball missing from the after look": 1,
+     "ball on the table left unconfirmed": 1
+    }
+   },
+   {
+    "session": "v04-firstspot",
+    "rack": "rack 2",
+    "shots": 15,
+    "right": 0,
+    "blockers": {
+     "false shot": 1,
+     "uncertain identity: unnamed spot in the after look": 3,
+     "uncertain identity: unnamed spot in the before look": 3,
+     "made ball not named before the shot": 2,
+     "uncertainty carried from an earlier shot": 2,
+     "wrong identity: a spot named as a ball that is gone": 2,
+     "table still moving at clip end (settled-table selection)": 3,
+     "absence rule: spot count did not fall by the missing balls": 2,
+     "ball on the table missing from the after look (blocks the absence rule)": 2,
+     "ball on the table left unconfirmed": 3,
+     "missed shot": 2
+    }
+   },
+   {
+    "session": "v04-otherside",
+    "rack": "rack 1",
+    "shots": 9,
+    "right": 2,
+    "blockers": {
+     "false shot": 1,
+     "wrong identity: a spot named as a ball that is gone": 2,
+     "table still moving at clip end (settled-table selection)": 5,
+     "ball on the table left unconfirmed": 1,
+     "uncertain identity: unnamed spot in the before look": 1,
+     "absence rule: spot count did not fall by the missing balls": 1
+    }
+   }
+  ]
+ }
+}
