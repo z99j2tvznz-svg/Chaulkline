@@ -1,0 +1,16 @@
+{
+ "about": "Added 2026-10-21 after Nackers' firsthand account. Does not replace rack1-events.json. Pocket IDs per Nackers for this recording, camera view: P1 far-left corner, P2 near-left corner, P3 near side, P4 near-right corner, P5 far-right corner, P6 far side. Pockets checked by Claude from video frames; 'evidence' = what the system had.",
+ "correction": {"shot": "A", "was": "one rail first, then the 1", "now": "two-rail kick: left short rail ~38.9 s, near long rail ~39.65 s, then the 1 ~39.9 s (agrees with Nackers)"},
+ "pockets": [
+  {"ball": 1, "shot": "B", "pocket": "P3", "conf": "high", "evidence": "pocket event"},
+  {"ball": 2, "shot": "E", "pocket": "P5", "conf": "high", "evidence": "absence"},
+  {"ball": 5, "shot": "F", "pocket": "P6", "conf": "high", "evidence": "absence"},
+  {"ball": 3, "shot": "G", "pocket": "P2", "conf": "high", "evidence": "pocket event"},
+  {"ball": 4, "shot": "H", "pocket": "P5", "conf": "medium-high", "evidence": "pocket event", "note": "body covers the area just after the drop"},
+  {"ball": 6, "shot": "I", "pocket": "P6", "conf": "high", "evidence": "absence"},
+  {"ball": 7, "shot": "J", "pocket": "P1", "conf": "high", "evidence": "absence"},
+  {"ball": 8, "shot": "K", "pocket": "P6", "conf": "high", "evidence": "pocket event"},
+  {"ball": 9, "shot": "L", "pocket": "P4", "conf": "high", "evidence": "pocket event"}
+ ],
+ "nackersAccount": ["1 break, dry", "2 two-rail kick at the 1, hits side-pocket jaw, stays out", "3 makes the 1 in the side; cue two rails, contacts the 6, hooked on the 2", "4 one-rail kick at the 2, missed top corner", "5 safety on the 2, failed", "6 makes the 2 top corner; cue one rail, contacts the 6, hooked on the 3", "7 one-rail kick, 3 and 5 nearly simultaneous, quite confident 5 first; 5 in side pocket, 3 one rail toward foot spot", "8 cuts the 3 in lower corner", "9 makes the 4 top corner, mostly obscured by body", "10 makes the 6 in side, three rails", "11 makes the 7 far-left corner", "12 makes the 8 in side", "13 makes the 9 near-side top corner"]
+}
