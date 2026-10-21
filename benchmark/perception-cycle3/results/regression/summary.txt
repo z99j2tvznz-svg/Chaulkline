@@ -1,0 +1,16 @@
+frozen30 c2best                       ALL 54/41 cw17/18 | HO 41/36 cw11/12 miss3 false8 ph0 mp3 unres46 st2 racks 0/5 10-16:13/5 10-17:3/0 10-17:4/2 017-:18/18 018-:3/3 019-:13/13
+frozen30 hold                         ALL 56/43 cw17/18 | HO 43/38 cw11/12 miss3 false8 ph0 mp3 unres44 st2 racks 0/5 10-16:13/5 10-17:3/0 10-17:4/2 017-:18/18 018-:4/4 019-:14/14
+frozen30 period                       ALL 56/42 cw16/17 | HO 42/37 cw10/11 miss3 false8 ph0 mp2 unres46 st2 racks 0/5 10-16:14/5 10-17:3/0 10-17:4/2 017-:18/18 018-:3/3 019-:14/14
+frozen30 hold+period                  ALL 58/44 cw16/17 | HO 44/39 cw10/11 miss3 false8 ph0 mp2 unres44 st2 racks 0/5 10-16:14/5 10-17:3/0 10-17:4/2 017-:18/18 018-:4/4 019-:15/15
+d30b     c2best                       ALL 52/38 cw22/22 | HO 39/33 cw16/16 miss4 false11 ph1 mp3 unres46 st2 racks 0/5 10-16:13/5 10-17:4/0 10-17:4/2 017-:15/15 018-:4/4 019-:12/12
+d30b     hold                         ALL 53/39 cw22/22 | HO 40/34 cw16/16 miss4 false11 ph1 mp3 unres45 st2 racks 0/5 10-16:13/5 10-17:4/0 10-17:4/2 017-:15/15 018-:4/4 019-:13/13
+d30b     period                       ALL 54/39 cw21/21 | HO 40/34 cw15/15 miss4 false11 ph1 mp2 unres46 st2 racks 0/5 10-16:14/5 10-17:4/0 10-17:4/2 017-:15/15 018-:4/4 019-:13/13
+d30b     hold+period                  ALL 55/40 cw21/21 | HO 41/35 cw15/15 miss4 false11 ph1 mp2 unres45 st2 racks 0/5 10-16:14/5 10-17:4/0 10-17:4/2 017-:15/15 018-:4/4 019-:14/14
+frozen30 c2best                       ALL 38/30 cw26/26 | HO 26/25 cw21/21 miss3 false8 ph2 mp3 unres59 st16 racks 0/5 10-16:12/5 10-17:0/0 10-17:1/0 017-:10/10 018-:3/3 019-:12/12
+frozen30 hold                         ALL 40/32 cw26/26 | HO 28/27 cw21/21 miss3 false8 ph2 mp3 unres57 st16 racks 0/5 10-16:12/5 10-17:0/0 10-17:1/0 017-:10/10 018-:4/4 019-:13/13
+frozen30 period                       ALL 42/33 cw23/23 | HO 29/28 cw18/18 miss3 false8 ph2 mp3 unres55 st12 racks 0/5 10-16:13/5 10-17:0/0 10-17:1/0 017-:13/13 018-:3/3 019-:12/12
+frozen30 hold+period                  ALL 44/35 cw23/23 | HO 31/30 cw18/18 miss3 false8 ph2 mp3 unres53 st12 racks 0/5 10-16:13/5 10-17:0/0 10-17:1/0 017-:13/13 018-:4/4 019-:13/13
+d30b     c2best                       ALL 36/28 cw30/30 | HO 24/23 cw25/25 miss4 false11 ph2 mp3 unres58 st15 racks 0/5 10-16:12/5 10-17:0/0 10-17:1/0 017-:8/8 018-:4/4 019-:11/11
+d30b     hold                         ALL 37/29 cw30/30 | HO 25/24 cw25/25 miss4 false11 ph2 mp3 unres57 st15 racks 0/5 10-16:12/5 10-17:0/0 10-17:1/0 017-:8/8 018-:4/4 019-:12/12
+d30b     period                       ALL 40/31 cw28/28 | HO 27/26 cw23/23 miss4 false11 ph2 mp3 unres54 st12 racks 0/5 10-16:13/5 10-17:0/0 10-17:1/0 017-:11/11 018-:4/4 019-:11/11
+d30b     hold+period                  ALL 41/32 cw28/28 | HO 28/27 cw23/23 miss4 false11 ph2 mp3 unres53 st12 racks 0/5 10-16:13/5 10-17:0/0 10-17:1/0 017-:11/11 018-:4/4 019-:12/12

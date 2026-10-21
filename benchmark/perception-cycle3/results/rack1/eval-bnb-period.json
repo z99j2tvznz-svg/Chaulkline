@@ -1,0 +1,205 @@
+{
+ "start": {
+  "truth": 10,
+  "established": 3,
+  "namedAtStart": 3,
+  "wronglyEstablished": 0,
+  "countCheck": null
+ },
+ "shots": {
+  "real": 13,
+  "found": 13,
+  "missed": 0,
+  "false": 0,
+  "firstRight": 12,
+  "firstNone": 0,
+  "firstWrong": 0
+ },
+ "tables": {
+  "correct": 13,
+  "unresolved": 0,
+  "wrong": 0,
+  "perShot": [
+   {
+    "shot": 1,
+    "id": "break",
+    "result": "correct",
+    "open": [],
+    "wrong": []
+   },
+   {
+    "shot": 2,
+    "id": "A",
+    "result": "correct",
+    "open": [],
+    "wrong": []
+   },
+   {
+    "shot": 3,
+    "id": "B",
+    "result": "correct",
+    "open": [],
+    "wrong": []
+   },
+   {
+    "shot": 4,
+    "id": "C",
+    "result": "correct",
+    "open": [],
+    "wrong": []
+   },
+   {
+    "shot": 5,
+    "id": "D",
+    "result": "correct",
+    "open": [],
+    "wrong": []
+   },
+   {
+    "shot": 6,
+    "id": "E",
+    "result": "correct",
+    "open": [],
+    "wrong": []
+   },
+   {
+    "shot": 7,
+    "id": "F",
+    "result": "correct",
+    "open": [],
+    "wrong": []
+   },
+   {
+    "shot": 8,
+    "id": "G",
+    "result": "correct",
+    "open": [],
+    "wrong": []
+   },
+   {
+    "shot": 9,
+    "id": "H",
+    "result": "correct",
+    "open": [],
+    "wrong": []
+   },
+   {
+    "shot": 10,
+    "id": "I",
+    "result": "correct",
+    "open": [],
+    "wrong": []
+   },
+   {
+    "shot": 11,
+    "id": "J",
+    "result": "correct",
+    "open": [],
+    "wrong": []
+   },
+   {
+    "shot": 12,
+    "id": "K",
+    "result": "correct",
+    "open": [],
+    "wrong": []
+   },
+   {
+    "shot": 13,
+    "id": "L",
+    "result": "correct",
+    "open": [],
+    "wrong": []
+   }
+  ]
+ },
+ "pockets": {
+  "made": 9,
+  "observed": 6,
+  "inferred": 3,
+  "notConfirmed": 0,
+  "wrongShot": 0,
+  "pidRight": 0,
+  "pidWrong": 0,
+  "pidUnknown": 9,
+  "fabricated": 0,
+  "perBall": [
+   {
+    "ball": 1,
+    "shot": 3,
+    "truthPocket": "P3",
+    "result": "observed entry",
+    "pid": "unknown (orientation not known)",
+    "camera": "near side",
+    "conf": "high"
+   },
+   {
+    "ball": 2,
+    "shot": 6,
+    "truthPocket": "P5",
+    "result": "inferred from the table"
+   },
+   {
+    "ball": 5,
+    "shot": 7,
+    "truthPocket": "P6",
+    "result": "inferred from the table"
+   },
+   {
+    "ball": 3,
+    "shot": 8,
+    "truthPocket": "P2",
+    "result": "observed entry",
+    "pid": "unknown (orientation not known)",
+    "camera": "near-left corner",
+    "conf": "high"
+   },
+   {
+    "ball": 4,
+    "shot": 9,
+    "truthPocket": "P5",
+    "result": "observed entry",
+    "pid": "unknown (orientation not known)",
+    "camera": "far-right corner",
+    "conf": "high"
+   },
+   {
+    "ball": 6,
+    "shot": 10,
+    "truthPocket": "P6",
+    "result": "observed entry",
+    "pid": "unknown (orientation not known)",
+    "camera": "far side",
+    "conf": "high"
+   },
+   {
+    "ball": 7,
+    "shot": 11,
+    "truthPocket": "P1",
+    "result": "inferred from the table"
+   },
+   {
+    "ball": 8,
+    "shot": 12,
+    "truthPocket": "P6",
+    "result": "observed entry",
+    "pid": "unknown (orientation not known)",
+    "camera": "far side",
+    "conf": "high"
+   },
+   {
+    "ball": 9,
+    "shot": 13,
+    "truthPocket": "P4",
+    "result": "observed entry",
+    "pid": "unknown (orientation not known)",
+    "camera": "near-right corner",
+    "conf": "high"
+   }
+  ]
+ },
+ "hidden": {
+  "carried": 1,
+  "right": 1
+ }
+}
