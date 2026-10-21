@@ -58,7 +58,7 @@
       2
      ],
      "first": 2,
-     "note": "2 into the far-right corner (P5) at ~88.8 s, checked at 5 fps. Player's account says P4: disagreement, video kept"
+     "note": "2 into the far-right corner (P5) at ~88.8 s, checked at 5 fps; confirmed by the player 2026-10-21 22:05 (resolved)"
     },
     {
      "id": "A5",
@@ -202,15 +202,16 @@
      "at": 304.3,
      "made": [],
      "first": 7,
-     "note": "the 7 ends hanging in the near-left corner jaws"
+     "note": "the 7 ends hanging in the near-left corner (P2) jaws. Player's account shot 8 ('7 toward P2')"
     },
     {
      "id": "B8",
-     "at": 311.5,
+     "at": 311.8,
      "made": [
       7
      ],
-     "first": 7
+     "first": 7,
+     "note": "the cue ball (struck ~311.8 s from mid-table) knocks the hanging 7 into P2. Checked at 1.5 fps 304-313 s: a separate cue strike. Not in the player's account (source of the 11 vs 12 count)"
     },
     {
      "id": "B9",
@@ -218,13 +219,14 @@
      "made": [],
      "first": 9,
      "scratch": true,
-     "note": "cue ball into the near side pocket (~327 s), taken out by hand ~330 s, placed ~334 s"
+     "note": "the 9 runs up the far rail toward P1 and misses; the cue ball goes into the near side pocket P3 (~328 s), taken out by hand ~330 s. Player: '9 attempted P1, missed, cue ball scratched' (agree)"
     },
     {
      "id": "B10",
      "at": 347.5,
      "made": [],
-     "first": 9
+     "first": 9,
+     "note": "the 9 goes toward P1 and misses. Player: '9 attempted P1, missed' (agree)"
     },
     {
      "id": "B11",
@@ -233,7 +235,7 @@
       9
      ],
      "first": 9,
-     "note": "9 runs around the table and drops in the near-right corner ~366.5 s"
+     "note": "the 9 runs around the table and drops in the near-right corner P4 ~366.5 s. Player: '9 made P4, two-rail bank' (agree)"
     }
    ]
   }

@@ -43,3 +43,15 @@ Between racks: the player's description (Magic Rack, balls returned, cue ball mo
 - Tables, shots, first ball and pot counts are unchanged: rack 2A 0 / 3 / 10, rack 2B 0 / 12 / 0 tables. The causes in
   RESULTS.md stand except cause 6 (the wrong P-ID), which was a truth error.
 - Open: the 2 in rack 2A (player P4, video P5); rack 2B shots 9-12 unreviewed by the player.
+
+## Update 2026-10-21 22:05 (player's confirmation and rack 2B shots 9-11)
+- **Rack 2A shot 5 resolved:** the player confirms the 2 went into P5, as the video showed.
+- **Rack 2B end of rack, player's account:** shot 9 = 9 attempted at P1, missed, cue ball scratched; shot 10 = 9
+  attempted at P1, missed; shot 11 = 9 made in P4 with a two-rail bank. All three agree with the video (my B9, B10,
+  B11): the 9 ran toward P1 both times, the cue ball dropped in P3 on the first, and the last went round into P4.
+- **Shot count, 11 (player) vs 12 (video):** re-checked 303.8-313 s at 1.5 fps. There are two separate cue strikes on
+  the 7: at ~304.3 s the cue ball comes off the far rail and sends the 7 into the P2 jaws, where it stops; at ~311.8 s,
+  after the player lines up from mid-table, the cue ball knocks the hanging 7 into P2. The player's account has one shot
+  for the 7 ("7 toward P2"), so the follow-up tap-in is the shot missing from the account. The video count of 12 stands.
+  No label changed for this; only the time of B8 was refined (311.5 -> 311.8 s, inside the scoring tolerance either
+  way).
