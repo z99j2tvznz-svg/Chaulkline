@@ -36,6 +36,9 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 #rec { position: fixed; z-index: 4; top: calc(env(safe-area-inset-top) + 40px); left: 12px; background: rgba(0,0,0,.6); border-radius: 8px; padding: 6px 10px; font-weight: 700; }
 #rec b { color: var(--bad); }
 #shotDone { position: fixed; z-index: 5; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom) + 18px); padding: 18px 34px; font-size: 20px; border-radius: 14px; }
+#stopRack { position: fixed; z-index: 5; right: calc(env(safe-area-inset-right) + 16px); bottom: calc(env(safe-area-inset-bottom) + 18px); padding: 16px 28px; font-size: 20px; border-radius: 14px; background: var(--bad); border-color: var(--bad); color: #fff; font-weight: 700; }
+#confirm { position: fixed; inset: 0; z-index: 6; background: rgba(0,0,0,.75); display: flex; align-items: center; justify-content: center; padding: 20px; }
+#confirm > div { background: #161b22; border: 1px solid var(--line); border-radius: 14px; padding: 18px; max-width: 420px; }
 .hidden { display: none !important; }
 .warn { color: var(--warn); }
 </style>
@@ -45,6 +48,8 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 <div id="top"><span id="ver"></span><span class="grow" id="where"></span><span id="sizeTxt" class="muted"></span><span id="meter"><i></i></span></div>
 <div id="rec" class="hidden"><b>●</b> REC <span id="recLeft"></span></div>
 <button id="shotDone" class="primary hidden">Shot done</button>
+<button id="stopRack" class="hidden">Stop</button>
+<div id="confirm" class="hidden"><div><h2>Stop recording?</h2><p class="muted">Only stop once the last ball has stopped rolling.</p><div class="row"><button class="big" id="cfYes">Yes, stop</button><button class="primary big" id="cfNo">Keep recording</button></div></div></div>
 <div id="big" class="hidden"></div>
 <div id="panel"></div>
 <script>
@@ -53,7 +58,9 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 // short clip per step (video, sound, motion sensor, camera settings) and the player's tap answers, and saves them as
 // zip files that each stay under the 30 MB upload limit. It does no tracking. Section contents and the reasons behind
 // them: chalkline-data/plans/test-recorder-sections.md in the project files.
-const VERSION = 'R0.6';
+// R0.7 adds the continuous rack session: one recording for a whole rack, nothing asked between shots (see 'continuous
+// rack mode' below).
+const VERSION = 'R0.7';
 const MB = 1048576, PART_LIMIT = 25 * MB, CLIP_MAX = 29 * MB;
 const $ = s => document.querySelector(s);
 const panel = $('#panel'), view = $('#view');
@@ -236,8 +243,8 @@ function trackInfo() {
   return { label: tr.label, settings, video: [view.videoWidth, view.videoHeight] };
 }
 function onMotion(e) {
-  if (!S.rec) return; const a = e.accelerationIncludingGravity || {}, g = e.rotationRate || {};
-  S.motion.push([Math.round(performance.now() - S.rec.t0), r3(a.x || 0), r3(a.y || 0), r3(a.z || 0), r3(g.alpha || 0), r3(g.beta || 0), r3(g.gamma || 0)]);
+  const o = S.rec || RK.rec; if (!o) return; const a = e.accelerationIncludingGravity || {}, g = e.rotationRate || {};
+  (S.rec ? S.motion : o.motion).push([Math.round(performance.now() - o.t0), r3(a.x || 0), r3(a.y || 0), r3(a.z || 0), r3(g.alpha || 0), r3(g.beta || 0), r3(g.gamma || 0)]);
 }
 async function startMotion() { // iPhone asks once, and only from a tap
   try {
@@ -247,7 +254,7 @@ async function startMotion() { // iPhone asks once, and only from a tap
 }
 let wake = null;
 async function keepAwake() { try { if (navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); } catch (e) { } }
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { keepAwake(); if (S.started && !S.stream?.active) openCamera(S.mode || DEFAULT).catch(() => { }); } else if (S.rec) S.rec.interrupted = true; });
+document.addEventListener('visibilitychange', () => { if (RK.rec) return rackVisibility(); if (document.visibilityState === 'visible') { keepAwake(); if (S.started && !S.stream?.active) openCamera(S.mode || DEFAULT).catch(() => { }); } else if (S.rec) S.rec.interrupted = true; });
 
 // beeps before and after recording only, never during, so they don't end up in the sound being tested
 let AC = null;
@@ -385,10 +392,10 @@ function showSetup() {
     '<label>Where is the phone?</label><select id="fSpot">' + opt(['low side', 'high side', 'corner', 'end rail'], st.spot) + '</select>' +
     '<label>Lighting right now</label><select id="fLight">' + opt(LIGHTS, st.light) + '</select>' +
     '<label>Place</label><select id="fPlace">' + opt(['home', 'pool hall'], st.place) + '</select>' +
-    '<label>Session</label><select id="fShort"><option value="2"' + (st.evening || !st.phone ? ' selected' : '') + '>Evening check (10 to 15 minutes)</option><option value="0"' + (st.phone && !st.short && !st.evening ? ' selected' : '') + '>Full session (about an hour)</option><option value="1"' + (st.short ? ' selected' : '') + '>Short version for another spot (about 20 minutes)</option></select>' +
+    '<label>Session</label><select id="fShort"><option value="2"' + (st.evening || !st.phone ? ' selected' : '') + '>Evening check (10 to 15 minutes)</option><option value="0"' + (st.phone && !st.short && !st.evening ? ' selected' : '') + '>Full session (about an hour)</option><option value="1"' + (st.short ? ' selected' : '') + '>Short version for another spot (about 20 minutes)</option><option value="3"' + (st.continuous ? ' selected' : '') + '>Continuous rack: start once, play the whole rack, stop</option></select>' +
     '<div class="row"><button class="primary big" id="go">Start</button></div><p class="muted">It will ask for the camera, the microphone and the motion sensor. Please allow all three.</p>';
   $('#go').onclick = async () => {
-    S.setup = { phone: $('#fPhone').value.trim(), table: $('#fTable').value, spot: $('#fSpot').value, light: $('#fLight').value, place: $('#fPlace').value, short: $('#fShort').value === '1', evening: $('#fShort').value === '2' };
+    S.setup = { phone: $('#fPhone').value.trim(), table: $('#fTable').value, spot: $('#fSpot').value, light: $('#fLight').value, place: $('#fPlace').value, short: $('#fShort').value === '1', evening: $('#fShort').value === '2', continuous: $('#fShort').value === '3' };
     const d = new Date(), p = n => String(n).padStart(2, '0');
     S.sessId = d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
     Object.assign(S, { sec: 0, step: 0, playN: 0, part: 1, clipN: 0, partBytes: 0, pending: [] }); save();
@@ -400,7 +407,9 @@ async function begin() {
   await startMotion(); keepAwake();
   try { await openCamera(DEFAULT); await pickMainLens(); if (deviceId) await openCamera(DEFAULT); }
   catch (e) { panel.innerHTML = '<h2>The camera didn\'t start</h2><p>' + (e && e.name === 'NotAllowedError' ? 'Camera or microphone access was blocked. In Safari tap aA, then Website Settings, and allow the Camera and Microphone. Then reload.' : esc((e && (e.message || e.name)) || 'unknown error')) + '</p>'; return; }
-  S.started = true; meterUpd(); showStep();
+  S.started = true;
+  if (S.setup.continuous) return showRack();
+  meterUpd(); showStep();
 }
 
 function showStep() {
@@ -531,11 +540,245 @@ function showResume() {
   };
 }
 
+// ---------- continuous rack mode ----------
+// One recording for a whole rack: start once before the break, stop after the last shot. Nothing is asked between shots
+// and nothing is trimmed. The video is written to this phone's storage every second while it records, so a long rack
+// never has to fit in memory. It is saved afterwards as numbered files that each stay under the upload limit: the video
+// cut into byte ranges, which joined back in order are the original file. If recording is cut off (a call, the screen
+// locking), what was recorded is kept, and recording can go on as a new segment of the same rack.
+let RACK_PART = PART_LIMIT;  // tests lower this to get several files from a short recording
+const RACK_LOW_SPACE = 300 * MB;  // stops on its own below this much free space, keeping what was recorded
+const GAMES = ['9-ball', '10-ball', '8-ball', 'Other'];
+const RK = { rec: null, racks: [] };
+const RMEM = new Map(); let RDB = null;
+function rdb() { return RDB || (RDB = new Promise((res, rej) => { try { const q = indexedDB.open('chalkRack', 1); q.onupgradeneeded = () => { q.result.createObjectStore('chunks'); q.result.createObjectStore('racks'); }; q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); } catch (e) { rej(e); } })); }
+async function rx(store, mode, fn) { const d = await rdb(); return new Promise((res, rej) => { const t = d.transaction(store, mode), st = t.objectStore(store), q = fn(st); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error); }); }
+async function rput(store, key, val) { try { await rx(store, 'readwrite', st => st.put(val, key)); } catch (e) { RMEM.set(store + ':' + key, val); RK.memOnly = true; } }
+async function rget(store, key) { const m = RMEM.get(store + ':' + key); if (m !== undefined) return m; try { return await rx(store, 'readonly', st => st.get(key)); } catch (e) { return null; } }
+async function rdel(store, range) { for (const k of [...RMEM.keys()]) if (k.startsWith(store + ':') && (typeof range === 'string' ? k.slice(store.length + 1) === range : range.includes(k.slice(store.length + 1)))) RMEM.delete(k); try { await rx(store, 'readwrite', st => st.delete(range)); } catch (e) { } }
+const chunkKey = (id, seg, i) => id + '/' + seg + '/' + String(i).padStart(6, '0');
+const segRange = (id, seg) => IDBKeyRange.bound(id + '/' + seg + '/', id + '/' + seg + '/￿');
+async function segKeys(id, seg) {
+  const pre = id + '/' + seg + '/', k = [...RMEM.keys()].filter(x => x.startsWith('chunks:' + pre)).map(x => x.slice(7));
+  try { k.push(...await rx('chunks', 'readonly', st => st.getAllKeys(segRange(id, seg)))); } catch (e) { }
+  return [...new Set(k.map(String))].sort();
+}
+const saveRack = rack => rput('racks', rack.id, rack);
+async function loadRacks() {
+  let list = [...RMEM.entries()].filter(([k]) => k.startsWith('racks:')).map(([, v]) => v);
+  try { list = list.concat(await rx('racks', 'readonly', st => st.getAll())); } catch (e) { }
+  const by = new Map(); for (const r of list) by.set(r.id, r);
+  RK.racks = [...by.values()].sort((a, b) => a.epoch - b.epoch);
+  // a rack that was still recording when the page was closed: keep every chunk that reached storage
+  for (const r of RK.racks) if (r.state === 'recording' && !(RK.rec && RK.rec.rack.id === r.id)) {
+    for (const g of r.segs) {
+      const keys = (await segKeys(r.id, g.seg)).filter(k => /\/\d{6}$/.test(k));
+      if (keys.length > g.chunks.length) for (const k of keys.slice(g.chunks.length)) { const v = await rget('chunks', k); if (v && v.size) { g.chunks.push([+k.split('/').pop(), null, null, v.size]); g.bytes += v.size; } }
+      if (!g.end) g.end = 'page closed while recording';
+    }
+    r.state = 'done'; await saveRack(r);
+  }
+  return RK.racks;
+}
+const mmss = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+function rackSecs(r) { return r.segs.reduce((a, g) => a + (g.secs || 0), 0); }
+function rackBytes(r) { return r.segs.reduce((a, g) => a + g.bytes, 0); }
+function median(a) { if (!a.length) return null; const b = [...a].sort((x, y) => x - y); return b[b.length >> 1]; }
+function rackFps(r) { return median(r.segs.flatMap(g => g.frames.slice(1, -1).map(f => f[1]))); }
+
+async function showRack() {
+  setWhere('Continuous rack'); $('#sizeTxt').textContent = ''; $('#meter').classList.add('hidden');
+  const racks = await loadRacks(), n = racks.length + 1, last = S.setup.game || '9-ball';
+  let h = '<h2>Rack ' + n + '</h2>' +
+    '<ol style="padding-left:20px;margin:6px 0"><li>Rack the balls and put the white where you\'ll break from.</li><li>Tap <b>Start recording</b>, then step away and leave the phone alone for the whole rack.</li><li>Let the table sit still for about 5 seconds, then break and play the rack out normally. There\'s nothing to tap between shots.</li><li>When the last ball has stopped, wait about 5 seconds, then tap <b>Stop</b>.</li></ol>' +
+    '<label>Game</label><select id="fGame">' + GAMES.map(g => '<option' + (g === last ? ' selected' : '') + '>' + g + '</option>').join('') + '</select>' +
+    '<div class="row"><button class="primary big" id="rackGo">Start recording</button></div>';
+  if (RK.memOnly) h += '<p class="warn">This phone\'s storage isn\'t available to the recorder, so it\'s recording into memory. Keep racks short and save each one straight away.</p>';
+  if (racks.length) h += '<h2 style="margin-top:14px">On this phone</h2>' + racks.map(r => '<p>Rack ' + r.n + ' (' + esc(r.game) + '), ' + mmss(rackSecs(r)) + ', ' + (rackBytes(r) / MB).toFixed(0) + ' MB: ' + (r.saved ? 'saved' : '<span class="warn">not saved yet</span>') + ' <button data-open="' + esc(r.id) + '">Open</button></p>').join('');
+  panel.innerHTML = h;
+  $('#rackGo').onclick = () => { S.setup.game = $('#fGame').value; save(); startRack(null); };
+  panel.querySelectorAll('[data-open]').forEach(b => { b.onclick = () => showRackDone(RK.racks.find(r => r.id === b.dataset.open)); });
+}
+
+function rackEv(o, type, detail) { o.seg.events.push([Math.round(performance.now() - o.t0), Date.now(), type, detail === undefined ? null : detail]); }
+async function flushMotion(o) {
+  if (!o.motion.length) return; const rows = o.motion; o.motion = [];
+  const k = o.rack.id + '/' + o.seg.seg + '/m' + String(o.seg.motionPieces++).padStart(4, '0');
+  await rput('chunks', k, rows);
+}
+// starts a recording for a new rack (rack null) or a new segment of an existing rack
+async function startRack(rack) {
+  if (RK.rec) return;
+  if (!rack) { const d = new Date(); rack = { id: 'r' + d.getTime(), n: RK.racks.length + 1, epoch: d.getTime(), started: d.toISOString(), session: S.sessId, setup: S.setup, game: S.setup.game || null, ua: navigator.userAgent, timeOrigin: performance.timeOrigin, segs: [], state: 'recording', saved: false, savedParts: [] }; RK.racks.push(rack); }
+  if (!(S.stream && S.stream.active) || micState() !== 'ok') { try { await openCamera(S.mode || DEFAULT); } catch (e) { } }
+  const mime = recMime(); let r;
+  try { r = new MediaRecorder(S.stream, { mimeType: mime, videoBitsPerSecond: DEFAULT.bps, audioBitsPerSecond: 64000 }); }
+  catch (e) { panel.innerHTML = '<h2>Recording didn\'t start</h2><p class="muted">' + esc(String(e && (e.name || e.message) || e)) + '</p><div class="row"><button class="primary" id="again">Back</button></div>'; $('#again').onclick = showRack; return; }
+  const seg = { seg: rack.segs.length + 1, mime: mime || r.mimeType || '', epoch: Date.now(), started: new Date().toISOString(), secs: 0, bytes: 0, chunks: [], frames: [], events: [], motionPieces: 0, motionOn: S.motionOn, mode: DEFAULT.id, camera: trackInfo(), mic: [micState()], end: null };
+  rack.segs.push(seg); rack.state = 'recording';
+  const o = { r, rack, seg, t0: performance.now(), i: 0, q: Promise.resolve(), motion: [], storeFailed: false };
+  RK.rec = o;
+  r.ondataavailable = e => {
+    if (!e.data || !e.data.size) return; const i = o.i++, blob = e.data;
+    seg.chunks.push([i, Math.round(performance.now() - o.t0), Date.now(), blob.size]); seg.bytes += blob.size;
+    o.q = o.q.then(async () => { await rput('chunks', chunkKey(rack.id, seg.seg, i), blob); if (i % 5 === 4) { await flushMotion(o); await saveRack(rack); } })
+      .catch(err => { rackEv(o, 'store-failed', String(err)); o.storeFailed = true; });
+  };
+  r.onerror = e => { rackEv(o, 'recorder-error', String(e && e.error && (e.error.name || e.error.message) || e)); };
+  o.stopped = new Promise(res => { r.onstop = res; });
+  for (const t of S.stream.getTracks()) {
+    t.onended = () => { rackEv(o, t.kind + '-ended'); if (t.kind === 'video' && document.visibilityState === 'visible') stopRack('camera was taken away'); };
+    t.onmute = () => rackEv(o, t.kind + '-muted'); t.onunmute = () => rackEv(o, t.kind + '-unmuted');
+  }
+  // camera frames shown on screen, counted each second: the real frame rate while recording
+  o.fc = { sec: 0, base: null };
+  const onFrame = (now, md) => {
+    if (RK.rec !== o) return;
+    const s = Math.floor((performance.now() - o.t0) / 1000);
+    if (o.fc.base === null) o.fc = { sec: s, base: md.presentedFrames };
+    else if (s > o.fc.sec) { seg.frames.push([o.fc.sec, md.presentedFrames - o.fc.base, md.width, md.height]); o.fc = { sec: s, base: md.presentedFrames }; }
+    view.requestVideoFrameCallback(onFrame);
+  };
+  if (view.requestVideoFrameCallback) view.requestVideoFrameCallback(onFrame);
+  r.start(1000); keepAwake(); await saveRack(rack); beep(990, 220);
+  // on screen while recording: time, size, frame rate and the Stop button only
+  panel.classList.add('hidden'); $('#rec').classList.remove('hidden'); $('#stopRack').classList.remove('hidden');
+  o.tick = setInterval(() => {
+    const s = (performance.now() - o.t0) / 1000, f = seg.frames.length ? seg.frames[seg.frames.length - 1][1] : null;
+    $('#recLeft').textContent = mmss(s) + ' · ' + (seg.bytes / MB).toFixed(0) + ' MB' + (f ? ' · ' + f + ' fps' : '') + (rack.segs.length > 1 ? ' · part ' + seg.seg : '');
+    if (o.storeFailed) stopRack('could not save to the phone\'s storage');
+    else if (document.visibilityState === 'visible' && S.stream.getVideoTracks().some(t => t.readyState === 'ended')) stopRack('the camera was taken away');
+  }, 500);
+  o.space = setInterval(async () => {
+    try { const e = await navigator.storage.estimate(); rackEv(o, 'storage', [Math.round(e.usage / MB), Math.round(e.quota / MB)]); if (e.quota - e.usage < RACK_LOW_SPACE) stopRack('the phone is almost out of space'); } catch (e) { }
+  }, 30000);
+  $('#stopRack').onclick = () => $('#confirm').classList.remove('hidden');
+  $('#cfNo').onclick = () => $('#confirm').classList.add('hidden');
+  $('#cfYes').onclick = () => { $('#confirm').classList.add('hidden'); stopRack('stopped'); };
+}
+async function stopRack(reason) {
+  const o = RK.rec; if (!o || o.stopping) return; o.stopping = true;
+  clearInterval(o.tick); clearInterval(o.space);
+  $('#stopRack').classList.add('hidden'); $('#confirm').classList.add('hidden'); $('#rec').classList.add('hidden');
+  panel.classList.remove('hidden'); panel.innerHTML = '<h2>Saving the recording…</h2>';
+  if (o.r.state !== 'inactive') { try { o.r.stop(); } catch (e) { } }
+  await Promise.race([o.stopped, sleep(5000)]);
+  await sleep(50); await o.q;
+  o.seg.secs = r3((performance.now() - o.t0) / 1000); o.seg.end = reason; o.seg.mic.push(micState()); rackEv(o, 'stop', reason);
+  await flushMotion(o);
+  o.rack.state = 'done'; await saveRack(o.rack); RK.rec = null; beep(520, 250);
+  if (reason !== 'stopped') return showCutOff(o.rack, reason);
+  showRackDone(o.rack);
+}
+// the page was hidden while recording (screen locked, a call, another app): Safari usually stops the camera
+function rackVisibility() {
+  const o = RK.rec; if (!o) return;
+  if (document.visibilityState !== 'visible') { rackEv(o, 'hidden'); return; }
+  rackEv(o, 'visible'); keepAwake();
+  const ok = o.r.state === 'recording' && S.stream && S.stream.getVideoTracks().every(t => t.readyState === 'live');
+  if (!ok) stopRack('the phone left the recorder');
+  else $('#where').textContent = 'Interrupted at ' + mmss(o.seg.events.filter(e => e[2] === 'hidden').pop()[0] / 1000) + ', still recording';
+}
+function showCutOff(rack, reason) {
+  setWhere('Rack ' + rack.n);
+  panel.innerHTML = '<h2>Recording stopped: ' + esc(reason) + '</h2><p>Everything up to then is kept (' + mmss(rackSecs(rack)) + ').</p><p class="muted">If the rack isn\'t finished, leave the balls where they are and carry on recording. It\'s saved as part ' + (rack.segs.length + 1) + ' of the same rack.</p>' +
+    '<div class="row"><button class="primary big" id="goOn">Carry on recording</button><button id="fin">The rack is finished</button></div>';
+  $('#goOn').onclick = async () => { panel.innerHTML = '<p>Starting the camera…</p>'; try { await openCamera(S.mode || DEFAULT); } catch (e) { } startRack(rack); };
+  $('#fin').onclick = () => showRackDone(rack);
+}
+
+// ---------- saving a rack: numbered files under the upload limit ----------
+function rackName(r) { return 'chalkline-' + VERSION + '-' + (r.session || 'rack') + '-rack' + r.n; }
+// each file carries one byte range of one segment's video; a segment's motion log goes with its last range when it fits
+async function rackPlan(r) {
+  const plan = [], budget = RACK_PART - Math.min(512 * 1024, RACK_PART / 4);  // room for meta.json
+  for (const g of r.segs) {
+    const motionKeys = (await segKeys(r.id, g.seg)).filter(k => /\/m\d{4}$/.test(k));
+    let mb = 0; for (const k of motionKeys) { const v = await rget('chunks', k); mb += (v ? v.length : 0) * 60; }
+    const base = r.segs.length > 1 ? 'rack' + r.n + '-seg' + g.seg : 'rack' + r.n, ext = extOf(g.mime);
+    const n = Math.max(1, Math.ceil(g.bytes / budget)), pieces = [];
+    for (let i = 0; i < n; i++) pieces.push({ seg: g.seg, name: base + ext + '.' + String(i + 1).padStart(3, '0'), video: base + ext, from: Math.round(g.bytes * i / n), to: Math.round(g.bytes * (i + 1) / n) });
+    const lastP = pieces[pieces.length - 1];
+    const motion = { seg: g.seg, name: base + '-motion.json', keys: motionKeys };
+    if ((lastP.to - lastP.from) + mb < budget) plan.push(...pieces.slice(0, -1).map(p => ({ files: [p] })), { files: [lastP, motion] });
+    else plan.push(...pieces.map(p => ({ files: [p] })), { files: [motion] });
+  }
+  return plan.map((p, i) => ({ part: i + 1, ...p }));
+}
+async function segBlob(r, g) {
+  const keys = (await segKeys(r.id, g.seg)).filter(k => /\/\d{6}$/.test(k)), blobs = [];
+  for (const k of keys) { const v = await rget('chunks', k); if (v) blobs.push(v); }
+  return new Blob(blobs, { type: (g.mime || 'video/mp4').split(';')[0] });
+}
+function rackMeta(r, plan, part) {
+  return { app: 'chalkline-recorder', version: VERSION, kind: 'continuous-rack', rack: r.n, id: r.id, game: r.game, session: r.session, started: r.started, epoch: r.epoch, timeOrigin: r.timeOrigin, ua: r.ua, setup: r.setup, part, parts: plan.length,
+    join: 'Join each video\'s pieces in order (.001, .002, ...) to get the original file, e.g. cat rack1.mp4.0* > rack1.mp4',
+    files: plan.map(p => ({ part: p.part, files: p.files.map(f => f.video ? { name: f.name, video: f.video, seg: f.seg, from: f.from, to: f.to } : { name: f.name, seg: f.seg }) })),
+    segments: r.segs.map(g => ({ seg: g.seg, started: g.started, epoch: g.epoch, secs: g.secs, bytes: g.bytes, mime: g.mime, mode: g.mode, camera: g.camera, mic: g.mic, end: g.end, motionOn: g.motionOn,
+      chunkCols: ['i', 'msSinceStart', 'epochMs', 'bytes'], chunks: g.chunks, frameCols: ['second', 'framesShown', 'width', 'height'], frames: g.frames, eventCols: ['msSinceStart', 'epochMs', 'event', 'detail'], events: g.events })) };
+}
+async function packRackPart(r, plan, k) {
+  const p = plan[k - 1], enc = new TextEncoder(), files = [];
+  const blobs = {};
+  for (const f of p.files) {
+    if (f.video) { blobs[f.seg] = blobs[f.seg] || await segBlob(r, r.segs.find(g => g.seg === f.seg)); files.push({ name: f.name, data: new Uint8Array(await blobs[f.seg].slice(f.from, f.to).arrayBuffer()) }); }
+    else { let rows = []; for (const key of f.keys) { const v = await rget('chunks', key); if (v) rows = rows.concat(v); } files.push({ name: f.name, data: enc.encode(JSON.stringify({ cols: ['ms', 'ax', 'ay', 'az', 'rotA', 'rotB', 'rotG'], rows })) }); }
+  }
+  files.unshift({ name: 'meta.json', data: enc.encode(JSON.stringify(rackMeta(r, plan, k), null, 1)) });
+  const blob = makeZip(files), name = rackName(r) + '-part' + String(k).padStart(2, '0') + '-of-' + String(plan.length).padStart(2, '0') + '.zip';
+  let file = null; try { file = new File([blob], name, { type: 'application/zip' }); } catch (e) { }
+  return { blob, file, name, mb: blob.size / MB };
+}
+async function shareOrDownload(files, blob, name) {
+  if (files.every(Boolean) && navigator.canShare && navigator.canShare({ files })) {
+    try { await navigator.share({ files }); return 'shared'; } catch (e) { if (e && e.name === 'AbortError') return 'cancelled'; }
+  }
+  try { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => a.remove(), 1000); } catch (e) { }
+  return 'downloaded';
+}
+async function showRackDone(r) {
+  setWhere('Rack ' + r.n); panel.classList.remove('hidden');
+  const plan = await rackPlan(r), fps = rackFps(r), cuts = r.segs.filter(g => g.end && g.end !== 'stopped').length, hid = r.segs.reduce((a, g) => a + g.events.filter(e => e[2] === 'hidden').length, 0);
+  const left = plan.filter(p => !r.savedParts.includes(p.part)).map(p => p.part);
+  let h = '<h2>Rack ' + r.n + ': ' + mmss(rackSecs(r)) + ', ' + (rackBytes(r) / MB).toFixed(rackBytes(r) < 10 * MB ? 1 : 0) + ' MB</h2>' +
+    '<p class="muted">' + (fps ? 'Frame rate ' + fps + ' fps. ' : '') + (r.segs.length > 1 ? r.segs.length + ' recordings (cut off ' + cuts + ' times). ' : '') + (hid ? 'The recorder was hidden ' + hid + ' times. ' : '') + '</p>' +
+    '<p>For the project chat it\'s saved as <b>' + plan.length + ' file' + (plan.length > 1 ? 's' : '') + '</b> of up to 25 MB. Save each one to Files, then send them all to Claude.</p>' +
+    '<div class="row"><button class="primary big" id="nextPart">' + (left.length ? 'Save file ' + left[0] + ' of ' + plan.length : 'All files saved') + '</button></div>' +
+    '<p class="muted">Saved: ' + (r.savedParts.length ? r.savedParts.slice().sort((a, b) => a - b).join(', ') : 'none yet') + '</p>' +
+    '<div class="row"><button id="whole">Save as one video</button><button id="toRacks">Back to racks</button><button id="delRack">Delete from this phone</button></div>';
+  panel.innerHTML = h;
+  const nb = $('#nextPart'); if (!left.length) nb.disabled = true;
+  // packing and sharing are two taps: the phone only allows sharing straight from a tap
+  nb.onclick = async () => {
+    const k = left[0]; nb.disabled = true; nb.textContent = 'Packing file ' + k + '…';
+    const z = await packRackPart(r, plan, k); nb.disabled = false; nb.textContent = 'Save file ' + k + ' (' + z.mb.toFixed(1) + ' MB)';
+    nb.onclick = async () => {
+      const how = await shareOrDownload([z.file], z.blob, z.name);
+      if (how === 'cancelled') return;
+      if (!r.savedParts.includes(k)) r.savedParts.push(k);
+      r.saved = r.savedParts.length >= plan.length; await saveRack(r); showRackDone(r);
+    };
+  };
+  $('#whole').onclick = async () => {
+    const files = [], enc = new TextEncoder();
+    for (const g of r.segs) { const b = await segBlob(r, g); try { files.push(new File([b], (r.segs.length > 1 ? 'rack' + r.n + '-seg' + g.seg : 'rack' + r.n) + extOf(g.mime), { type: b.type })); } catch (e) { } }
+    try { files.push(new File([enc.encode(JSON.stringify(rackMeta(r, plan, 0), null, 1))], rackName(r) + '-meta.json', { type: 'application/json' })); } catch (e) { }
+    const how = await shareOrDownload(files, files[0], files[0] && files[0].name);
+    if (how === 'downloaded' && files.length > 1) for (const f of files.slice(1)) await shareOrDownload([f], f, f.name);
+  };
+  $('#toRacks').onclick = showRack;
+  $('#delRack').onclick = async () => {
+    if (!r.saved && !confirm('This rack hasn\'t been saved to files yet. Delete it anyway?')) return;
+    for (const g of r.segs) await rdel('chunks', segRange(r.id, g.seg));
+    await rdel('racks', r.id); RK.racks = RK.racks.filter(x => x !== r); showRack();
+  };
+}
+
 $('#ver').textContent = VERSION;
 load(); meterUpd();
 if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder)) panel.innerHTML = '<h2>This browser can\'t record</h2><p>Open this page in Safari on the iPhone, from its https address.</p>';
 else if (S.setup && S.sessId) showResume(); else showSetup();
-window.__rec = { S, SECTIONS, EVENING, save, LAYOUT, steps, packPart, partSaved, setSpeed: v => { SPEED = v; }, layoutSvg, makeZip };
+window.__rec = { S, SECTIONS, EVENING, save, LAYOUT, steps, packPart, partSaved, setSpeed: v => { SPEED = v; }, layoutSvg, makeZip, RK, loadRacks, rackPlan, stopRack, setRackPart: v => { RACK_PART = v; } };
 </script>
 </body>
 </html>

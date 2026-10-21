@@ -1,0 +1,36 @@
+name: recorder-host-check
+# Dev branch only: checks that the R0.7 recorder on this branch is served as a web page by raw.githack.com (the address
+# used to test it on the iPhone without touching the live recorder on GitHub Pages), and runs the recorder browser tests.
+on:
+  push:
+    branches: [claude/project-thread-vl1o4a]
+    paths: ['recorder/**', 'tests/recorder*.js', '.github/workflows/recorder-host-check.yml']
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Served page matches this commit
+        run: |
+          set -e
+          for url in "https://raw.githack.com/${GITHUB_REPOSITORY}/${GITHUB_SHA}/recorder/index.html" "https://rawcdn.githack.com/${GITHUB_REPOSITORY}/${GITHUB_SHA}/recorder/index.html"; do
+            ok=0
+            for i in 1 2 3 4 5 6; do
+              code=$(curl -sS -L -o page.html -w '%{http_code} %{content_type}' "$url" || true); echo "$url -> $code"
+              if [[ "$code" == 200\ text/html* ]] && cmp -s page.html recorder/index.html; then ok=1; break; fi
+              sleep 20
+            done
+            test $ok = 1
+          done
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.11.0'
+      - name: Recorder browser tests
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          sudo apt-get install -y ffmpeg >/dev/null
+          node --test tests/recorder.test.js tests/recorder-rack.test.js
