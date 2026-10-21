@@ -77,3 +77,24 @@ so its storage and permissions are separate from R0.6's.
 6. Battery and heat over 3 racks.
 
 The short test recording answers 1, 5 and part of 2. The three racks answer the rest.
+
+## iPhone test 1 (2026-10-21 05:26 UTC): one complete 9-ball rack
+Setup: iPhone 16 Pro Max, iOS 18.7, Safari 26.6.1, low side spot, home 7 ft table. Files: 3 zips, plus the meta file
+from "Save as one video". Stored in project files as `chalkline-data/sessions/rack-20261021-0526/`.
+
+Confirmed:
+- Safari honours the 1 s timeslice: 200 chunks of about 260 KB, one every 1.05 s, so memory stays flat.
+- 3 min 31 s, 51.9 MB (14.8 MB/min), saved as 3 files of 17.3 MB.
+- All three zips are intact. The joined video is exactly 51,891,686 bytes, matching the recorded size, and decodes from
+  start to end: H.264 1280x720 + AAC, 210.99 s.
+- Frame rate: 12,651 video frames over 210.9 s = 59.98 fps. The longest gap between frames is 41.7 ms (2 of 12,650 gaps
+  above one frame). The on-screen frame log shows 58-61 every second. There was no slowdown over the recording.
+- Motion sensor: 12,661 rows (about 60 Hz) for the whole recording. Microphone ok at start and end. No hidden /
+  interrupted events. Storage quota reported as 39 GB.
+- The video starts on the racked table before the break and ends on a still table after the last ball.
+
+Not yet tested: racks longer than about 4 minutes, a screen lock or call during recording, heat and battery over 3
+racks, "Save as one video" for the video itself.
+
+Note: the project-files store rewrites mp4 metadata on upload (the md5 changes, the frame count does not), so the copy
+there is not byte-identical to the phone's file.
