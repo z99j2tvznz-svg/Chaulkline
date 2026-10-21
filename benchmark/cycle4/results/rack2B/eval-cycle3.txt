@@ -1,0 +1,16 @@
+start: established 6/10 (named at rack start 1), wrongly established 0, pack count 9 + 1 away = 10 (DISAGREES)
+shots: found 11/12, missed 1, false 0; first ball right 5, no reading 4, wrong 0
+tables after shots: correct 0, unresolved 12, wrong 0; hidden balls carried 0 (right 0)
+  shot 1 (B-break): unresolved 2 on the table, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 8 gone, left unconfirmed
+  shot 2 (B1): unresolved 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 8 gone, left unconfirmed
+  shot 3 (B2): unresolved 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 8 gone, left unconfirmed
+  shot 4 (B3): unresolved 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 8 gone, left unconfirmed
+  shot 5 (B4): unresolved 0 on the table, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 6 on the table, left unconfirmed; 8 gone, left unconfirmed
+  shot 6 (B5): unresolved 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 8 gone, left unconfirmed
+  shot 7 (B6): unresolved 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 8 gone, left unconfirmed
+  shot 8 (B7): unresolved 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 8 gone, left unconfirmed
+  shot 9 (B8): unresolved 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 7 gone, left unconfirmed; 8 gone, left unconfirmed
+  shot 10 (B9): unresolved 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 7 gone, left unconfirmed; 8 gone, left unconfirmed
+  shot 11 (B10): unresolved 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 7 gone, left unconfirmed; 8 gone, left unconfirmed; 9 on the table, left unconfirmed
+  shot 12 (B11): no table 
+pockets: 8 made: observed 3, inferred 0, not confirmed 5, other shot 0; P-ID right 3, wrong 0, unknown 0; fabricated 0

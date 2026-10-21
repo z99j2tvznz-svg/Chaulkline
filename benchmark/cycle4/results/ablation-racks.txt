@@ -1,0 +1,32 @@
+== without breakPots
+ T 13/0/0 P obs9 inf0 nc0 ws0 pid9/0 start 10/10
+ T 0/13/0 P obs6 inf0 nc3 ws0 pid6/0 start 9/10
+ T 0/12/0 P obs5 inf0 nc4 ws0 pid5/0 start 6/10
+== without breakTwoPass
+ T 13/0/0 P obs9 inf0 nc0 ws0 pid9/0 start 10/10
+ T 6/7/0 P obs6 inf1 nc2 ws0 pid6/0 start 10/10
+ T 10/2/0 P obs5 inf3 nc1 ws0 pid5/0 start 10/10
+== without anonPockets
+ T 13/0/0 P obs9 inf0 nc0 ws0 pid9/0 start 10/10
+ T 12/1/0 P obs6 inf3 nc0 ws0 pid6/0 start 10/10
+ T 10/2/0 P obs5 inf3 nc1 ws0 pid5/0 start 10/10
+== without spotBack
+ T 13/0/0 P obs9 inf0 nc0 ws0 pid9/0 start 10/10
+ T 2/10/1 P obs6 inf1 nc2 ws0 pid6/0 start 10/10
+ T 11/1/0 P obs6 inf3 nc0 ws0 pid6/0 start 10/10
+== without lateStart
+ T 13/0/0 P obs9 inf0 nc0 ws0 pid9/0 start 10/10
+ T 12/1/0 P obs6 inf3 nc0 ws0 pid6/0 start 10/10
+ T 8/3/1 P obs5 inf3 nc0 ws0 pid5/0 start 10/10
+== without jawEdges
+ T 13/0/0 P obs9 inf0 nc0 ws0 pid9/0 start 10/10
+ T 3/0/10 P obs5 inf3 nc0 ws1 pid5/0 start 10/10
+ T 7/5/0 P obs4 inf3 nc2 ws0 pid4/0 start 10/10
+== without railEdges
+ T 13/0/0 P obs9 inf0 nc0 ws0 pid9/0 start 10/10
+ T 12/1/0 P obs5 inf4 nc0 ws0 pid5/0 start 10/10
+ T 0/12/0 P obs4 inf0 nc5 ws0 pid4/0 start 6/10
+== without bagSpots
+ T 13/0/0 P obs9 inf0 nc0 ws0 pid9/0 start 10/10
+ T 7/4/2 P obs6 inf2 nc1 ws0 pid6/0 start 10/10
+ T 11/1/0 P obs6 inf3 nc0 ws0 pid6/0 start 10/10

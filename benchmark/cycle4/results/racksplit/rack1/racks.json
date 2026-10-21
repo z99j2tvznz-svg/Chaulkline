@@ -1,0 +1,19 @@
+{
+ "recording": "/tmp/claude-0/-home-user-Chaulkline/e2aab88e-650e-5c9b-8cd7-b373619fcdb2/scratchpad/c4/in/rack1-edges-bnb.json",
+ "proposals": [],
+ "racks": [
+  {
+   "rack": 1,
+   "from": 0,
+   "to": 210.87,
+   "log": "/tmp/claude-0/-home-user-Chaulkline/e2aab88e-650e-5c9b-8cd7-b373619fcdb2/scratchpad/c4/racks/final1/rack1-log.json",
+   "rackLookProbe": {
+    "file": "/tmp/claude-0/-home-user-Chaulkline/e2aab88e-650e-5c9b-8cd7-b373619fcdb2/scratchpad/c4/racks/final1/probe-0.00-11.97.json",
+    "isPack": true,
+    "count": 9,
+    "match": 0.87,
+    "end": "x0"
+   }
+  }
+ ]
+}

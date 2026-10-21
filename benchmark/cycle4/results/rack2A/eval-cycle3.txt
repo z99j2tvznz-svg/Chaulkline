@@ -1,0 +1,17 @@
+start: established 9/10 (named at rack start 1), wrongly established 0, pack count 9 + 1 away = 10 (DISAGREES)
+shots: found 13/13, missed 0, false 1; first ball right 8, no reading 2, wrong 1
+tables after shots: correct 0, unresolved 3, wrong 10; hidden balls carried 1 (right 1)
+  shot 1 (A-break): wrong 7 on the table, called gone; 4 gone, left unconfirmed
+  shot 2 (A1): wrong 7 on the table, called gone; 4 gone, left unconfirmed
+  shot 3 (A2): wrong 1 gone, called on the table; 7 on the table, called gone; 0 on the table, left unconfirmed; 3 on the table, left unconfirmed; 4 gone, left unconfirmed; 8 on the table, left unconfirmed; 9 on the table, left unconfirmed
+  shot 4 (A3): wrong 7 on the table, called gone; 1 gone, left unconfirmed; 4 gone, left unconfirmed
+  shot 5 (A4): wrong 7 on the table, called gone; 1 gone, left unconfirmed; 4 gone, left unconfirmed
+  shot 6 (A5): wrong 7 on the table, called gone; 1 gone, left unconfirmed; 4 gone, left unconfirmed
+  shot 7 (A6): wrong 7 on the table, called gone; 1 gone, left unconfirmed; 4 gone, left unconfirmed
+  shot 8 (A7): wrong 7 on the table, called gone; 1 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed
+  shot 9 (A8): wrong 3 gone, called on the table; 7 on the table, called gone; 1 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed
+  shot 10 (A9): wrong 3 gone, called on the table; 7 on the table, called gone; 1 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed
+  shot 11 (A10): unresolved 1 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed
+  shot 12 (A11): unresolved 1 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed
+  shot 13 (A12): unresolved 1 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed
+pockets: 9 made: observed 5, inferred 0, not confirmed 2, other shot 2; P-ID right 5, wrong 0, unknown 0; fabricated 0

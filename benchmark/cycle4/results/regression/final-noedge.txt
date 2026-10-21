@@ -1,0 +1,8 @@
+frozen30 c4-final                     ALL 60/45 cw15/16 | HO 46/40 cw 9/10 miss2 false8 ph0 mp2 unres43 st2 racks 0/5 10-16:14/5 10-17:4/0 10-17:4/2 017-:18/18 018-:4/4 019-:16/16
+d30b     c4-final                     ALL 56/41 cw21/21 | HO 42/36 cw15/15 miss4 false11 ph1 mp2 unres44 st2 racks 0/5 10-16:14/5 10-17:4/0 10-17:4/2 017-:15/15 018-:4/4 019-:15/15
+
+real	0m43.351s
+user	0m52.618s
+sys	0m4.163s
+
+[exited with code 0]

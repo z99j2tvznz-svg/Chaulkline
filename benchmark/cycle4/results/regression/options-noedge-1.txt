@@ -1,0 +1,12 @@
+frozen30 cycle3                       ALL 58/44 cw16/17 | HO 44/39 cw10/11 miss3 false8 ph0 mp2 unres44 st2 racks 0/5 10-16:14/5 10-17:3/0 10-17:4/2 017-:18/18 018-:4/4 019-:15/15
+frozen30 c4-all                       ALL 55/39 cw21/21 | HO 41/34 cw15/15 miss2 false9 ph2 mp4 unres44 st3 racks 0/5 10-16:14/5 10-17:5/0 10-17:4/2 017-:13/13 018-:4/4 019-:15/15
+frozen30 c4-railNb                    ALL 54/39 cw21/21 | HO 40/34 cw15/15 miss3 false9 ph1 mp4 unres45 st3 racks 0/5 10-16:14/5 10-17:4/0 10-17:4/2 017-:13/13 018-:4/4 019-:15/15
+frozen30 c4-bag                       ALL 58/44 cw16/17 | HO 44/39 cw10/11 miss3 false8 ph0 mp2 unres44 st2 racks 0/5 10-16:14/5 10-17:3/0 10-17:4/2 017-:18/18 018-:4/4 019-:15/15
+frozen30 c4-jaw                       ALL 58/44 cw17/18 | HO 44/39 cw11/12 miss3 false8 ph1 mp2 unres43 st2 racks 0/5 10-16:14/5 10-17:3/0 10-17:4/2 017-:18/18 018-:4/4 019-:15/15
+d30b     cycle3                       ALL 55/40 cw21/21 | HO 41/35 cw15/15 miss4 false11 ph1 mp2 unres45 st2 racks 0/5 10-16:14/5 10-17:4/0 10-17:4/2 017-:15/15 018-:4/4 019-:14/14
+d30b     c4-all                       ALL 53/37 cw27/27 | HO 39/32 cw21/21 miss4 false12 ph3 mp4 unres43 st3 racks 0/5 10-16:14/5 10-17:5/0 10-17:4/2 017-:12/12 018-:4/4 019-:14/14
+d30b     c4-railNb                    ALL 53/37 cw26/26 | HO 39/32 cw20/20 miss4 false12 ph2 mp4 unres44 st3 racks 0/5 10-16:14/5 10-17:5/0 10-17:4/2 017-:12/12 018-:4/4 019-:14/14
+d30b     c4-bag                       ALL 55/40 cw21/21 | HO 41/35 cw15/15 miss4 false11 ph1 mp2 unres45 st2 racks 0/5 10-16:14/5 10-17:4/0 10-17:4/2 017-:15/15 018-:4/4 019-:14/14
+d30b     c4-jaw                       ALL 55/40 cw22/22 | HO 41/35 cw16/16 miss4 false11 ph2 mp2 unres44 st2 racks 0/5 10-16:14/5 10-17:4/0 10-17:4/2 017-:15/15 018-:4/4 019-:14/14
+
+[exited with code 0]

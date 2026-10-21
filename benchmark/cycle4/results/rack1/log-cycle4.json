@@ -1,0 +1,1208 @@
+{
+ "frames": 6327,
+ "seconds": 210.87,
+ "opts": {
+  "track": {
+   "version": "v0.6",
+   "spotBack": true,
+   "lateStart": true,
+   "anonEntries": true,
+   "jawEdges": true,
+   "railEdges": true,
+   "bagSpots": true
+  },
+  "pocketHold": true,
+  "period": true,
+  "whole": true,
+  "guard": true,
+  "probe": true,
+  "breakPots": true,
+  "breakTwoPass": true,
+  "minLater": 2,
+  "anonPockets": true,
+  "minStill": 1,
+  "gapBefore": 0.2,
+  "look": 1,
+  "creep": 0.75,
+  "minSeen": 0.8,
+  "hideGap": 0.5,
+  "moveFrom": 1.5,
+  "moveAway": 3,
+  "camShift": 1.5,
+  "set": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9
+  ]
+ },
+ "orientation": {
+  "foot": "camera-left end (x = 0)",
+  "from": "rack position at the start",
+  "pack": {
+   "centre": [
+    16,
+    18.3
+   ],
+   "count": 9,
+   "match": 0.864
+  }
+ },
+ "stillStretches": [
+  [
+   0,
+   11.97
+  ],
+  [
+   17.1,
+   19.27
+  ],
+  [
+   19.5,
+   38.33
+  ],
+  [
+   43.1,
+   55.2
+  ],
+  [
+   60.33,
+   71.5
+  ],
+  [
+   74.97,
+   84.97
+  ],
+  [
+   87.17,
+   99.67
+  ],
+  [
+   101.8,
+   113.9
+  ],
+  [
+   117.57,
+   130.97
+  ],
+  [
+   136.77,
+   145.67
+  ],
+  [
+   146.23,
+   160.4
+  ],
+  [
+   166.1,
+   174.63
+  ],
+  [
+   178.77,
+   187.8
+  ],
+  [
+   190.7,
+   199.7
+  ],
+  [
+   200.17,
+   208.8
+  ],
+  [
+   208.87,
+   210.87
+  ]
+ ],
+ "shots": [
+  {
+   "n": 1,
+   "t": 11.8,
+   "first": null,
+   "look": {
+    "from": 19.53,
+    "to": 37.93,
+    "settled": true,
+    "unnamed": 0,
+    "spots": 10
+   },
+   "pocketEvents": [],
+   "made": [],
+   "table": {
+    "0": {
+     "status": "present",
+     "x": 29.1,
+     "y": 23.4
+    },
+    "1": {
+     "status": "present",
+     "x": 34.7,
+     "y": 2.6
+    },
+    "2": {
+     "status": "present",
+     "x": 66.4,
+     "y": 20.3
+    },
+    "3": {
+     "status": "present",
+     "x": 31.7,
+     "y": 17.1
+    },
+    "4": {
+     "status": "present",
+     "x": 72.7,
+     "y": 23.9
+    },
+    "5": {
+     "status": "present",
+     "x": 34.7,
+     "y": 19.4
+    },
+    "6": {
+     "status": "present",
+     "x": 34.4,
+     "y": 33.5
+    },
+    "7": {
+     "status": "present",
+     "x": 11.2,
+     "y": 28.3
+    },
+    "8": {
+     "status": "present",
+     "x": 42.7,
+     "y": 27.7
+    },
+    "9": {
+     "status": "present",
+     "x": 72.6,
+     "y": 8.6
+    }
+   },
+   "unresolved": []
+  },
+  {
+   "n": 2,
+   "t": 38.17,
+   "first": 1,
+   "look": {
+    "from": 44.23,
+    "to": 54.8,
+    "settled": true,
+    "unnamed": 0,
+    "spots": 10
+   },
+   "pocketEvents": [],
+   "made": [],
+   "table": {
+    "0": {
+     "status": "present",
+     "x": 62,
+     "y": 32.2
+    },
+    "1": {
+     "status": "present",
+     "x": 37.1,
+     "y": 3.2
+    },
+    "2": {
+     "status": "present",
+     "x": 66.4,
+     "y": 20.3
+    },
+    "3": {
+     "status": "present",
+     "x": 31.7,
+     "y": 17.1
+    },
+    "4": {
+     "status": "present",
+     "x": 72.7,
+     "y": 23.9
+    },
+    "5": {
+     "status": "present",
+     "x": 34.7,
+     "y": 19.4
+    },
+    "6": {
+     "status": "present",
+     "x": 34.4,
+     "y": 33.5
+    },
+    "7": {
+     "status": "present",
+     "x": 11.2,
+     "y": 28.3
+    },
+    "8": {
+     "status": "present",
+     "x": 42.7,
+     "y": 27.7
+    },
+    "9": {
+     "status": "present",
+     "x": 72.6,
+     "y": 8.6
+    }
+   },
+   "unresolved": []
+  },
+  {
+   "n": 3,
+   "t": 55.03,
+   "first": 1,
+   "look": {
+    "from": 61.67,
+    "to": 71.13,
+    "settled": true,
+    "unnamed": 0,
+    "spots": 9
+   },
+   "pocketEvents": [
+    {
+     "ball": 1,
+     "t": 56,
+     "pocket": "near side",
+     "inMouth": true,
+     "jaws": false
+    }
+   ],
+   "made": [
+    {
+     "ball": 1,
+     "kind": "observed entry",
+     "pocket": {
+      "camera": "near side",
+      "pid": "P3",
+      "conf": "high"
+     },
+     "t": 56
+    }
+   ],
+   "table": {
+    "0": {
+     "status": "present",
+     "x": 34.6,
+     "y": 30.8
+    },
+    "1": {
+     "status": "pocketed"
+    },
+    "2": {
+     "status": "present",
+     "x": 66.4,
+     "y": 20.3
+    },
+    "3": {
+     "status": "present",
+     "x": 31.7,
+     "y": 17.2
+    },
+    "4": {
+     "status": "present",
+     "x": 72.8,
+     "y": 24
+    },
+    "5": {
+     "status": "present",
+     "x": 34.7,
+     "y": 19.4
+    },
+    "6": {
+     "status": "present",
+     "x": 57,
+     "y": 34.5
+    },
+    "7": {
+     "status": "present",
+     "x": 11.2,
+     "y": 28.4
+    },
+    "8": {
+     "status": "present",
+     "x": 42.7,
+     "y": 27.8
+    },
+    "9": {
+     "status": "present",
+     "x": 72.6,
+     "y": 8.6
+    }
+   },
+   "unresolved": []
+  },
+  {
+   "n": 4,
+   "t": 71.33,
+   "first": 2,
+   "look": {
+    "from": 75.7,
+    "to": 84.6,
+    "settled": true,
+    "unnamed": 0,
+    "spots": 9
+   },
+   "pocketEvents": [],
+   "made": [],
+   "table": {
+    "0": {
+     "status": "present",
+     "x": 63.3,
+     "y": 34.3
+    },
+    "1": {
+     "status": "pocketed"
+    },
+    "2": {
+     "status": "present",
+     "x": 72.3,
+     "y": 28.5
+    },
+    "3": {
+     "status": "present",
+     "x": 31.7,
+     "y": 17.2
+    },
+    "4": {
+     "status": "present",
+     "x": 73.9,
+     "y": 25.5
+    },
+    "5": {
+     "status": "present",
+     "x": 34.7,
+     "y": 19.4
+    },
+    "6": {
+     "status": "present",
+     "x": 57,
+     "y": 34.4
+    },
+    "7": {
+     "status": "present",
+     "x": 11.2,
+     "y": 28.4
+    },
+    "8": {
+     "status": "present",
+     "x": 42.7,
+     "y": 27.8
+    },
+    "9": {
+     "status": "present",
+     "x": 72.6,
+     "y": 8.6
+    }
+   },
+   "unresolved": []
+  },
+  {
+   "n": 5,
+   "t": 84.8,
+   "first": 2,
+   "look": {
+    "from": 88.33,
+    "to": 99.3,
+    "settled": true,
+    "unnamed": 0,
+    "spots": 9
+   },
+   "pocketEvents": [],
+   "made": [],
+   "table": {
+    "0": {
+     "status": "present",
+     "x": 75.4,
+     "y": 9.1
+    },
+    "1": {
+     "status": "pocketed"
+    },
+    "2": {
+     "status": "present",
+     "x": 70.7,
+     "y": 29.2
+    },
+    "3": {
+     "status": "present",
+     "x": 31.7,
+     "y": 17.1
+    },
+    "4": {
+     "status": "present",
+     "x": 73.4,
+     "y": 24.6
+    },
+    "5": {
+     "status": "present",
+     "x": 34.7,
+     "y": 19.4
+    },
+    "6": {
+     "status": "present",
+     "x": 57,
+     "y": 34.4
+    },
+    "7": {
+     "status": "present",
+     "x": 11.2,
+     "y": 28.3
+    },
+    "8": {
+     "status": "present",
+     "x": 42.7,
+     "y": 27.8
+    },
+    "9": {
+     "status": "present",
+     "x": 72.6,
+     "y": 8.6
+    }
+   },
+   "unresolved": []
+  },
+  {
+   "n": 6,
+   "t": 99.5,
+   "first": 2,
+   "look": {
+    "from": 102.5,
+    "to": 113.53,
+    "settled": true,
+    "unnamed": 0,
+    "spots": 8
+   },
+   "pocketEvents": [
+    {
+     "ball": 2,
+     "t": 100.9,
+     "pocket": "far-right corner",
+     "inMouth": true,
+     "jaws": false
+    }
+   ],
+   "made": [
+    {
+     "ball": 2,
+     "kind": "observed entry",
+     "pocket": {
+      "camera": "far-right corner",
+      "pid": "P5",
+      "conf": "medium"
+     },
+     "t": 100.9
+    }
+   ],
+   "table": {
+    "0": {
+     "status": "present",
+     "x": 58.3,
+     "y": 34.4
+    },
+    "1": {
+     "status": "pocketed"
+    },
+    "2": {
+     "status": "pocketed"
+    },
+    "3": {
+     "status": "present",
+     "x": 31.7,
+     "y": 17.1
+    },
+    "4": {
+     "status": "present",
+     "x": 73.4,
+     "y": 24.6
+    },
+    "5": {
+     "status": "present",
+     "x": 34.7,
+     "y": 19.4
+    },
+    "6": {
+     "status": "present",
+     "x": 50.2,
+     "y": 28.1
+    },
+    "7": {
+     "status": "present",
+     "x": 11.2,
+     "y": 28.3
+    },
+    "8": {
+     "status": "present",
+     "x": 42.7,
+     "y": 27.8
+    },
+    "9": {
+     "status": "present",
+     "x": 72.6,
+     "y": 8.6
+    }
+   },
+   "unresolved": []
+  },
+  {
+   "n": 7,
+   "t": 113.73,
+   "first": 5,
+   "look": {
+    "from": 118.4,
+    "to": 130.6,
+    "settled": true,
+    "unnamed": 0,
+    "spots": 7
+   },
+   "pocketEvents": [
+    {
+     "ball": 5,
+     "t": 115.83,
+     "pocket": "far side",
+     "inMouth": true,
+     "jaws": false
+    }
+   ],
+   "made": [
+    {
+     "ball": 5,
+     "kind": "observed entry",
+     "pocket": {
+      "camera": "far side",
+      "pid": "P6",
+      "conf": "medium"
+     },
+     "t": 115.83
+    }
+   ],
+   "table": {
+    "0": {
+     "status": "present",
+     "x": 29.6,
+     "y": 23.1
+    },
+    "1": {
+     "status": "pocketed"
+    },
+    "2": {
+     "status": "pocketed"
+    },
+    "3": {
+     "status": "present",
+     "x": 5.6,
+     "y": 11.3
+    },
+    "4": {
+     "status": "present",
+     "x": 73.4,
+     "y": 24.6
+    },
+    "5": {
+     "status": "pocketed"
+    },
+    "6": {
+     "status": "present",
+     "x": 50.2,
+     "y": 28.1,
+     "hiddenSince": 127.47
+    },
+    "7": {
+     "status": "present",
+     "x": 11.1,
+     "y": 28.4
+    },
+    "8": {
+     "status": "present",
+     "x": 42.6,
+     "y": 27.7
+    },
+    "9": {
+     "status": "present",
+     "x": 72.6,
+     "y": 8.6
+    }
+   },
+   "unresolved": []
+  },
+  {
+   "n": 8,
+   "t": 130.8,
+   "first": 3,
+   "look": {
+    "from": 141.67,
+    "to": 145.3,
+    "settled": true,
+    "unnamed": 0,
+    "spots": 6
+   },
+   "pocketEvents": [
+    {
+     "ball": 3,
+     "t": 132.17,
+     "pocket": "near-left corner",
+     "inMouth": true,
+     "jaws": false
+    }
+   ],
+   "made": [
+    {
+     "ball": 3,
+     "kind": "observed entry",
+     "pocket": {
+      "camera": "near-left corner",
+      "pid": "P2",
+      "conf": "high"
+     },
+     "t": 132.17
+    }
+   ],
+   "table": {
+    "0": {
+     "status": "present",
+     "x": 68.8,
+     "y": 12.9
+    },
+    "1": {
+     "status": "pocketed"
+    },
+    "2": {
+     "status": "pocketed"
+    },
+    "3": {
+     "status": "pocketed"
+    },
+    "4": {
+     "status": "present",
+     "x": 73.7,
+     "y": 24.7
+    },
+    "5": {
+     "status": "pocketed"
+    },
+    "6": {
+     "status": "present",
+     "x": 50.3,
+     "y": 28.3
+    },
+    "7": {
+     "status": "present",
+     "x": 10.9,
+     "y": 28.6
+    },
+    "8": {
+     "status": "present",
+     "x": 42.7,
+     "y": 27.9
+    },
+    "9": {
+     "status": "present",
+     "x": 72.9,
+     "y": 8.6
+    }
+   },
+   "unresolved": []
+  },
+  {
+   "n": 9,
+   "t": 145.5,
+   "first": 4,
+   "look": {
+    "from": 158.3,
+    "to": 160.03,
+    "settled": true,
+    "unnamed": 0,
+    "spots": 5
+   },
+   "pocketEvents": [
+    {
+     "ball": 4,
+     "t": 146.03,
+     "pocket": "far-right corner",
+     "inMouth": true,
+     "jaws": false
+    }
+   ],
+   "made": [
+    {
+     "ball": 4,
+     "kind": "observed entry",
+     "pocket": {
+      "camera": "far-right corner",
+      "pid": "P5",
+      "conf": "medium"
+     },
+     "t": 146.03
+    }
+   ],
+   "table": {
+    "0": {
+     "status": "present",
+     "x": 54.8,
+     "y": 10.2
+    },
+    "1": {
+     "status": "pocketed"
+    },
+    "2": {
+     "status": "pocketed"
+    },
+    "3": {
+     "status": "pocketed"
+    },
+    "4": {
+     "status": "pocketed"
+    },
+    "5": {
+     "status": "pocketed"
+    },
+    "6": {
+     "status": "present",
+     "x": 50.2,
+     "y": 28.2
+    },
+    "7": {
+     "status": "present",
+     "x": 11.1,
+     "y": 28.4
+    },
+    "8": {
+     "status": "present",
+     "x": 42.6,
+     "y": 27.8
+    },
+    "9": {
+     "status": "present",
+     "x": 72.7,
+     "y": 8.7
+    }
+   },
+   "unresolved": []
+  },
+  {
+   "n": 10,
+   "t": 160.23,
+   "first": 6,
+   "look": {
+    "from": 166.8,
+    "to": 174.27,
+    "settled": true,
+    "unnamed": 0,
+    "spots": 4
+   },
+   "pocketEvents": [
+    {
+     "ball": 6,
+     "t": 161.17,
+     "pocket": "far side",
+     "inMouth": true,
+     "jaws": false
+    }
+   ],
+   "made": [
+    {
+     "ball": 6,
+     "kind": "observed entry",
+     "pocket": {
+      "camera": "far side",
+      "pid": "P6",
+      "conf": "medium"
+     },
+     "t": 161.17
+    }
+   ],
+   "table": {
+    "0": {
+     "status": "present",
+     "x": 34.6,
+     "y": 25.3
+    },
+    "1": {
+     "status": "pocketed"
+    },
+    "2": {
+     "status": "pocketed"
+    },
+    "3": {
+     "status": "pocketed"
+    },
+    "4": {
+     "status": "pocketed"
+    },
+    "5": {
+     "status": "pocketed"
+    },
+    "6": {
+     "status": "pocketed"
+    },
+    "7": {
+     "status": "present",
+     "x": 11.1,
+     "y": 28.4
+    },
+    "8": {
+     "status": "present",
+     "x": 42.6,
+     "y": 27.8
+    },
+    "9": {
+     "status": "present",
+     "x": 72.6,
+     "y": 8.6
+    }
+   },
+   "unresolved": []
+  },
+  {
+   "n": 11,
+   "t": 174.47,
+   "first": 7,
+   "look": {
+    "from": 180.07,
+    "to": 187.43,
+    "settled": true,
+    "unnamed": 0,
+    "spots": 3
+   },
+   "pocketEvents": [
+    {
+     "ball": 7,
+     "t": 175.7,
+     "pocket": "far-left corner",
+     "inMouth": true,
+     "jaws": false
+    }
+   ],
+   "made": [
+    {
+     "ball": 7,
+     "kind": "observed entry",
+     "pocket": {
+      "camera": "far-left corner",
+      "pid": "P1",
+      "conf": "medium"
+     },
+     "t": 175.7
+    }
+   ],
+   "table": {
+    "0": {
+     "status": "present",
+     "x": 38.9,
+     "y": 7.9
+    },
+    "1": {
+     "status": "pocketed"
+    },
+    "2": {
+     "status": "pocketed"
+    },
+    "3": {
+     "status": "pocketed"
+    },
+    "4": {
+     "status": "pocketed"
+    },
+    "5": {
+     "status": "pocketed"
+    },
+    "6": {
+     "status": "pocketed"
+    },
+    "7": {
+     "status": "pocketed"
+    },
+    "8": {
+     "status": "present",
+     "x": 42.7,
+     "y": 28.1
+    },
+    "9": {
+     "status": "present",
+     "x": 72.8,
+     "y": 8.7
+    }
+   },
+   "unresolved": []
+  },
+  {
+   "n": 12,
+   "t": 187.63,
+   "first": 8,
+   "look": {
+    "from": 191.43,
+    "to": 199.33,
+    "settled": true,
+    "unnamed": 0,
+    "spots": 2
+   },
+   "pocketEvents": [
+    {
+     "ball": 8,
+     "t": 189.43,
+     "pocket": "far side",
+     "inMouth": true,
+     "jaws": false
+    }
+   ],
+   "made": [
+    {
+     "ball": 8,
+     "kind": "observed entry",
+     "pocket": {
+      "camera": "far side",
+      "pid": "P6",
+      "conf": "high"
+     },
+     "t": 189.43
+    }
+   ],
+   "table": {
+    "0": {
+     "status": "present",
+     "x": 62.4,
+     "y": 31.7
+    },
+    "1": {
+     "status": "pocketed"
+    },
+    "2": {
+     "status": "pocketed"
+    },
+    "3": {
+     "status": "pocketed"
+    },
+    "4": {
+     "status": "pocketed"
+    },
+    "5": {
+     "status": "pocketed"
+    },
+    "6": {
+     "status": "pocketed"
+    },
+    "7": {
+     "status": "pocketed"
+    },
+    "8": {
+     "status": "pocketed"
+    },
+    "9": {
+     "status": "present",
+     "x": 72.7,
+     "y": 8.6
+    }
+   },
+   "unresolved": []
+  },
+  {
+   "n": 13,
+   "t": 199.53,
+   "first": 9,
+   "look": {
+    "from": 208.9,
+    "to": 210.87,
+    "settled": true,
+    "unnamed": 0,
+    "spots": 1
+   },
+   "pocketEvents": [
+    {
+     "ball": 9,
+     "t": 200.13,
+     "pocket": "near-right corner",
+     "inMouth": true,
+     "jaws": false
+    }
+   ],
+   "made": [
+    {
+     "ball": 9,
+     "kind": "observed entry",
+     "pocket": {
+      "camera": "near-right corner",
+      "pid": "P4",
+      "conf": "high"
+     },
+     "t": 200.13
+    }
+   ],
+   "table": {
+    "0": {
+     "status": "present",
+     "x": 71,
+     "y": 13
+    },
+    "1": {
+     "status": "pocketed"
+    },
+    "2": {
+     "status": "pocketed"
+    },
+    "3": {
+     "status": "pocketed"
+    },
+    "4": {
+     "status": "pocketed"
+    },
+    "5": {
+     "status": "pocketed"
+    },
+    "6": {
+     "status": "pocketed"
+    },
+    "7": {
+     "status": "pocketed"
+    },
+    "8": {
+     "status": "pocketed"
+    },
+    "9": {
+     "status": "pocketed"
+    }
+   },
+   "unresolved": []
+  }
+ ],
+ "rackLook": {
+  "from": 0.03,
+  "to": 11.6,
+  "seen": [
+   {
+    "num": 0,
+    "x": 59.2,
+    "y": 26
+   },
+   {
+    "num": null,
+    "x": 19.7,
+    "y": 18.7
+   },
+   {
+    "num": null,
+    "x": 12.2,
+    "y": 18.7
+   }
+  ],
+  "unresolved": [
+   {
+    "ball": 1,
+    "why": "not seen at rack start"
+   },
+   {
+    "ball": 2,
+    "why": "not seen at rack start"
+   },
+   {
+    "ball": 3,
+    "why": "not seen at rack start"
+   },
+   {
+    "ball": 4,
+    "why": "not seen at rack start"
+   },
+   {
+    "ball": 5,
+    "why": "not seen at rack start"
+   },
+   {
+    "ball": 6,
+    "why": "not seen at rack start"
+   },
+   {
+    "ball": 7,
+    "why": "not seen at rack start"
+   },
+   {
+    "ball": 8,
+    "why": "not seen at rack start"
+   },
+   {
+    "ball": 9,
+    "why": "not seen at rack start"
+   }
+  ]
+ },
+ "breakLookAny": {
+  "spots": 10,
+  "named": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9
+  ]
+ },
+ "start": {
+  "balls": {
+   "0": "seen and named at rack start",
+   "1": "came out of the rack on the break",
+   "2": "came out of the rack on the break",
+   "3": "came out of the rack on the break",
+   "4": "came out of the rack on the break",
+   "5": "came out of the rack on the break",
+   "6": "came out of the rack on the break",
+   "7": "came out of the rack on the break",
+   "8": "came out of the rack on the break",
+   "9": "came out of the rack on the break"
+  },
+  "established": 10,
+  "countCheck": {
+   "packCount": 9,
+   "seenAwayFromPack": 1,
+   "expected": 10,
+   "established": 10,
+   "agrees": true
+  }
+ },
+ "breakPots": {
+  "applied": false,
+  "why": "every ball established"
+ },
+ "final": {
+  "0": {
+   "status": "present",
+   "x": 71,
+   "y": 13
+  },
+  "1": {
+   "status": "pocketed"
+  },
+  "2": {
+   "status": "pocketed"
+  },
+  "3": {
+   "status": "pocketed"
+  },
+  "4": {
+   "status": "pocketed"
+  },
+  "5": {
+   "status": "pocketed"
+  },
+  "6": {
+   "status": "pocketed"
+  },
+  "7": {
+   "status": "pocketed"
+  },
+  "8": {
+   "status": "pocketed"
+  },
+  "9": {
+   "status": "pocketed"
+  }
+ }
+}

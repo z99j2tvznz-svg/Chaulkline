@@ -1,0 +1,8 @@
+frozen30 D-both                       ALL 59/44 cw15/16 | HO 45/39 cw 9/10 miss2 false8 ph0 mp2 unres44 st2 racks 0/5 10-16:14/5 10-17:4/0 10-17:4/2 017-:18/18 018-:4/4 019-:15/15
+frozen30 D-spotBack                   ALL 58/44 cw16/17 | HO 44/39 cw10/11 miss3 false8 ph0 mp2 unres44 st2 racks 0/5 10-16:14/5 10-17:3/0 10-17:4/2 017-:18/18 018-:4/4 019-:15/15
+frozen30 D-late                       ALL 59/44 cw15/16 | HO 45/39 cw 9/10 miss2 false8 ph0 mp2 unres44 st2 racks 0/5 10-16:14/5 10-17:4/0 10-17:4/2 017-:18/18 018-:4/4 019-:15/15
+d30b     D-both                       ALL 55/40 cw21/21 | HO 41/35 cw15/15 miss4 false11 ph1 mp2 unres45 st2 racks 0/5 10-16:14/5 10-17:4/0 10-17:4/2 017-:15/15 018-:4/4 019-:14/14
+d30b     D-spotBack                   ALL 55/40 cw21/21 | HO 41/35 cw15/15 miss4 false11 ph1 mp2 unres45 st2 racks 0/5 10-16:14/5 10-17:4/0 10-17:4/2 017-:15/15 018-:4/4 019-:14/14
+d30b     D-late                       ALL 55/40 cw21/21 | HO 41/35 cw15/15 miss4 false11 ph1 mp2 unres45 st2 racks 0/5 10-16:14/5 10-17:4/0 10-17:4/2 017-:15/15 018-:4/4 019-:14/14
+
+[exited with code 0]

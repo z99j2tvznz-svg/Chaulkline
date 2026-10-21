@@ -1,0 +1,5 @@
+start: established 10/10 (named at rack start 1), wrongly established 0, pack count 9 + 1 away = 10 (agrees)
+shots: found 13/13, missed 0, false 0; first ball right 9, no reading 1, wrong 1
+tables after shots: correct 12, unresolved 1, wrong 0; hidden balls carried 1 (right 1)
+  shot 3 (A2): unresolved 0 on the table, left unconfirmed; 5 on the table, left unconfirmed; 7 on the table, left unconfirmed; 8 on the table, left unconfirmed
+pockets: 9 made: observed 6, inferred 3, not confirmed 0, other shot 0; P-ID right 6, wrong 0, unknown 3; fabricated 0
