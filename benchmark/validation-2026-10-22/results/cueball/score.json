@@ -1,0 +1,354 @@
+{
+ "cloth": [
+  79.06,
+  39.03
+ ],
+ "diamond": [
+  9.88,
+  9.76
+ ],
+ "A": [
+  {
+   "event": "A1",
+   "intended": [
+    1,
+    1
+   ],
+   "found": true,
+   "extraShots": 0,
+   "system": [
+    1.08,
+    0.84
+   ],
+   "offIn": [
+    0.8,
+    -1.6
+   ],
+   "offDiamonds": 0.18,
+   "offIn2d": 1.8
+  },
+  {
+   "event": "A2",
+   "intended": [
+    4,
+    0.115
+   ],
+   "found": true,
+   "extraShots": 0,
+   "system": [
+    3.97,
+    -0.02
+   ],
+   "offIn": [
+    -0.3,
+    -1.4
+   ],
+   "offDiamonds": 0.14,
+   "offIn2d": 1.4,
+   "frozenAxis": {
+    "rail": "near",
+    "errorIn": 1.4,
+    "errorDiamonds": 0.14
+   }
+  },
+  {
+   "event": "A3",
+   "intended": [
+    7,
+    1
+   ],
+   "found": true,
+   "extraShots": 0,
+   "system": [
+    7.08,
+    0.85
+   ],
+   "offIn": [
+    0.8,
+    -1.5
+   ],
+   "offDiamonds": 0.17,
+   "offIn2d": 1.7
+  },
+  {
+   "event": "A4",
+   "intended": [
+    4,
+    2
+   ],
+   "found": true,
+   "extraShots": 0,
+   "system": [
+    4.05,
+    1.79
+   ],
+   "offIn": [
+    0.5,
+    -2
+   ],
+   "offDiamonds": 0.21,
+   "offIn2d": 2.1
+  },
+  {
+   "event": "A5",
+   "intended": [
+    1,
+    3
+   ],
+   "found": true,
+   "extraShots": 0,
+   "system": [
+    0.98,
+    2.95
+   ],
+   "offIn": [
+    -0.2,
+    -0.5
+   ],
+   "offDiamonds": 0.05,
+   "offIn2d": 0.5
+  },
+  {
+   "event": "A6",
+   "intended": [
+    6,
+    3.885
+   ],
+   "found": true,
+   "extraShots": 0,
+   "system": [
+    5.9,
+    3.79
+   ],
+   "offIn": [
+    -1,
+    -0.9
+   ],
+   "offDiamonds": 0.14,
+   "offIn2d": 1.4,
+   "frozenAxis": {
+    "rail": "far",
+    "errorIn": 0.9,
+    "errorDiamonds": 0.1
+   }
+  },
+  {
+   "event": "A7",
+   "intended": [
+    7,
+    3
+   ],
+   "found": true,
+   "extraShots": 0,
+   "system": [
+    6.94,
+    3.02
+   ],
+   "offIn": [
+    -0.6,
+    0.2
+   ],
+   "offDiamonds": 0.06,
+   "offIn2d": 0.6
+  },
+  {
+   "event": "A8",
+   "intended": [
+    7.885,
+    2
+   ],
+   "found": true,
+   "extraShots": 0,
+   "system": [
+    7.84,
+    1.94
+   ],
+   "offIn": [
+    -0.4,
+    -0.6
+   ],
+   "offDiamonds": 0.07,
+   "offIn2d": 0.7,
+   "frozenAxis": {
+    "rail": "right",
+    "errorIn": 0.4,
+    "errorDiamonds": 0.04
+   }
+  }
+ ],
+ "B": [
+  {
+   "event": "B1",
+   "shotsFound": 1,
+   "complete": true,
+   "gaps": 0,
+   "gapSec": 0,
+   "v0": 21.5,
+   "duration": 5.17,
+   "pathDiamonds": 7.5,
+   "rest": [
+    6.33,
+    1.99
+   ],
+   "player": "out",
+   "system": "in",
+   "fromBoxEdgeIn": -1.2,
+   "borderline": false,
+   "agree": false,
+   "pastBoxCentreDiamonds": 0.33
+  },
+  {
+   "event": "B2",
+   "shotsFound": 1,
+   "complete": true,
+   "gaps": 0,
+   "gapSec": 0,
+   "v0": 18.9,
+   "duration": 3.84,
+   "pathDiamonds": 3.01,
+   "rest": [
+    4.82,
+    1.93
+   ],
+   "player": "out",
+   "system": "out",
+   "fromBoxEdgeIn": 7.2,
+   "borderline": false,
+   "agree": true,
+   "pastBoxCentreDiamonds": -1.18
+  },
+  {
+   "event": "B3",
+   "shotsFound": 1,
+   "complete": true,
+   "gaps": 0,
+   "gapSec": 0,
+   "v0": 15.9,
+   "duration": 5.34,
+   "pathDiamonds": 8.45,
+   "rest": [
+    5.41,
+    2.12
+   ],
+   "player": "in",
+   "system": "out",
+   "fromBoxEdgeIn": 1.3,
+   "borderline": false,
+   "agree": false,
+   "pastBoxCentreDiamonds": -0.59
+  },
+  {
+   "event": "B4",
+   "shotsFound": 1,
+   "complete": true,
+   "gaps": 0,
+   "gapSec": 0,
+   "v0": 15.8,
+   "duration": 6.1,
+   "pathDiamonds": 9.38,
+   "rest": [
+    4.53,
+    1.87
+   ],
+   "player": "out",
+   "system": "out",
+   "fromBoxEdgeIn": 10.1,
+   "borderline": false,
+   "agree": true,
+   "pastBoxCentreDiamonds": -1.47
+  }
+ ],
+ "C": [
+  {
+   "event": "C1",
+   "shotsFound": 1,
+   "complete": true,
+   "gaps": 0,
+   "gapSec": 0,
+   "v0": 16.1,
+   "duration": 4.8,
+   "pathDiamonds": 4.71,
+   "rest": [
+    6.59,
+    1.97
+   ],
+   "player": "no",
+   "closestRightIn": 14.3,
+   "system": "no",
+   "agree": true,
+   "restFromRightDiamonds": 1.29
+  },
+  {
+   "event": "C2",
+   "shotsFound": 1,
+   "complete": true,
+   "gaps": 0,
+   "gapSec": 0,
+   "v0": 21.5,
+   "duration": 4.9,
+   "pathDiamonds": 6.47,
+   "rest": [
+    7.31,
+    2.25
+   ],
+   "player": "yes",
+   "closestRightIn": 0.5,
+   "system": "yes",
+   "agree": true,
+   "restFromRightDiamonds": 0.57
+  }
+ ],
+ "D": [],
+ "shots": {
+  "events": 6,
+  "found": 6,
+  "missed": 0,
+  "extra": 0
+ },
+ "summary": {
+  "A": {
+   "placements": 8,
+   "found": 8,
+   "medianOffDiamonds": 0.14,
+   "worstOffDiamonds": 0.21,
+   "withinQuarterDiamond": 8,
+   "frozenAxis": [
+    {
+     "event": "A2",
+     "rail": "near",
+     "errorIn": 1.4,
+     "errorDiamonds": 0.14
+    },
+    {
+     "event": "A6",
+     "rail": "far",
+     "errorIn": 0.9,
+     "errorDiamonds": 0.1
+    },
+    {
+     "event": "A8",
+     "rail": "right",
+     "errorIn": 0.4,
+     "errorDiamonds": 0.04
+    }
+   ]
+  },
+  "B": {
+   "shots": 4,
+   "agree": 2,
+   "disagree": 2,
+   "borderline": 0
+  },
+  "C": {
+   "shots": 2,
+   "agree": 2,
+   "disagree": 0
+  },
+  "shots": {
+   "events": 6,
+   "found": 6,
+   "missed": 0,
+   "extra": 0
+  }
+ }
+}

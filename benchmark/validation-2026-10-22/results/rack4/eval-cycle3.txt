@@ -1,0 +1,30 @@
+start: established 8/10 (named at rack start 1), wrongly established 0, pack count 9 + 1 away = 10 (DISAGREES)
+shots: found 25/26, missed 1, false 1; first ball right 7, no reading 1, wrong 12
+tables after shots: correct 0, unresolved 26, wrong 0; hidden balls carried 3 (right 3)
+  shot 1 (break): unresolved 3 gone, left unconfirmed; 4 on the table, left unconfirmed
+  shot 2 (S1): unresolved 3 gone, left unconfirmed; 5 on the table, left unconfirmed
+  shot 3 (S2): unresolved 3 gone, left unconfirmed; 5 on the table, left unconfirmed
+  shot 4 (S3): unresolved 1 gone, left unconfirmed; 3 gone, left unconfirmed; 5 on the table, left unconfirmed
+  shot 5 (S4): unresolved 1 gone, left unconfirmed; 3 gone, left unconfirmed
+  shot 6 (S5): unresolved 1 gone, left unconfirmed; 3 gone, left unconfirmed
+  shot 7 (S6): unresolved 1 gone, left unconfirmed; 3 gone, left unconfirmed
+  shot 8 (S7): unresolved 1 gone, left unconfirmed; 3 gone, left unconfirmed
+  shot 9 (S8): unresolved 1 gone, left unconfirmed; 3 gone, left unconfirmed
+  shot 10 (S9): unresolved 1 gone, left unconfirmed; 3 gone, left unconfirmed
+  shot 11 (S10): unresolved 1 gone, left unconfirmed; 3 gone, left unconfirmed
+  shot 12 (S11): unresolved 1 gone, left unconfirmed; 3 gone, left unconfirmed
+  shot 13 (S12): unresolved 1 gone, left unconfirmed; 3 gone, left unconfirmed
+  shot 14 (S13): unresolved 1 gone, left unconfirmed; 3 gone, left unconfirmed
+  shot 15 (S14): unresolved 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed
+  shot 16 (S15): unresolved 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 on the table, left unconfirmed; 8 on the table, left unconfirmed
+  shot 17 (S16): unresolved 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 7 on the table, left unconfirmed
+  shot 18 (S17): unresolved 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed
+  shot 19 (S18): unresolved 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed
+  shot 20 (S19): unresolved 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed
+  shot 21 (S20): unresolved 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed; 6 gone, left unconfirmed
+  shot 22 (S21): no table 
+  shot 23 (S22): unresolved 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed; 6 gone, left unconfirmed; 7 gone, left unconfirmed
+  shot 24 (S23): unresolved 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 5 gone, left unconfirmed; 6 gone, left unconfirmed; 7 gone, left unconfirmed
+  shot 25 (S24): unresolved 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 6 gone, left unconfirmed; 7 gone, left unconfirmed; 8 gone, left unconfirmed
+  shot 26 (S25): unresolved 1 gone, left unconfirmed; 2 gone, left unconfirmed; 3 gone, left unconfirmed; 4 gone, left unconfirmed; 6 gone, left unconfirmed; 7 gone, left unconfirmed; 8 gone, left unconfirmed; 9 gone, left unconfirmed
+pockets: 9 made: observed 0, inferred 0, not confirmed 8, other shot 1; P-ID right 0, wrong 0, unknown 0; fabricated 0
