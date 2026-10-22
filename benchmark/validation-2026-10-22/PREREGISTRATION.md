@@ -105,3 +105,16 @@ feedback is not part of the first prototype unless D shows clean separation.
 - `tools/score-cueball.js`: the scoring above, from the player's measurements written as JSON (format in its header).
 - Plumbing check: rack 1 footage against synthetic measurements made from the tool's own output, with known offsets.
   The offsets were recovered exactly (0.36 in). This tests the code paths only, and is not a result.
+
+## Change before any footage (2026-10-22 19:21, player's request)
+- The player asked for guided steps with pictures in the recorder. Recorder R0.8 (commit 4267444, dev branch) adds a
+  "Cue-ball test" session for this.
+- **One short clip per event**, so the recorder labels each event itself. A placements record 8 s; shots record up to
+  20 s or until "Shot done", plus a 2.5 s still tail.
+- **Measurements typed into the app after each clip**, and saved with that clip. A placement is made, recorded, then
+  measured; the ball is never moved before the clip ends.
+- **The racks are unchanged:** R0.7 continuous mode, one recording per rack.
+- `cueball.js` runs per clip:
+  - A: the clip's still period gives the position.
+  - B-D: the clip's single shot and its rest position.
+  - A clip with no shot found = missed; more than one = false shots.
