@@ -20,7 +20,7 @@ test('cue-ball test: pictures, one clip per event, measurements stored with each
     await page.goto(srv.url + '/recorder/index.html');
     await page.waitForFunction(() => window.__rec);
     await page.evaluate(() => window.__rec.setSpeed(0.05));
-    assert.deepStrictEqual(await page.evaluate(() => window.__rec.CUEBALL.map(s => s.steps.filter(x => x.kind !== 'note').length)), [8, 10, 10, 10], '38 events');
+    assert.deepStrictEqual(await page.evaluate(() => window.__rec.CUEBALL.map(s => s.steps.filter(x => x.kind !== 'note').length)), [8, 11, 10, 10], '38 events plus the sticker clip');
     await page.selectOption('#fShort', '4');
     await page.click('#go');
     await page.waitForSelector('#recBtn');
@@ -33,9 +33,13 @@ test('cue-ball test: pictures, one clip per event, measurements stored with each
     await page.waitForSelector('#cueSave', { timeout: 15000 });
     assert.ok(await page.isDisabled('#cueSave'), 'Next waits for the numbers');
     await fill('8.5', '8.75'); await page.click('#cueSave');
-    await skip(7);
-    // B: the set-up picture, then B1 ended with Shot done, in the box
-    await page.waitForSelector('#noteOk'); assert.ok(await page.isVisible('svg.lay')); await page.click('#noteOk');
+    // A2 placed by the diamonds, no tape
+    await page.waitForSelector('#recBtn'); await page.click('#recBtn');
+    await page.waitForSelector('#cueGrid', { timeout: 15000 }); await page.click('#cueGrid');
+    await skip(6);
+    // B: the set-up picture and a clip of the stickers (tape optional, skipped here), then B1 ended with Shot done
+    await page.waitForSelector('#recBtn'); assert.ok(await page.isVisible('svg.lay')); await page.click('#recBtn');
+    await page.waitForSelector('#cueSkip', { timeout: 15000 }); await page.click('#cueSkip');
     await page.waitForSelector('#recBtn'); await page.click('#recBtn');
     await page.waitForSelector('#shotDone:not([disabled])', { timeout: 15000 }); await page.click('#shotDone');
     await page.waitForSelector('#cueSave', { timeout: 15000 });
@@ -61,14 +65,16 @@ test('cue-ball test: pictures, one clip per event, measurements stored with each
     const meta = JSON.parse(execFileSync('python3', ['-c', 'import zipfile,sys; print(zipfile.ZipFile(sys.argv[1]).read("meta.json").decode())', zipPath]).toString());
     assert.strictEqual(meta.version, 'R0.8');
     assert.strictEqual(meta.setup.cueball, true);
-    assert.deepStrictEqual(meta.clips.map(c => c.step), ['A1', 'B1', 'C1', 'D1', 'D2']);
+    assert.deepStrictEqual(meta.clips.map(c => c.step), ['A1', 'A2', 'Bsetup', 'B1', 'C1', 'D1', 'D2']);
     assert.deepStrictEqual(meta.clips.map(c => c.answers), [
       { event: 'A1', measured: { left: 8.5, near: 8.75 } },
+      { event: 'A2', placedOnGrid: [4, 0.115] },
+      { event: 'Bsetup', skipped: true },
       { event: 'B1', measured: { right: 18, near: 17.5 }, inBox: 'in' },
       { event: 'C1', measured: { left: 1.25 }, touched: 'unsure' },
       { event: 'D1', measured: { right: 30, far: 18 }, railsHit: '1', speed: 'level 1' },
       { event: 'D2', skipped: true }]);
-    assert.strictEqual(meta.clips[1].stoppedEarly, true);
+    assert.strictEqual(meta.clips[3].stoppedEarly, true);
     assert.deepStrictEqual(errors, []);
   } finally { await browser.close(); srv.close(); }
 });

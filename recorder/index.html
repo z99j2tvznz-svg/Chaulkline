@@ -378,10 +378,10 @@ const D_TEXT = { 'level 1': 'Level 1: up to the right rail and back, stopping ab
 const D_PATH = { 'level 1': [CS, [7.85, 2], [1, 2.25]], 'level 2': [CS, [7.85, 2], [0.15, 2.2], [1, 2.3]], 'level 3': [CS, [7.85, 2], [0.15, 2.2], [3, 2.35]] };
 const STICKERS = { balls: [], marks: [[CS[0] - 0.2, CS[1]]], box: BOX, arrow: [CS, [5.4, 2]] };
 const CUEBALL = [
-  { id: 'cueA', title: 'Test A: placements', intro: 'Only the cue ball on the table. For each spot: place it by hand, close is fine, then tap Record and step away. It records 8 seconds. Then measure from the cushion to the nearest edge of the ball, without touching it, and type the two numbers in.', steps:
+  { id: 'cueA', title: 'Test A: placements', intro: 'Only the cue ball on the table. For each spot: place it by sighting the diamonds (no maths needed), tap Record and step away. It records 8 seconds. Then, if you can, measure from the cushion to the nearest edge of the ball and type the two numbers in, just as the tape reads. The app does the maths. If you\'d rather not measure, tap "On the diamond spot, no tape".', steps:
     A_SPOTS.map(([id, at, where, rails]) => ({ id, cd: 6, dur: 8, form: 'pos', rails, layout: cueAt(at), text: 'Place the cue ball ' + where + '.' })) },
   { id: 'cueB', title: 'Test B: stop in the box', intro: 'Ten shots from the start spot S. Try to stop the cue ball inside the box.', steps: [
-    { id: 'Bsetup', kind: 'note', layout: STICKERS, text: 'Set up: start spot S is 2 diamonds from the left rail on the centre line, with one sticker 2 inches to its left. The box is 9 by 9 inches, centred on the 6th diamond on the centre line: put one sticker on each of its 4 corners.' },
+    { id: 'Bsetup', cd: 6, dur: 8, form: 'sticker', layout: STICKERS, text: 'Set up by sighting the diamonds, no measuring needed. S: where the line from the 2nd diamond on the long rails crosses the line from the middle diamond on the short rails; one sticker about 2 inches to its left. The box: about a hand wide (9 inches) around the crossing of the 6th diamond and the middle diamond, one sticker on each corner. Take the cue ball off, tap Record and step away: it films the stickers for 8 seconds.' },
     ...Array.from({ length: 10 }, (_, i) => ({ id: 'B' + (i + 1), ...CUE_SHOT, form: 'box', rails: ['right', 'near'], layout: cueAt(CS, { box: BOX, arrow: [CS, BOX.c] }), text: 'Cue ball on S. Shoot straight down the centre line and try to stop it inside the box.' }))] },
   { id: 'cueC', title: 'Test C: lag', intro: 'Ten lags from S, like a real lag: up to the right rail and back, finishing as close to the left rail as you can.', steps:
     Array.from({ length: 10 }, (_, i) => ({ id: 'C' + (i + 1), ...CUE_SHOT, form: 'lag', layout: cueAt(CS, { path: [CS, [7.85, 2], [0.2, 2.25]] }), text: 'Cue ball on S. Lag: up to the right rail and back, as close to the left rail as you can.' })) },
@@ -536,6 +536,7 @@ function askCue(meta, step) {
   const pick = (id, opts) => '<div class="row" id="' + id + '">' + opts.map(o => '<button data-v="' + o + '">' + o + '</button>').join('') + '</div>';
   const railSel = (id, opts) => '<select id="' + id + '">' + opts.map(o => '<option>' + o + '</option>').join('') + '</select>';
   let h = '<h2>' + esc(step.id) + ': your measurements</h2><p class="muted">Cushion nose to the nearest edge of the ball, without touching it. Type 0 if it touches that rail.</p>', f = [];
+  if (step.form === 'sticker') h = '<h2>Optional: one sticker</h2><p class="muted">If you can, measure the box\'s sticker nearest the near rail and the left rail: from each of those two cushions to the middle of the sticker, just as the tape reads. Otherwise skip.</p>' + num('m1', 'From the left rail') + num('m2', 'From the near rail'), f = ['m1', 'm2'];
   if (step.form === 'pos' || step.form === 'box') { h += num('m1', 'From the ' + step.rails[0] + ' rail') + num('m2', 'From the ' + step.rails[1] + ' rail'); f = ['m1', 'm2']; }
   if (step.form === 'box') h += '<p>Did its centre stop inside the box?</p>' + pick('pIn', ['in', 'out', 'unsure']);
   if (step.form === 'lag') { h += num('m1', 'Gap to the left rail') + '<p>Did it touch the left rail on the way back?</p>' + pick('pTouch', ['no', 'yes', 'unsure']); f = ['m1']; }
@@ -544,7 +545,7 @@ function askCue(meta, step) {
       '<label for="r2">Closest long rail</label>' + railSel('r2', ['near', 'far']) + num('m2', 'Distance from it') + '<p>How many rails did it hit?</p>' + pick('pRails', ['0', '1', '2', '3+']);
     f = ['m1', 'm2'];
   }
-  h += '<div class="row"><button class="primary big" id="cueSave" disabled>Next</button><button id="cueSkip">Couldn\'t measure, skip it</button><button id="redo">Record this one again</button></div>';
+  h += '<div class="row"><button class="primary big" id="cueSave" disabled>Next</button>' + (step.form === 'pos' ? '<button id="cueGrid">On the diamond spot, no tape</button>' : '') + '<button id="cueSkip">' + (step.form === 'sticker' ? 'Skip' : 'Couldn\'t measure, skip it') + '</button><button id="redo">Record this one again</button></div>';
   panel.innerHTML = h;
   const picks = {}, groups = { box: ['pIn'], lag: ['pTouch'], speed: ['pRails'] }[step.form] || [];
   const ready = () => { $('#cueSave').disabled = !(f.every(id => $('#' + id).value.trim() !== '' && !isNaN(parseFloat($('#' + id).value))) && groups.every(g => picks[g] != null)); };
@@ -553,11 +554,13 @@ function askCue(meta, step) {
   $('#cueSave').onclick = async () => {
     const v = id => parseFloat($('#' + id).value), m = {};
     if (step.form === 'pos' || step.form === 'box') { m[step.rails[0]] = v('m1'); m[step.rails[1]] = v('m2'); }
+    if (step.form === 'sticker') { m.left = v('m1'); m.near = v('m2'); }
     if (step.form === 'lag') m.left = v('m1');
     if (step.form === 'speed') { m[$('#r1').value] = v('m1'); m[$('#r2').value] = v('m2'); }
     await setAnswers(meta.n, { event: step.id, measured: m, ...(picks.pIn ? { inBox: picks.pIn } : {}), ...(picks.pTouch ? { touched: picks.pTouch } : {}), ...(picks.pRails ? { railsHit: picks.pRails } : {}), ...(step.speed ? { speed: step.speed } : {}) });
     afterClip(step);
   };
+  if ($('#cueGrid')) $('#cueGrid').onclick = async () => { await setAnswers(meta.n, { event: step.id, placedOnGrid: step.layout.balls[0].at }); afterClip(step); };
   $('#cueSkip').onclick = async () => { await setAnswers(meta.n, { event: step.id, skipped: true }); afterClip(step); };
   $('#redo').onclick = async () => { await setAnswers(meta.n, { event: step.id, redo: true }); showStep(); };
 }

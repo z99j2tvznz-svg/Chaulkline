@@ -118,3 +118,19 @@ feedback is not part of the first prototype unless D shows clean separation.
   - A: the clip's still period gives the position.
   - B-D: the clip's single shot and its rest position.
   - A clip with no shot found = missed; more than one = false shots.
+
+## Change before any footage (2026-10-22 20:10, player's request: no arithmetic, place by the diamonds)
+- **Placement:** balls and stickers are placed by sighting the diamonds. The player types raw tape readings only,
+  and Claude does all conversion.
+- **A, tape optional per placement.** "On the diamond spot, no tape" stores the intended grid crossing. A results are
+  reported in two tiers:
+  - taped placements: truth = tape;
+  - grid-only placements: truth = the intended crossing. This bounds the error only to about the placement accuracy
+    (est. 1-2 in), so it is never used for claims finer than that.
+- **B set-up clip.** B starts with an 8 s clip of the stickers. The stickers are also seen by the camera, and the
+  system output is checked for sticker false detections. Optionally, one sticker is taped.
+  - Zone centre = the taped sticker + 4.5 in, else the diamond crossing.
+  - The player's in/out call (relative to the stickers they see) is reported next to the measured in/out.
+- **Pending: the player's choice between tape and grid for A.**
+- The player's idea of calibrating the camera view from the diamonds (straightening the lens curve) is noted as a
+  future perception improvement. Perception is frozen for this validation.
