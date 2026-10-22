@@ -150,3 +150,10 @@ feedback is not part of the first prototype unless D shows clean separation.
   and the box stickers seen in the set-up clip. Accuracy claims rest on these, and the tape tier is reported
   separately.
 - The test design is frozen from here on, at the player's request.
+
+## No tape (2026-10-22 20:15, player: tape readings are too unreliable to keep)
+- Tape readings are not used as truth. Any typed in are stored but not scored.
+- Truth without a tape: a ball frozen against a rail (exact on that axis), diamond-sighted placements (about 1-2 in),
+  the stickers seen in the set-up clip, the player's in/out and touched calls, and rails hit.
+- What this can show: whether the camera puts a ball within about a quarter diamond. It cannot show sub-inch accuracy,
+  and no such claim is made. The camera is never used as its own truth.
