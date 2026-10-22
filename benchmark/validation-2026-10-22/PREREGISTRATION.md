@@ -134,3 +134,11 @@ feedback is not part of the first prototype unless D shows clean separation.
 - **Pending: the player's choice between tape and grid for A.**
 - The player's idea of calibrating the camera view from the diamonds (straightening the lens curve) is noted as a
   future perception improvement. Perception is frozen for this validation.
+
+## Units (2026-10-22 20:11, player's point: amateurs think in diamonds, not inches)
+- All results and any coaching feedback are given in diamonds (1 diamond ≈ 9.9 in along, 9.8 in across), with inches
+  alongside.
+- The go-rule thresholds are unchanged and restated: median ≤ 1.5 in ≈ 1/6 diamond, worst ≤ 3 in ≈ 1/3 diamond.
+- The finest feedback players use is about a quarter diamond (≈ 2.5 in). The diamond-sighted placements (about
+  1-2 in placement error) can therefore test the question that matters for the drill: whether the camera puts the ball
+  within a quarter diamond. The tape is only needed for claims finer than that.
