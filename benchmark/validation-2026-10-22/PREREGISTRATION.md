@@ -92,3 +92,10 @@ feedback is not part of the first prototype unless D shows clean separation.
 - Far-rail accuracy is not assumed. Test A has three far-side placements and one against the far rail. The lag (C) runs
   to the right short rail, because a lag to the far long rail would put the player between the phone and the table.
 - The test layout fits this table and this phone spot. Nothing in the evaluation depends on a special camera placement.
+
+## Tools (written before any footage; checked only for plumbing)
+- `tools/cueball.js`: runs the Cycle 4 tracker unchanged. It gives each shot's path, gaps, path length, initial speed,
+  duration, closest approach to each cushion and rest position, plus every still period.
+- `tools/score-cueball.js`: the scoring above, from the player's measurements written as JSON (format in its header).
+- Plumbing check: rack 1 footage against synthetic measurements made from the tool's own output, with known offsets.
+  The offsets were recovered exactly (0.36 in). This tests the code paths only, and is not a result.
