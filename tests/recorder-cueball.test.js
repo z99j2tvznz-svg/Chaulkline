@@ -47,7 +47,7 @@ test('cue-ball test: pictures, one clip per event, measurements stored with each
     await page.waitForSelector('#cueSave', { timeout: 30000 });
     await fill('1.25'); await page.click('#pTouch [data-v="unsure"]'); await page.click('#cueSave');
     await skip(9);
-    // D1: soft, rest measured from the right and far rails, one rail hit; D2 could not be measured
+    // D1: level 1, rest measured from the right and far rails, one rail hit; D2 could not be measured
     await page.waitForSelector('#recBtn'); await page.click('#recBtn');
     await page.waitForSelector('#cueSave', { timeout: 30000 });
     await page.selectOption('#r1', 'right'); await page.selectOption('#r2', 'far');
@@ -65,8 +65,8 @@ test('cue-ball test: pictures, one clip per event, measurements stored with each
     assert.deepStrictEqual(meta.clips.map(c => c.answers), [
       { event: 'A1', measured: { left: 8.5, near: 8.75 } },
       { event: 'B1', measured: { right: 18, near: 17.5 }, inBox: 'in' },
-      { event: 'C1', measured: { right: 1.25 }, touched: 'unsure' },
-      { event: 'D1', measured: { right: 30, far: 18 }, railsHit: '1', speed: 'soft' },
+      { event: 'C1', measured: { left: 1.25 }, touched: 'unsure' },
+      { event: 'D1', measured: { right: 30, far: 18 }, railsHit: '1', speed: 'level 1' },
       { event: 'D2', skipped: true }]);
     assert.strictEqual(meta.clips[1].stoppedEarly, true);
     assert.deepStrictEqual(errors, []);

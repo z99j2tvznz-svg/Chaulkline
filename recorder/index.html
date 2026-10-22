@@ -359,7 +359,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 // start spot, the box is 9 x 9 in (half a box = 0.46 diamond) centred on the 6th diamond, marked by corner stickers.
 const CS = [2, 2], BOX = { c: [6, 2], h: 0.46 }, EDGE = 0.115; // a ball touching a rail: its centre half a ball off it
 const cueAt = (at, extra = {}) => ({ balls: [{ b: 0, at }], ...extra });
-const CUE_SHOT = { cd: 8, dur: 20, ask: 'cue' };
+const CUE_SHOT = { cd: 8, dur: 25, ask: 'cue' };
 const A_SPOTS = [
   ['A1', [1, 1], '1 diamond from the left rail and 1 diamond from the near rail', ['left', 'near']],
   ['A2', [4, EDGE], 'touching the near rail, at the middle diamond', ['left', 'near']],
@@ -369,8 +369,13 @@ const A_SPOTS = [
   ['A6', [6, 4 - EDGE], 'touching the far rail, 2 diamonds from the right rail', ['right', 'far']],
   ['A7', [7, 3], '1 diamond from the right rail and 1 diamond from the far rail', ['right', 'far']],
   ['A8', [8 - EDGE, 2], 'touching the right rail, on the centre line', ['right', 'near']]];
-const D_SPEED = ['soft', 'soft', 'soft', 'medium', 'medium', 'medium', 'medium', 'firm', 'firm', 'firm'];
-const D_TEXT = { soft: 'Soft: it should stop on its own before the right rail.', medium: 'Medium: it should reach the right rail and come back a little.', firm: 'Firm: it should hit the right rail and come back past the middle, or further.' };
+// D: speed levels the way players practise them: up to the right rail and back, graded by where the ball stops
+// relative to the left (second) rail. The picture's path ends where the level aims to stop.
+const D_SPEED = ['level 1', 'level 1', 'level 1', 'level 2', 'level 2', 'level 2', 'level 2', 'level 3', 'level 3', 'level 3'];
+const D_TEXT = { 'level 1': 'Level 1: up to the right rail and back, stopping about 1 diamond before the left rail.',
+  'level 2': 'Level 2: up to the right rail, back to touch the left rail, and out about 1 diamond.',
+  'level 3': 'Level 3: up to the right rail, back off the left rail, and out about 3 diamonds.' };
+const D_PATH = { 'level 1': [CS, [7.85, 2], [1, 2.25]], 'level 2': [CS, [7.85, 2], [0.15, 2.2], [1, 2.3]], 'level 3': [CS, [7.85, 2], [0.15, 2.2], [3, 2.35]] };
 const STICKERS = { balls: [], marks: [[CS[0] - 0.2, CS[1]]], box: BOX, arrow: [CS, [5.4, 2]] };
 const CUEBALL = [
   { id: 'cueA', title: 'Test A: placements', intro: 'Only the cue ball on the table. For each spot: place it by hand, close is fine, then tap Record and step away. It records 8 seconds. Then measure from the cushion to the nearest edge of the ball, without touching it, and type the two numbers in.', steps:
@@ -378,10 +383,10 @@ const CUEBALL = [
   { id: 'cueB', title: 'Test B: stop in the box', intro: 'Ten shots from the start spot S. Try to stop the cue ball inside the box.', steps: [
     { id: 'Bsetup', kind: 'note', layout: STICKERS, text: 'Set up: start spot S is 2 diamonds from the left rail on the centre line, with one sticker 2 inches to its left. The box is 9 by 9 inches, centred on the 6th diamond on the centre line: put one sticker on each of its 4 corners.' },
     ...Array.from({ length: 10 }, (_, i) => ({ id: 'B' + (i + 1), ...CUE_SHOT, form: 'box', rails: ['right', 'near'], layout: cueAt(CS, { box: BOX, arrow: [CS, BOX.c] }), text: 'Cue ball on S. Shoot straight down the centre line and try to stop it inside the box.' }))] },
-  { id: 'cueC', title: 'Test C: lag to the rail', intro: 'Ten shots from S toward the right rail. Stop as close to it as you can without touching it.', steps:
-    Array.from({ length: 10 }, (_, i) => ({ id: 'C' + (i + 1), ...CUE_SHOT, form: 'lag', layout: cueAt(CS, { arrow: [CS, [7.8, 2]] }), text: 'Cue ball on S. Lag toward the right rail: as close as you can without touching it.' })) },
-  { id: 'cueD', title: 'Test D: three speeds', intro: 'Ten shots from S straight down the centre line: 3 soft, 4 medium, 3 firm. The speed is just what you mean to do.', steps:
-    D_SPEED.map((sp, i) => ({ id: 'D' + (i + 1), ...CUE_SHOT, form: 'speed', speed: sp, layout: cueAt(CS, { arrow: [CS, [7.8, 2]] }), text: 'Cue ball on S. ' + D_TEXT[sp] })) }];
+  { id: 'cueC', title: 'Test C: lag', intro: 'Ten lags from S, like a real lag: up to the right rail and back, finishing as close to the left rail as you can.', steps:
+    Array.from({ length: 10 }, (_, i) => ({ id: 'C' + (i + 1), ...CUE_SHOT, form: 'lag', layout: cueAt(CS, { path: [CS, [7.85, 2], [0.2, 2.25]] }), text: 'Cue ball on S. Lag: up to the right rail and back, as close to the left rail as you can.' })) },
+  { id: 'cueD', title: 'Test D: speed levels', intro: 'Ten shots from S, up to the right rail and back: 3 at level 1, 4 at level 2, 3 at level 3. The level is just what you aim for.', steps:
+    D_SPEED.map((sp, i) => ({ id: 'D' + (i + 1), ...CUE_SHOT, form: 'speed', speed: sp, layout: cueAt(CS, { path: D_PATH[sp] }), text: 'Cue ball on S. ' + D_TEXT[sp] })) }];
 
 function steps() { if (S.setup && S.setup.cueball) return CUEBALL; if (S.setup && S.setup.evening) return EVENING; return S.setup && S.setup.short ? SECTIONS.map(s => ({ ...s, steps: s.steps.filter(x => x.short) })).filter(s => s.steps.length) : SECTIONS; }
 function cur() { const secs = steps(), sec = secs[S.sec]; return sec ? { sec, step: sec.steps[S.step], secs } : null; }
@@ -410,7 +415,9 @@ function layoutSvg(lay) {
     for (const dx of [-1, 1]) for (const dy of [-1, 1]) s += '<circle cx="' + X(b.c[0] + dx * b.h) + '" cy="' + Y(b.c[1] + dy * b.h) + '" r="0.8" fill="none" stroke="#fff" stroke-width="0.45"/>'; }
   if (lay && lay.marks) for (const m of lay.marks) s += '<circle cx="' + X(m[0]) + '" cy="' + Y(m[1]) + '" r="0.8" fill="none" stroke="#fff" stroke-width="0.45"/>';
   if (lay && lay.arrow) { const [a, b] = lay.arrow; s += '<line x1="' + X(a[0]) + '" y1="' + Y(a[1]) + '" x2="' + X(b[0]) + '" y2="' + Y(b[1]) + '" stroke="#fff" stroke-width="0.5" stroke-dasharray="1.2 0.8"/><path d="M' + X(b[0]) + ' ' + Y(b[1]) + ' l-2 -1.2 v2.4 z" fill="#fff"/>'; }
-  if (lay && lay.box !== undefined || lay && lay.arrow) s += '<text x="' + X(CS[0]) + '" y="' + (Y(CS[1]) + 4.6) + '" font-size="3" text-anchor="middle" fill="#fff">S</text>';
+  if (lay && lay.path) { const P = lay.path, e = P[P.length - 1], q = P[P.length - 2], dir = e[0] < q[0] ? -1 : 1;
+    s += '<polyline points="' + P.map(p => X(p[0]) + ',' + Y(p[1])).join(' ') + '" fill="none" stroke="#fff" stroke-width="0.5" stroke-dasharray="1.2 0.8"/><path d="M' + X(e[0]) + ' ' + Y(e[1]) + ' l' + (-2 * dir) + ' -1.2 v2.4 z" fill="#fff"/>'; }
+  if (lay && (lay.box || lay.arrow || lay.path)) s += '<text x="' + X(CS[0]) + '" y="' + (Y(CS[1]) + 4.6) + '" font-size="3" text-anchor="middle" fill="#fff">S</text>';
   if (lay) for (const o of lay.balls) s += ballSvg(o.b, X(o.at[0]), Y(o.at[1]), 1.8);
   if (S.setup && S.setup.cueball) s += '<text x="46" y="4.6" font-size="2.6" text-anchor="middle" fill="#e8dccb">far rail</text><text x="46" y="50.6" font-size="2.6" text-anchor="middle" fill="#e8dccb">near rail</text><text x="3.4" y="27" font-size="2.6" text-anchor="middle" fill="#e8dccb" transform="rotate(-90 3.4 26)">left</text><text x="88.6" y="27" font-size="2.6" text-anchor="middle" fill="#e8dccb" transform="rotate(90 88.6 26)">right</text>';
   const spot = S.setup ? S.setup.spot : 'low side';
@@ -531,7 +538,7 @@ function askCue(meta, step) {
   let h = '<h2>' + esc(step.id) + ': your measurements</h2><p class="muted">Cushion nose to the nearest edge of the ball, without touching it. Type 0 if it touches that rail.</p>', f = [];
   if (step.form === 'pos' || step.form === 'box') { h += num('m1', 'From the ' + step.rails[0] + ' rail') + num('m2', 'From the ' + step.rails[1] + ' rail'); f = ['m1', 'm2']; }
   if (step.form === 'box') h += '<p>Did its centre stop inside the box?</p>' + pick('pIn', ['in', 'out', 'unsure']);
-  if (step.form === 'lag') { h += num('m1', 'Gap to the right rail') + '<p>Did it touch the rail?</p>' + pick('pTouch', ['no', 'yes', 'unsure']); f = ['m1']; }
+  if (step.form === 'lag') { h += num('m1', 'Gap to the left rail') + '<p>Did it touch the left rail on the way back?</p>' + pick('pTouch', ['no', 'yes', 'unsure']); f = ['m1']; }
   if (step.form === 'speed') {
     h += '<label for="r1">Closest short rail</label>' + railSel('r1', ['left', 'right']) + num('m1', 'Distance from it') +
       '<label for="r2">Closest long rail</label>' + railSel('r2', ['near', 'far']) + num('m2', 'Distance from it') + '<p>How many rails did it hit?</p>' + pick('pRails', ['0', '1', '2', '3+']);
@@ -546,7 +553,7 @@ function askCue(meta, step) {
   $('#cueSave').onclick = async () => {
     const v = id => parseFloat($('#' + id).value), m = {};
     if (step.form === 'pos' || step.form === 'box') { m[step.rails[0]] = v('m1'); m[step.rails[1]] = v('m2'); }
-    if (step.form === 'lag') m.right = v('m1');
+    if (step.form === 'lag') m.left = v('m1');
     if (step.form === 'speed') { m[$('#r1').value] = v('m1'); m[$('#r2').value] = v('m2'); }
     await setAnswers(meta.n, { event: step.id, measured: m, ...(picks.pIn ? { inBox: picks.pIn } : {}), ...(picks.pTouch ? { touched: picks.pTouch } : {}), ...(picks.pRails ? { railsHit: picks.pRails } : {}), ...(step.speed ? { speed: step.speed } : {}) });
     afterClip(step);
