@@ -45,7 +45,8 @@ player supplies after this file was committed.
 - **Truth.**
   - The player's tape measurements: cushion nose to the nearest ball edge, to ¼ in. Claude adds 1.125 in (half a 2¼ in
     ball).
-  - Table size: the player's measured cloth length and width.
+  - Table size: the player's earlier measurement in the recorder setup (2026-10-17 session), 79.06 × 39.03 in,
+    cushion nose to cushion nose. Reused at the player's request on 2026-10-22, before any footage.
   - The coordinate frame is the system's: x from the left rail, y from the near rail. The system assumes 78 × 39 in;
     its positions are scaled to the measured cloth size before errors are computed. Unscaled errors are also reported.
   - Measurement error of the truth itself is about ±0.25-0.5 in, so differences below that are not reported as
@@ -68,9 +69,14 @@ player supplies after this file was committed.
   - Velocity has no ground truth. It is judged only for consistency within each stroke group and for separation
     between groups. No precision claim is made beyond what the frames support.
 - **Coaching outcomes.**
-  - B in or out: the system says "in" when the rest centre is within 4.5 in of the zone centre (the zone centre is
-    measured once from the tape marks, or taken as 6 diamonds from the left on the centre line). Compared with the
-    measured position and with the player's in/out. Rests within 0.5 in of the edge are reported as borderline.
+  - B in or out:
+    - The zone is a 9 × 9 in box, marked by 4 donut-sticker corners. This was changed from a circle at the player's
+      suggestion on 2026-10-22, before any footage.
+    - The system says "in" when the rest centre is inside the box: within 4.5 in of the zone centre along both
+      axes. The zone centre is 6 diamonds from the left on the centre line.
+    - Compared with the measured position and with the player's in/out. Rests within 0.5 in of the box edge are
+      reported as borderline.
+    - The stickers on the cloth are reported if the system ever takes one for a ball. They are not filtered out.
   - C cushion contact: the system says "touched" when the tracked centre comes within 1.625 in of the right cushion
     line (half a ball + 0.5 in), or the track reverses direction there. Compared with the player's yes/no; "unsure" is
     reported apart.

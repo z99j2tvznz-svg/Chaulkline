@@ -8,6 +8,7 @@
 const fs = require('fs');
 const [tPath, ...outs] = process.argv.slice(2), T = JSON.parse(fs.readFileSync(tPath, 'utf8'));
 const run = outs.map(p => p && p !== '-' ? JSON.parse(fs.readFileSync(p, 'utf8')) : null);
+// zone: a 9 x 9 in box (half-width ZONE_R) marked by 4 corner stickers; "in" = ball centre inside the box
 const R = 1.125, [CL, CW] = T.cloth, SYS = [78, 39], ZONE_R = 4.5, BORDER = 0.5, CONTACT = 0.5;
 // truth centre in real inches, x from the left cushion, y from the near cushion
 const centre = m => ({ x: m.L != null ? m.L + R : CL - R - m.R, y: m.N != null ? m.N + R : CW - R - m.F });
@@ -47,10 +48,10 @@ function shotsFor(i, list) {
 if (run[1] && T.B) {
   const m = shotsFor(1, T.B), Z = T.zone ? centre(T.zone) : { x: 6 * CL / 8, y: CW / 2 };
   const rows = m.rows.map(({ e, s }) => {
-    const c = centre(e), d = Math.hypot(c.x - Z.x, c.y - Z.y), r = { id: e.id, truthDist: +d.toFixed(2), truthIn: d <= ZONE_R, playerIn: e.in, borderline: Math.abs(d - ZONE_R) <= BORDER };
+    const c = centre(e), d = Math.hypot(c.x - Z.x, c.y - Z.y), edge = Math.max(Math.abs(c.x - Z.x), Math.abs(c.y - Z.y)), r = { id: e.id, truthDist: +d.toFixed(2), truthIn: edge <= ZONE_R, playerIn: e.in, borderline: Math.abs(edge - ZONE_R) <= BORDER };
     if (!s || !s.rest) return { ...r, system: null };
     const q = err(c, s.rest), sd = Math.hypot(q.system.x - Z.x, q.system.y - Z.y);
-    return { ...r, ...q, systemDist: +sd.toFixed(2), systemIn: sd <= ZONE_R, travelTruth: e.fromS != null ? e.fromS : null, pathLength: s.pathLength };
+    return { ...r, ...q, systemDist: +sd.toFixed(2), systemIn: Math.max(Math.abs(q.system.x - Z.x), Math.abs(q.system.y - Z.y)) <= ZONE_R, travelTruth: e.fromS != null ? e.fromS : null, pathLength: s.pathLength };
   });
   const clear = rows.filter(r => r.system !== null && !r.borderline);
   res.B = { detected: m.detected, missed: m.missed, false: m.false, complete: m.complete, rows, restError: stats(rows.filter(r => r.error != null).map(r => r.error)),
