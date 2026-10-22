@@ -107,7 +107,22 @@ sampling noise. So this shows "no harm", not proof of a gain.
 
 **With the edge boxes** (detector re-run with `--rejected` on the Oct 17-19 held-out clips, frozen30 pick):
 
-EDGE_REGRESSION_PLACEHOLDER
+The detector was re-run with `--rejected` on all 77 Oct 17-19 clips. The re-run's kept boxes match the original set
+except for detector noise: in 30 clips positions differ by at most 0.56 in, and a few numbers flip. Cycle 3 run on this
+re-detected set gives exactly its original line, so the comparison is like for like.
+([results/regression/edge-frozen30.json](results/regression/edge-frozen30.json))
+
+| Setting (frozen30 pick) | ALL | HO |
+|---|---|---|
+| Cycle 3 | 58/44, cw 16/17 | 44/39, cw 10/11; missed 3, false 8 |
+| **Cycle 4 (all track options)** | **61/46, cw 15/16** | **47/41, cw 9/10**; missed 2, false 8 |
+| jawEdges alone | 59/45, cw 16/17 | 45/40, cw 10/11 |
+| railEdges alone | 58/44, cw 16/17 | 44/39, cw 10/11 (Oct 17 −1, Oct 19 +1) |
+
+- Cycle 4 is +3 / +2 tables right with 1 fewer confidently wrong on both counts.
+- railEdges is neutral on old clips. Its gain is specific to the 2B break count.
+- The d30b pick has no edge re-run: that would be a second detector pass, about 2 h. Its no-edge result is above (+1,
+  confidently wrong unchanged).
 
 ## Remaining failures, ranked
 1. **Nothing is held out yet.** All rack gains are on the footage the rules were built on, and one threshold
