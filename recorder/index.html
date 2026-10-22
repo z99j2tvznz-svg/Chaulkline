@@ -58,9 +58,10 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 // short clip per step (video, sound, motion sensor, camera settings) and the player's tap answers, and saves them as
 // zip files that each stay under the 30 MB upload limit. It does no tracking. Section contents and the reasons behind
 // them: chalkline-data/plans/test-recorder-sections.md in the project files.
+// R0.8 adds the cue-ball test session (38 short steps with pictures and a measurement form after each).
 // R0.7 adds the continuous rack session: one recording for a whole rack, nothing asked between shots (see 'continuous
 // rack mode' below).
-const VERSION = 'R0.7';
+const VERSION = 'R0.8';
 const MB = 1048576, PART_LIMIT = 25 * MB, CLIP_MAX = 29 * MB;
 const $ = s => document.querySelector(s);
 const panel = $('#panel'), view = $('#view');
@@ -352,7 +353,37 @@ function meterUpd() {
 }
 function setWhere(t) { $('#where').textContent = t; }
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-function steps() { if (S.setup && S.setup.evening) return EVENING; return S.setup && S.setup.short ? SECTIONS.map(s => ({ ...s, steps: s.steps.filter(x => x.short) })).filter(s => s.steps.length) : SECTIONS; }
+// R0.8: the cue-ball test (38 events, only the cue ball on the table). One short clip per event, so the recorder itself
+// tells the events apart; after each clip the player types in the tape measurements (cushion nose to the nearest edge
+// of the ball, inches), stored with the clip as its answers. Positions in diamonds as in the layout pictures: S is the
+// start spot, the box is 9 x 9 in (half a box = 0.46 diamond) centred on the 6th diamond, marked by corner stickers.
+const CS = [2, 2], BOX = { c: [6, 2], h: 0.46 }, EDGE = 0.115; // a ball touching a rail: its centre half a ball off it
+const cueAt = (at, extra = {}) => ({ balls: [{ b: 0, at }], ...extra });
+const CUE_SHOT = { cd: 8, dur: 20, ask: 'cue' };
+const A_SPOTS = [
+  ['A1', [1, 1], '1 diamond from the left rail and 1 diamond from the near rail', ['left', 'near']],
+  ['A2', [4, EDGE], 'touching the near rail, at the middle diamond', ['left', 'near']],
+  ['A3', [7, 1], '1 diamond from the right rail and 1 diamond from the near rail', ['right', 'near']],
+  ['A4', [4, 2], 'in the centre of the table', ['left', 'near']],
+  ['A5', [1, 3], '1 diamond from the left rail and 1 diamond from the far rail', ['left', 'far']],
+  ['A6', [6, 4 - EDGE], 'touching the far rail, 2 diamonds from the right rail', ['right', 'far']],
+  ['A7', [7, 3], '1 diamond from the right rail and 1 diamond from the far rail', ['right', 'far']],
+  ['A8', [8 - EDGE, 2], 'touching the right rail, on the centre line', ['right', 'near']]];
+const D_SPEED = ['soft', 'soft', 'soft', 'medium', 'medium', 'medium', 'medium', 'firm', 'firm', 'firm'];
+const D_TEXT = { soft: 'Soft: it should stop on its own before the right rail.', medium: 'Medium: it should reach the right rail and come back a little.', firm: 'Firm: it should hit the right rail and come back past the middle, or further.' };
+const STICKERS = { balls: [], marks: [[CS[0] - 0.2, CS[1]]], box: BOX, arrow: [CS, [5.4, 2]] };
+const CUEBALL = [
+  { id: 'cueA', title: 'Test A: placements', intro: 'Only the cue ball on the table. For each spot: place it by hand, close is fine, then tap Record and step away. It records 8 seconds. Then measure from the cushion to the nearest edge of the ball, without touching it, and type the two numbers in.', steps:
+    A_SPOTS.map(([id, at, where, rails]) => ({ id, cd: 6, dur: 8, form: 'pos', rails, layout: cueAt(at), text: 'Place the cue ball ' + where + '.' })) },
+  { id: 'cueB', title: 'Test B: stop in the box', intro: 'Ten shots from the start spot S. Try to stop the cue ball inside the box.', steps: [
+    { id: 'Bsetup', kind: 'note', layout: STICKERS, text: 'Set up: start spot S is 2 diamonds from the left rail on the centre line, with one sticker 2 inches to its left. The box is 9 by 9 inches, centred on the 6th diamond on the centre line: put one sticker on each of its 4 corners.' },
+    ...Array.from({ length: 10 }, (_, i) => ({ id: 'B' + (i + 1), ...CUE_SHOT, form: 'box', rails: ['right', 'near'], layout: cueAt(CS, { box: BOX, arrow: [CS, BOX.c] }), text: 'Cue ball on S. Shoot straight down the centre line and try to stop it inside the box.' }))] },
+  { id: 'cueC', title: 'Test C: lag to the rail', intro: 'Ten shots from S toward the right rail. Stop as close to it as you can without touching it.', steps:
+    Array.from({ length: 10 }, (_, i) => ({ id: 'C' + (i + 1), ...CUE_SHOT, form: 'lag', layout: cueAt(CS, { arrow: [CS, [7.8, 2]] }), text: 'Cue ball on S. Lag toward the right rail: as close as you can without touching it.' })) },
+  { id: 'cueD', title: 'Test D: three speeds', intro: 'Ten shots from S straight down the centre line: 3 soft, 4 medium, 3 firm. The speed is just what you mean to do.', steps:
+    D_SPEED.map((sp, i) => ({ id: 'D' + (i + 1), ...CUE_SHOT, form: 'speed', speed: sp, layout: cueAt(CS, { arrow: [CS, [7.8, 2]] }), text: 'Cue ball on S. ' + D_TEXT[sp] })) }];
+
+function steps() { if (S.setup && S.setup.cueball) return CUEBALL; if (S.setup && S.setup.evening) return EVENING; return S.setup && S.setup.short ? SECTIONS.map(s => ({ ...s, steps: s.steps.filter(x => x.short) })).filter(s => s.steps.length) : SECTIONS; }
 function cur() { const secs = steps(), sec = secs[S.sec]; return sec ? { sec, step: sec.steps[S.step], secs } : null; }
 
 const BALL_COL = ['#f4f4f0', '#f2c230', '#2456c9', '#d23a2c', '#6d3aa8', '#f07f23', '#1f8a4c', '#8a1f2a', '#111'];
@@ -375,7 +406,13 @@ function layoutSvg(lay) {
     s += '<line x1="' + X(a[0]) + '" y1="' + Y(a[1]) + '" x2="' + X(o[0]) + '" y2="' + Y(o[1]) + '" stroke="#fff" stroke-width="0.4" stroke-dasharray="1 1"/>';
     if (lay.pocket) { const p = PK[lay.pocket]; s += '<line x1="' + X(o[0]) + '" y1="' + Y(o[1]) + '" x2="' + X(p[0]) + '" y2="' + Y(p[1]) + '" stroke="#f2c230" stroke-width="0.4" stroke-dasharray="1 1"/>'; }
   }
+  if (lay && lay.box) { const b = lay.box; s += '<rect x="' + X(b.c[0] - b.h) + '" y="' + Y(b.c[1] + b.h) + '" width="' + (b.h * 20) + '" height="' + (b.h * 20) + '" fill="none" stroke="#f2c230" stroke-width="0.4" stroke-dasharray="1 0.8"/>';
+    for (const dx of [-1, 1]) for (const dy of [-1, 1]) s += '<circle cx="' + X(b.c[0] + dx * b.h) + '" cy="' + Y(b.c[1] + dy * b.h) + '" r="0.8" fill="none" stroke="#fff" stroke-width="0.45"/>'; }
+  if (lay && lay.marks) for (const m of lay.marks) s += '<circle cx="' + X(m[0]) + '" cy="' + Y(m[1]) + '" r="0.8" fill="none" stroke="#fff" stroke-width="0.45"/>';
+  if (lay && lay.arrow) { const [a, b] = lay.arrow; s += '<line x1="' + X(a[0]) + '" y1="' + Y(a[1]) + '" x2="' + X(b[0]) + '" y2="' + Y(b[1]) + '" stroke="#fff" stroke-width="0.5" stroke-dasharray="1.2 0.8"/><path d="M' + X(b[0]) + ' ' + Y(b[1]) + ' l-2 -1.2 v2.4 z" fill="#fff"/>'; }
+  if (lay && lay.box !== undefined || lay && lay.arrow) s += '<text x="' + X(CS[0]) + '" y="' + (Y(CS[1]) + 4.6) + '" font-size="3" text-anchor="middle" fill="#fff">S</text>';
   if (lay) for (const o of lay.balls) s += ballSvg(o.b, X(o.at[0]), Y(o.at[1]), 1.8);
+  if (S.setup && S.setup.cueball) s += '<text x="46" y="4.6" font-size="2.6" text-anchor="middle" fill="#e8dccb">far rail</text><text x="46" y="50.6" font-size="2.6" text-anchor="middle" fill="#e8dccb">near rail</text><text x="3.4" y="27" font-size="2.6" text-anchor="middle" fill="#e8dccb" transform="rotate(-90 3.4 26)">left</text><text x="88.6" y="27" font-size="2.6" text-anchor="middle" fill="#e8dccb" transform="rotate(90 88.6 26)">right</text>';
   const spot = S.setup ? S.setup.spot : 'low side';
   const ph = spot === 'end rail' ? [-4, 26] : spot === 'corner' ? [2, 55] : [46, 56];
   s += '<text x="' + Math.max(4, ph[0]) + '" y="' + Math.min(57.5, ph[1]) + '" font-size="3.6" text-anchor="' + (spot === 'end rail' ? 'start' : 'middle') + '" fill="#9aa6b2">' + (spot === 'end rail' ? '◀ phone' : '▼ phone') + '</text>';
@@ -392,10 +429,10 @@ function showSetup() {
     '<label>Where is the phone?</label><select id="fSpot">' + opt(['low side', 'high side', 'corner', 'end rail'], st.spot) + '</select>' +
     '<label>Lighting right now</label><select id="fLight">' + opt(LIGHTS, st.light) + '</select>' +
     '<label>Place</label><select id="fPlace">' + opt(['home', 'pool hall'], st.place) + '</select>' +
-    '<label>Session</label><select id="fShort"><option value="2"' + (st.evening || !st.phone ? ' selected' : '') + '>Evening check (10 to 15 minutes)</option><option value="0"' + (st.phone && !st.short && !st.evening ? ' selected' : '') + '>Full session (about an hour)</option><option value="1"' + (st.short ? ' selected' : '') + '>Short version for another spot (about 20 minutes)</option><option value="3"' + (st.continuous ? ' selected' : '') + '>Continuous rack: start once, play the whole rack, stop</option></select>' +
+    '<label>Session</label><select id="fShort"><option value="2"' + (st.evening || !st.phone ? ' selected' : '') + '>Evening check (10 to 15 minutes)</option><option value="0"' + (st.phone && !st.short && !st.evening ? ' selected' : '') + '>Full session (about an hour)</option><option value="1"' + (st.short ? ' selected' : '') + '>Short version for another spot (about 20 minutes)</option><option value="3"' + (st.continuous ? ' selected' : '') + '>Continuous rack: start once, play the whole rack, stop</option><option value="4"' + (st.cueball ? ' selected' : '') + '>Cue-ball test (38 short steps with pictures)</option></select>' +
     '<div class="row"><button class="primary big" id="go">Start</button></div><p class="muted">It will ask for the camera, the microphone and the motion sensor. Please allow all three.</p>';
   $('#go').onclick = async () => {
-    S.setup = { phone: $('#fPhone').value.trim(), table: $('#fTable').value, spot: $('#fSpot').value, light: $('#fLight').value, place: $('#fPlace').value, short: $('#fShort').value === '1', evening: $('#fShort').value === '2', continuous: $('#fShort').value === '3' };
+    S.setup = { phone: $('#fPhone').value.trim(), table: $('#fTable').value, spot: $('#fSpot').value, light: $('#fLight').value, place: $('#fPlace').value, short: $('#fShort').value === '1', evening: $('#fShort').value === '2', continuous: $('#fShort').value === '3', cueball: $('#fShort').value === '4' };
     const d = new Date(), p = n => String(n).padStart(2, '0');
     S.sessId = d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
     Object.assign(S, { sec: 0, step: 0, playN: 0, part: 1, clipN: 0, partBytes: 0, pending: [] }); save();
@@ -418,11 +455,11 @@ function showStep() {
   let h = '<h2>' + esc(sec.title) + '</h2>';
   if (S.step === 0 && sec.intro) h += '<p class="muted">' + esc(sec.intro) + '</p>';
   if (step.kind === 'measure') return showMeasure(h, step);
-  if (step.kind === 'note') { panel.innerHTML = h + '<p>' + esc(step.text) + '</p><div class="row"><button class="primary big" id="noteOk">Done</button></div>'; $('#noteOk').onclick = next; return; }
+  if (step.kind === 'note') { panel.innerHTML = h + '<p>' + esc(step.text) + '</p>' + (step.layout ? layoutSvg(step.layout) : '') + '<div class="row"><button class="primary big" id="noteOk">Done</button></div>'; $('#noteOk').onclick = next; return; }
   h += '<p>' + (step.kind === 'play' ? 'Shot ' + (S.playN + 1) + '. ' : 'Step ' + (S.step + 1) + ' of ' + sec.steps.length + '. ') + esc(step.text) + '</p>';
   if (step.opt) h += '<p class="muted">Optional.</p>';
   if (step.layout) h += layoutSvg(step.layout);
-  if (step.kind !== 'camtest') h += '<p class="muted">After you tap Record you get ' + step.cd + ' seconds to get in place. It then records for ' + step.dur + ' seconds.</p>';
+  if (step.kind !== 'camtest') h += '<p class="muted">After you tap Record you get ' + step.cd + ' seconds to get in place. It then records for ' + step.dur + ' seconds' + (step.ask === 'cue' ? ', or tap Shot done once the ball has stopped (it keeps a few still seconds).' : '.') + (step.form ? ' Then it asks for your measurements.' : '') + '</p>';
   h += '<div class="row"><button class="primary big" id="recBtn">' + (step.kind === 'camtest' ? 'Start the camera check' : 'Record') + '</button><button id="skipBtn">Skip</button>' + (step.kind === 'play' && S.playN > 0 ? '<button id="endPlay">Finish playing</button>' : '') + '</div>';
   h += '<div class="row"><button id="saveNow"' + (S.pending.length ? '' : ' disabled') + '>Save what\'s recorded now</button></div>';
   panel.innerHTML = h;
@@ -475,7 +512,8 @@ async function runStep(step, sec) {
     const meta = await keepClip(c, info);
     S.busy = false;
     if (meta.interrupted) { panel.innerHTML = '<h2>Recording was interrupted</h2><p>The phone left the recorder while recording. It\'s kept, but please record this step again.</p><div class="row"><button class="primary" id="again">Again</button></div>'; $('#again').onclick = showStep; return; }
-    if (meta.mic && meta.mic.some(m => m !== 'ok')) { panel.innerHTML = '<h2>No sound on that clip</h2><p>The phone took the microphone away, often because of Siri, a call, or another app using sound. It will reconnect when you record again, so please record this step again.</p><div class="row"><button class="primary" id="again">Again</button><button id="keepGoing">Keep it and carry on</button></div>'; $('#again').onclick = showStep; $('#keepGoing').onclick = () => step.ask ? askShot(meta, step) : afterClip(step); return; }
+    if (meta.mic && meta.mic.some(m => m !== 'ok')) { panel.innerHTML = '<h2>No sound on that clip</h2><p>The phone took the microphone away, often because of Siri, a call, or another app using sound. It will reconnect when you record again, so please record this step again.</p><div class="row"><button class="primary" id="again">Again</button><button id="keepGoing">Keep it and carry on</button></div>'; $('#again').onclick = showStep; $('#keepGoing').onclick = () => step.form ? askCue(meta, step) : step.ask ? askShot(meta, step) : afterClip(step); return; }
+    if (step.form) return askCue(meta, step);
     if (step.ask) return askShot(meta, step);
     afterClip(step);
   } catch (e) { S.busy = false; panel.classList.remove('hidden'); panel.innerHTML = '<h2>Something went wrong</h2><p class="muted">' + esc(String(e && (e.message || e.name) || e)) + '</p><div class="row"><button class="primary" id="again">Back</button></div>'; $('#again').onclick = showStep; }
@@ -483,6 +521,38 @@ async function runStep(step, sec) {
 function afterClip(step) {
   if (step.kind === 'play') { S.playN++; save(); return showStep(); }
   next();
+}
+// cue-ball test: the player's tape measurements for this event, kept with the clip as its answers. Every distance is
+// cushion nose to the nearest edge of the ball, in inches; which rail each one is from is stored with it
+function askCue(meta, step) {
+  const num = (id, label) => '<label for="' + id + '">' + label + '</label><input id="' + id + '" inputmode="decimal" placeholder="inches">';
+  const pick = (id, opts) => '<div class="row" id="' + id + '">' + opts.map(o => '<button data-v="' + o + '">' + o + '</button>').join('') + '</div>';
+  const railSel = (id, opts) => '<select id="' + id + '">' + opts.map(o => '<option>' + o + '</option>').join('') + '</select>';
+  let h = '<h2>' + esc(step.id) + ': your measurements</h2><p class="muted">Cushion nose to the nearest edge of the ball, without touching it. Type 0 if it touches that rail.</p>', f = [];
+  if (step.form === 'pos' || step.form === 'box') { h += num('m1', 'From the ' + step.rails[0] + ' rail') + num('m2', 'From the ' + step.rails[1] + ' rail'); f = ['m1', 'm2']; }
+  if (step.form === 'box') h += '<p>Did its centre stop inside the box?</p>' + pick('pIn', ['in', 'out', 'unsure']);
+  if (step.form === 'lag') { h += num('m1', 'Gap to the right rail') + '<p>Did it touch the rail?</p>' + pick('pTouch', ['no', 'yes', 'unsure']); f = ['m1']; }
+  if (step.form === 'speed') {
+    h += '<label for="r1">Closest short rail</label>' + railSel('r1', ['left', 'right']) + num('m1', 'Distance from it') +
+      '<label for="r2">Closest long rail</label>' + railSel('r2', ['near', 'far']) + num('m2', 'Distance from it') + '<p>How many rails did it hit?</p>' + pick('pRails', ['0', '1', '2', '3+']);
+    f = ['m1', 'm2'];
+  }
+  h += '<div class="row"><button class="primary big" id="cueSave" disabled>Next</button><button id="cueSkip">Couldn\'t measure, skip it</button><button id="redo">Record this one again</button></div>';
+  panel.innerHTML = h;
+  const picks = {}, groups = { box: ['pIn'], lag: ['pTouch'], speed: ['pRails'] }[step.form] || [];
+  const ready = () => { $('#cueSave').disabled = !(f.every(id => $('#' + id).value.trim() !== '' && !isNaN(parseFloat($('#' + id).value))) && groups.every(g => picks[g] != null)); };
+  for (const g of groups) $('#' + g).querySelectorAll('button').forEach(b => b.onclick = () => { picks[g] = b.dataset.v; $('#' + g).querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); ready(); });
+  f.forEach(id => { $('#' + id).oninput = ready; });
+  $('#cueSave').onclick = async () => {
+    const v = id => parseFloat($('#' + id).value), m = {};
+    if (step.form === 'pos' || step.form === 'box') { m[step.rails[0]] = v('m1'); m[step.rails[1]] = v('m2'); }
+    if (step.form === 'lag') m.right = v('m1');
+    if (step.form === 'speed') { m[$('#r1').value] = v('m1'); m[$('#r2').value] = v('m2'); }
+    await setAnswers(meta.n, { event: step.id, measured: m, ...(picks.pIn ? { inBox: picks.pIn } : {}), ...(picks.pTouch ? { touched: picks.pTouch } : {}), ...(picks.pRails ? { railsHit: picks.pRails } : {}), ...(step.speed ? { speed: step.speed } : {}) });
+    afterClip(step);
+  };
+  $('#cueSkip').onclick = async () => { await setAnswers(meta.n, { event: step.id, skipped: true }); afterClip(step); };
+  $('#redo').onclick = async () => { await setAnswers(meta.n, { event: step.id, redo: true }); showStep(); };
 }
 function askShot(meta, step) {
   const picked = new Set(); let off = null;
@@ -778,7 +848,7 @@ $('#ver').textContent = VERSION;
 load(); meterUpd();
 if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder)) panel.innerHTML = '<h2>This browser can\'t record</h2><p>Open this page in Safari on the iPhone, from its https address.</p>';
 else if (S.setup && S.sessId) showResume(); else showSetup();
-window.__rec = { S, SECTIONS, EVENING, save, LAYOUT, steps, packPart, partSaved, setSpeed: v => { SPEED = v; }, layoutSvg, makeZip, RK, loadRacks, rackPlan, stopRack, setRackPart: v => { RACK_PART = v; } };
+window.__rec = { S, SECTIONS, EVENING, CUEBALL, save, LAYOUT, steps, packPart, partSaved, setSpeed: v => { SPEED = v; }, layoutSvg, makeZip, RK, loadRacks, rackPlan, stopRack, setRackPart: v => { RACK_PART = v; } };
 </script>
 </body>
 </html>
