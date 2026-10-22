@@ -1,0 +1,7 @@
+{
+ "about": "Pockets by eye (Claude). The rack is at the camera-left end, so P1 far-left, P2 near-left, P3 near side, P4 near-right, P5 far-right, P6 far side.",
+ "pockets": [
+  {"ball": 7, "pocket": "P1", "conf": "high"},
+  {"ball": 9, "pocket": "P3", "conf": "high"}
+ ]
+}

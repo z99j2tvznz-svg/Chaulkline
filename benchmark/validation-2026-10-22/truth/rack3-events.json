@@ -1,0 +1,15 @@
+{
+ "about": "Recording R0.8 20261022-1227 'rack3' (146.4 s). Checked by eye by Claude from the video before either system was run (1 fps overview; 5-15 fps around every shot). Times are seconds from the start of the recording, 'at' = cue strike, about +/-0.3 s. Not reviewed by the player. A piece of chalk sits on the near rail by the near side pocket from ~51 s and on the near-left rail later (not a ball).",
+ "start": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+ "shots": [
+  {"id": "break", "at": 15.85, "made": [8, 3], "first": null, "note": "8 into the far-left corner (~16.2 s), then 3 into the far-left corner (~16.8 s); balls roll until ~21 s"},
+  {"id": "S1", "at": 33.35, "made": [1], "first": 1, "note": "1 into the far side pocket (~33.7 s)"},
+  {"id": "S2", "at": 44.9, "made": [], "first": 2, "note": "miss: the 2 runs along the near rail toward the near-left corner and stays out"},
+  {"id": "S3", "at": 63.5, "made": [2], "first": 2, "note": "2 into the far-right corner (~64.3 s); cue ball rolls back to the left end until ~70 s"},
+  {"id": "S4", "at": 81.5, "made": [4], "first": 4, "note": "4 into the near-left corner (~83.3 s)"},
+  {"id": "S5", "at": 95.9, "made": [5], "first": 5, "note": "5 reaches the near-left corner jaws at ~97.2 s, hangs there and drops at ~99 s"},
+  {"id": "S6", "at": 111.3, "made": [6], "first": 6, "note": "6 into the far side pocket (~113.3 s)"},
+  {"id": "S7", "at": 122.3, "made": [7], "first": 7, "note": "7 into the far-right corner (~123.5 s)"},
+  {"id": "S8", "at": 134.7, "made": [9], "first": 9, "note": "9 into the near-left corner (~135.1 s); rack over"}
+ ]
+}

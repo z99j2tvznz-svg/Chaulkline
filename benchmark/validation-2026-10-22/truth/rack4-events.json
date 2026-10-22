@@ -1,0 +1,220 @@
+{
+ "about": "Recording R0.8 20261022-1227 'rack4' (411.6 s). Checked by eye by Claude from the video before either system was run (2.5 s overview; 2-16 fps around every shot). Times are seconds from the start of the recording, 'at' = cue strike, about +/-0.5 s. Not reviewed by the player. Racking 0-40 s. The camera is knocked at ~302-306 s and the view stays shifted. Shots marked DOUBTFUL go to the player.",
+ "start": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9
+ ],
+ "shots": [
+  {
+   "id": "break",
+   "at": 40.95,
+   "made": [
+    3
+   ],
+   "first": null,
+   "note": "3 into the far-left corner (~41.3 s); the 4 runs to the near-left corner and comes back out"
+  },
+  {
+   "id": "S1",
+   "at": 59.2,
+   "made": [],
+   "first": null,
+   "note": "DOUBTFUL: cue ball (at the far rail by the 5/4 pair) struck to the left; contact with any ball unclear"
+  },
+  {
+   "id": "S2",
+   "at": 74.8,
+   "made": [],
+   "first": 1,
+   "note": "1 sent toward the near-right corner, stays out"
+  },
+  {
+   "id": "S3",
+   "at": 94.4,
+   "made": [
+    1
+   ],
+   "first": 1,
+   "note": "1 into the near side pocket (~95.3 s); cue ball then hits the 9"
+  },
+  {
+   "id": "S4",
+   "at": 109.3,
+   "made": [],
+   "first": 2,
+   "note": "cue ball passes the 5/4 pair (possible graze) and hits the 2; 2 scatters the pair"
+  },
+  {
+   "id": "S5",
+   "at": 125.2,
+   "made": [],
+   "first": 2,
+   "note": "miss"
+  },
+  {
+   "id": "S6",
+   "at": 138.8,
+   "made": [],
+   "first": 2,
+   "note": "2 runs to the right end"
+  },
+  {
+   "id": "S7",
+   "at": 150.1,
+   "made": [],
+   "first": 2,
+   "note": "2 travels the length of the table back to the far-left area"
+  },
+  {
+   "id": "S8",
+   "at": 172.1,
+   "made": [],
+   "first": 2,
+   "note": "shot over the 9; 2 to the far-left corner area, stays out"
+  },
+  {
+   "id": "S9",
+   "at": 183.0,
+   "made": [],
+   "first": 2,
+   "note": "thin hit on the 2, cue ball then hits the 9"
+  },
+  {
+   "id": "S10",
+   "at": 203.0,
+   "made": [],
+   "first": 4,
+   "note": "DOUBTFUL: cue ball goes off the far rail and hits the 4 before the 2 (foul); cue ball picked up ~209 s and placed by hand ~217 s (ball in hand). 217-225 s the player moves the cue ball and the 6 by hand (not a shot)"
+  },
+  {
+   "id": "S11",
+   "at": 238.6,
+   "made": [],
+   "first": null,
+   "scratch": true,
+   "note": "DOUBTFUL: cue ball runs round the table; it ends by the far side pocket and is taken out of it by hand ~244 s (likely scratch in P6)"
+  },
+  {
+   "id": "S12",
+   "at": 251.8,
+   "made": [],
+   "first": 2,
+   "note": "miss"
+  },
+  {
+   "id": "S13",
+   "at": 261.8,
+   "made": [],
+   "first": 2,
+   "note": "miss"
+  },
+  {
+   "id": "S14",
+   "at": 271.0,
+   "made": [
+    2
+   ],
+   "first": 2,
+   "note": "2 into the near-left corner (~271.5 s)"
+  },
+  {
+   "id": "S15",
+   "at": 284.3,
+   "made": [],
+   "first": null,
+   "note": "DOUBTFUL first ball (cue ball was touching the 6); 4 runs to the near-left area"
+  },
+  {
+   "id": "S16",
+   "at": 295.3,
+   "made": [],
+   "first": null,
+   "note": "cue ball into the 4/7 pair at the far rail; first ball unclear. The camera is knocked and the view shifts at ~302-306 s"
+  },
+  {
+   "id": "S17",
+   "at": 321.8,
+   "made": [],
+   "first": 4,
+   "note": "4 and 9 move, nothing made"
+  },
+  {
+   "id": "S18",
+   "at": 332.6,
+   "made": [
+    4
+   ],
+   "first": 4,
+   "note": "4 into the far-right corner (~333.3 s)"
+  },
+  {
+   "id": "S19",
+   "at": 341.6,
+   "made": [
+    5
+   ],
+   "first": 5,
+   "note": "5 into the far side pocket (~342.6 s)"
+  },
+  {
+   "id": "S20",
+   "at": 352.8,
+   "made": [
+    6
+   ],
+   "first": 6,
+   "scratch": true,
+   "note": "6 toward the near-left corner (gone by ~353.4 s); the cue ball goes into the near side pocket (~354 s), placed by hand ~357 s"
+  },
+  {
+   "id": "S21",
+   "at": 365.7,
+   "made": [],
+   "first": null,
+   "note": "DOUBTFUL: the player blocks most of the view 358-366 s; cue ball moves past the 8 toward the 7"
+  },
+  {
+   "id": "S22",
+   "at": 372.3,
+   "made": [
+    7
+   ],
+   "first": 7,
+   "note": "7 into the far-right corner (~373.1 s)"
+  },
+  {
+   "id": "S23",
+   "at": 381.3,
+   "made": [],
+   "first": 8,
+   "scratch": true,
+   "note": "8 runs to the right end, stays out; the cue ball goes into the far-left corner (~384 s), placed by hand ~389 s"
+  },
+  {
+   "id": "S24",
+   "at": 396.0,
+   "made": [
+    8
+   ],
+   "first": 8,
+   "note": "8 into the near-right corner (~396.5 s)"
+  },
+  {
+   "id": "S25",
+   "at": 404.4,
+   "made": [
+    9
+   ],
+   "first": 9,
+   "note": "9 runs along the far rail past the far side pocket into the far-left corner (~405.2 s); rack over"
+  }
+ ]
+}

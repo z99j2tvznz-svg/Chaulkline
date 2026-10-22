@@ -1,0 +1,7 @@
+{
+ "about": "Recording R0.8 20261022-1227 'rack5' (68.5 s). Checked by eye by Claude from the video before either system was run (1 fps overview; 4-15 fps around the break). Times are seconds from the start of the recording, 'at' = cue strike, about +/-0.3 s. Racking 0-36 s (balls placed by hand), break 45.7 s. The 9 went in on the break, which wins the rack, so the rack is one shot long; the player then walks round and stops recording. Not reviewed by the player.",
+ "start": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+ "shots": [
+  {"id": "break", "at": 45.7, "made": [7, 9], "first": null, "note": "7 into the far-left corner (~46.1 s); 9 into the near side pocket (~47.5 s); the 2 runs at the near-left corner and comes back out; 9 on the break wins the rack; first ball not judged (head ball not readable at the strike)"}
+ ]
+}
