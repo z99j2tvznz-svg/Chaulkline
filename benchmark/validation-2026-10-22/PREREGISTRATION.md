@@ -142,3 +142,11 @@ feedback is not part of the first prototype unless D shows clean separation.
 - The finest feedback players use is about a quarter diamond (≈ 2.5 in). The diamond-sighted placements (about
   1-2 in placement error) can therefore test the question that matters for the drill: whether the camera puts the ball
   within a quarter diamond. The tape is only needed for claims finer than that.
+
+## Truth confidence (2026-10-22 20:14, player: "my tape numbers won't be accurate")
+- Tape readings are low-confidence truth. They are all kept and reported as such. None is dropped for disagreeing with
+  the system, because that would bias the result.
+- High-confidence truth = positions exact without a tape: a ball frozen against a rail (exact on that axis; A2, A6, A8)
+  and the box stickers seen in the set-up clip. Accuracy claims rest on these, and the tape tier is reported
+  separately.
+- The test design is frozen from here on, at the player's request.
