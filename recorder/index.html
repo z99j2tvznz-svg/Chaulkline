@@ -36,6 +36,7 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 #rec { position: fixed; z-index: 4; top: calc(env(safe-area-inset-top) + 40px); left: 12px; background: rgba(0,0,0,.6); border-radius: 8px; padding: 6px 10px; font-weight: 700; }
 #rec b { color: var(--bad); }
 #shotDone { position: fixed; z-index: 5; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom) + 18px); padding: 18px 34px; font-size: 20px; border-radius: 14px; }
+#newAtt { position: fixed; z-index: 5; left: calc(env(safe-area-inset-left) + 16px); bottom: calc(env(safe-area-inset-bottom) + 18px); padding: 16px 24px; font-size: 20px; border-radius: 14px; background: #26303b; font-weight: 700; }
 #stopRack { position: fixed; z-index: 5; right: calc(env(safe-area-inset-right) + 16px); bottom: calc(env(safe-area-inset-bottom) + 18px); padding: 16px 28px; font-size: 20px; border-radius: 14px; background: var(--bad); border-color: var(--bad); color: #fff; font-weight: 700; }
 #confirm { position: fixed; inset: 0; z-index: 6; background: rgba(0,0,0,.75); display: flex; align-items: center; justify-content: center; padding: 20px; }
 #confirm > div { background: #161b22; border: 1px solid var(--line); border-radius: 14px; padding: 18px; max-width: 420px; }
@@ -49,6 +50,7 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 <div id="rec" class="hidden"><b>●</b> REC <span id="recLeft"></span></div>
 <button id="shotDone" class="primary hidden">Shot done</button>
 <button id="stopRack" class="hidden">Stop</button>
+<button id="newAtt" class="hidden">New attempt</button>
 <div id="confirm" class="hidden"><div><h2>Stop recording?</h2><p class="muted">Only stop once the last ball has stopped rolling.</p><div class="row"><button class="big" id="cfYes">Yes, stop</button><button class="primary big" id="cfNo">Keep recording</button></div></div></div>
 <div id="big" class="hidden"></div>
 <div id="panel"></div>
@@ -58,10 +60,12 @@ svg.lay { width: 100%; max-width: 420px; display: block; margin: 8px 0; }
 // short clip per step (video, sound, motion sensor, camera settings) and the player's tap answers, and saves them as
 // zip files that each stay under the 30 MB upload limit. It does no tracking. Section contents and the reasons behind
 // them: chalkline-data/plans/test-recorder-sections.md in the project files.
+// R0.9 adds the Three-Ball Runout drill: the continuous session with the cue ball and the 1, 2 and 3, and a New attempt
+// button while recording (its taps go into the recording's events as 'new-attempt'; nothing else is asked).
 // R0.8 adds the cue-ball test session (38 short steps with pictures and a measurement form after each).
 // R0.7 adds the continuous rack session: one recording for a whole rack, nothing asked between shots (see 'continuous
 // rack mode' below).
-const VERSION = 'R0.8';
+const VERSION = 'R0.9';
 const MB = 1048576, PART_LIMIT = 25 * MB, CLIP_MAX = 29 * MB;
 const $ = s => document.querySelector(s);
 const panel = $('#panel'), view = $('#view');
@@ -436,10 +440,10 @@ function showSetup() {
     '<label>Where is the phone?</label><select id="fSpot">' + opt(['low side', 'high side', 'corner', 'end rail'], st.spot) + '</select>' +
     '<label>Lighting right now</label><select id="fLight">' + opt(LIGHTS, st.light) + '</select>' +
     '<label>Place</label><select id="fPlace">' + opt(['home', 'pool hall'], st.place) + '</select>' +
-    '<label>Session</label><select id="fShort"><option value="2"' + (st.evening || !st.phone ? ' selected' : '') + '>Evening check (10 to 15 minutes)</option><option value="0"' + (st.phone && !st.short && !st.evening ? ' selected' : '') + '>Full session (about an hour)</option><option value="1"' + (st.short ? ' selected' : '') + '>Short version for another spot (about 20 minutes)</option><option value="3"' + (st.continuous ? ' selected' : '') + '>Continuous rack: start once, play the whole rack, stop</option><option value="4"' + (st.cueball ? ' selected' : '') + '>Cue-ball test (38 short steps with pictures)</option></select>' +
+    '<label>Session</label><select id="fShort"><option value="2"' + (st.evening || !st.phone ? ' selected' : '') + '>Evening check (10 to 15 minutes)</option><option value="0"' + (st.phone && !st.short && !st.evening ? ' selected' : '') + '>Full session (about an hour)</option><option value="1"' + (st.short ? ' selected' : '') + '>Short version for another spot (about 20 minutes)</option><option value="3"' + (st.continuous ? ' selected' : '') + '>Continuous rack: start once, play the whole rack, stop</option><option value="4"' + (st.cueball ? ' selected' : '') + '>Cue-ball test (38 short steps with pictures)</option><option value="5"' + (st.drill === 'threeball' ? ' selected' : '') + '>Three-Ball Runout drill (cue ball, 1, 2, 3)</option></select>' +
     '<div class="row"><button class="primary big" id="go">Start</button></div><p class="muted">It will ask for the camera, the microphone and the motion sensor. Please allow all three.</p>';
   $('#go').onclick = async () => {
-    S.setup = { phone: $('#fPhone').value.trim(), table: $('#fTable').value, spot: $('#fSpot').value, light: $('#fLight').value, place: $('#fPlace').value, short: $('#fShort').value === '1', evening: $('#fShort').value === '2', continuous: $('#fShort').value === '3', cueball: $('#fShort').value === '4' };
+    S.setup = { phone: $('#fPhone').value.trim(), table: $('#fTable').value, spot: $('#fSpot').value, light: $('#fLight').value, place: $('#fPlace').value, short: $('#fShort').value === '1', evening: $('#fShort').value === '2', continuous: $('#fShort').value === '3' || $('#fShort').value === '5', cueball: $('#fShort').value === '4', ...($('#fShort').value === '5' ? { drill: 'threeball', game: 'Three-Ball Runout' } : {}) };
     const d = new Date(), p = n => String(n).padStart(2, '0');
     S.sessId = d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
     Object.assign(S, { sec: 0, step: 0, playN: 0, part: 1, clipN: 0, partBytes: 0, pending: [] }); save();
@@ -666,17 +670,23 @@ function rackBytes(r) { return r.segs.reduce((a, g) => a + g.bytes, 0); }
 function median(a) { if (!a.length) return null; const b = [...a].sort((x, y) => x - y); return b[b.length >> 1]; }
 function rackFps(r) { return median(r.segs.flatMap(g => g.frames.slice(1, -1).map(f => f[1]))); }
 
+// the drill's set-up picture: the four balls scattered anywhere
+function drillSvg() { return layoutSvg({ balls: [{ b: 0, at: [2, 1.4] }, { b: 1, at: [5.2, 2.9] }, { b: 2, at: [3.6, 1] }, { b: 3, at: [6.6, 1.7] }] }); }
 async function showRack() {
   setWhere('Continuous rack'); $('#sizeTxt').textContent = ''; $('#meter').classList.add('hidden');
-  const racks = await loadRacks(), n = racks.length + 1, last = S.setup.game || '9-ball';
-  let h = '<h2>Rack ' + n + '</h2>' +
+  const racks = await loadRacks(), n = racks.length + 1, last = S.setup.game || '9-ball', drill = S.setup.drill === 'threeball';
+  if (drill) setWhere('Three-Ball Runout');
+  let h = drill ? '<h2>Three-Ball Runout</h2>' + drillSvg() +
+    '<ol style="padding-left:20px;margin:6px 0"><li>Put the cue ball, the 1, the 2 and the 3 anywhere on the table. Any order, any pocket.</li><li>Tap <b>Start recording</b> and leave the phone alone. Play as many attempts as you like in one recording.</li><li>Shoot normally. There\'s nothing to tap between shots.</li><li>To start again, put the balls back anywhere. If you stop an attempt early, tap <b>New attempt</b> after the balls are back.</li><li>When you\'re done, wait about 5 seconds, then tap <b>Stop</b>.</li></ol>' +
+    '<div class="row"><button class="primary big" id="rackGo">Start recording</button></div>' :
+    '<h2>Rack ' + n + '</h2>' +
     '<ol style="padding-left:20px;margin:6px 0"><li>Rack the balls and put the white where you\'ll break from.</li><li>Tap <b>Start recording</b>, then step away and leave the phone alone for the whole rack.</li><li>Let the table sit still for about 5 seconds, then break and play the rack out normally. There\'s nothing to tap between shots.</li><li>When the last ball has stopped, wait about 5 seconds, then tap <b>Stop</b>.</li></ol>' +
     '<label>Game</label><select id="fGame">' + GAMES.map(g => '<option' + (g === last ? ' selected' : '') + '>' + g + '</option>').join('') + '</select>' +
     '<div class="row"><button class="primary big" id="rackGo">Start recording</button></div>';
   if (RK.memOnly) h += '<p class="warn">This phone\'s storage isn\'t available to the recorder, so it\'s recording into memory. Keep racks short and save each one straight away.</p>';
   if (racks.length) h += '<h2 style="margin-top:14px">On this phone</h2>' + racks.map(r => '<p>Rack ' + r.n + ' (' + esc(r.game) + '), ' + mmss(rackSecs(r)) + ', ' + (rackBytes(r) / MB).toFixed(0) + ' MB: ' + (r.saved ? 'saved' : '<span class="warn">not saved yet</span>') + ' <button data-open="' + esc(r.id) + '">Open</button></p>').join('');
   panel.innerHTML = h;
-  $('#rackGo').onclick = () => { S.setup.game = $('#fGame').value; save(); startRack(null); };
+  $('#rackGo').onclick = () => { S.setup.game = drill ? 'Three-Ball Runout' : $('#fGame').value; save(); startRack(null); };
   panel.querySelectorAll('[data-open]').forEach(b => { b.onclick = () => showRackDone(RK.racks.find(r => r.id === b.dataset.open)); });
 }
 
@@ -723,6 +733,11 @@ async function startRack(rack) {
   r.start(1000); keepAwake(); await saveRack(rack); beep(990, 220);
   // on screen while recording: time, size, frame rate and the Stop button only
   panel.classList.add('hidden'); $('#rec').classList.remove('hidden'); $('#stopRack').classList.remove('hidden');
+  if (rack.setup && rack.setup.drill) {
+    // New attempt: only a mark in the recording's events; the drill also finds new attempts on its own
+    const na = $('#newAtt'); na.classList.remove('hidden'); o.attempts = rack.segs.reduce((a, g) => a + g.events.filter(e => e[2] === 'new-attempt').length, 1);
+    na.onclick = () => { o.attempts++; rackEv(o, 'new-attempt', o.attempts); beep(1320, 120); na.textContent = 'Attempt ' + o.attempts + ' ✓'; setTimeout(() => { na.textContent = 'New attempt'; }, 2000); };
+  }
   o.tick = setInterval(() => {
     const s = (performance.now() - o.t0) / 1000, f = seg.frames.length ? seg.frames[seg.frames.length - 1][1] : null;
     $('#recLeft').textContent = mmss(s) + ' · ' + (seg.bytes / MB).toFixed(0) + ' MB' + (f ? ' · ' + f + ' fps' : '') + (rack.segs.length > 1 ? ' · part ' + seg.seg : '');
@@ -739,7 +754,7 @@ async function startRack(rack) {
 async function stopRack(reason) {
   const o = RK.rec; if (!o || o.stopping) return; o.stopping = true;
   clearInterval(o.tick); clearInterval(o.space);
-  $('#stopRack').classList.add('hidden'); $('#confirm').classList.add('hidden'); $('#rec').classList.add('hidden');
+  $('#stopRack').classList.add('hidden'); $('#newAtt').classList.add('hidden'); $('#confirm').classList.add('hidden'); $('#rec').classList.add('hidden');
   panel.classList.remove('hidden'); panel.innerHTML = '<h2>Saving the recording…</h2>';
   if (o.r.state !== 'inactive') { try { o.r.stop(); } catch (e) { } }
   await Promise.race([o.stopped, sleep(5000)]);
