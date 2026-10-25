@@ -1,0 +1,9 @@
+{
+  "name": "chalkline-fieldwork-lab",
+  "private": true,
+  "version": "0.1.0",
+  "description": "ChatGPT-owned synthetic foundation scenario lab, isolated from the Chalkline player app",
+  "scripts": {
+    "test": "node --test tests/*.test.cjs"
+  }
+}
