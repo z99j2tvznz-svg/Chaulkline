@@ -5,9 +5,11 @@
   const G = globalThis.ChalklineTableGeometry;
   const cam = new globalThis.ChalklineCameraAdapters.BrowserCameraAdapter();
   const cv = new globalThis.ChalklinePerspectiveAdapters.OpenCVPerspectiveAdapter();
+  const localPerspective = new globalThis.ChalklineCanvasPerspectiveAdapters.CanvasPerspectiveAdapter();
+  let perspective = localPerspective;
   const video = $('camera'), src = $('source'), overlay = $('overlay'), out = $('output');
   const points = [];
-  let sourceType = null, cvReady = false, rev = 0, result = null, currentCal = null, calibrating = false;
+  let sourceType = null, rev = 0, result = null, currentCal = null, calibrating = false;
   const setStatus = (id, text, cls = '') => { const e = $(id); e.textContent = text; e.className = 'status' + (cls ? ' ' + cls : ''); };
   const setVisible = (el, visible) => { el.hidden = !visible; };
   const updateCorners = () => {
@@ -17,7 +19,7 @@
     });
     $('metric-points').textContent = `${points.length} / 4`;
     $('undo-corner').disabled = points.length === 0;
-    $('rectify').disabled = !cvReady || points.length !== 4 || !src.width || calibrating;
+    $('rectify').disabled = points.length !== 4 || !src.width || calibrating;
   };
   const drawOverlay = () => {
     const ctx = overlay.getContext('2d');
@@ -108,7 +110,7 @@
         currentCal = G.createCalibration({ points, imageWidth: src.width, imageHeight: src.height,
           table: $('table-size').value, revision: ++rev, sourceType });
         $('metric-rev').textContent = String(currentCal.revision);
-        setStatus('cal-status', 'Four valid corners recorded. Load OpenCV if needed and choose Rectify table.', 'good');
+        setStatus('cal-status', 'Four valid corners recorded. Choose Rectify table. OpenCV.js is optional.', 'good');
       } catch (err) {
         points.pop(); drawOverlay(); updateCorners();
         setStatus('cal-status', err.message, 'error');
@@ -133,29 +135,37 @@
     } catch (e) { setStatus('cal-status', e.message, 'error'); }
   });
   $('load-cv').addEventListener('click', async () => {
-    if (cvReady) return;
+    if (perspective === cv) return;
     $('load-cv').disabled = true;
-    setStatus('cv-status', 'Loading official OpenCV.js 4.10.0 (first load may be large)...');
+    setStatus('cv-status', 'Trying the optional OpenCV.js 4.10.0 download. The local Canvas backend remains ready...');
     try {
-      await cv.ready(); cvReady = true;
+      await cv.ready(); perspective = cv;
       $('metric-cv').textContent = 'OPENCV 4.10';
       setStatus('cv-status', 'OpenCV.js is initialized. Rectification is available.', 'good');
     } catch (e) {
-      setStatus('cv-status', e.message, 'error');
+      setStatus('cv-status', 'OpenCV.js could not download. The built-in Canvas backend still works: mark four corners and choose Rectify table. Details: ' + e.message, 'warn');
       $('load-cv').disabled = false;
     }
     updateCorners();
   });
   $('rectify').addEventListener('click', () => {
-    if (!currentCal || !cvReady) return;
+    if (!currentCal) return;
     try {
       calibrating = true; updateCorners();
-      const projection = cv.rectify(src, currentCal, out);
+      let projection;
+      try { projection = perspective.rectify(src, currentCal, out); }
+      catch (error) {
+        if (perspective === localPerspective) throw error;
+        perspective = localPerspective;
+        $('metric-cv').textContent = 'CANVAS LOCAL';
+        setStatus('cv-status', 'OpenCV.js could not process this frame. Switched to the on-device Canvas backend.', 'warn');
+        projection = perspective.rectify(src, currentCal, out);
+      }
       result = G.withProjection(currentCal, projection);
       setVisible(out, true); setVisible($('output-empty'), false);
       $('download').disabled = false;
-      $('output-caption').textContent = `OPENCV.JS / ${projection.widthPx} × ${projection.heightPx} / MANUAL CORNERS / REV ${currentCal.revision}`;
-      setStatus('cal-status', 'Perspective transform complete. Inspect rail alignment and export the calibration record.', 'good');
+      $('output-caption').textContent = `${projection.provider.toUpperCase()} / ${projection.widthPx} × ${projection.heightPx} / MANUAL CORNERS / REV ${currentCal.revision}`;
+      setStatus('cal-status', 'Perspective transform complete using ' + projection.provider + '. Inspect rail alignment and export the calibration record.', 'good');
       $('output-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
     } catch (e) { setStatus('cal-status', `OpenCV rectification failed: ${e.message}`, 'error'); }
     finally { calibrating = false; updateCorners(); }
