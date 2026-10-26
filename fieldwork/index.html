@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Fieldwork">
+  <meta name="color-scheme" content="light">
+  <title>Fieldwork / Chalkline foundation lab</title>
+  <style>
+    :root{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172333;background:#f2f0e9;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0;min-width:320px}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #e9773f;outline-offset:3px}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.shell{max-width:1680px;margin:auto}
+    .bar{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #dcdcd2;background:#fffcf6;padding:13px clamp(16px,4vw,56px);gap:12px}
+    .brand{display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.13em;font-weight:900}.logo{height:32px;width:32px;border-radius:5px;background:#d96336;color:white;display:grid;place-items:center;letter-spacing:-.1em;font-size:14px}
+    .brand small{display:block;margin-top:2px;letter-spacing:.08em;font-size:9px;color:#747c83}.tag{font-size:10px;letter-spacing:.08em;color:#9c4928;background:#fbe9dc;border:1px solid #f1c9b4;padding:7px 10px;border-radius:20px;white-space:nowrap}
+    .intro{padding:clamp(24px,4vw,52px) clamp(16px,4vw,56px) 22px}.eyebrow{font:700 10px ui-monospace,SFMono-Regular,monospace;letter-spacing:.19em;color:#c35a31}
+    h1{font-size:clamp(30px,3.5vw,48px);letter-spacing:-.045em;line-height:1.08;margin:12px 0}.intro p{font-size:14px;color:#64717e;max-width:690px;line-height:1.55;margin:0}
+    .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:17px}.pill{background:#e9ece7;color:#53645c;padding:7px 10px;border-radius:6px;font-size:10px;font-weight:750;letter-spacing:.06em}.pill.warn{background:#f4dfd1;color:#8b492f}
+    .layout{display:grid;grid-template-columns:minmax(180px,220px) minmax(0,1fr) minmax(245px,300px);gap:18px;padding:16px clamp(16px,4vw,56px) 42px;align-items:start}
+    .panel{background:#fffdf8;border:1px solid #deddd3;border-radius:9px;box-shadow:0 5px 12px #16233404;overflow:hidden;min-width:0}.pad{padding:20px}.section{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid #e8e6dd}
+    .section h2{font-size:12px;letter-spacing:.065em;margin:0}.small{font-size:10px;letter-spacing:.08em;color:#78828a;font-weight:700}.side-title{padding:20px 16px 8px;font:700 10px ui-monospace,monospace;letter-spacing:.12em;color:#879097}
+    .choices{padding:5px 10px 14px}.choice{display:flex;text-align:left;align-items:center;width:100%;gap:10px;padding:13px 10px;color:#45515d;border:1px solid transparent;border-radius:6px;background:none;font-size:12px;margin:2px 0}.choice:hover{background:#f4f2ea}.choice.active{background:#fff0e7;border-color:#f3c6ad;color:#a84723;font-weight:800}
+    .choice .num{font:700 10px ui-monospace,monospace;opacity:.65;width:22px}.choice .name{flex:1}.choice .dot{width:7px;height:7px;border-radius:50%;background:#d6d7d0}.choice.active .dot{background:#e37642}
+    .subcaption{padding:12px 16px;background:#f8f6f0;border-top:1px solid #e9e6dd;color:#8a9192;font-size:10px;line-height:1.5}
+    .main-title{font-size:24px;letter-spacing:-.03em;font-weight:750;margin:0 0 6px}.main-description{font-size:12px;color:#75808a;line-height:1.5;margin:0;max-width:700px}
+    .metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:#deddd3;border-bottom:1px solid #deddd3}.metric{background:#fffdf8;padding:16px 14px}.metric .key{font-size:9px;letter-spacing:.1em;color:#90989e;font-weight:750}.metric .value{font:750 13px ui-monospace,SFMono-Regular,monospace;margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .board-wrap{padding:22px;background:#1e303b}.board{display:block;width:100%;max-width:800px;margin:auto;aspect-ratio:780/390}.board-label{color:#b0babc;font:11px ui-monospace,monospace}
+    .board-legend{display:flex;flex-wrap:wrap;gap:18px;color:#acbdc3;font-size:10px;padding-top:14px}.swatch{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}.swatch.cue{background:#fff}.swatch.obj{background:#e7c35f}.swatch.unknown{background:#9fa8af;border:1px dashed #fff}
+    .control{display:flex;align-items:center;gap:12px;padding:18px 20px}.navbtn{background:#f5f3ed;border:1px solid #deddd6;padding:10px 14px;border-radius:6px;color:#20323b;font-weight:750;min-width:40px}.navbtn:disabled{opacity:.4;cursor:default}.play{background:#d9663a;color:#fff;border-color:#d9663a}.control input{flex:1;min-width:50px;accent-color:#d9663a}.frame-label{font:800 11px ui-monospace,monospace;color:#6e7780;white-space:nowrap}
+    .info{padding:16px 20px;background:#f8f6f0;color:#6f7c85;font-size:11px;line-height:1.6;border-top:1px solid #e9e5dd}.info strong{color:#253540}
+    .rightcard{padding:20px;border-bottom:1px solid #e9e6df}.rightcard h3{font-size:10px;letter-spacing:.15em;margin:0 0 16px;color:#818b91}.state-name{font:800 20px ui-monospace,monospace;letter-spacing:-.03em;color:#20303b}.state-name.uncertain{color:#bb6433}.description{font-size:12px;color:#64717e;line-height:1.55;margin:10px 0 0}.facts{display:grid;grid-template-columns:1fr auto;gap:12px;font-size:11px;color:#6a747b;padding-top:18px}.facts strong{font:800 11px ui-monospace,monospace;color:#22323d}
+    .events{padding:8px 14px 14px;max-height:430px;overflow:auto}.event{position:relative;padding:11px 7px 11px 17px;border-left:1px solid #e5e1d9;margin-left:7px}.event:before{content:"";position:absolute;left:-4px;top:15px;height:7px;width:7px;border-radius:50%;background:#e0e0d6}.event.supported:before,.event.confirmed:before{background:#3b7b69}.event.uncertain:before{background:#d26c40}.event.candidate:before{background:#d4ad5f}
+    .event .time{font:10px ui-monospace,monospace;color:#979e9e}.event .name{font-size:12px;font-weight:760;margin-top:5px;overflow-wrap:anywhere}.event .status{font-size:9px;letter-spacing:.1em;color:#8a9699;text-transform:uppercase;margin-top:5px}.noevents{font-size:12px;color:#8a9699;padding:30px 9px;text-align:center}
+    footer{border-top:1px solid #dedbd2;background:#ecebe4;color:#79818a;font-size:10px;padding:18px clamp(16px,4vw,56px);line-height:1.6;letter-spacing:.04em}
+    @media(max-width:1120px){.layout{grid-template-columns:185px minmax(0,1fr)}.right{grid-column:2}.events{max-height:260px}.choices{padding:5px 6px 12px}.choice{padding:10px 6px}}
+    @media(max-width:760px){.bar{padding:12px 16px}.tag{font-size:9px}.layout{grid-template-columns:minmax(0,1fr);padding:12px 12px 24px;gap:14px}.left,.right{grid-column:1}.choices{display:grid;grid-template-columns:1fr 1fr;gap:3px}.choice{padding:11px 6px;font-size:11px}.intro{padding:24px 16px 10px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.control{padding:14px 10px;gap:8px}.navbtn{padding:10px;min-width:34px}.frame-label{font-size:10px}.board-wrap{padding:12px}.rightcard{padding:14px}.pad{padding:16px}}
+    @media(max-width:430px){.brand{font-size:10px}.brand small{font-size:8px}.tag{padding:6px}.choices{grid-template-columns:1fr 1fr}.choice .num{width:auto}.choice .dot{display:none}.metric{padding:12px}.control{gap:5px}.frame-label{letter-spacing:-.06em;font-size:9px}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="bar">
+      <div class="brand"><div class="logo">FW</div><div>FIELDWORK<small>CHALKLINE / FOUNDATION ENGINEERING</small></div></div>
+      <span class="tag mono">CHATGPT BUILD 001 / ISOLATED</span>
+    </header>
+    <section class="intro">
+      <div class="eyebrow">FOUNDATION LAB / EVIDENCE WORKBENCH</div>
+      <h1>Evidence before conclusions.</h1>
+      <p>A transparent engineering sandbox for interpreting a physical pool table. Select a controlled scenario, advance through its observations, and inspect exactly what the engine knows and what it refuses to guess.</p>
+      <div class="pills"><span class="pill" id="count">9 SYNTHETIC SCENARIOS</span><span class="pill warn">NOT VALIDATED ON REAL FOOTAGE</span><span class="pill">NOT THE PLAYER APP</span></div>
+    </section>
+    <div class="layout">
+      <aside class="panel left"><div class="section"><h2>TEST SCENARIOS</h2><span class="small mono">01 / 09</span></div><div class="side-title">CONTROLLED EVIDENCE</div><nav class="choices" id="scenarios" aria-label="Synthetic scenarios"></nav><div class="subcaption mono">One scenario at a time.<br>All observations are synthetic.</div></aside>
+      <main class="panel main">
+        <div class="pad"><div class="eyebrow">STATE INTERPRETER / DEMO</div><h2 class="main-title" id="title">Clean pocket</h2><p class="main-description" id="desc"></p></div>
+        <div class="metrics">
+          <div class="metric"><div class="key">SHOT PHASE</div><div class="value" id="m-phase">SETUP</div></div>
+          <div class="metric"><div class="key">CAMERA</div><div class="value" id="m-camera">CAM-A</div></div>
+          <div class="metric"><div class="key">BALL TRACKS</div><div class="value" id="m-tracks">0</div></div>
+          <div class="metric"><div class="key">SHOT COUNT</div><div class="value" id="m-shots">0</div></div>
+        </div>
+        <div class="board-wrap"><svg class="board" id="table" role="img" aria-label="Top-down synthetic table positions" viewBox="0 0 780 390"></svg><div class="board-legend"><span><i class="swatch cue"></i>Cue ball</span><span><i class="swatch obj"></i>Object ball</span><span><i class="swatch unknown"></i>Unknown or obscured</span></div></div>
+        <div class="control"><button class="navbtn" id="prev" aria-label="Previous frame">&#8592;</button><button class="navbtn play" id="play">Play</button><input type="range" id="scrub" min="0" max="1" value="0" step="1" aria-label="Choose observed frame"><button class="navbtn" id="next" aria-label="Next frame">&#8594;</button><span class="frame-label" id="frame-number">01 / 07</span></div>
+        <div class="info"><strong>EXPECTED:</strong> <span id="expected"></span><div style="margin-top:5px"><strong>READ THIS CORRECTLY:</strong> The engine consumes pre-classified ball, player and strike evidence. This interface does not analyze camera footage or prove detection accuracy.</div></div>
+      </main>
+      <aside class="panel right"><div class="section"><h2>EVIDENCE INSPECTOR</h2><span class="small mono" id="time">T+0.00 S</span></div>
+        <div class="rightcard"><h3>CURRENT INTERPRETATION</h3><div class="state-name" id="phase-text">SETUP</div><p class="description" id="explain">Awaiting observations.</p><div class="facts"><span>LAST EVIDENCE</span><strong id="last">None</strong><span>CLEAR VIEW</span><strong id="view">NO</strong><span>RELEASE CLASS</span><strong>EXPERIMENTAL</strong></div></div>
+        <div class="section"><h2>EVENT TRACE</h2><span class="small mono" id="event-count">0 EVENTS</span></div><div class="events" id="events" aria-live="polite"></div>
+      </aside>
+    </div>
+    <footer class="mono">FIELDWORK / CHATGPT ENGINEERING SPACE &nbsp; | &nbsp; SYNTHETIC EVIDENCE ONLY &nbsp; | &nbsp; NO SOURCE FOOTAGE OR LIVE APP CHANGES</footer>
+  </div>
+  <script src="./src/foundation/engine.js"></script>
+  <script src="./scenarios/scenarios.js"></script>
+  <script>
+    'use strict';
+    const $=id=>document.getElementById(id);
+    const scenarios=window.ChalklineScenarios.scenarios;
+    const Engine=window.ChalklineFoundation.FoundationEngine;
+    const labels={SETUP:'Setup in progress',ARMED:'Ready for a strike',STRIKE_PENDING:'Verifying the strike',IN_MOTION:'Ball movement recorded',SETTLING:'Waiting for a settled table',RESOLVED:'Supported interpretation',UNCERTAIN:'Insufficient evidence to conclude',VIEW_INVALID:'Camera calibration not valid'};
+    let active=0,at=0,states=[],interval=null;
+    const clean=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const svg=(tag,attrs)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,String(v)));return n;};
+    function stop(){if(interval!==null){clearInterval(interval);interval=null;}$('play').textContent='Play';}
+    function openScenario(index){stop();active=index;at=0;const e=new Engine();states=scenarios[index].frames.map(f=>e.step(f));$('scrub').max=String(states.length-1);$('title').textContent=scenarios[index].name;$('desc').textContent=scenarios[index].description;$('expected').textContent=scenarios[index].expect;render();}
+    function board(state){const root=$('table');root.replaceChildren();
+      root.append(svg('rect',{x:26,y:14,width:728,height:362,rx:24,fill:'#253d48',stroke:'#8ba3a5','stroke-width':3}));
+      root.append(svg('rect',{x:57,y:44,width:666,height:302,rx:8,fill:'#17665d',stroke:'#2e887b','stroke-width':5}));
+      root.append(svg('rect',{x:67,y:54,width:646,height:282,rx:2,fill:'#246e60',stroke:'#83ae96','stroke-width':1,'stroke-dasharray':'3 5'}));
+      const pockets=[[55,44],[390,39],[725,44],[55,346],[390,351],[725,346]];
+      pockets.forEach(([x,y])=>root.append(svg('circle',{cx:x,cy:y,r:17,fill:'#0b1d25',stroke:'#445962','stroke-width':2})));
+      for(let i=1;i<8;i++){const x=57+i*666/8;for(const y of [28,361])root.append(svg('circle',{cx:x,cy:y,r:3,fill:'#b9b9ac'}));}
+      const toX=x=>57+x/state.config.length*666, toY=y=>44+y/state.config.width*302;
+      state.balls.forEach(b=>{if(b.status==='pocketed')return;const cx=toX(b.x),cy=toY(b.y),unknown=b.status==='unknown'||b.number===null;
+        if(unknown)root.append(svg('circle',{cx,cy,r:15,fill:'none',stroke:'#ffb981','stroke-width':2,'stroke-dasharray':'3 4'}));
+        const c=svg('circle',{cx,cy,r:12,fill:unknown?'#9ba7a9':b.number===0?'#fffef6':'#e1b74d',stroke:unknown?'#dce8e4':b.number===0?'#ced6d0':'#694a15','stroke-width':2});root.append(c);
+        const t=svg('text',{x:cx,y:cy+4,'text-anchor':'middle','font-size':12,'font-family':'ui-monospace,monospace','font-weight':'bold',fill:unknown?'#fff':b.number===0?'#263341':'#36270b'});t.textContent=unknown?'?':String(b.number);root.append(t);
+      });
+      const t=svg('text',{x:390,y:383,'text-anchor':'middle',fill:'#b2c3c5','font-size':10,'font-family':'ui-monospace,monospace'});t.textContent='MODEL SPACE / '+state.config.length+' x '+state.config.width+' in';root.append(t);
+    }
+    function render(){const sc=scenarios[active],s=states[at];$('count').textContent=scenarios.length+' SYNTHETIC SCENARIOS';$('scrub').value=String(at);$('frame-number').textContent=String(at+1).padStart(2,'0')+' / '+String(states.length).padStart(2,'0');$('time').textContent='T+'+s.t.toFixed(2)+' S';$('m-phase').textContent=s.phase;$('m-camera').textContent=s.cameraValid?s.revision:'INVALID';$('m-tracks').textContent=String(s.balls.length);$('m-shots').textContent=String(s.shots.length);$('phase-text').textContent=s.phase;$('phase-text').className='state-name'+(s.phase==='UNCERTAIN'||s.phase==='VIEW_INVALID'?' uncertain':'');$('explain').textContent=labels[s.phase]||s.phase;$('last').textContent=s.lastEvidence.replaceAll('-',' ').toUpperCase();$('view').textContent=s.clearView?'YES':'NO';$('prev').disabled=at===0;$('next').disabled=at===states.length-1;
+      [...document.querySelectorAll('.choice')].forEach((b,i)=>{b.classList.toggle('active',i===active);b.setAttribute('aria-pressed',String(i===active));});
+      document.querySelector('.left .section .small').textContent=String(active+1).padStart(2,'0')+' / '+String(scenarios.length).padStart(2,'0');
+      board(s);const events=$('events');events.replaceChildren();$('event-count').textContent=s.events.length+' EVENTS';
+      if(!s.events.length){events.innerHTML='<div class="noevents">No recorded events at this frame.</div>';return;}
+      for(const ev of s.events.slice(-13).reverse()){const node=document.createElement('div');node.className='event '+ev.status;node.innerHTML='<div class="time">T+'+ev.t.toFixed(2)+' / '+clean(ev.id)+'</div><div class="name">'+clean(ev.type.replaceAll('-',' '))+'</div><div class="status">'+clean(ev.status)+'</div>';events.append(node);}
+    }
+    $('scenarios').innerHTML=scenarios.map((s,i)=>'<button type="button" class="choice" data-index="'+i+'" aria-pressed="false"><span class="num">'+String(i+1).padStart(2,'0')+'</span><span class="name">'+clean(s.name)+'</span><span class="dot"></span></button>').join('');
+    $('scenarios').addEventListener('click',e=>{const button=e.target.closest('button[data-index]');if(button)openScenario(Number(button.dataset.index));});
+    $('prev').addEventListener('click',()=>{stop();at=Math.max(0,at-1);render();});
+    $('next').addEventListener('click',()=>{stop();at=Math.min(states.length-1,at+1);render();});
+    $('scrub').addEventListener('input',e=>{stop();at=Number(e.target.value);render();});
+    $('play').addEventListener('click',()=>{if(interval!==null){stop();return;}if(at===states.length-1)at=0;render();$('play').textContent='Pause';interval=setInterval(()=>{at++;if(at>=states.length){at=states.length-1;stop();}render();},650);});
+    window.addEventListener('keydown',e=>{if(e.target.matches('input,button'))return;if(e.key==='ArrowLeft'){$('prev').click();}else if(e.key==='ArrowRight'){$('next').click();}});
+    openScenario(0);
+  </script>
+</body>
+</html>
