@@ -1,4 +1,4 @@
-/* Chalkline Fieldwork 0.1 — Safari photo session UI. All image data stays local until a user exports/shares. */
+/* Chalkline Fieldwork 0.2 — Safari photo session UI. All image data stays local until a user exports/shares. */
 (function(root){
 'use strict';
 if(typeof document==='undefined')return;
@@ -102,31 +102,62 @@ function drawOverlay(canvas,analysis){
   const ctx=canvas.getContext('2d'),table=analysis?.table;
   if(!table){
     ctx.save();ctx.fillStyle='rgba(219,76,55,.90)';ctx.fillRect(8,8,Math.min(330,canvas.width-16),38);
-    ctx.fillStyle='white';ctx.font='bold 17px monospace';ctx.fillText('TABLE NOT VERIFIED',18,34);ctx.restore();return;
+    ctx.fillStyle='white';ctx.font='bold 17px monospace';ctx.fillText('NO TABLE REFERENCE',18,34);ctx.restore();return;
   }
-  const w=canvas.width,scale=Math.max(1,w/1100),q=table.corners;
-  ctx.save();ctx.lineWidth=4*scale;ctx.strokeStyle='#ff7954';ctx.setLineDash([10*scale,6*scale]);drawPoly(ctx,q);ctx.stroke();ctx.setLineDash([]);
-  ctx.font=`bold ${14*scale}px monospace`;ctx.textBaseline='middle';
+  const w=canvas.width,scale=Math.max(1,w/1100),q=table.virtualCorners||table.corners;
+  function segment(a,b,t0,t1){
+    const p=[a[0]+(b[0]-a[0])*t0,a[1]+(b[1]-a[1])*t0],r=[a[0]+(b[0]-a[0])*t1,a[1]+(b[1]-a[1])*t1];
+    ctx.beginPath();ctx.moveTo(...p);ctx.lineTo(...r);ctx.stroke();
+  }
+  ctx.save();ctx.lineCap='round';
+  // Cyan = the four inner cushion-nose lines. Segments across corner/side pocket
+  // gaps are dashed because no physical cushion exists through a pocket opening.
   table.rails.forEach((r,i)=>{
-    const x=(r.a[0]+r.b[0])/2,y=(r.a[1]+r.b[1])/2;
-    ctx.fillStyle='rgba(20,38,47,.86)';ctx.fillRect(x-30*scale,y-10*scale,60*scale,20*scale);
-    ctx.fillStyle='white';ctx.textAlign='center';ctx.fillText('R'+(i+1),x,y);
+    ctx.lineWidth=3.5*scale;ctx.strokeStyle='#f9dd6e';ctx.setLineDash([]);
+    if(i%2===0){segment(r.a,r.b,.07,.44);segment(r.a,r.b,.56,.93);}
+    else segment(r.a,r.b,.07,.93);
+    ctx.strokeStyle='#fff8e8';ctx.lineWidth=2*scale;ctx.setLineDash([5*scale,6*scale]);
+    segment(r.a,r.b,0,.07);segment(r.a,r.b,.93,1);
+    if(i%2===0)segment(r.a,r.b,.44,.56);
   });
+  ctx.setLineDash([]);
+  // Virtual sharp: intersection of extended nose lines. NOT a physical pocket mouth.
+  q.forEach((p,i)=>{
+    const [x,y]=p,rad=13*scale;
+    ctx.strokeStyle='#141c26';ctx.lineWidth=5*scale;
+    ctx.beginPath();ctx.moveTo(x-rad,y);ctx.lineTo(x+rad,y);ctx.moveTo(x,y-rad);ctx.lineTo(x,y+rad);ctx.stroke();
+    ctx.strokeStyle='#fff9de';ctx.lineWidth=2.3*scale;ctx.stroke();
+    ctx.font=`bold ${13*scale}px monospace`;ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.lineWidth=3*scale;ctx.strokeStyle='#162935';ctx.strokeText('V'+(i+1),x+rad+4,y-12*scale);
+    ctx.fillStyle='#fff9de';ctx.fillText('V'+(i+1),x+rad+4,y-12*scale);
+  });
+  // The image may show dark *regions* near expected pockets. Their centroids are
+  // not measured jaw points or proven pocket centres; never use as scored outcomes.
   table.pockets.forEach((p,i)=>{
-    const [x,y]=p.p,rad=12*scale;
-    ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.fillStyle=p.observed?'#55d49d':'rgba(252,250,245,.20)';ctx.fill();
-    ctx.lineWidth=3*scale;ctx.strokeStyle=p.observed?'#064a3c':'#fa774f';ctx.stroke();
-    ctx.textAlign='left';ctx.font=`bold ${14*scale}px monospace`;ctx.fillStyle='#fff';ctx.strokeStyle='#18323c';ctx.lineWidth=3*scale;
-    const label='P'+pad(i+1)+(p.observed?' ✓':' ?');ctx.strokeText(label,x+rad+4,y-3);ctx.fillText(label,x+rad+4,y-3);
+    const [x,y]=p.p,rad=6*scale;
+    ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.lineWidth=2.4*scale;
+    ctx.strokeStyle=p.observed?'#c8fba0':'#f9a980';ctx.stroke();
+    if(p.observed&&p.darkRegionCentroid){
+      const [px,py]=p.darkRegionCentroid;
+      ctx.fillStyle='#9af1c1';ctx.fillRect(px-2.5*scale,py-2.5*scale,5*scale,5*scale);
+    }
+    if(p.kind==='side'){
+      ctx.textAlign='left';ctx.font=`bold ${14*scale}px monospace`;ctx.fillStyle='#fff9de';ctx.strokeStyle='#162935';ctx.lineWidth=3*scale;
+      ctx.strokeText('S?',x+9*scale,y-9*scale);ctx.fillText('S?',x+9*scale,y-9*scale);
+    }
   });
+  // Diamond proposals may not be true rail markings: show them as small outlines.
   for(const d of table.diamonds){
-    const [x,y]=d.point,rad=4*scale;
+    const [x,y]=d.point,rad=3.5*scale;
     ctx.beginPath();ctx.moveTo(x,y-rad);ctx.lineTo(x+rad,y);ctx.lineTo(x,y+rad);ctx.lineTo(x-rad,y);ctx.closePath();
-    ctx.fillStyle=d.observed?'#63dbb3':'#ff7954';if(d.observed)ctx.fill();else ctx.strokeStyle='#ff7954';ctx.lineWidth=2*scale;ctx.stroke();
+    ctx.strokeStyle=d.observed?'#9af1c1':'#f9a980';ctx.lineWidth=1.7*scale;ctx.stroke();
   }
-  ctx.save();const text=`${analysis.status.toUpperCase()} • ${analysis.method==='manual-adjusted'?'MANUAL':'AUTOMATIC'} • ${table.geometryConfidence.toFixed(2)} GEOM. SCORE`;
-  ctx.font=`bold ${14*scale}px monospace`;const rectW=Math.min(w-16,ctx.measureText(text).width+30*scale);
-  ctx.fillStyle='rgba(19,37,47,.92)';ctx.fillRect(8,8,rectW,34*scale);ctx.fillStyle='#fff';ctx.textAlign='left';ctx.fillText(text,18*scale,26*scale);ctx.restore();ctx.restore();
+  ctx.save();const nose=table.geometrySource==='virtual_intersection_of_image_fitted_noses';
+  const mode=analysis.method==='manual-adjusted'?'MANUAL VIRTUAL CORNERS':(nose?'NOSE LINES FIT':'NOSE LINES UNVERIFIED');
+  const text=`REVIEW • ${mode} • POCKET OPENINGS UNVERIFIED`;
+  ctx.font=`bold ${13*scale}px monospace`;const rectW=Math.min(w-16,ctx.measureText(text).width+30*scale);
+  ctx.fillStyle='rgba(19,37,47,.94)';ctx.fillRect(8,8,rectW,34*scale);ctx.fillStyle='#fff';ctx.textAlign='left';ctx.fillText(text,18*scale,26*scale);
+  ctx.restore();ctx.restore();
 }
 function drawJpegImage(img){const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;c.getContext('2d',{willReadFrequently:true}).drawImage(img,0,0);return c;}
 async function buildDerived(frame,canvas){
@@ -240,7 +271,7 @@ function renderInstrument(){const node=$('evidenceReadout');node.replaceChildren
 }
 async function displayReview(){
   const fr=state.session?.frames[state.selection],canvas=$('reviewCanvas'),place=$('reviewPlaceholder'),top=$('topdownImage');
-  state.editing=false;show($('canvasEditBanner'),false);$('editCornersBtn').textContent='ADJUST 4 CORNERS';$('resetCornersBtn').hidden=!fr?.autoAnalysis||!fr.analysis||fr.analysis.method!=='manual-adjusted';
+  state.editing=false;show($('canvasEditBanner'),false);$('editCornersBtn').textContent='ADJUST 4 VIRTUAL CORNERS';$('resetCornersBtn').hidden=!fr?.autoAnalysis||!fr.analysis||fr.analysis.method!=='manual-adjusted';
   if(!fr){canvas.width=800;canvas.height=450;canvas.getContext('2d').clearRect(0,0,800,450);place.hidden=false;top.removeAttribute('src');show($('noTopdown'),true);return;}
   $('reviewFrameCount').textContent=`FRAME ${pad(state.selection+1)} / ${pad(state.session.frames.length)}`;
   try{

@@ -78,3 +78,24 @@ test('session ZIP exports all evidence with actual labels and imports',async()=>
  assert.equal(summary.imageResults[0].status,'review');assert.equal(summary.tableSizeFeet,9);
  const imported=await B.zipToSession(blob);assert.equal(imported.frames.length,1);assert.equal(imported.frames[0].analysis.status,'review');assert.equal(imported.tableSizeFeet,9);
 });
+
+test('two rail nose lines cross at virtual sharp; parallel rails do not intersect',()=>{
+ samePt(G.lineIntersection([0,7],[100,7],[20,-30],[20,30]),[20,7]);
+ assert.equal(G.lineIntersection([0,0],[100,0],[0,20],[100,20]),null);
+});
+test('virtual geometry is distinct from unverified physical pocket outcome',()=>{
+ const im=pixels(600,400,[90,89,90]);fillRect(im,75,60,525,330,[28,142,116,255]);
+ const r=V.analyzePixels(im);assert.ok(r.table);
+ assert.equal(r.table.pockets.length,6);
+ assert.deepEqual(r.table.pockets[0].virtualReference,r.table.pockets[0].p);
+ assert.equal(r.table.pockets[0].openingCenterVerified,false);
+ assert.equal(r.table.pockets[0].physicalPocketOutcome,'unknown');
+ assert.notEqual(r.status,'pass');
+});
+test('manually adjusted points remain explicitly user-confirmed and do not imply observed pockets',()=>{
+ const im=pixels(600,400,[80,82,80]);const q=[[80,70],[520,70],[520,320],[80,320]];
+ const r=V.calculateGeometry(im,q,{method:'manual-adjusted',geometryConfidence:.65});
+ assert.equal(r.table.geometrySource,'user_confirmed_virtual_intersections');
+ assert.equal(r.table.cornerSource,'confirmed_by_user');
+ assert.equal(r.status,'review');
+});

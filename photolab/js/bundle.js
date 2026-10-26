@@ -69,11 +69,11 @@
  function rectifiedName(i){return 'rectified/capture_'+String(i+1).padStart(3,'0')+'_topdown.jpg';}
  function analysisName(i){return 'analysis/capture_'+String(i+1).padStart(3,'0')+'.analysis.json';}
  async function sessionToZip(session){
-   const entries=[],m={schema:'chalkline.photo-session/1',app:'Chalkline Fieldwork',version:'0.1.0',
+   const entries=[],m={schema:'chalkline.photo-session/1',app:'Chalkline Fieldwork',version:'0.2.0',
      id:session.id,createdAt:session.createdAt,exportedAt:new Date().toISOString(),tableSizeFeet:session.tableSizeFeet,synthetic:!!session.synthetic,
      captureCount:session.frames.length,completeCaptureCount:session.frames.length>=5,
      device:session.device||{},imageResults:[],privacy:'All images processed locally; this ZIP can contain images of private property.'};
-   const lines=[`Session ${session.id}`,`Started ${session.createdAt}`,`Detector: ${ns.VISION_VERSION||'photo-heuristic/0.1.0'}`];
+   const lines=[`Session ${session.id}`,`Started ${session.createdAt}`,`Detector: ${ns.VISION_VERSION||'photo-nose-lines/0.2.0'}`];
    for(let i=0;i<session.frames.length;i++){
      const fr=session.frames[i],result=fr.analysis||null;
      entries.push({name:photoName(i),data:fr.original});
@@ -85,7 +85,7 @@
      if(fr.overlay)entries.push({name:overlayName(i),data:fr.overlay});
      if(fr.rectified)entries.push({name:rectifiedName(i),data:fr.rectified});
      entries.push({name:analysisName(i),data:jsonString({schema:'chalkline.photo-analysis/1',captureIndex:i+1,filename:fr.filename||photoName(i),capturedAt:fr.capturedAt,dimensions:fr.dimensions,normalization:fr.normalization||null,synthetic:!!fr.synthetic,analysis:result})});
-     m.imageResults.push({captureIndex:i+1,status:result?.status||'not_analyzed',geometryConfidence:result?.table?.geometryConfidence??null,
+     m.imageResults.push({captureIndex:i+1,status:result?.status||'not_analyzed',geometryConfidence:result?.table?.geometryConfidence??null,geometrySource:result?.table?.geometrySource??null,
        cornersObserved:result?.metrics?.cornersObserved??0,sidesObserved:result?.metrics?.sidesObserved??0,diamondsObserved:result?.metrics?.diamondsObserved??0,method:result?.method??null,synthetic:!!fr.synthetic,sourceFilename:fr.sourceFilename||null,normalization:fr.normalization||null});
      lines.push(`Photo ${i+1}: ${result?.status||'not_analyzed'}, ${result?.reason||result?.warnings?.join('; ')||'no error'}`);
    }
@@ -93,7 +93,7 @@
    m.statusCounts=statuses;
    entries.push({name:'session_summary.json',data:jsonString(m)});
    entries.push({name:'debug_log.txt',data:lines.concat(session.log||[]).join('\n')+'\n'});
-   entries.push({name:'README.txt',data:'Chalkline Fieldwork evidence bundle v0.1.\nphotos/ contains the JPEG image inputs analyzed by the detector (max 1600px).\nsource_originals/ contains original uploaded photo bytes when available; camera snapshots are already JPEG.\noverlays/ contains illustrated geometry and evidence status.\nrectified/ contains proposed perspective warp.\nanalysis/ has model-derived coordinates and heuristic scores; NOT ground-truth.\nCompare images against independently checked annotations before quoting accuracy.\nNo images were uploaded by the app. Upload this ZIP to ChatGPT yourself.\n'});
+   entries.push({name:'README.txt',data:'Chalkline Fieldwork evidence bundle v0.2.\nphotos/ contains the JPEG image inputs analyzed by the detector (max 1600px).\nsource_originals/ contains original uploaded photo bytes when available; camera snapshots are already JPEG.\noverlays/ contains illustrated geometry and evidence status.\nrectified/ contains proposed perspective warp.\nanalysis/ has model-derived coordinates and heuristic scores; NOT ground-truth.\nVirtual corners = intersections of inner cushion-nose lines; pocket-opening centres and ball capture are NOT verified.\nCompare images against independently checked annotations before quoting accuracy.\nNo images were uploaded by the app. Upload this ZIP to ChatGPT yourself.\n'});
    return createZip(entries);
  }
  function imageType(b){return b.length>3&&b[0]===0xff&&b[1]===0xd8?'image/jpeg':'application/octet-stream';}

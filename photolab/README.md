@@ -8,7 +8,7 @@ This is a **separate Safari-targeted photo session application**, not a replacem
 
 On any HTTPS static website, serve this directory as `/photolab/` and open `https://your-website/photolab/`. For local desktop inspection, `fieldwork-standalone.html` embeds all scripts/styles and has no external dependencies. However, **the iPhone camera requires a secure context (HTTPS)**; opening an HTML file from Files may not provide camera or reliable local persistence. If camera permission is unavailable, use **Add from Camera Roll / Files**. Actual Safari/iPhone testing is still required.
 
-**Deployment status:** Not deployed. **GitHub branch created and code committed** to `chatgpt/fieldwork-photo-session-v01` (commit `4a31c017c34a456a1e7e941e9685e76c971eb97d`) with [draft PR #13](https://github.com/z99j2tvznz-svg/Chaulkline/pull/13) targeting the experimental `claude/project-thread-vl1o4a` branch. The production app and `main` were not modified. Initial create-branch attempt returned 403, but a later retry succeeded.
+**Deployment status:** The photo-session UI is served from the independent `/photolab/` GitHub Pages route. Version 0.2 is an isolated prototype, not the production Chalkline app. **GitHub branch created and code committed** to `chatgpt/fieldwork-photo-session-v01` (commit `4a31c017c34a456a1e7e941e9685e76c971eb97d`) with [draft PR #13](https://github.com/z99j2tvznz-svg/Chaulkline/pull/13) targeting the experimental `claude/project-thread-vl1o4a` branch. The production app and `main` were not modified. Initial create-branch attempt returned 403, but a later retry succeeded.
 
 Recommended next step: independently review [draft PR #13](https://github.com/z99j2tvznz-svg/Chaulkline/pull/13), then deploy the isolated `/photolab/` page to a separate HTTPS staging location. Do not merge to `main` or resume Three-Ball Runout before real-table and device validation.
 
@@ -27,7 +27,7 @@ Recommended next step: independently review [draft PR #13](https://github.com/z9
 
 All coordinates and heuristic confidence fields refer to **the analyzed JPEG pixels** (not necessarily the original file's size). Every pocket and diamond has `source: "observed_candidate"` only when there is a supporting image signal; otherwise `source: "geometric_proposal"`, `observed: false`. Rails are `inferred_from_cloth`. These signals are **not calibrated probabilities**; a dark mark does not prove a real pocket and a bright point does not prove a real diamond. The perspective view is a projective warp, not a metric 3-D reconstruction.
 
-**Accuracy:** no real Chalkline images were available to validate this v0.1 baseline. No real-world accuracy is claimed. Synthetic test image results must never be included in product accuracy measurements.
+**Accuracy:** The v0.1 baseline had not been validated. For v0.2, five real photos from one user-provided private review bundle were used for regression checks and to correct the nose geometry. All five produced an image-supported four-rail fit, but there were no independent, manually measured ground-truth corner coordinates: **no pixel-accuracy or physical pocket-scoring accuracy claim**. Synthetic test image results must never be included in product accuracy measurements.
 
 ## ZIP layout
 
@@ -64,8 +64,16 @@ The smoke test uses a self-contained HTML page with `about:blank` because this e
 
 ## Limitations and next acceptance gate
 
-1. Deploy to a separate HTTPS test location and exercise Safari camera permissions, saved sessions across reloads, background/foreground, camera roll, and Share Sheet on a real iPhone.
-2. Record 5–10 unchanged tripod-position images from the user's actual home table, including partial occlusion and dim lighting; **freeze labels before tuning the detector**.
+1. Exercise Safari camera permissions, saved sessions across reloads, background/foreground, camera roll, and Share Sheet on a real iPhone.
+2. Freeze independent hand-measured reference lines/corners on the five already supplied photos before any additional tuning. Add other lighting/table types as held-out tests.
 3. Report separately: table geometry pass rate, mean corner reprojection error, independently verified corner/side pockets, precision/recall of candidate diamonds, orientation errors, and rejection rates. Break down by session/camera/lighting. No fabricated numbers.
 4. Revisit existing Chalkline `src/vision.js` auto-calibration and other open-source candidates on this **same frozen footage** before deciding which detector to productionize. This prototype borrows the existing Chalkline color-segmentation *approach* but does not include OpenCV.js or an unreviewed third-party model.
 5. Integrate any successful detector behind the shared physical state interface only after acceptance; don't turn geometric proposals into authoritative tracking events.
+
+## Geometry correction — v0.2
+
+The October 25 real five-photo review bundle demonstrated that v0.1 followed outside-rail edges and even expanded into the room on capture 001. It also marked capture 002 PASS despite wrong physical reference. v0.2 anchors the playing surface to **inner cushion-nose lines** and computes **virtual sharp intersections** where each pair of extended lines meets at the four corner pockets. These **four reference coordinates are not pocket-opening centres**. Six pockets still have separately labelled candidate locations and dark-region evidence; actual jaw-tip positions, opening centres and ball acceptance geometry remain **unknown**. The app deliberately reports **REVIEW** until real labels/physical mouth criteria are established; no synthetic/heuristic PASS assertion is accepted.
+
+Automatic detection uses a high-chroma felt mask, robustly fits the *last dark-to-felt transition* across each of four projected edges, then intersects adjacent extended lines. Per-rail inlier counts, masks and corner provenance are exported. If any rail lacks support, the app falls back to an unverified felt outline and raises a review warning. This is a conservative heuristic prototype: coloured cushions, green cloth, severe glare, hidden rails, steep foreshortening or different table geometry may require an alternate provider. Please send a v0.2 ZIP for actual iPhone validation.
+
+**Privacy**: User's real table photos remain local to the evaluation session and are not committed into the public GitHub repository. Visual labels and confidence scores are provisional, and none should be treated as physics scoring truth.

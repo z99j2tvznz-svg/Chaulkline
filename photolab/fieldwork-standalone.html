@@ -1,0 +1,1084 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f3ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fieldwork">
+<meta name="description" content="Chalkline Fieldwork: offline-first pool table photo geometry and evidence export.">
+<title>Chalkline / Fieldwork — Photo Sessions</title>
+<style>
+:root{font-family:Arial,Helvetica,sans-serif;color:#182f3a;background:#f7f3eb;--paper:#f7f3eb;--ink:#182f3a;--muted:#69747a;--accent:#ea6d4d;--line:#d9d4ca;--soft:#eae5db;--mint:#cbdcbe;--evidence:#3eae85}*{box-sizing:border-box}html{background:var(--paper)}body{margin:0;min-height:100vh}button,select,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.46}button:focus-visible,a:focus-visible,select:focus-visible,label:focus-within{outline:3px solid #f0a94a;outline-offset:3px}button{touch-action:manipulation}a{color:inherit;text-decoration:none}[hidden],.hidden-input{display:none!important}.page{max-width:1800px;margin:auto;min-height:100vh;display:flex;flex-direction:column}.masthead{height:90px;border-bottom:1px solid var(--ink);display:grid;grid-template-columns:288px 1fr auto;align-items:center;gap:0;flex-shrink:0}.logo-block{height:100%;display:flex;align-items:center;gap:13px;padding:0 26px;border-right:1px solid var(--ink)}.logo-symbol{width:38px;height:38px;position:relative;transform:rotate(-13deg);border:3px solid var(--accent);background:#f7f3ec}.logo-symbol i{width:7px;height:7px;position:absolute;background:var(--ink)}.logo-symbol i:nth-child(1){top:3px;left:3px}.logo-symbol i:nth-child(2){top:3px;right:3px}.logo-symbol i:nth-child(3){bottom:3px;left:3px}.logo-symbol i:nth-child(4){bottom:3px;right:3px}.logo-text{display:flex;flex-direction:column;gap:2px}.logo-text small{font-family:'Courier New',monospace;font-size:8px;letter-spacing:1.3px;white-space:nowrap}.logo-text strong{font-size:24px;letter-spacing:-1.5px;font-weight:900;line-height:1}.period{color:var(--accent)}.header-centre{font-family:'Courier New',monospace;letter-spacing:.08em;font-size:11px;padding:0 24px;color:#586873;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.live-dot{width:7px;height:7px;display:inline-block;background:var(--accent);border-radius:50%;vertical-align:middle;margin-right:9px}.header-slash{padding:0 9px;color:var(--accent)}.head-actions{height:100%;display:flex;align-items:center;gap:20px;padding:0 24px}.local-label{font-family:'Courier New',monospace;font-size:10px;font-weight:bold;letter-spacing:1px;white-space:nowrap}.tiny-square{width:8px;height:8px;background:#85b68c;display:inline-block;margin-right:7px}.header-button{width:33px;height:33px;display:grid;place-items:center;border:1px solid var(--ink);background:transparent;border-radius:50%;font-weight:bold}.work-layout{display:grid;grid-template-columns:236px minmax(0,1fr) 270px;align-items:stretch;flex:1;min-height:calc(100vh - 130px)}.stage-nav{border-right:1px solid var(--ink);display:flex;flex-direction:column}.nav-title,.aside-top{display:flex;justify-content:space-between;align-items:center;padding:27px 19px 23px;font-family:'Courier New',monospace;font-size:10px;letter-spacing:.1em;font-weight:bold}.nav-title span,.aside-top span{opacity:.55}.step{min-height:90px;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;padding:18px 14px 15px 18px;display:grid;grid-template-columns:28px minmax(0,1fr) 16px;align-items:center;gap:10px;color:var(--ink)}.step:last-of-type{border-bottom:1px solid var(--line)}.step:hover{background:#eae5db}.step.active{background:var(--ink);color:#fff}.step.active .step-no{color:var(--accent)}.step .step-no{font:700 12px 'Courier New',monospace;color:var(--accent);align-self:start;padding-top:1px}.step b{display:block;font-weight:900;letter-spacing:.1em;font-size:12px}.step small{font-size:11px;color:var(--muted);display:block;margin-top:6px}.step.active small{color:#c4ced0}.step-end{font-size:16px;opacity:.4;align-self:start}.nav-foot{margin-top:auto;padding:28px 20px 34px}.nav-foot-mark{font:900 42px Arial,Helvetica,sans-serif;letter-spacing:-4px}.nav-foot-mark span{font:700 11px 'Courier New',monospace;letter-spacing:0}.nav-foot p{font:700 9px/1.6 'Courier New',monospace;letter-spacing:1px;color:#6f777a;margin:8px 0 0}.screens{padding:39px clamp(24px,3.8vw,76px) 52px;min-width:0}.screen{max-width:1050px;margin:0 auto}.eyebrow{display:flex;gap:10px;align-items:center;font-family:'Courier New',monospace;letter-spacing:1.2px;font-size:10px;color:#52616b;font-weight:700;margin-bottom:26px}.eyebrow-index{color:var(--accent)}.hero-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(270px,.88fr);gap:20px;min-height:370px;align-items:center}.outline-flag{font:700 10px 'Courier New',monospace;letter-spacing:1px;border:1px solid var(--accent);color:#ac4f38;display:inline-block;padding:10px 12px}.hero-copy h1,.screen-header h1{font-size:clamp(38px,4.6vw,77px);line-height:.98;letter-spacing:-.074em;font-weight:900;margin:25px 0 20px}.hero-copy h1 em,.screen-header h1 em{font-style:normal;color:var(--accent)}.intro,.screen-header p{font-size:14px;line-height:1.7;color:#506168;max-width:510px}.home-main-actions{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 17px}.action-primary,.action-secondary{min-height:48px;display:inline-flex;justify-content:center;align-items:center;gap:22px;padding:12px 18px;font-weight:800;font-size:11px;letter-spacing:.055em;transition:background .1s,border .1s}.action-primary{background:var(--accent);color:#fff;border:1px solid var(--accent)}.action-primary:hover{background:#cf5638}.action-primary span{font-size:18px;line-height:1}.action-secondary{background:transparent;color:var(--ink);border:1px solid var(--ink)}.action-secondary:hover{background:var(--soft)}.micro-note{font-family:'Courier New',monospace;color:#7e827e;font-size:10px;line-height:1.6;max-width:410px}.hero-illustration{position:relative;min-width:0;overflow:hidden;background:#f0e9dc;border:1px solid var(--line);padding:4px}.hero-illustration svg{width:100%;display:block}.art-stamp{position:absolute;bottom:13px;left:13px;font:900 13px/1.05 Arial;color:var(--ink);background:#d3e1c9;border:1px solid #283c46;padding:9px 11px}.art-stamp small{display:block;margin-top:6px;font:9px 'Courier New',monospace;letter-spacing:1px}.section-head{border-top:1px solid var(--ink);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;padding:15px 0 12px;margin:38px 0 0}.section-head h2{font-size:12px;letter-spacing:1px;margin:0;font-weight:900}.section-head span{font:10px 'Courier New',monospace;color:#6d7a7e;text-align:right}.section-head.compact{margin:17px 0 0}.session-list{display:flex;flex-direction:column}.session-entry{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:10px;border-bottom:1px solid var(--line);min-height:74px}.session-letter{background:var(--mint);height:38px;width:38px;display:grid;place-items:center;font:bold 19px 'Courier New',monospace}.session-entry b{font-size:12px;letter-spacing:.04em}.session-entry small{display:block;font:10px 'Courier New',monospace;color:var(--muted);margin-top:5px}.session-actions{display:flex;gap:5px}.session-actions button,.quiet-link{border:0;background:none;color:var(--ink);text-decoration:underline;text-underline-offset:3px;font:700 10px 'Courier New',monospace;padding:10px}.session-actions button.delete{color:#b85e46}.empty-sessions{padding:25px 0;font-size:12px;color:#67777b;font-style:italic}.import-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;font:700 10px 'Courier New',monospace;letter-spacing:.04em;margin:24px 0;padding:20px;background:var(--soft)}.screen-header{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:26px}.screen-header h1{margin:4px 0 14px;font-size:clamp(42px,5vw,70px)}.screen-header p{margin:0}.count-big{text-align:right;white-space:nowrap}.count-big strong{font-size:53px;letter-spacing:-.07em}.count-big strong span{font-size:24px;color:#9daba9}.count-big small{display:block;font:700 9px 'Courier New',monospace;letter-spacing:1px;color:#788486}.capture-stack{display:flex;flex-direction:column}.camera-shell{border:1px solid var(--ink);background:#13252e;color:#f7f1e6}.camera-banner,.camera-foot{height:47px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;gap:12px;font:700 10px 'Courier New',monospace;letter-spacing:.07em}.camera-banner{border-bottom:1px solid rgba(255,255,255,.16)}.red-rec{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent)}.camera-body{height:min(48vw,450px);min-height:230px;position:relative;overflow:hidden;background:radial-gradient(ellipse,#203b46 0,#101a20 85%)}.camera-body video{width:100%;height:100%;object-fit:contain;display:none}.camera-body.camera-on video{display:block}.camera-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}.camera-placeholder p{font-size:11px;color:#b1bdbd}.viewfinder{width:min(65%,360px);height:145px;position:relative;display:grid;place-items:center}.viewfinder i{width:20px;height:20px;position:absolute;border-color:#a6bbb1;border-style:solid}.viewfinder i:nth-child(1){top:0;left:0;border-width:2px 0 0 2px}.viewfinder i:nth-child(2){top:0;right:0;border-width:2px 2px 0 0}.viewfinder i:nth-child(3){bottom:0;right:0;border-width:0 2px 2px 0}.viewfinder i:nth-child(4){bottom:0;left:0;border-width:0 0 2px 2px}.viewfinder-caption{font:700 11px 'Courier New',monospace;letter-spacing:1px;color:#d8e5de}.camera-foot{height:auto;min-height:70px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.16)}.camera-foot .action-secondary{color:#f9f5ed;border-color:#788c96}.camera-foot .action-primary{color:#fff}.capture-import{border:1px dashed #aaa79f;display:flex;gap:16px;align-items:center;justify-content:space-between;margin-top:15px;padding:16px;font-size:11px;color:var(--muted);line-height:1.5}.file-pick{flex-shrink:0;cursor:pointer;border:1px solid var(--ink);padding:13px;font:700 11px 'Courier New',monospace;color:var(--ink)}.file-pick:hover{background:var(--soft)}.thumb-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:12px 0}.thumb{border:1px solid var(--line);min-width:0;position:relative;background:#e5ddd1;aspect-ratio:1.55}.thumb img{width:100%;height:100%;object-fit:cover}.thumb b{position:absolute;left:5px;top:5px;background:var(--ink);color:#fff;font:10px 'Courier New',monospace;padding:4px}.thumb button{position:absolute;top:5px;right:5px;border:0;background:var(--accent);color:white;min-width:24px;min-height:24px}.empty-thumbs{grid-column:1/-1;min-height:80px;display:grid;place-items:center;color:var(--muted);font:10px 'Courier New',monospace;border:1px dashed var(--line)}.bottom-next{border-top:1px solid var(--ink);margin-top:28px;padding-top:18px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px}.bottom-next p,.inline-note{color:#6d777b;font-size:12px;line-height:1.5;max-width:450px}.button-combo{display:flex;gap:8px;flex-wrap:wrap}.analyze-summary{display:flex;align-items:center;gap:24px;padding:25px 24px;background:var(--ink);color:#fff}.analytic-blob{border:1px solid #afcbb4;width:85px;height:85px;display:grid;place-items:center;position:relative;flex-shrink:0}.analytic-blob i{width:40px;height:30px;border:2px solid var(--accent);transform:skew(-12deg) rotate(-7deg);display:block}.analysis-score{font-size:55px;font-weight:900;line-height:1;letter-spacing:-3px}.analysis-score span{font-size:20px;color:var(--accent)}.analyze-summary p{margin:5px 0 0;color:#bdcacc;font-size:11px}.meter-track{height:6px;background:#e5dfd4}.meter-fill{height:100%;width:0;background:var(--accent);transition:width .2s}.analysis-row{min-height:62px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:45px minmax(100px,1fr) 110px 85px;gap:12px;align-items:center}.analysis-row .frame-index{font:700 11px 'Courier New',monospace;color:var(--accent)}.analysis-row strong{font-size:13px;letter-spacing:.015em}.analysis-row small{font:10px 'Courier New',monospace;color:#778083;display:block;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.status-tag{display:inline-block;text-transform:uppercase;font:700 9px 'Courier New',monospace;letter-spacing:.04em;padding:7px 6px;border:1px solid #b7b7ac;text-align:center}.status-tag.pass{background:#ddeddd;border-color:#88ae93}.status-tag.review{background:#f6e8d0;border-color:#d1ac74}.status-tag.fail{background:#f4dbd5;border-color:#df978a}.status-tag.pending{background:#eee;border-color:#bbb}.analysis-row button{border:0;background:none;text-decoration:underline;font:700 10px 'Courier New',monospace;letter-spacing:.04em;padding:10px;text-align:right}.review-tools{display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:12px}.toggle-group{display:flex;border:1px solid var(--ink)}.toggle{border:0;background:transparent;font:700 10px 'Courier New',monospace;padding:12px 18px;color:var(--ink)}.toggle+.toggle{border-left:1px solid var(--ink)}.toggle.active{background:var(--ink);color:#fff}.small-action{min-height:36px;font:700 10px 'Courier New',monospace;gap:0;padding:8px 10px}.review-stage{position:relative;background:#17252d;border:1px solid var(--ink);min-height:250px;display:grid;place-items:center;overflow:hidden}.review-stage canvas{display:block;width:100%;height:auto;max-height:610px;object-fit:contain;touch-action:none}.review-placeholder{position:absolute;font:12px 'Courier New',monospace;color:#c9d1d0;pointer-events:none}.canvas-edit-banner{position:absolute;left:0;right:0;bottom:0;background:#e96c4d;color:#fff;font:bold 11px 'Courier New',monospace;padding:11px;text-align:center;pointer-events:none}.review-legend{display:flex;gap:18px;flex-wrap:wrap;padding:11px 0;border-bottom:1px solid var(--line);font:9px 'Courier New',monospace;color:#52646c}.key-line{width:18px;height:0;border-top:2px solid var(--accent);display:inline-block;vertical-align:middle;margin-right:6px}.key-dot{width:9px;height:9px;border:2px solid #558b7c;border-radius:50%;display:inline-block;vertical-align:middle;margin-right:5px}.key-dot.observed{background:#5bd0a8;border-color:#145b4b}.key-dot.proposed{border-color:#e56f51}.filmstrip{margin-top:12px;display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px}.film-item{flex:0 0 115px;border:2px solid transparent;background:#e5dfd4;padding:3px;text-align:left}.film-item.selected{border-color:var(--accent)}.film-item img{width:100%;height:63px;object-fit:cover}.film-item small{display:block;font:9px 'Courier New',monospace;padding:5px 3px 2px}.topdown-block{margin-top:26px}.topdown-block img{display:block;width:100%;height:auto;min-height:80px;background:#243f3e;max-height:420px;object-fit:contain;margin-top:12px}.topdown-block img:not([src]){display:none}.topdown-empty{padding:30px;text-align:center;background:var(--soft);color:#666;font-size:11px}.metrics-row{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);margin:30px 0 22px}.metrics-row>div{padding:19px}.metrics-row>div+div{border-left:1px solid var(--line)}.metrics-row span{display:block;font:700 10px 'Courier New',monospace;letter-spacing:.03em}.metrics-row strong{font-weight:900;font-size:45px;letter-spacing:-.05em;display:block;margin-top:7px}.package-panel{background:var(--soft);display:flex;gap:20px;padding:28px;align-items:flex-start}.package-icon{height:70px;min-width:64px;background:var(--ink);color:var(--paper);font:900 19px 'Courier New',monospace;display:grid;place-items:center;position:relative}.package-icon:after{content:'';position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--accent)}.package-label{font:700 10px 'Courier New',monospace;color:#6b7b7d}.package-panel h2{font-size:clamp(14px,2.2vw,23px);font-weight:900;overflow-wrap:anywhere;margin:10px 0}.package-panel p{font-size:12px;color:#66767b;max-width:550px;line-height:1.6}.export-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.big-action{min-height:58px}.handoff-instructions{margin-top:35px;border-top:1px solid var(--ink);padding-top:25px;display:grid;grid-template-columns:90px 1fr;gap:25px}.handoff-index{font:900 24px/1.1 Arial;letter-spacing:-1px;color:var(--accent)}.handoff-instructions h3{font-size:14px;letter-spacing:.05em;margin:0}.handoff-instructions p{max-width:600px;font-size:13px;color:#53666d;line-height:1.6}.handoff-instructions .privacy-line{font:700 10px 'Courier New',monospace;margin-top:18px;color:#af624e}.context-panel{border-left:1px solid var(--ink);display:flex;flex-direction:column;min-width:0}.aside-top{border-bottom:1px solid var(--line)}.instrument-content{padding:7px 20px}.side-section{padding:21px 0;border-bottom:1px solid var(--line)}.side-section h3{font:700 10px 'Courier New',monospace;letter-spacing:.1em;color:var(--accent);margin:0 0 16px}.instrument-value{font:900 21px 'Courier New',monospace;overflow-wrap:anywhere}.side-section p{font-size:11px;line-height:1.65;color:#778286;margin:11px 0 0}#tableSizeSelect{width:100%;height:44px;border:1px solid var(--ink);background:transparent;padding:0 9px;font:700 11px 'Courier New',monospace;color:var(--ink);border-radius:0}.aside-measure{display:flex;justify-content:space-between;gap:9px;align-items:center;margin-bottom:13px;font:10px 'Courier New',monospace}.aside-measure strong{font-size:14px}.readout-item{border-top:1px solid var(--line);padding:9px 0;display:flex;justify-content:space-between;gap:8px;align-items:center;font:10px 'Courier New',monospace}.readout-item strong{text-align:right}.aside-bottom{margin-top:auto;padding:22px 20px;background:#cbdcbe}.aside-bottom>span{font:900 11px Arial;letter-spacing:.03em}.aside-bottom p{font:10px/1.5 'Courier New',monospace;color:#435d52}.global-footer{height:40px;flex-shrink:0;border-top:1px solid var(--ink);display:flex;justify-content:space-between;gap:10px;align-items:center;padding:0 24px;font:700 9px 'Courier New',monospace;letter-spacing:.04em;color:#69747a}.toast{position:fixed;z-index:40;bottom:20px;right:20px;max-width:min(420px,calc(100vw - 40px));background:var(--ink);color:#fff;padding:16px;font-size:12px;line-height:1.4;border-left:5px solid var(--accent);box-shadow:4px 4px 0 #bdb8aa}.modal-backdrop{position:fixed;inset:0;background:rgba(8,24,32,.55);display:grid;place-items:center;z-index:100;padding:20px}.modal{position:relative;width:min(620px,100%);background:var(--paper);border:2px solid var(--ink);padding:32px;max-height:90vh;overflow-y:auto}.modal h2{font-size:26px;letter-spacing:-.04em}.modal p{line-height:1.7;font-size:13px;color:#485d65}.modal-close{position:absolute;top:12px;right:12px;border:1px solid var(--ink);background:transparent;width:35px;height:35px;font-size:22px}.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+@media(max-width:1260px){.work-layout{grid-template-columns:190px minmax(0,1fr) 230px}.masthead{grid-template-columns:240px 1fr auto}.hero-grid{grid-template-columns:1fr 0.7fr}.screens{padding:30px 30px 45px}.logo-block{padding:0 14px}.logo-text strong{font-size:21px}.step{padding-left:12px}.head-actions{padding:0 12px}}
+@media(max-width:1000px){.work-layout{grid-template-columns:164px minmax(0,1fr)}.context-panel{display:none}.masthead{grid-template-columns:225px 1fr auto}.header-centre{padding:0 14px;font-size:9px}.screens{padding:29px 25px 44px}.hero-copy h1{font-size:clamp(42px,6vw,65px)}.step{grid-template-columns:23px minmax(0,1fr);gap:5px}.step-end{display:none}.step small{font-size:10px}}
+@media(max-width:700px){.masthead{height:71px;grid-template-columns:1fr auto}.logo-block{border-right:0;padding-left:17px}.logo-text strong{font-size:23px}.header-centre{display:none}.head-actions{gap:12px}.local-label{font-size:9px}.work-layout{display:block;min-height:unset}.stage-nav{display:flex;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--ink);width:100%;position:sticky;top:0;background:var(--paper);z-index:10}.nav-title,.nav-foot{display:none}.step{min-height:58px;min-width:0;flex:1;display:flex;gap:5px;justify-content:center;border:0;border-right:1px solid var(--line);padding:11px 5px;text-align:center}.step .step-no{font-size:9px;align-self:center;padding:0}.step b{font-size:9px;letter-spacing:0}.step small,.step-end{display:none}.screens{padding:23px 17px 50px}.eyebrow{margin-bottom:17px}.hero-grid{display:block;min-height:0}.hero-copy h1{font-size:clamp(45px,11vw,67px);margin-top:20px}.intro{font-size:13px}.hero-illustration{max-height:245px;overflow:hidden;margin-top:25px}.hero-illustration svg{height:240px;object-fit:cover}.home-main-actions{gap:8px}.action-primary,.action-secondary{min-height:45px;font-size:10px}.section-head{margin-top:26px}.screen-header{margin-bottom:20px;align-items:flex-start}.screen-header h1{font-size:clamp(42px,9vw,58px)}.screen-header p{font-size:12px}.count-big strong{font-size:34px}.count-big strong span{font-size:14px}.count-big small{font-size:8px}.camera-body{height:55vw;min-height:220px}.camera-foot{padding:10px;justify-content:space-between;gap:7px}.camera-foot .action-primary{flex:1}.capture-import{display:block}.capture-import span{display:block;margin-top:16px}.capture-import label{display:inline-block}.thumb-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.bottom-next>.action-primary,.bottom-next .button-combo{width:100%}.bottom-next .button-combo>*{flex:1}.review-legend{gap:10px}.review-stage{min-height:170px}.review-header{display:block}.review-header .outline-flag{margin-top:13px}.review-tools{justify-content:flex-start}.review-tools .small-action{font-size:9px}.analysis-row{grid-template-columns:27px minmax(95px,1fr) 80px;gap:6px}.analysis-row button{grid-column:3;text-align:center;font-size:8px;padding:4px}.status-tag{font-size:8px;padding:5px 2px}.analysis-row strong{font-size:11px}.analysis-row small{font-size:9px}.metrics-row strong{font-size:32px}.metrics-row>div{padding:12px 9px}.metrics-row span{font-size:8px}.package-panel{padding:18px;gap:11px}.package-icon{min-width:48px;height:60px;font-size:14px}.handoff-instructions{grid-template-columns:50px 1fr;gap:12px}.handoff-index{font-size:18px}.global-footer{padding:0 13px;font-size:8px}.global-footer span:nth-child(2){display:none}}
+@media(max-width:380px){.head-actions{gap:6px}.local-label{display:none}.step .step-no{display:none}.logo-text strong{font-size:22px}.home-main-actions>*{width:100%}.count-big{display:none}}
+
+</style>
+<script>
+/* Chalkline Fieldwork / geometry v0.1 — no dependencies, pure functions.
+ * Coordinates are always image pixels or normalized u/v; homography is a proposal, not ground truth.
+ */
+(function(root) {
+  'use strict';
+  const ns = root.Fieldwork || (root.Fieldwork = {});
+  function area(q) { let s=0; for(let i=0;i<q.length;i++){const p=q[i],b=q[(i+1)%q.length];s+=p[0]*b[1]-b[0]*p[1];}return Math.abs(s)/2; }
+  function distance(a,b) { return Math.hypot(a[0]-b[0],a[1]-b[1]); }
+  function convexHull(points) {
+    if(points.length<3)return points.slice();
+    const pts=points.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+    const cr=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+    const lo=[],up=[];
+    for(const p of pts){while(lo.length>1&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p);}
+    for(let i=pts.length-1;i>=0;i--){const p=pts[i];while(up.length>1&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p);}
+    return lo.slice(0,-1).concat(up.slice(0,-1));
+  }
+  function bestQuad(hull) {
+    // Maximise quadrilateral area from convex boundary, capped by caller to a small hull.
+    const n=hull.length;if(n<4)return null;
+    const tri=(a,b,c)=>Math.abs((b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]))/2;
+    let best=null,ba=-1;
+    for(let i=0;i<n;i++)for(let k=i+2;k<n;k++){
+      let a1=-1,a2=-1,jj=-1,mm=-1;
+      for(let j=i+1;j<k;j++){const t=tri(hull[i],hull[j],hull[k]);if(t>a1){a1=t;jj=j;}}
+      for(let j=k+1;j<n+i;j++){const j0=j%n,t=tri(hull[i],hull[j0],hull[k]);if(t>a2){a2=t;mm=j0;}}
+      if(jj>=0&&mm>=0&&a1+a2>ba){ba=a1+a2;best=[hull[i],hull[jj],hull[k],hull[mm]];}
+    }
+    return best;
+  }
+  function orderedQuad(points){
+    if(!points||points.length!==4)return null;
+    const c=points.reduce((o,p)=>[o[0]+p[0]/4,o[1]+p[1]/4],[0,0]);
+    const q=points.slice().map(p=>[+p[0],+p[1]]).sort((a,b)=>Math.atan2(a[1]-c[1],a[0]-c[0])-Math.atan2(b[1]-c[1],b[0]-c[0]));
+    const sums=q.map(p=>p[0]+p[1]);let i=sums.indexOf(Math.min(...sums));return q.slice(i).concat(q.slice(0,i));
+  }
+  function validQuad(q,w,h) {
+    if(!Array.isArray(q)||q.length!==4||q.some(p=>!p||p.some(x=>!Number.isFinite(x))))return false;
+    const A=area(q);if(A < 0.028*w*h)return false;
+    const v=(a,b)=>[b[0]-a[0],b[1]-a[1]];
+    let sign=0;
+    for(let i=0;i<4;i++){
+      const a=v(q[i],q[(i+1)%4]),b=v(q[(i+1)%4],q[(i+2)%4]),cr=a[0]*b[1]-a[1]*b[0];
+      if(Math.abs(cr)<1)return false;
+      if(sign&&cr*sign<=0)return false;sign=Math.sign(cr);
+      if(Math.hypot(...a)<0.07*Math.min(w,h))return false;
+    }
+    return true;
+  }
+  function solveLinear(A,b) {
+    const n=b.length,m=A.map((r,i)=>r.slice().concat([b[i]]));
+    for(let c=0;c<n;c++){
+      let piv=c;for(let i=c+1;i<n;i++)if(Math.abs(m[i][c])>Math.abs(m[piv][c]))piv=i;
+      if(Math.abs(m[piv][c])<1e-10)return null;
+      [m[piv],m[c]]=[m[c],m[piv]];
+      const p=m[c][c];for(let j=c;j<=n;j++)m[c][j]/=p;
+      for(let i=0;i<n;i++)if(i!==c){const v=m[i][c];for(let j=c;j<=n;j++)m[i][j]-=v*m[c][j];}
+    }
+    return m.map(r=>r[n]);
+  }
+  function homography(quad){
+    // Maps a normalized rect [(0,0),(1,0),(1,1),(0,1)] into image coordinates.
+    if(!Array.isArray(quad)||quad.length!==4||quad.some((p,i)=>!p||!Number.isFinite(p[0])||!Number.isFinite(p[1])||distance(p,quad[(i+1)%4])<1e-7)||area(quad)<1e-7)return null;
+    const uv=[[0,0],[1,0],[1,1],[0,1]],A=[],b=[];
+    for(let i=0;i<4;i++){
+      const [u,v]=uv[i],[x,y]=quad[i];
+      A.push([u,v,1,0,0,0,-x*u,-x*v]);b.push(x);
+      A.push([0,0,0,u,v,1,-y*u,-y*v]);b.push(y);
+    }
+    const h=solveLinear(A,b);if(!h)return null;
+    for(const [u,v] of uv)if(Math.abs(h[6]*u+h[7]*v+1)<1e-8)return null;
+    return [...h,1];
+  }
+  function project(H,u,v){const d=H[6]*u+H[7]*v+1;return d&&Number.isFinite(d)?[(H[0]*u+H[1]*v+H[2])/d,(H[3]*u+H[4]*v+H[5])/d]:[NaN,NaN];}
+  // Infinite straight-line intersection (not a pocket jaw, not a physical ball target).
+  function lineIntersection(a,b,c,d){
+    const vx=b[0]-a[0],vy=b[1]-a[1],wx=d[0]-c[0],wy=d[1]-c[1],den=vx*wy-vy*wx;
+    if(!Number.isFinite(den)||Math.abs(den)<1e-7)return null;
+    const t=((c[0]-a[0])*wy-(c[1]-a[1])*wx)/den;
+    const p=[a[0]+vx*t,a[1]+vy*t];return p.every(Number.isFinite)?p:null;
+  }
+  function longRailQuad(quad,axis) {
+    // axis=horizontal uses top/bottom edges; vertical rotates the rectangle 90 degrees.
+    return axis==='vertical'?[quad[1],quad[2],quad[3],quad[0]]:quad.slice();
+  }
+  function rails(quad){return [0,1,2,3].map(i=>({id:'rail_'+i,a:quad[i],b:quad[(i+1)%4],long:i%2===0,source:'inferred_from_cloth'}));}
+  function diamondProposals(H) {
+    const points=[];
+    const long=[0.125,0.25,0.375,0.625,0.75,0.875];
+    for(const t of long){points.push({id:'long_top_'+t,u:t,v:0,rail:0});points.push({id:'long_bottom_'+t,u:t,v:1,rail:2});}
+    for(const t of [0.25,0.5,0.75]){points.push({id:'short_right_'+t,u:1,v:t,rail:1});points.push({id:'short_left_'+t,u:0,v:t,rail:3});}
+    return points.map(p=>({...p,point:project(H,p.u,p.v),source:'geometric_proposal',observed:false,confidence:0}));
+  }
+  function expectedPockets(H) {
+    return [
+      {id:'corner_TL',kind:'corner',p:project(H,0,0),u:0,v:0},
+      {id:'side_top',kind:'side',p:project(H,0.5,0),u:0.5,v:0},
+      {id:'corner_TR',kind:'corner',p:project(H,1,0),u:1,v:0},
+      {id:'corner_BR',kind:'corner',p:project(H,1,1),u:1,v:1},
+      {id:'side_bottom',kind:'side',p:project(H,0.5,1),u:0.5,v:1},
+      {id:'corner_BL',kind:'corner',p:project(H,0,1),u:0,v:1}
+    ];
+  }
+  function rectifiedPixels(input,H,outWidth=880,outHeight=440){
+    if(!H)return null;
+    const result=new Uint8ClampedArray(outWidth*outHeight*4),src=input.data,w=input.width,h=input.height;
+    for(let y=0;y<outHeight;y++){
+      const v=(y+.5)/outHeight;
+      for(let x=0;x<outWidth;x++){
+        const u=(x+.5)/outWidth,[sx,sy]=project(H,u,v),oi=(y*outWidth+x)*4;
+        const ix=Math.floor(sx),iy=Math.floor(sy),tx=sx-ix,ty=sy-iy;
+        if(ix<0||ix>=w-1||iy<0||iy>=h-1){result[oi]=result[oi+1]=result[oi+2]=23;result[oi+3]=255;continue;}
+        const j=(iy*w+ix)*4,k=j+w*4;
+        for(let c=0;c<3;c++){result[oi+c]=src[j+c]*(1-tx)*(1-ty)+src[j+4+c]*tx*(1-ty)+src[k+c]*(1-tx)*ty+src[k+4+c]*tx*ty;}
+        result[oi+3]=255;
+      }
+    }
+    return {width:outWidth,height:outHeight,data:result};
+  }
+  const api={area,distance,convexHull,bestQuad,orderedQuad,validQuad,solveLinear,homography,project,longRailQuad,lineIntersection,rails,diamondProposals,expectedPockets,rectifiedPixels};
+  Object.assign(ns,api);
+  if(typeof module==='object'&&module.exports)module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
+<script>
+/* Chalkline Fieldwork — automatic PHOTO candidate detector, fully on device.
+ * Derived in approach from existing Chalkline cloth segmentation. Does NOT assert real-world accuracy.
+ * 'observed' requires an image signal. Geometry-derived pockets/diamonds are PROPOSALS until evidence is found.
+ */
+(function(root){
+  'use strict';
+  const ns=root.Fieldwork || (root.Fieldwork={});
+  const G=(typeof module==='object'&&module.exports)?require('./geometry.js'):ns;
+  const V='photo-nose-lines/0.2.0',clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+  function hsv(r,g,b){
+    r/=255;g/=255;b/=255;
+    const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
+    let h=0;
+    if(d){if(max===r)h=((g-b)/d)%6;else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h=(h*60+360)%360;}
+    return [h,max?d/max:0,max];
+  }
+  const hd=(a,b)=>{const d=Math.abs(a-b)%360;return Math.min(d,360-d);};
+  function largest(mask,w,h){
+    const seen=new Uint8Array(mask.length),stack=new Int32Array(mask.length);
+    let best=null,bestCount=0;
+    for(let i=0;i<mask.length;i++){
+      if(!mask[i]||seen[i])continue;
+      let n=0,head=0,tail=1;stack[0]=i;seen[i]=1;
+      const coords=[];
+      while(head<tail){const p=stack[head++],x=p%w,y=(p/w)|0;n++;coords.push(p);
+        if(x>0&&mask[p-1]&&!seen[p-1]){seen[p-1]=1;stack[tail++]=p-1;}
+        if(x<w-1&&mask[p+1]&&!seen[p+1]){seen[p+1]=1;stack[tail++]=p+1;}
+        if(y>0&&mask[p-w]&&!seen[p-w]){seen[p-w]=1;stack[tail++]=p-w;}
+        if(y<h-1&&mask[p+w]&&!seen[p+w]){seen[p+w]=1;stack[tail++]=p+w;}
+      }
+      if(n>bestCount){bestCount=n;best=coords;}
+    }
+    return best;
+  }
+  function tableFromPixels(img){
+    const {width:W,height:H,data}=img;
+    if(W<120||H<100) return {quad:null,reasons:['Image is too small to analyze.']};
+    const st=Math.max(1,Math.ceil(Math.max(W,H)/420)),w=Math.ceil(W/st),h=Math.ceil(H/st);
+    const hue=new Uint16Array(w*h),sat=new Float32Array(w*h),val=new Float32Array(w*h),hist=new Float32Array(36);
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+      const ix=Math.min(W-1,x*st),iy=Math.min(H-1,y*st),i=y*w+x,j=(iy*W+ix)*4,[hh,s,v]=hsv(data[j],data[j+1],data[j+2]);
+      hue[i]=hh;sat[i]=s;val[i]=v;
+      if(s>.65&&v>.49&&v<.99) hist[Math.floor(hh/10)%36]+=s*v;
+    }
+    const peaks=Array.from({length:36},(_,i)=>[hist[i]*2+hist[(i+35)%36]+hist[(i+1)%36],i]).sort((a,b)=>b[0]-a[0]);
+    let best=null;
+    for(const [,i] of peaks){
+      if(!best&&peaks[0][0]<1)break;
+      if(best&&hd(best.hue,i*10+5)<21)continue;
+      if(best&&best.iterations>=4)break;
+      const center=i*10+5,mask=new Uint8Array(w*h);
+      for(let k=0;k<mask.length;k++)if(hd(hue[k],center)<15&&sat[k]>.62&&val[k]>.45)mask[k]=1;
+      const comp=largest(mask,w,h);if(!comp||comp.length<w*h*.045)continue;
+      let border=0,xc=0,yc=0;
+      const rl=new Int32Array(h).fill(w),rr=new Int32Array(h).fill(-1),ct=new Int32Array(w).fill(h),cb=new Int32Array(w).fill(-1);
+      for(const k of comp){const x=k%w,y=(k/w)|0;xc+=x;yc+=y;
+        rl[y]=Math.min(rl[y],x);rr[y]=Math.max(rr[y],x);ct[x]=Math.min(ct[x],y);cb[x]=Math.max(cb[x],y);
+        if(x<2||y<2||x>w-3||y>h-3)border++;
+      }
+      const boundary=[];
+      for(let y=0;y<h;y++)if(rr[y]>=0){boundary.push([rl[y],y],[rr[y],y]);}
+      for(let x=0;x<w;x++)if(cb[x]>=0){boundary.push([x,ct[x]],[x,cb[x]]);}
+      let hull=G.convexHull(boundary);
+      // Large irregular masks can yield many hull vertices. Subsample while retaining extremes.
+      if(hull.length>48){const stride=hull.length/48;hull=Array.from({length:48},(_,j)=>hull[Math.floor(j*stride)]);}
+      const q0=G.bestQuad(hull);if(!q0)continue;
+      const quad=G.orderedQuad(q0.map(p=>[clamp((p[0]+.5)*st,0,W-1),clamp((p[1]+.5)*st,0,H-1)]));
+      if(!G.validQuad(quad,W,H))continue;
+      const coverage=comp.length/(w*h),quadArea=G.area(q0),fill=quadArea>0?comp.length/quadArea:0;
+      const cx=xc/comp.length,cy=yc/comp.length,central=1-clamp(Math.hypot(cx-w/2,cy-h/2)/(.65*Math.hypot(w,h)));
+      const borderShare=border/comp.length;
+      const score=coverage*(.55+.45*central)*clamp(fill,.2,1.15)*(1-clamp(borderShare*12,0,.65))*(center>80&&center<255?1.15:1);
+      if(!best||score>best.score){best={quad,hue:center,coverage,fill,borderShare,score,iterations:0};}
+      if(best)best.iterations=(best.iterations||0)+1;
+    }
+    if(!best)return {quad:null,reasons:['Could not isolate one complete felt surface. Keep all six pockets visible, use good light, avoid large occlusions.']};
+    const geometryConfidence=clamp((best.coverage-.035)/.25)*.42+clamp(best.fill/.90)*.38+(1-clamp(best.borderShare*12))*.20;
+    return {...best,geometryConfidence,reasons:[]};
+  }
+  function lightDarkNear(img,px,py,rad,mode='dark'){
+    const {width:w,height:h,data}=img;
+    let n=0,hits=0,luma=0,cx=0,cy=0;
+    const r=Math.max(2,Math.min(46,rad)),x0=Math.max(0,Math.floor(px-r)),x1=Math.min(w-1,Math.ceil(px+r));
+    const y0=Math.max(0,Math.floor(py-r)),y1=Math.min(h-1,Math.ceil(py+r));
+    const rsq=r*r,step=(r>18?2:1);
+    for(let y=y0;y<=y1;y+=step)for(let x=x0;x<=x1;x+=step){
+      if((x-px)**2+(y-py)**2>rsq)continue;
+      const i=(y*w+x)*4,R=data[i],Gr=data[i+1],B=data[i+2],hi=Math.max(R,Gr,B),lo=Math.min(R,Gr,B);
+      const ok=mode==='dark'?hi<75:(hi>180&&hi-lo<75);
+      if(ok){hits++;cx+=x;cy+=y;}luma+=.21*R+.72*Gr+.07*B;n++;
+    }
+    return {fraction:n?hits/n:0,centroid:hits?[cx/hits,cy/hits]:[px,py],mean:n?luma/n:0,hits,samples:n};
+  }
+  function outwardNormal(q,rail){
+    const a=q[rail],b=q[(rail+1)%4],dx=b[0]-a[0],dy=b[1]-a[1],d=Math.hypot(dx,dy)||1;
+    const n=[dy/d,-dx/d],middle=[(a[0]+b[0])/2,(a[1]+b[1])/2];
+    const c=q.reduce((s,p)=>[s[0]+p[0]/4,s[1]+p[1]/4],[0,0]);
+    if((c[0]-middle[0])*n[0]+(c[1]-middle[1])*n[1]>0)return [-n[0],-n[1]];
+    return n;
+  }
+  function pocketEvidence(img,p,q,kind){
+    const range=G.distance(q[0],q[2]),rad=clamp(range*(kind==='corner'?.035:.03),5,34);
+    const signal=lightDarkNear(img,p[0],p[1],rad);
+    return {signal,observed:signal.hits>=5&&signal.fraction>(kind==='corner'?.07:.085),confidence:clamp((signal.fraction-.04)*2.6)};
+  }
+  function checkDiamonds(img,q,H){
+    const proposed=G.diamondProposals(H);const minSide=Math.min(G.distance(q[0],q[3]),G.distance(q[1],q[2]));
+    // Search a narrow band OUTSIDE the playing area near the known geometric mark proposal.
+    return proposed.map(d=>{
+      const normal=outwardNormal(q,d.rail),p=d.point;let best={score:0,point:p,fraction:0};
+      const len=G.distance(q[d.rail],q[(d.rail+1)%4]),tangent=[(q[(d.rail+1)%4][0]-q[d.rail][0])/len,(q[(d.rail+1)%4][1]-q[d.rail][1])/len];
+      const offsetStep=Math.max(2,Math.round(minSide*.012)),spread=Math.min(26,Math.max(10,len*.06));
+      for(let j=1;j<=12;j++)for(let k=-3;k<=3;k++){
+        const x=p[0]+normal[0]*offsetStep*j+tangent[0]*spread*k*.33;
+        const y=p[1]+normal[1]*offsetStep*j+tangent[1]*spread*k*.33;
+        const result=lightDarkNear(img,x,y,clamp(offsetStep*.36,3,10),'light');
+        const contrast=Math.max(0,result.mean-100)/155;
+        const score=result.fraction*contrast;
+        if(score>best.score)best={score,point:[x,y],fraction:result.fraction};
+      }
+      // Conservative label. White/bright marks may still be reflections; never ground truth.
+      const observed=best.score>.31;
+      return {...d,point:observed?best.point:d.point,source:observed?'observed_candidate':'geometric_proposal',observed,confidence:observed?clamp(best.score):0,evidence:{brightContrastScore:+best.score.toFixed(3)}};
+    });
+  }
+  // Fit the INNER cushion noses. The initial HSV blob includes cushion faces; its hull
+  // is only a seed. Across each rail, scan inward for the last dark-to-felt transition,
+  // robustly fit that line, and INTERSECT adjacent lines. Those intersections are
+  // virtual playing-surface corners, NOT pocket centres or guaranteed pocket outcomes.
+  function fitCushionNoses(img,quad,clothHue){
+    const q=G.orderedQuad(quad),cx=q.reduce((s,p)=>s+p[0]/4,0),cy=q.reduce((s,p)=>s+p[1]/4,0);
+    const scale=Math.max(img.width,img.height)/1600,rails=[];
+    const sample=(x,y)=>{
+      const ix=Math.round(x),iy=Math.round(y);
+      if(ix<0||iy<0||ix>=img.width||iy>=img.height)return null;
+      const j=(iy*img.width+ix)*4,[h,s,v]=hsv(img.data[j],img.data[j+1],img.data[j+2]);
+      return {h,s,v};
+    };
+    function regression(pts,allowed){
+      let n=0,st=0,ss=0,stt=0,sts=0;
+      for(let i=0;i<pts.length;i++)if(allowed[i]){const t=pts[i].t-.5,s=pts[i].s;n++;st+=t;ss+=s;stt+=t*t;sts+=t*s;}
+      if(n<3)return null;
+      const den=n*stt-st*st;
+      const slope=Math.abs(den)>1e-8?(n*sts-st*ss)/den:0;
+      return {slope,offset:(ss-slope*st)/n};
+    }
+    for(let edge=0;edge<4;edge++){
+      const a=q[edge],b=q[(edge+1)%4],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1;
+      let nx=-dy/len,ny=dx/len;
+      const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
+      if((cx-mx)*nx+(cy-my)*ny<0){nx=-nx;ny=-ny;}
+      const pts=[];
+      const start=-18*scale,end=54*scale,step=2*scale,probe=9*scale;
+      for(let j=0;j<54;j++){
+        const t=.16+(.68*j/53),px=a[0]+dx*t,py=a[1]+dy*t;
+        let selected=null;
+        for(let z=start;z<=end;z+=step){
+          const dark=sample(px+nx*z,py+ny*z),inside=sample(px+nx*(z+probe),py+ny*(z+probe));
+          if(!dark||!inside)continue;
+          const contrast=inside.v-dark.v;
+          if(inside.s>.56&&inside.v>155/255&&hd(inside.h,clothHue)<20&&dark.v<185/255&&contrast>72/255){
+            // Last (most inward) supported transition eliminates outer cushion/trim edges.
+            selected={t,s:z};
+          }
+        }
+        if(selected)pts.push(selected);
+      }
+      let inliers=pts.map(()=>true),model=null;
+      for(let k=0;k<3;k++){
+        const f=regression(pts,inliers);if(!f)break;
+        model=f;const residuals=pts.filter((p,i)=>inliers[i]).map(p=>Math.abs(p.s-(f.offset+f.slope*(p.t-.5)))).sort((a,b)=>a-b);
+        const med=residuals[Math.floor(residuals.length/2)]||0,tol=Math.max(6*scale,2.4*med);
+        inliers=pts.map(p=>Math.abs(p.s-(f.offset+f.slope*(p.t-.5)))<=tol);
+      }
+      const count=inliers.filter(Boolean).length;
+      const extent=pts.length?(Math.max(...pts.map(p=>p.t))-Math.min(...pts.map(p=>p.t))):0;
+      const measured=!!(model&&pts.length>=22&&count>=18&&extent>.45&&Math.abs(model.slope)<.3*len);
+      const startOffset=measured?model.offset-model.slope/2:0,endOffset=measured?model.offset+model.slope/2:0;
+      const a0=[a[0]+nx*startOffset,a[1]+ny*startOffset],b0=[b[0]+nx*endOffset,b[1]+ny*endOffset];
+      rails.push({id:'nose_'+edge,a:a0,b:b0,source:measured?'image_transition_fit':'geometric_proposal',measured,
+        evidence:{samples:pts.length,inliers:count,coverage:+(count/54).toFixed(3),medianInwardOffset:measured?+model.offset.toFixed(2):null}});
+    }
+    const intersections=rails.map((r,i)=>G.lineIntersection(rails[(i+3)%4].a,rails[(i+3)%4].b,r.a,r.b));
+    const trusted=rails.every(r=>r.measured)&&intersections.every(Boolean)&&G.validQuad(intersections,img.width,img.height)&&
+      intersections.every((p,i)=>G.distance(p,q[i])<.115*Math.max(img.width,img.height)&&p[0]>=0&&p[0]<img.width&&p[1]>=0&&p[1]<img.height);
+    return {quad:trusted?intersections:q,rails,fitAccepted:!!trusted,seedQuad:q,
+      reason:trusted?null:'At least one cushion-nose line lacked sufficient supported image transitions',
+      geometrySource:trusted?'virtual_intersection_of_image_fitted_noses':'unverified_felt_hull'};
+  }
+  function calculateGeometry(img,quad,opts={}){
+    const W=img.width,H=img.height,base=G.orderedQuad(quad);
+    const nose=opts.noseFit||null;
+    if(!G.validQuad(base,W,H))return {status:'fail',table:null,reason:'Invalid table corners: outline too small or self-crossing',version:V};
+    let orientation=opts.orientation;
+    let options;
+    if(!orientation){
+      options=['horizontal','vertical'].map(axis=>{
+        const q=G.longRailQuad(base,axis),matrix=G.homography(q),pockets=G.expectedPockets(matrix);
+        let score=0;
+        for(const pk of pockets.filter(p=>p.kind==='side')){const ev=pocketEvidence(img,pk.p,q,'side');score+=ev.signal.fraction;}
+        const elongation=(G.distance(q[0],q[1])+G.distance(q[2],q[3]))/(G.distance(q[1],q[2])+G.distance(q[3],q[0]));
+        score+=clamp((elongation-1)*.03,-.05,.05);
+        return {axis,score};
+      });
+      // Prefer the obviously longer pair of projected cushion edges. Dark shapes near
+      // trim, shadow, or pockets are not a reliable way to override unmistakable length.
+      const top=G.distance(base[0],base[1])+G.distance(base[2],base[3]);
+      const sides=G.distance(base[1],base[2])+G.distance(base[3],base[0]);
+      if(top>1.55*sides)orientation='horizontal';
+      else if(sides>1.55*top)orientation='vertical';
+      else{options.sort((a,b)=>b.score-a.score);orientation=options[0].axis;}
+    }
+    const q=G.longRailQuad(base,orientation),Hmat=G.homography(q);
+    if(!Hmat)return {status:'fail',table:null,reason:'Perspective geometry is singular',version:V};
+    const pockets=G.expectedPockets(Hmat).map(p=>{
+      const ev=pocketEvidence(img,p.p,q,p.kind);
+      return {...p,source:ev.observed?'observed_candidate':'geometric_proposal',observed:ev.observed,confidence:+ev.confidence.toFixed(3),signal:{darkFraction:+ev.signal.fraction.toFixed(3),pixels:ev.signal.hits,centroid:ev.signal.centroid}};
+    });
+    const diamonds=checkDiamonds(img,q,Hmat);
+    const foundCorners=pockets.filter(p=>p.kind==='corner'&&p.observed).length;
+    const foundSides=pockets.filter(p=>p.kind==='side'&&p.observed).length;
+    const geomConfidence=Number.isFinite(opts.geometryConfidence)?opts.geometryConfidence:0.65;
+    // These are heuristic evidence scores, not calibrated probabilities or precision claims.
+    const evidenceScore=clamp(.48*geomConfidence+.38*(foundCorners/4)+.14*(foundSides/2));
+    const warnings=[];
+    if(foundCorners<4)warnings.push(`${foundCorners}/4 corner pockets have independent dark-image evidence`);
+    if(foundSides<2)warnings.push(`${foundSides}/2 side pockets have independent dark-image evidence`);
+    if(!diamonds.some(d=>d.observed))warnings.push('No diamond markers met the conservative bright-mark test; placements are proposals only');
+    if(opts.method==='manual-adjusted')warnings.push('Four virtual intersections manually adjusted; not an automatic success');
+    if(nose&&!nose.fitAccepted)warnings.push('Cushion nose intersections could not be verified; rectification is provisional');
+    warnings.push('Pocket centres, jaw positions and ball drop acceptance are NOT identified by these virtual corners');
+    // No PASS without independent pocket evidence. Geometry can still be useful for review.
+    const status=geomConfidence<.35?'fail':'review'; // Image-dark pixels and fitted lines alone cannot prove real pocket openings.
+    const railFit=nose?nose.rails:null;
+    const geometrySource=opts.method==='manual-adjusted'?'user_confirmed_virtual_intersections':(nose?.geometrySource||'unverified_felt_hull');
+    return {status,version:V,reason:null,warnings,table:{corners:q,virtualCorners:q,rawCorners:base,seedCorners:nose?.seedQuad||base,cornerSource:opts.method==='manual-adjusted'?'confirmed_by_user':geometrySource,geometrySource,orientation,homography:Hmat,geometryConfidence:+geomConfidence.toFixed(3),evidenceScore:+evidenceScore.toFixed(3),rails:G.rails(q).map((r,i)=>({...r,source:nose?.fitAccepted?'virtual_cushion_nose_fit':geometrySource})),railFit,pockets:pockets.map(p=>({...p,virtualReference:p.kind==='corner'?p.p:null,darkRegionCentroid:p.observed?p.signal?.centroid||null:null,openingCenterVerified:false,physicalPocketOutcome:'unknown'})),diamonds,rectifiedAspectRatio:2},metrics:{cornersObserved:foundCorners,sidesObserved:foundSides,diamondsObserved:diamonds.filter(d=>d.observed).length,diamondProposals:diamonds.length,pocketProposals:6,railProposals:4},method:opts.method||'auto-felt-segmentation',note:'Nose-line virtual corners are geometric references only; no pocket opening centre or guaranteed-ball-drop claim. Uncalibrated, review against original photo.'};
+  }
+  function analyzePixels(img,options={}){
+    const t0=typeof performance!=='undefined'?performance.now():Date.now(),region=tableFromPixels(img);
+    let analysis;
+    if(!region.quad)analysis={status:'fail',reason:region.reasons[0],warnings:region.reasons,table:null,metrics:{cornersObserved:0,sidesObserved:0,diamondsObserved:0,diamondProposals:0,pocketProposals:0,railProposals:0},version:V,method:'auto-felt-segmentation'};
+    else {const nose=fitCushionNoses(img,region.quad,region.hue);analysis=calculateGeometry(img,nose.quad,{geometryConfidence:region.geometryConfidence,noseFit:nose});}
+    analysis.imageSize={width:img.width,height:img.height};
+    analysis.tableRegion=region.quad?{hue:region.hue,coverage:+region.coverage.toFixed(3),fill:+region.fill.toFixed(3),borderShare:+region.borderShare.toFixed(4)}:null;
+    analysis.processingMs=Math.round((typeof performance!=='undefined'?performance.now():Date.now())-t0);
+    analysis.options={tableSizeFeet:options.tableSizeFeet||7};
+    return analysis;
+  }
+  const api={VISION_VERSION:V,hsv,largest,tableFromPixels,fitCushionNoses,lightDarkNear,outwardNormal,pocketEvidence,checkDiamonds,calculateGeometry,analyzePixels};
+  Object.assign(ns,api);
+  if(typeof module==='object'&&module.exports)module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
+<script>
+/* Self-contained ZIP writer / reader. STORE (no compression) by design: supports Safari offline, no CDN.
+ * Importer reads only self-generated stored ZIPs, verifies CRC and bounds, rejects unsafe paths.
+ */
+(function(root){
+ 'use strict';
+ const ns=root.Fieldwork||(root.Fieldwork={});
+ const encoder=new TextEncoder(),decoder=new TextDecoder();
+ const table=new Uint32Array(256);
+ for(let i=0;i<256;i++){let c=i;for(let j=0;j<8;j++)c=(c&1)?0xedb88320^(c>>>1):c>>>1;table[i]=c>>>0;}
+ function crc32(bytes){let c=0xffffffff;for(let i=0;i<bytes.length;i++)c=table[(c^bytes[i])&255]^(c>>>8);return (c^0xffffffff)>>>0;}
+ function le16(view,o,v){view.setUint16(o,v,true);}function le32(view,o,v){view.setUint32(o,v>>>0,true);}
+ async function toBytes(v){
+   if(v instanceof Uint8Array)return v;
+   if(v instanceof ArrayBuffer)return new Uint8Array(v);
+   if(typeof Blob!=='undefined'&&v instanceof Blob)return new Uint8Array(await v.arrayBuffer());
+   if(typeof v==='string')return encoder.encode(v);
+   throw new TypeError('ZIP entry must be bytes, string, or Blob');
+ }
+ async function createZip(entries){
+   const all=[],central=[];let offset=0;
+   for(const entry of entries){
+     const name=entry.name.replace(/\\/g,'/');
+     if(!name||name.startsWith('/')||name.split('/').some(t=>t==='..'||t==='.')||/[\0\r\n]/.test(name))throw new Error('Unsafe ZIP entry name');
+     const n=encoder.encode(name),bytes=await toBytes(entry.data);
+     if(n.length>65535||bytes.length>0xffffffff)throw new Error('ZIP item too large');
+     const crc=crc32(bytes),local=new Uint8Array(30+n.length),v=new DataView(local.buffer);
+     le32(v,0,0x04034b50);le16(v,4,20);le16(v,6,0x800);le16(v,8,0);
+     le32(v,14,crc);le32(v,18,bytes.length);le32(v,22,bytes.length);le16(v,26,n.length);
+     local.set(n,30);all.push(local,bytes);
+     const c=new Uint8Array(46+n.length),cv=new DataView(c.buffer);
+     le32(cv,0,0x02014b50);le16(cv,4,20);le16(cv,6,20);le16(cv,8,0x800);
+     le16(cv,10,0);le32(cv,16,crc);le32(cv,20,bytes.length);le32(cv,24,bytes.length);
+     le16(cv,28,n.length);le32(cv,42,offset);c.set(n,46);central.push(c);
+     offset+=local.length+bytes.length;
+   }
+   const csize=central.reduce((n,c)=>n+c.length,0),eocd=new Uint8Array(22),ev=new DataView(eocd.buffer);
+   if(entries.length>65535)throw new Error('Too many ZIP entries');
+   le32(ev,0,0x06054b50);le16(ev,8,entries.length);le16(ev,10,entries.length);le32(ev,12,csize);le32(ev,16,offset);
+   return new Blob([...all,...central,eocd],{type:'application/zip'});
+ }
+ async function parseZip(blob,{maxBytes=120*1024*1024,maxEntries=150}={}){
+   if(blob.size>maxBytes)throw new Error('ZIP too large for in-browser import');
+   const bytes=new Uint8Array(await blob.arrayBuffer()),view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength),files=new Map();
+   let end=-1;
+   for(let i=bytes.length-22;i>=Math.max(0,bytes.length-65557);i--)if(view.getUint32(i,true)===0x06054b50){end=i;break;}
+   if(end<0)throw new Error('Invalid ZIP end record');
+   const count=view.getUint16(end+10,true),start=view.getUint32(end+16,true);
+   if(count>maxEntries)throw new Error('Too many files in ZIP');
+   let p=start;
+   for(let i=0;i<count;i++){
+     if(p+46>bytes.length||view.getUint32(p,true)!==0x02014b50)throw new Error('Invalid ZIP file table');
+     const method=view.getUint16(p+10,true),size=view.getUint32(p+24,true),crc=view.getUint32(p+16,true),len=view.getUint16(p+28,true),extra=view.getUint16(p+30,true),comment=view.getUint16(p+32,true),localOffset=view.getUint32(p+42,true);
+     if(method!==0)throw new Error('Only uncompressed Fieldwork bundles can be imported');
+     if(p+46+len+extra+comment>bytes.length)throw new Error('Truncated ZIP filename');
+     const name=decoder.decode(bytes.subarray(p+46,p+46+len));
+     if(!name||name.startsWith('/')||name.split('/').some(t=>t==='..'||t==='.')||name.includes('\\')||name.includes('\0'))throw new Error('Unsafe ZIP filename');
+     if(localOffset+30>bytes.length||view.getUint32(localOffset,true)!==0x04034b50)throw new Error('Missing ZIP file data');
+     const nlen=view.getUint16(localOffset+26,true),elen=view.getUint16(localOffset+28,true),dataStart=localOffset+30+nlen+elen;
+     if(dataStart+size>bytes.length)throw new Error('ZIP entry truncated');
+     const file=bytes.slice(dataStart,dataStart+size);
+     if(crc32(file)!==crc)throw new Error('ZIP checksum mismatch for '+name);
+     files.set(name,file);p+=46+len+extra+comment;
+   }
+   return files;
+ }
+ function jsonString(obj){return JSON.stringify(obj,null,2)+'\n';}
+ function photoName(i){return 'photos/capture_'+String(i+1).padStart(3,'0')+'.jpg';}
+ function overlayName(i){return 'overlays/capture_'+String(i+1).padStart(3,'0')+'_overlay.jpg';}
+ function rectifiedName(i){return 'rectified/capture_'+String(i+1).padStart(3,'0')+'_topdown.jpg';}
+ function analysisName(i){return 'analysis/capture_'+String(i+1).padStart(3,'0')+'.analysis.json';}
+ async function sessionToZip(session){
+   const entries=[],m={schema:'chalkline.photo-session/1',app:'Chalkline Fieldwork',version:'0.2.0',
+     id:session.id,createdAt:session.createdAt,exportedAt:new Date().toISOString(),tableSizeFeet:session.tableSizeFeet,synthetic:!!session.synthetic,
+     captureCount:session.frames.length,completeCaptureCount:session.frames.length>=5,
+     device:session.device||{},imageResults:[],privacy:'All images processed locally; this ZIP can contain images of private property.'};
+   const lines=[`Session ${session.id}`,`Started ${session.createdAt}`,`Detector: ${ns.VISION_VERSION||'photo-nose-lines/0.2.0'}`];
+   for(let i=0;i<session.frames.length;i++){
+     const fr=session.frames[i],result=fr.analysis||null;
+     entries.push({name:photoName(i),data:fr.original});
+     if(fr.source){
+       const ext=String(fr.sourceFilename||'').split('.').pop().toLowerCase();
+       const safeExt=/^(jpe?g|png|webp|heic|heif|gif|bmp|tiff?)$/.test(ext)?ext:'bin';
+       entries.push({name:'source_originals/source_'+String(i+1).padStart(3,'0')+'.'+safeExt,data:fr.source});
+     }
+     if(fr.overlay)entries.push({name:overlayName(i),data:fr.overlay});
+     if(fr.rectified)entries.push({name:rectifiedName(i),data:fr.rectified});
+     entries.push({name:analysisName(i),data:jsonString({schema:'chalkline.photo-analysis/1',captureIndex:i+1,filename:fr.filename||photoName(i),capturedAt:fr.capturedAt,dimensions:fr.dimensions,normalization:fr.normalization||null,synthetic:!!fr.synthetic,analysis:result})});
+     m.imageResults.push({captureIndex:i+1,status:result?.status||'not_analyzed',geometryConfidence:result?.table?.geometryConfidence??null,geometrySource:result?.table?.geometrySource??null,
+       cornersObserved:result?.metrics?.cornersObserved??0,sidesObserved:result?.metrics?.sidesObserved??0,diamondsObserved:result?.metrics?.diamondsObserved??0,method:result?.method??null,synthetic:!!fr.synthetic,sourceFilename:fr.sourceFilename||null,normalization:fr.normalization||null});
+     lines.push(`Photo ${i+1}: ${result?.status||'not_analyzed'}, ${result?.reason||result?.warnings?.join('; ')||'no error'}`);
+   }
+   const statuses=m.imageResults.reduce((s,i)=>(s[i.status]=(s[i.status]||0)+1,s),{});
+   m.statusCounts=statuses;
+   entries.push({name:'session_summary.json',data:jsonString(m)});
+   entries.push({name:'debug_log.txt',data:lines.concat(session.log||[]).join('\n')+'\n'});
+   entries.push({name:'README.txt',data:'Chalkline Fieldwork evidence bundle v0.2.\nphotos/ contains the JPEG image inputs analyzed by the detector (max 1600px).\nsource_originals/ contains original uploaded photo bytes when available; camera snapshots are already JPEG.\noverlays/ contains illustrated geometry and evidence status.\nrectified/ contains proposed perspective warp.\nanalysis/ has model-derived coordinates and heuristic scores; NOT ground-truth.\nVirtual corners = intersections of inner cushion-nose lines; pocket-opening centres and ball capture are NOT verified.\nCompare images against independently checked annotations before quoting accuracy.\nNo images were uploaded by the app. Upload this ZIP to ChatGPT yourself.\n'});
+   return createZip(entries);
+ }
+ function imageType(b){return b.length>3&&b[0]===0xff&&b[1]===0xd8?'image/jpeg':'application/octet-stream';}
+ async function zipToSession(blob){
+   const files=await parseZip(blob),sum=files.get('session_summary.json');
+   if(!sum)throw new Error('Not a Fieldwork bundle: session_summary.json missing');
+   const m=JSON.parse(decoder.decode(sum));
+   if(m.schema!=='chalkline.photo-session/1'||!Array.isArray(m.imageResults))throw new Error('Unknown session bundle format');
+   if(m.imageResults.length>10)throw new Error('Too many photos');
+   const frames=[];
+   for(let i=0;i<m.imageResults.length;i++){
+     const original=files.get(photoName(i));if(!original)throw new Error('Photo '+(i+1)+' is missing');
+     const aj=files.get(analysisName(i)),an=aj?JSON.parse(decoder.decode(aj)):{};
+     const ob=files.get(overlayName(i)),rb=files.get(rectifiedName(i));
+     const rawPrefix='source_originals/source_'+String(i+1).padStart(3,'0')+'.';
+     const originalRaw=[...files.entries()].find(([name])=>name.startsWith(rawPrefix));
+     frames.push({id:'imported_'+i,filename:an.filename||photoName(i),capturedAt:an.capturedAt,
+       dimensions:an.dimensions,normalization:an.normalization||null,synthetic:!!an.synthetic,source:originalRaw?new Blob([originalRaw[1]],{type:'application/octet-stream'}):null,
+       sourceFilename:m.imageResults[i].sourceFilename||null,original:new Blob([original],{type:imageType(original)}),
+       overlay:ob?new Blob([ob],{type:'image/jpeg'}):null,rectified:rb?new Blob([rb],{type:'image/jpeg'}):null,
+       analysis:an.analysis||null});
+   }
+   return {id:root.crypto?.randomUUID?.()||('imported-'+Date.now()),createdAt:m.createdAt||new Date().toISOString(),
+     tableSizeFeet:[7,8,9].includes(m.tableSizeFeet)?m.tableSizeFeet:7,synthetic:!!m.synthetic,
+     device:m.device||{},frames,log:['Imported ZIP '+new Date().toISOString(),'Original session '+m.id],importedFrom:m.id};
+ }
+ const api={crc32,createZip,parseZip,sessionToZip,zipToSession,photoName,analysisName};
+ Object.assign(ns,api);if(typeof module==='object'&&module.exports)module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
+<script>
+/* IndexedDB session persistence. Full-resolution photo Blobs never leave this browser without export. */
+(function(root){
+ 'use strict';
+ const ns=root.Fieldwork||(root.Fieldwork={});let dbPromise;
+ function openDB(){
+   if(typeof indexedDB==='undefined')return Promise.reject(new Error('IndexedDB unavailable'));
+   if(dbPromise)return dbPromise;
+   dbPromise=new Promise((resolve,reject)=>{
+     const r=indexedDB.open('chalkline-fieldwork',1);
+     r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('sessions'))r.result.createObjectStore('sessions',{keyPath:'id'});};
+     r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error||new Error('Cannot open local storage'));
+   });
+   return dbPromise;
+ }
+ async function readSessions(){
+   const db=await openDB();return new Promise((resolve,reject)=>{
+     const t=db.transaction('sessions','readonly'),r=t.objectStore('sessions').getAll();
+     r.onsuccess=()=>resolve(r.result.sort((a,b)=>b.createdAt.localeCompare(a.createdAt)));
+     r.onerror=()=>reject(r.error);
+   });
+ }
+ async function saveSession(session){
+   const db=await openDB();return new Promise((resolve,reject)=>{
+     const tx=db.transaction('sessions','readwrite');tx.objectStore('sessions').put(session);
+     tx.oncomplete=()=>resolve(true);tx.onerror=()=>reject(tx.error||new Error('Storage quota may be full'));
+   });
+ }
+ async function deleteSession(id){const db=await openDB();return new Promise((resolve,reject)=>{
+   const tx=db.transaction('sessions','readwrite');tx.objectStore('sessions').delete(id);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);
+ });}
+ const api={openDB,readSessions,saveSession,deleteSession};Object.assign(ns,api);
+ if(typeof module==='object'&&module.exports)module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
+<script>
+/* Chalkline Fieldwork 0.2 — Safari photo session UI. All image data stays local until a user exports/shares. */
+(function(root){
+'use strict';
+if(typeof document==='undefined')return;
+const F=root.Fieldwork;const $=id=>document.getElementById(id);const show=(el,visible)=>{el.hidden=!visible;};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));const pad=i=>String(i).padStart(2,'0');
+const state={session:null,sessions:[],step:'home',selection:0,view:'overlay',editing:false,dragIndex:-1,
+  camera:null,busy:false,saveError:null,bundle:null,bundleFor:null,dragChanged:false};
+function now(){return new Date().toISOString();}
+function makeID(){return (crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.floor(Math.random()*1e6)}`).slice(0,32);}
+function formatDate(t){try{return new Date(t).toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'});}catch{return t||'unknown';}}
+function toast(msg,error=false){const box=$('toast');box.textContent=(error?'NOTICE — ':'')+msg;box.hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>box.hidden=true,6000);}
+function log(s){if(state.session)state.session.log.push(`${now()} ${s}`);}
+async function persist(){
+  if(!state.session)return;
+  try{await F.saveSession(state.session);state.saveError=null;}catch(e){state.saveError=e.message;toast('Could not save this session locally: '+e.message+' — export your ZIP before closing.',true);}
+}
+async function refreshSessions(){try{state.sessions=await F.readSessions();}catch(e){state.sessions=[];$('footerMessage').textContent='LOCAL STORAGE UNAVAILABLE / EXPORT BEFORE CLOSING';}}
+function metaSummary(frames){
+  const counts={pass:0,review:0,fail:0,pending:0};
+  frames.forEach(fr=>{const s=fr.analysis?.status||'pending';counts[s]=(counts[s]||0)+1;});return counts;
+}
+function setSession(s){state.session=s;state.selection=0;state.editing=false;state.bundle=null;state.bundleFor=null;state.busy=false;state.dragIndex=-1;updateAll();}
+function navigate(step){
+  if(!state.session&&step!=='home'){toast('Start or load a session first.',true);return;}
+  if(step==='capture'&&state.step!=='capture'){}
+  if(state.step==='capture'&&step!=='capture')stopCamera();
+  state.step=step;document.querySelectorAll('.screen').forEach(s=>show(s,s.id==='screen-'+step));
+  document.querySelectorAll('.step').forEach(el=>el.classList.toggle('active',el.dataset.step===step));
+  if(step==='review')displayReview();
+  if(step==='export')renderExport();
+  updateAll();root.scrollTo?.({top:0,behavior:'instant'});
+}
+function makeSession(synthetic=false){return {id:makeID(),createdAt:now(),tableSizeFeet:Number($('tableSizeSelect').value)||7,
+  frames:[],synthetic,device:{userAgent:navigator.userAgent,platform:navigator.platform||'',language:navigator.language||''},log:[`${now()} Session opened. Synthetic=${synthetic}`]};}
+async function newSession(){const s=makeSession();setSession(s);await persist();await refreshSessions();navigate('capture');}
+function revokeAfter(image){const url=image.dataset.objectUrl;if(url){URL.revokeObjectURL(url);delete image.dataset.objectUrl;}}
+function setBlobImage(img,blob){
+  revokeAfter(img);if(!blob){img.removeAttribute('src');return;}
+  const url=URL.createObjectURL(blob);img.dataset.objectUrl=url;
+  img.onload=()=>{if(img.dataset.objectUrl===url){URL.revokeObjectURL(url);delete img.dataset.objectUrl;}};
+  img.onerror=()=>{if(img.dataset.objectUrl===url){URL.revokeObjectURL(url);delete img.dataset.objectUrl;}};
+  img.src=url;
+}
+function blobToImage(blob){
+  return new Promise((resolve,reject)=>{
+    const img=new Image(),url=URL.createObjectURL(blob);
+    img.onload=()=>{URL.revokeObjectURL(url);resolve(img);};
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Browser cannot decode this image. Try JPEG or PNG.'));};img.src=url;
+  });
+}
+function canvasBlob(canvas,type='image/jpeg',quality=.88){return new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('Canvas export failed')),type,quality));}
+function canvasFromImage(img,max=1600){
+  const scale=Math.min(1,max/Math.max(img.naturalWidth||img.videoWidth||img.width,img.naturalHeight||img.videoHeight||img.height));
+  const w=Math.max(1,Math.round((img.naturalWidth||img.videoWidth||img.width)*scale)),h=Math.max(1,Math.round((img.naturalHeight||img.videoHeight||img.height)*scale));
+  const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;canvas.getContext('2d',{willReadFrequently:true}).drawImage(img,0,0,w,h);return canvas;
+}
+async function captureFromSource(blob,filename,opts={}){
+  if(!state.session)throw new Error('Create a session first');
+  if(state.session.frames.length>=10)throw new Error('10 images maximum in one session');
+  const img=await blobToImage(blob),width=img.naturalWidth,height=img.naturalHeight;
+  if(width<120||height<100)throw new Error('Photo is too small');
+  const canvas=canvasFromImage(img,1600),normalized=await canvasBlob(canvas);
+  const frame={id:makeID(),filename:filename||`capture_${pad(state.session.frames.length+1)}.jpg`,capturedAt:now(),dimensions:{width:canvas.width,height:canvas.height,sourceWidth:width,sourceHeight:height},
+    original:normalized,source:opts.isCamera?null:blob,sourceFilename:filename||null,
+    normalization:{fromCamera:!!opts.isCamera,resized:width!==canvas.width||height!==canvas.height,sourceType:blob.type||'unknown',analyzedType:'image/jpeg'},
+    synthetic:!!opts.synthetic,overlay:null,rectified:null,analysis:null,autoAnalysis:null};
+  state.session.frames.push(frame);state.bundle=null;state.bundleFor=null;log(`Added frame ${state.session.frames.length}: ${frame.filename} ${canvas.width}x${canvas.height} from ${width}x${height}`);
+  await persist();updateAll();return frame;
+}
+async function fromFileInput(files){
+  if(!state.session)await newSession();
+  let count=0;
+  for(const f of files){
+    try{await captureFromSource(f,f.name,{isCamera:false});count++;}
+    catch(e){toast(`${f.name}: ${e.message}`,true);if(state.session.frames.length>=10)break;}
+  }
+  if(count)toast(`${count} photo${count===1?'':'s'} added. Analysis is ready.`);
+}
+async function startCamera(){
+  if(!navigator.mediaDevices?.getUserMedia){toast('Live camera needs an HTTPS page. Use camera-roll import instead.',true);return;}
+  try{stopCamera();const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}});
+    state.camera=stream;const video=$('cameraVideo');video.srcObject=stream;await video.play();
+    $('cameraBody').classList.add('camera-on');$('cameraPlaceholder').hidden=true;$('cameraStatus').textContent='LIVE / CAMERA CONNECTED';
+    $('takePhotoBtn').disabled=false;$('stopCameraBtn').disabled=false;$('startCameraBtn').disabled=true;
+  }catch(e){stopCamera();toast(`Camera could not start: ${e.message}. You can choose photos from Files.`,true);}
+}
+function stopCamera(){
+  state.camera?.getTracks().forEach(t=>t.stop());state.camera=null;
+  const vid=$('cameraVideo');vid.pause();vid.srcObject=null;
+  $('cameraBody').classList.remove('camera-on');$('cameraPlaceholder').hidden=false;
+  $('cameraStatus').textContent='CAMERA OFF';$('takePhotoBtn').disabled=true;$('stopCameraBtn').disabled=true;$('startCameraBtn').disabled=false;
+}
+async function takePhoto(){
+  const video=$('cameraVideo');if(!state.camera||!video.videoWidth){toast('Camera is not ready.',true);return;}
+  try{const canvas=canvasFromImage(video,1920),blob=await canvasBlob(canvas,'image/jpeg',.92);
+    await captureFromSource(blob,`camera_${pad(state.session.frames.length+1)}.jpg`,{isCamera:true});toast('Frame captured.');
+  }catch(e){toast('Capture failed: '+e.message,true);}
+}
+function drawPoly(ctx,pts,close=true){ctx.beginPath();pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));if(close)ctx.closePath();}
+function drawOverlay(canvas,analysis){
+  const ctx=canvas.getContext('2d'),table=analysis?.table;
+  if(!table){
+    ctx.save();ctx.fillStyle='rgba(219,76,55,.90)';ctx.fillRect(8,8,Math.min(330,canvas.width-16),38);
+    ctx.fillStyle='white';ctx.font='bold 17px monospace';ctx.fillText('NO TABLE REFERENCE',18,34);ctx.restore();return;
+  }
+  const w=canvas.width,scale=Math.max(1,w/1100),q=table.virtualCorners||table.corners;
+  function segment(a,b,t0,t1){
+    const p=[a[0]+(b[0]-a[0])*t0,a[1]+(b[1]-a[1])*t0],r=[a[0]+(b[0]-a[0])*t1,a[1]+(b[1]-a[1])*t1];
+    ctx.beginPath();ctx.moveTo(...p);ctx.lineTo(...r);ctx.stroke();
+  }
+  ctx.save();ctx.lineCap='round';
+  // Cyan = the four inner cushion-nose lines. Segments across corner/side pocket
+  // gaps are dashed because no physical cushion exists through a pocket opening.
+  table.rails.forEach((r,i)=>{
+    ctx.lineWidth=3.5*scale;ctx.strokeStyle='#f9dd6e';ctx.setLineDash([]);
+    if(i%2===0){segment(r.a,r.b,.07,.44);segment(r.a,r.b,.56,.93);}
+    else segment(r.a,r.b,.07,.93);
+    ctx.strokeStyle='#fff8e8';ctx.lineWidth=2*scale;ctx.setLineDash([5*scale,6*scale]);
+    segment(r.a,r.b,0,.07);segment(r.a,r.b,.93,1);
+    if(i%2===0)segment(r.a,r.b,.44,.56);
+  });
+  ctx.setLineDash([]);
+  // Virtual sharp: intersection of extended nose lines. NOT a physical pocket mouth.
+  q.forEach((p,i)=>{
+    const [x,y]=p,rad=13*scale;
+    ctx.strokeStyle='#141c26';ctx.lineWidth=5*scale;
+    ctx.beginPath();ctx.moveTo(x-rad,y);ctx.lineTo(x+rad,y);ctx.moveTo(x,y-rad);ctx.lineTo(x,y+rad);ctx.stroke();
+    ctx.strokeStyle='#fff9de';ctx.lineWidth=2.3*scale;ctx.stroke();
+    ctx.font=`bold ${13*scale}px monospace`;ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.lineWidth=3*scale;ctx.strokeStyle='#162935';ctx.strokeText('V'+(i+1),x+rad+4,y-12*scale);
+    ctx.fillStyle='#fff9de';ctx.fillText('V'+(i+1),x+rad+4,y-12*scale);
+  });
+  // The image may show dark *regions* near expected pockets. Their centroids are
+  // not measured jaw points or proven pocket centres; never use as scored outcomes.
+  table.pockets.forEach((p,i)=>{
+    const [x,y]=p.p,rad=6*scale;
+    ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.lineWidth=2.4*scale;
+    ctx.strokeStyle=p.observed?'#c8fba0':'#f9a980';ctx.stroke();
+    if(p.observed&&p.darkRegionCentroid){
+      const [px,py]=p.darkRegionCentroid;
+      ctx.fillStyle='#9af1c1';ctx.fillRect(px-2.5*scale,py-2.5*scale,5*scale,5*scale);
+    }
+    if(p.kind==='side'){
+      ctx.textAlign='left';ctx.font=`bold ${14*scale}px monospace`;ctx.fillStyle='#fff9de';ctx.strokeStyle='#162935';ctx.lineWidth=3*scale;
+      ctx.strokeText('S?',x+9*scale,y-9*scale);ctx.fillText('S?',x+9*scale,y-9*scale);
+    }
+  });
+  // Diamond proposals may not be true rail markings: show them as small outlines.
+  for(const d of table.diamonds){
+    const [x,y]=d.point,rad=3.5*scale;
+    ctx.beginPath();ctx.moveTo(x,y-rad);ctx.lineTo(x+rad,y);ctx.lineTo(x,y+rad);ctx.lineTo(x-rad,y);ctx.closePath();
+    ctx.strokeStyle=d.observed?'#9af1c1':'#f9a980';ctx.lineWidth=1.7*scale;ctx.stroke();
+  }
+  ctx.save();const nose=table.geometrySource==='virtual_intersection_of_image_fitted_noses';
+  const mode=analysis.method==='manual-adjusted'?'MANUAL VIRTUAL CORNERS':(nose?'NOSE LINES FIT':'NOSE LINES UNVERIFIED');
+  const text=`REVIEW • ${mode} • POCKET OPENINGS UNVERIFIED`;
+  ctx.font=`bold ${13*scale}px monospace`;const rectW=Math.min(w-16,ctx.measureText(text).width+30*scale);
+  ctx.fillStyle='rgba(19,37,47,.94)';ctx.fillRect(8,8,rectW,34*scale);ctx.fillStyle='#fff';ctx.textAlign='left';ctx.fillText(text,18*scale,26*scale);
+  ctx.restore();ctx.restore();
+}
+function drawJpegImage(img){const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;c.getContext('2d',{willReadFrequently:true}).drawImage(img,0,0);return c;}
+async function buildDerived(frame,canvas){
+  const ov=document.createElement('canvas');ov.width=canvas.width;ov.height=canvas.height;ov.getContext('2d').drawImage(canvas,0,0);
+  drawOverlay(ov,frame.analysis);frame.overlay=await canvasBlob(ov,'image/jpeg',.88);
+  const H=frame.analysis?.table?.homography;
+  if(!H){frame.rectified=null;return;}
+  const pix=canvas.getContext('2d',{willReadFrequently:true}).getImageData(0,0,canvas.width,canvas.height);
+  const result=F.rectifiedPixels(pix,H,880,440);
+  if(!result){frame.rectified=null;return;}
+  const dst=document.createElement('canvas');dst.width=result.width;dst.height=result.height;
+  dst.getContext('2d').putImageData(new ImageData(result.data,result.width,result.height),0,0);
+  frame.rectified=await canvasBlob(dst,'image/jpeg',.90);
+}
+async function analyzeFrame(i,manualQuad=null){
+  if(!state.session)throw new Error('No active session');const fr=state.session.frames[i],img=await blobToImage(fr.original),canvas=drawJpegImage(img);
+  const pix=canvas.getContext('2d',{willReadFrequently:true}).getImageData(0,0,canvas.width,canvas.height);
+  let analysis;
+  if(manualQuad){
+    analysis=F.calculateGeometry(pix,manualQuad,{method:'manual-adjusted',geometryConfidence:.65});
+    analysis.imageSize={width:canvas.width,height:canvas.height};analysis.options={tableSizeFeet:state.session.tableSizeFeet};
+  }else analysis=F.analyzePixels(pix,{tableSizeFeet:state.session.tableSizeFeet});
+  if(!manualQuad){fr.autoAnalysis=structuredClone(analysis);}
+  fr.analysis=analysis;await buildDerived(fr,canvas);
+  log(`Analyzed ${i+1}: ${analysis.status} ${analysis.method} ${analysis.metrics?.cornersObserved||0}/4 corners ${analysis.metrics?.sidesObserved||0}/2 sides ${analysis.metrics?.diamondsObserved||0}/18 diamonds`);
+  state.bundle=null;state.bundleFor=null;
+  return analysis;
+}
+async function analyzeAll(){
+  if(state.busy)return;
+  if(!state.session?.frames.length){toast('Capture at least one frame first.',true);navigate('capture');return;}
+  state.busy=true;$('runAnalysisBtn').disabled=true;$('analysisBadge').textContent='RUNNING';
+  let done=0,errors=0;
+  try{
+    for(let i=0;i<state.session.frames.length;i++){
+      $('analysisProgressText').textContent=`Analyzing photo ${i+1} of ${state.session.frames.length}…`;
+      await sleep(15);
+      try{await analyzeFrame(i);}catch(e){errors++;const fr=state.session.frames[i];fr.analysis={status:'fail',reason:e.message,version:F.VISION_VERSION,method:'auto-felt-segmentation',metrics:{cornersObserved:0,sidesObserved:0,diamondsObserved:0}};fr.overlay=null;fr.rectified=null;log('Processing failed frame '+(i+1)+': '+e.message);}
+      done++;$('analysisMeter').style.width=Math.round(100*done/state.session.frames.length)+'%';
+      $('analysisProgressNumber').innerHTML=pad(Math.round(100*done/state.session.frames.length))+'<span>%</span>';
+      renderAnalysisList();await sleep(15);
+    }
+    await persist();$('analysisProgressText').textContent=`${done} photos analyzed locally. ${errors} runtime failure(s).`;
+    $('analysisBadge').textContent='COMPLETE';toast('Analysis complete. Inspect evidence, not just the status label.');
+  }finally{state.busy=false;$('runAnalysisBtn').disabled=false;updateAll();}
+}
+function frameStatus(f){return f.analysis?.status||'pending';}
+function updateAll(){
+  const s=state.session,c=s?.frames.length||0,n=metaSummary(s?.frames||[]);
+  $('sessionTopName').textContent=s?`SESSION ${s.id.slice(0,8).toUpperCase()}`:'NO SESSION';
+  $('asideSessionId').textContent=s?`#${s.id.slice(0,8)}`:'—';$('asideSessionDate').textContent=s?formatDate(s.createdAt):'Create a session to begin.';
+  $('tableSizeSelect').value=String(s?.tableSizeFeet||7);$('asideFrames').textContent=`${pad(c)} / 10`;
+  $('asideFound').textContent=pad(n.pass+n.review);$('asideReview').textContent=pad(n.review+n.fail);
+  $('captureCounter').innerHTML=`${pad(c)}<span>/10</span>`;
+  $('captureStatusText').textContent=c>=5?`${c} CAPTURES / TARGET REACHED`:`${c} OF 5 MINIMUM RECOMMENDED`;
+  $('captureHint').textContent=c<5?`Capture ${5-c} more image${5-c===1?'':'s'} for a complete set. You can still analyze now.`:'Capture set ready. Continue to analysis.';
+  $('captureNextBtn').disabled=c===0;
+  $('analysisNextBtn').disabled=c===0||n.pending===c;
+  $('reviewNextBtn').disabled=c===0;
+  if(state.step==='capture')renderThumbs();
+  if(state.step==='analyze')renderAnalysisList();
+  if(state.step==='review')renderReviewFilmstrip();
+  renderInstrument();renderExport();
+}
+function renderThumbs(){const node=$('captureThumbs');node.replaceChildren();const frames=state.session?.frames||[];
+  if(!frames.length){const div=document.createElement('div');div.className='empty-thumbs';div.textContent='YOUR IMAGES WILL APPEAR HERE.';node.append(div);return;}
+  frames.forEach((fr,i)=>{const div=document.createElement('div');div.className='thumb';const img=document.createElement('img');img.alt='Capture '+(i+1);setBlobImage(img,fr.original);const b=document.createElement('b');b.textContent=pad(i+1);
+    const rem=document.createElement('button');rem.type='button';rem.title='Remove photo '+(i+1);rem.ariaLabel='Remove photo '+(i+1);rem.textContent='×';rem.addEventListener('click',async()=>{if(state.busy)return;state.session.frames.splice(i,1);state.selection=Math.max(0,Math.min(state.selection,state.session.frames.length-1));state.bundle=null;await persist();updateAll();});
+    div.append(img,b,rem);node.append(div);
+  });
+}
+function renderSessions(){const node=$('sessionsList');node.replaceChildren();$('sessionCount').textContent=`${state.sessions.length} LOCAL RECORD${state.sessions.length===1?'':'S'}`;
+  if(!state.sessions.length){const p=document.createElement('div');p.className='empty-sessions';p.textContent='No saved sessions yet. Start with photos or try the synthetic demo.';node.append(p);return;}
+  for(const s of state.sessions){
+    const row=document.createElement('div');row.className='session-entry';const letter=document.createElement('div');letter.className='session-letter';letter.textContent=s.synthetic?'S':'F';
+    const body=document.createElement('div');const b=document.createElement('b');b.textContent=(s.synthetic?'SYNTHETIC / ':'SESSION / ')+s.id.slice(0,8).toUpperCase();
+    const sub=document.createElement('small');const n=metaSummary(s.frames);sub.textContent=`${formatDate(s.createdAt)} · ${s.frames.length} photos · ${n.pass} pass / ${n.review} review / ${n.fail} fail`;
+    body.append(b,sub);const buttons=document.createElement('div');buttons.className='session-actions';
+    const open=document.createElement('button');open.textContent='OPEN ↗';open.type='button';open.addEventListener('click',()=>{setSession(s);navigate(s.frames.some(fr=>fr.analysis)?'review':'capture');});
+    const del=document.createElement('button');del.textContent='DELETE';del.type='button';del.className='delete';del.addEventListener('click',async()=>{if(!confirm('Delete this locally stored session and all photos?'))return;try{await F.deleteSession(s.id);if(state.session?.id===s.id)state.session=null;await refreshSessions();renderSessions();updateAll();}catch(e){toast(e.message,true);}});
+    buttons.append(open,del);row.append(letter,body,buttons);node.append(row);
+  }
+}
+function renderAnalysisList(){const node=$('analysisFrameList');node.replaceChildren();const s=state.session;
+  if(!s?.frames.length){node.textContent='No photos captured.';return;}
+  s.frames.forEach((fr,i)=>{const el=document.createElement('div');el.className='analysis-row';
+    const first=document.createElement('span');first.className='frame-index';first.textContent=pad(i+1);
+    const title=document.createElement('div'),b=document.createElement('strong');b.textContent=fr.filename||`Capture ${i+1}`;const sm=document.createElement('small');
+    sm.textContent=fr.analysis?`${fr.analysis.metrics?.cornersObserved??0}/4 corners · ${fr.analysis.metrics?.sidesObserved??0}/2 sides · ${fr.analysis.metrics?.diamondsObserved??0}/18 diamonds`:'Not yet analyzed';title.append(b,sm);
+    const tag=document.createElement('span');tag.className=`status-tag ${frameStatus(fr)}`;tag.textContent=frameStatus(fr)==='review'?'REVIEW':frameStatus(fr).toUpperCase();
+    const btn=document.createElement('button');btn.type='button';btn.textContent='VIEW ↗';btn.onclick=()=>{state.selection=i;navigate('review');};
+    el.append(first,title,tag,btn);node.append(el);
+  });
+  const counts=metaSummary(s.frames);if(!state.busy){$('analysisBadge').textContent=counts.pending?'READY / PARTIAL':'COMPLETE';const progress=(s.frames.length-counts.pending)/s.frames.length*100;$('analysisMeter').style.width=progress+'%';$('analysisProgressNumber').innerHTML=pad(Math.round(progress))+'<span>%</span>';}
+}
+function renderReviewFilmstrip(){const node=$('reviewFilmstrip');node.replaceChildren();(state.session?.frames||[]).forEach((fr,i)=>{
+  const b=document.createElement('button');b.className='film-item'+(state.selection===i?' selected':'');b.type='button';
+  const img=document.createElement('img');img.alt='Frame '+(i+1);setBlobImage(img,fr.original);const txt=document.createElement('small');txt.textContent=pad(i+1)+' / '+frameStatus(fr).toUpperCase();b.append(img,txt);
+  b.onclick=()=>{state.selection=i;state.editing=false;displayReview();updateAll();};node.append(b);
+});}
+function renderInstrument(){const node=$('evidenceReadout');node.replaceChildren();const title=document.createElement('h3');title.textContent='SELECTED FRAME';node.append(title);
+  const fr=state.session?.frames[state.selection];if(!fr){const p=document.createElement('p');p.textContent='No frame selected.';node.append(p);return;}
+  const table=fr.analysis?.table;
+  const row=(a,b)=>{const div=document.createElement('div');div.className='readout-item';const l=document.createElement('span');l.textContent=a;const v=document.createElement('strong');v.textContent=String(b);div.append(l,v);node.append(div);};
+  row('FRAME',`${state.selection+1} / ${state.session.frames.length}`);row('STATUS',frameStatus(fr).toUpperCase());
+  row('MODE',fr.analysis?.method||'NOT RUN');row('CORNERS',`${fr.analysis?.metrics?.cornersObserved||0} / 4`);
+  row('SIDE POCKETS',`${fr.analysis?.metrics?.sidesObserved||0} / 2`);row('DIAMONDS',`${fr.analysis?.metrics?.diamondsObserved||0} / 18`);
+  row('GEOM. SCORE',table?.geometryConfidence?.toFixed(2)??'—');
+  if(fr.analysis?.warnings?.length){const p=document.createElement('p');p.textContent=fr.analysis.warnings.join(' • ');node.append(p);}
+  else if(fr.analysis?.reason){const p=document.createElement('p');p.textContent=fr.analysis.reason;node.append(p);}
+}
+async function displayReview(){
+  const fr=state.session?.frames[state.selection],canvas=$('reviewCanvas'),place=$('reviewPlaceholder'),top=$('topdownImage');
+  state.editing=false;show($('canvasEditBanner'),false);$('editCornersBtn').textContent='ADJUST 4 VIRTUAL CORNERS';$('resetCornersBtn').hidden=!fr?.autoAnalysis||!fr.analysis||fr.analysis.method!=='manual-adjusted';
+  if(!fr){canvas.width=800;canvas.height=450;canvas.getContext('2d').clearRect(0,0,800,450);place.hidden=false;top.removeAttribute('src');show($('noTopdown'),true);return;}
+  $('reviewFrameCount').textContent=`FRAME ${pad(state.selection+1)} / ${pad(state.session.frames.length)}`;
+  try{
+    const blob=state.view==='overlay'&&fr.overlay?fr.overlay:fr.original;
+    const img=await blobToImage(blob);if(fr!==state.session?.frames[state.selection])return;
+    canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;canvas.getContext('2d').drawImage(img,0,0);
+    place.hidden=true;
+    setBlobImage(top,fr.rectified);show($('noTopdown'),!fr.rectified);
+  }catch(e){place.textContent='Image could not be displayed: '+e.message;place.hidden=false;}
+}
+function selectedFrame(){return state.session?.frames[state.selection];}
+function canvasCoords(evt){const canvas=$('reviewCanvas'),r=canvas.getBoundingClientRect();return[(evt.clientX-r.left)*canvas.width/r.width,(evt.clientY-r.top)*canvas.height/r.height];}
+function drawManualHandles(){const fr=selectedFrame(),q=fr?.analysis?.table?.corners;if(!q)return;const canvas=$('reviewCanvas'),ctx=canvas.getContext('2d');
+  const rad=Math.max(10,canvas.width*.012);ctx.save();
+  q.forEach(([x,y],i)=>{ctx.fillStyle='#fdecda';ctx.strokeStyle='#db4d33';ctx.lineWidth=4;ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.font=`bold ${rad}px monospace`;ctx.fillStyle='#263943';ctx.textAlign='center';ctx.fillText(String(i+1),x,y+rad*.35);
+  });ctx.restore();
+}
+async function toggleCorners(){const fr=selectedFrame();if(!fr?.analysis?.table){toast('This photo has no detected corners. Recapture with the whole playing surface visible.',true);return;}
+  if(state.view!=='overlay'){$('reviewCanvas').getContext('2d');state.view='overlay';document.querySelectorAll('.toggle').forEach(t=>t.classList.toggle('active',t.dataset.view==='overlay'));await displayReview();}
+  state.editing=!state.editing;show($('canvasEditBanner'),state.editing);
+  $('editCornersBtn').textContent=state.editing?'FINISH CORNER EDIT':'ADJUST 4 CORNERS';
+  if(state.editing){state.dragImage=await blobToImage(fr.overlay||fr.original);drawManualHandles();}else await displayReview();
+}
+async function saveManualGeometry(){const fr=selectedFrame();if(!fr?.analysis?.table)return;
+  const points=fr.analysis.table.corners;
+  if(!state.dragChanged)return;
+  state.dragChanged=false;
+  try{await analyzeFrame(state.selection,points);await persist();updateAll();$('resetCornersBtn').hidden=false;
+    // Keep editing mode and show manual handles after overlay regeneration.
+    const img=await blobToImage(fr.overlay);const c=$('reviewCanvas');c.width=img.naturalWidth;c.height=img.naturalHeight;c.getContext('2d').drawImage(img,0,0);if(state.editing)drawManualHandles();
+    state.dragImage=img;setBlobImage($('topdownImage'),fr.rectified);show($('noTopdown'),!fr.rectified);
+  }catch(e){toast('Corner adjustment rejected: '+e.message,true);}
+}
+async function revertCorners(){const fr=selectedFrame();if(!fr)return;state.editing=false;
+  await analyzeFrame(state.selection);await persist();await displayReview();updateAll();toast('Re-ran automatic table finding; manual correction removed.');
+}
+function renderExport(){const fr=state.session?.frames||[],c=metaSummary(fr);$('exportImages').textContent=pad(fr.length);
+  $('exportPass').textContent=`${pad(c.pass)} / ${pad(c.review)}`;$('exportReview').textContent=pad(c.fail+c.review+c.pending);
+  const label=state.session?.id.slice(0,8)||'session';const d=(state.session?.createdAt||now()).slice(0,10);
+  $('exportFilename').textContent=`chalkline_fieldwork_${d}_${label}.zip`;
+  $('exportZipBtn').disabled=fr.length===0;$('shareZipBtn').disabled=fr.length===0;
+}
+async function getBundle(){
+  const s=state.session;if(!s?.frames.length)throw new Error('No photos to export');
+  // The bundle cache is invalidated after every photo/analyze/edit operation.
+  if(state.bundle&&state.bundleFor===s.id)return state.bundle;
+  const blob=await F.sessionToZip(s);state.bundle=blob;state.bundleFor=s.id;return blob;
+}
+async function exportZip(share){
+  const btn=share?$('shareZipBtn'):$('exportZipBtn'),prev=btn.textContent;btn.disabled=true;btn.textContent='PACKAGING…';
+  try{const blob=await getBundle(),name=$('exportFilename').textContent,file=new File([blob],name,{type:'application/zip'});
+    if(share&&navigator.canShare?.({files:[file]})&&navigator.share){
+      try{await navigator.share({files:[file],title:'Chalkline Fieldwork Review Bundle'});toast('Shared via your device.');}
+      catch(e){if(e.name!=='AbortError')throw e;}
+    }else{
+      if(share)toast('Share Sheet is unavailable here. The ZIP will download instead.');
+      const link=document.createElement('a'),url=URL.createObjectURL(blob);link.href=url;link.download=name;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+      toast('ZIP ready. Save it to Files and attach it in your Chalkline chat.');
+    }
+  }catch(e){toast('Could not export ZIP: '+e.message,true);}finally{btn.disabled=false;btn.textContent=prev;}
+}
+async function importBundle(file){
+  try{const s=await F.zipToSession(file);setSession(s);await persist();await refreshSessions();renderSessions();navigate('review');toast('Bundle imported into local storage.');}
+  catch(e){toast('Import rejected: '+e.message,true);}
+}
+function drawDemo(canvas,shift=0){
+  // SYNTHETIC FIXTURE — not a photograph, not an accuracy validation.
+  const ctx=canvas.getContext('2d');const w=canvas.width,h=canvas.height;
+  ctx.fillStyle='#344449';ctx.fillRect(0,0,w,h);
+  ctx.save();ctx.translate(shift*3,shift*2);
+  let q=[[183,158],[1030,112],[1120,558],[112,610]];
+  const c=q.reduce((s,p)=>[s[0]+p[0]/4,s[1]+p[1]/4],[0,0]);
+  const outer=q.map(p=>[c[0]+(p[0]-c[0])*1.13,c[1]+(p[1]-c[1])*1.16]);
+  ctx.fillStyle='#735337';drawPoly(ctx,outer);ctx.fill();ctx.lineWidth=8;ctx.strokeStyle='#a98358';ctx.stroke();
+  ctx.fillStyle='#1c736a';drawPoly(ctx,q);ctx.fill();ctx.lineWidth=9;ctx.strokeStyle='#164f4e';ctx.stroke();
+  for(let i=0;i<6;i++){
+    const u=[0,.5,1,1,.5,0][i],v=[0,0,0,1,1,1][i],p=F.project(F.homography(q),u,v);
+    ctx.beginPath();ctx.fillStyle='#0c1519';ctx.arc(p[0],p[1],i===1||i===4?23:22,0,Math.PI*2);ctx.fill();
+  }
+  const H=F.homography(q);const expected=F.diamondProposals(H);
+  for(const d of expected){const n=F.outwardNormal(q,d.rail);let x=d.point[0]+n[0]*26,y=d.point[1]+n[1]*26;
+    ctx.fillStyle='#f6efe3';ctx.beginPath();ctx.moveTo(x,y-5);ctx.lineTo(x+5,y);ctx.lineTo(x,y+5);ctx.lineTo(x-5,y);ctx.closePath();ctx.fill();}
+  for(let j=0;j<8;j++){
+    const p=F.project(H,.18+(.57*(j%4)/4),.20+.21*(Math.floor(j/4))),r=10;
+    ctx.beginPath();ctx.arc(p[0],p[1],r,0,Math.PI*2);ctx.fillStyle=['#faf8e9','#e6b436','#2562a3','#9f252e'][j%4];ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.3)';ctx.lineWidth=2;ctx.stroke();
+  }
+  ctx.restore();return canvas;
+}
+async function addDemo(){if(state.busy)return;state.busy=true;
+  try{
+    const s=makeSession(true);setSession(s);for(let i=0;i<5;i++){
+      const canvas=document.createElement('canvas');canvas.width=1280;canvas.height=720;drawDemo(canvas,i-2);
+      const blob=await canvasBlob(canvas,'image/jpeg',.94);await captureFromSource(blob,`SYNTHETIC_fixture_${pad(i+1)}.jpg`,{isCamera:true,synthetic:true});
+    }
+    await persist();await refreshSessions();navigate('analyze');state.busy=false;await analyzeAll();toast('Synthetic demonstration processed; not a real-world accuracy test.');
+  }catch(e){toast(e.message,true);}finally{state.busy=false;}
+}
+function listen(){
+  $('brandHome').onclick=e=>{e.preventDefault();navigate('home');};
+  document.querySelectorAll('.step').forEach(b=>b.onclick=()=>navigate(b.dataset.step));
+  $('newSessionBtn').onclick=newSession;$('demoBtn').onclick=addDemo;
+  $('tableSizeSelect').onchange=async e=>{if(!state.session)return;state.session.tableSizeFeet=Number(e.target.value);state.bundle=null;state.bundleFor=null;
+    for(const fr of state.session.frames){if(fr.analysis)fr.analysis.options={...(fr.analysis.options||{}),tableSizeFeet:state.session.tableSizeFeet};if(fr.autoAnalysis)fr.autoAnalysis.options={...(fr.autoAnalysis.options||{}),tableSizeFeet:state.session.tableSizeFeet};}
+    log('Table size changed to '+state.session.tableSizeFeet);await persist();updateAll();};
+  $('startCameraBtn').onclick=startCamera;$('stopCameraBtn').onclick=stopCamera;$('takePhotoBtn').onclick=takePhoto;
+  $('photosInput').onchange=async e=>{await fromFileInput([...e.target.files]);e.target.value='';};
+  $('captureNextBtn').onclick=()=>navigate('analyze');$('runAnalysisBtn').onclick=analyzeAll;$('analysisNextBtn').onclick=()=>navigate('review');
+  $('reviewNextBtn').onclick=()=>navigate('export');$('exportZipBtn').onclick=()=>exportZip(false);$('shareZipBtn').onclick=()=>exportZip(true);
+  $('importInput').onchange=async e=>{if(e.target.files?.[0])await importBundle(e.target.files[0]);e.target.value='';};
+  document.querySelectorAll('.toggle').forEach(t=>t.onclick=async()=>{state.view=t.dataset.view;document.querySelectorAll('.toggle').forEach(b=>b.classList.toggle('active',b===t));await displayReview();});
+  $('editCornersBtn').onclick=toggleCorners;$('resetCornersBtn').onclick=revertCorners;
+  const canvas=$('reviewCanvas');
+  canvas.addEventListener('pointerdown',evt=>{
+    if(!state.editing||!selectedFrame()?.analysis?.table)return;
+    const p=canvasCoords(evt),q=selectedFrame().analysis.table.corners;
+    const radius=Math.max(40,canvas.width*.045);let best=-1,dist=radius;
+    q.forEach((v,i)=>{const d=F.distance(p,v);if(d<dist){dist=d;best=i;}});
+    if(best<0)return;state.dragIndex=best;state.dragChanged=false;canvas.setPointerCapture(evt.pointerId);evt.preventDefault();
+  });
+  canvas.addEventListener('pointermove',evt=>{
+    if(!state.editing||state.dragIndex<0)return;
+    const fr=selectedFrame(),pt=canvasCoords(evt);
+    fr.analysis.table.corners[state.dragIndex]=[Math.max(0,Math.min(canvas.width-1,pt[0])),Math.max(0,Math.min(canvas.height-1,pt[1]))];
+    state.dragChanged=true;
+    const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);
+    // During drag, show previous exported overlay behind the provisional handles.
+    if(state.dragImage){ctx.drawImage(state.dragImage,0,0,canvas.width,canvas.height);}
+    drawManualHandles();evt.preventDefault();
+  });
+  canvas.addEventListener('pointerup',async evt=>{if(state.dragIndex<0)return;state.dragIndex=-1;
+    if(canvas.hasPointerCapture(evt.pointerId))canvas.releasePointerCapture(evt.pointerId);await saveManualGeometry();});
+  canvas.addEventListener('pointercancel',()=>{state.dragIndex=-1;state.dragChanged=false;displayReview();});
+  $('helpBtn').onclick=()=>show($('helpModal'),true);$('closeHelpBtn').onclick=()=>show($('helpModal'),false);
+  $('helpContinueBtn').onclick=()=>show($('helpModal'),false);
+  $('helpModal').onclick=e=>{if(e.target===$('helpModal'))show($('helpModal'),false);};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')show($('helpModal'),false);});
+  root.addEventListener('pagehide',stopCamera);
+}
+async function init(){listen();await refreshSessions();renderSessions();updateAll();navigate('home');
+  root.FieldworkApp={state,makeSession,makeID,captureFromSource,analyzeFrame,analyzeAll,navigate,importBundle,exportZip,addDemo};
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <a class="logo-block" href="#" id="brandHome" aria-label="Fieldwork home"><span class="logo-symbol"><i></i><i></i><i></i><i></i></span><span class="logo-text"><small>CHALKLINE / RESEARCH DIVISION</small><strong>FIELDWORK<span class="period">.</span></strong></span></a>
+    <div class="header-centre"><span class="live-dot"></span> PHOTO EVIDENCE STATION <span class="header-slash">/</span> <span id="sessionTopName">NO SESSION</span></div>
+    <div class="head-actions"><span class="local-label"><span class="tiny-square"></span> ON-DEVICE</span><button type="button" class="header-button" id="helpBtn" aria-label="Open instructions">?</button></div>
+  </header>
+  <div class="work-layout">
+    <nav class="stage-nav" aria-label="Session workflow">
+      <div class="nav-title">WORKFLOW <span>01—05</span></div>
+      <button type="button" class="step active" data-step="home"><span class="step-no">01</span><span><b>SETUP</b><small>Prepare a session</small></span><span class="step-end">↗</span></button>
+      <button type="button" class="step" data-step="capture"><span class="step-no">02</span><span><b>CAPTURE</b><small>Photograph the table</small></span><span class="step-end">↗</span></button>
+      <button type="button" class="step" data-step="analyze"><span class="step-no">03</span><span><b>ANALYZE</b><small>Run image geometry</small></span><span class="step-end">↗</span></button>
+      <button type="button" class="step" data-step="review"><span class="step-no">04</span><span><b>INSPECT</b><small>Audit the evidence</small></span><span class="step-end">↗</span></button>      <button type="button" class="step" data-step="export"><span class="step-no">05</span><span><b>EXPORT</b><small>Build review package</small></span><span class="step-end">↗</span></button>
+      <div class="nav-foot"><div class="nav-foot-mark">FW <span>0.2</span></div><p>OBSERVE FIRST.<br>NEVER INVENT EVIDENCE.</p></div>
+    </nav>
+
+    <main class="screens" id="mainContent">
+      <section id="screen-home" class="screen" aria-labelledby="homeHeading">
+        <div class="eyebrow"><span class="eyebrow-index">FIELD NOTE NO. 001</span> / TABLE CALIBRATION</div>
+        <div class="hero-grid">
+          <div class="hero-copy"><span class="outline-flag">EXPERIMENTAL / LOCAL ONLY</span>
+            <h1 id="homeHeading">SEE THE TABLE.<br><em>KEEP THE PROOF.</em></h1>
+            <p class="intro">Capture 5–10 table photos. Detect the playing surface, inspect pocket and rail evidence, and export the complete session for independent review.</p>
+            <div class="home-main-actions"><button id="newSessionBtn" type="button" class="action-primary">START NEW SESSION <span>↗</span></button><button id="demoBtn" type="button" class="action-secondary">TRY A SYNTHETIC DEMO</button></div>
+            <p class="micro-note">No account. No server. Photos remain in your browser until you choose to export them.</p>
+          </div>
+          <div class="hero-illustration" aria-label="Stylized four-corner pool table registration illustration" role="img">
+            <svg viewBox="0 0 460 345" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><defs><pattern id="gridlines" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#ded8cd" stroke-width=".8"/></pattern></defs><rect x="0" y="0" width="460" height="345" fill="url(#gridlines)"/><path d="M68 83L360 50L415 242L32 286Z" fill="#f2e7d6" stroke="#223948" stroke-width="2.5"/><path d="M80 94L346 67L391 230L52 268Z" fill="#d1dcb9" stroke="#243c3f" stroke-width="2"/><path d="M80 94L346 67L391 230L52 268Z" fill="none" stroke="#f26845" stroke-width="2" stroke-dasharray="7 5"/><path d="M80 94L391 230M346 67L52 268" stroke="#f26845" stroke-width="1" opacity=".65"/><g fill="#f26845" stroke="#fdf8f0" stroke-width="2"><circle cx="80" cy="94" r="7"/><circle cx="346" cy="67" r="7"/><circle cx="391" cy="230" r="7"/><circle cx="52" cy="268" r="7"/></g><g fill="#1c3743"><circle cx="211" cy="78" r="7"/><circle cx="222" cy="251" r="7"/></g><g fill="#f26845" font-family="monospace" font-size="11" font-weight="bold"><text x="60" y="76">P01</text><text x="351" y="48">P03</text><text x="402" y="253">P04</text><text x="17" y="296">P06</text></g><path d="M322 315H446" stroke="#1b303b" stroke-width="1.5"/><text x="322" y="307" font-size="11" fill="#1b303b" font-family="monospace">REFERENCE / NOT TO SCALE</text></svg>
+            <div class="art-stamp">GEOMETRY<br>IN REVIEW <small>FIG. 01</small></div>
+          </div>
+        </div>
+        <div class="section-head"><h2>YOUR SESSIONS</h2><span id="sessionCount">0 LOCAL RECORDS</span></div>
+        <div id="sessionsList" class="session-list"><div class="empty-sessions">No saved sessions yet. Start with photos or try the synthetic demo.</div></div>
+        <div class="import-bar"><span>HAVE A REVIEW BUNDLE?</span><label for="importInput" class="quiet-link">IMPORT A FIELDWORK ZIP <span>↗</span></label><input id="importInput" class="hidden-input" type="file" accept=".zip,application/zip"></div>
+      </section>
+
+      <section id="screen-capture" class="screen" hidden aria-labelledby="captureHeading">
+        <div class="eyebrow"><span class="eyebrow-index">STATION 02</span> / OPTICAL COLLECTION</div>
+        <div class="screen-header"><div><h1 id="captureHeading">PHOTO <em>SESSION.</em></h1><p>Keep the iPhone near its intended operating position. Fit the entire table and all pockets into each photo.</p></div><div class="count-big"><strong id="captureCounter">00<span>/10</span></strong><small>IMAGES ACQUIRED</small></div></div>
+        <div class="capture-stack">
+          <div class="camera-shell"><div class="camera-banner"><span><span class="red-rec"></span> <span id="cameraStatus">CAMERA OFF</span></span><span>INPUT 01 / OPTICAL</span></div>
+            <div class="camera-body" id="cameraBody"><video id="cameraVideo" playsinline autoplay muted></video><div class="camera-placeholder" id="cameraPlaceholder"><div class="viewfinder"><i></i><i></i><i></i><i></i><div class="viewfinder-caption">READY FOR ACQUISITION</div></div><p>Start your camera or choose existing table photos.</p></div></div>
+            <div class="camera-foot"><button type="button" id="startCameraBtn" class="action-secondary">START CAMERA</button><button type="button" id="stopCameraBtn" class="action-secondary" disabled>STOP</button><button type="button" id="takePhotoBtn" class="action-primary" disabled>CAPTURE FRAME <span>●</span></button></div>
+          </div>
+          <div class="capture-import"><label for="photosInput" class="file-pick">＋ ADD FROM CAMERA ROLL / FILES</label><input type="file" id="photosInput" class="hidden-input" accept="image/*" multiple><span>Use this on iOS if live camera access isn't available. A maximum of 10 captures is supported.</span></div>
+          <div class="section-head compact"><h2>CAPTURED FRAMES</h2><span id="captureStatusText">0 OF 5 MINIMUM RECOMMENDED</span></div>
+          <div id="captureThumbs" class="thumb-grid"><div class="empty-thumbs">YOUR IMAGES WILL APPEAR HERE.</div></div>
+        </div>
+        <div class="bottom-next"><p id="captureHint">Aim for 5–10 usable views from the tripod position.</p><button id="captureNextBtn" class="action-primary" type="button">CONTINUE TO ANALYSIS <span>↗</span></button></div>
+      </section>
+
+      <section id="screen-analyze" class="screen" hidden aria-labelledby="analyzeHeading">
+        <div class="eyebrow"><span class="eyebrow-index">STATION 03</span> / ON-DEVICE PROCESSING</div>
+        <div class="screen-header"><div><h1 id="analyzeHeading">FIND THE <em>TABLE.</em></h1><p>Evaluate each frame independently. Observed features are separated from unverified geometry proposals.</p></div><span class="outline-flag" id="analysisBadge">NOT RUN</span></div>
+        <div class="analyze-summary"><span class="analytic-blob"><i></i></span><div><div class="analysis-score" id="analysisProgressNumber">00<span>%</span></div><p id="analysisProgressText">Ready to inspect the recorded frames.</p></div></div>
+        <div class="meter-track"><div id="analysisMeter" class="meter-fill"></div></div>
+        <div id="analysisFrameList" class="analysis-rows"></div>
+        <div class="bottom-next"><div class="inline-note">A high heuristic score is <strong>not a measured detection accuracy</strong>. Missing features will remain unverified in the export.</div><div class="button-combo"><button type="button" class="action-secondary" id="runAnalysisBtn">ANALYZE PHOTOS</button><button type="button" class="action-primary" id="analysisNextBtn">INSPECT RESULTS <span>↗</span></button></div></div>
+      </section>
+
+      <section id="screen-review" class="screen" hidden aria-labelledby="reviewHeading">
+        <div class="eyebrow"><span class="eyebrow-index">STATION 04</span> / HUMAN VERIFICATION</div>
+        <div class="screen-header review-header"><div><h1 id="reviewHeading">EVIDENCE <em>BOARD.</em></h1><p>Orange outlines are model geometry. Green markers have supporting image evidence. Hollow markers are proposals.</p></div><span id="reviewFrameCount" class="outline-flag">FRAME —</span></div>
+        <div class="review-tools"><div class="toggle-group" role="group" aria-label="Review display"><button type="button" class="toggle active" data-view="overlay">OVERLAY</button><button type="button" class="toggle" data-view="original">ORIGINAL</button></div><button type="button" id="editCornersBtn" class="action-secondary small-action">ADJUST 4 VIRTUAL CORNERS</button><button type="button" id="resetCornersBtn" class="action-secondary small-action" hidden>REVERT AUTO</button></div>
+        <div class="review-stage"><canvas id="reviewCanvas" width="1280" height="720" aria-label="Image analysis review canvas"></canvas><div id="reviewPlaceholder" class="review-placeholder">CHOOSE A FRAME TO INSPECT</div><div id="canvasEditBanner" class="canvas-edit-banner" hidden>DRAG VIRTUAL INTERSECTIONS. THIS IS A MANUAL TABLE REFERENCE, NOT A POCKET CENTRE.</div></div>
+        <div class="review-legend"><span><i class="key-line"></i> INNER CUSHION NOSES</span><span><i class="key-dot observed"></i> DARK REGION (UNVERIFIED)</span><span><i class="key-dot proposed"></i> VIRTUAL SHARP (V1–V4)</span></div>
+        <div class="filmstrip" id="reviewFilmstrip"></div>
+        <div class="topdown-block"><div class="section-head compact"><h2>RECTIFIED PLAN</h2><span>GEOMETRY PROPOSAL / NOT A MEASUREMENT</span></div><img id="topdownImage" alt="Proposed projectively rectified top-down table"/><div id="noTopdown" class="topdown-empty" hidden>No valid table geometry in this image.</div></div>
+        <div class="bottom-next"><p>Review failures are valuable. Export original photographs even if analysis fails.</p><button id="reviewNextBtn" type="button" class="action-primary">PACKAGE EVIDENCE <span>↗</span></button></div>
+      </section>
+
+      <section id="screen-export" class="screen" hidden aria-labelledby="exportHeading">
+        <div class="eyebrow"><span class="eyebrow-index">STATION 05</span> / EVIDENCE TRANSFER</div>
+        <div class="screen-header"><div><h1 id="exportHeading">PACK IT <em>ALL.</em></h1><p>Every capture, annotated result, top-down proposal, machine-readable coordinate and log in one ZIP.</p></div><span class="outline-flag">USER CONTROLLED</span></div>
+        <div class="metrics-row"><div><span>FRAMES</span><strong id="exportImages">00</strong></div><div><span>PASS / REVIEW</span><strong id="exportPass">00 / 00</strong></div><div><span>NEEDS REVIEW</span><strong id="exportReview">00</strong></div></div>
+        <div class="package-panel"><div class="package-icon">ZIP</div><div><span class="package-label">EVIDENCE ARCHIVE / UNCOMPRESSED</span><h2 id="exportFilename">chalkline_fieldwork_session.zip</h2><p>Includes source frames, overlays, rectified images, analysis JSON per frame, session summary and debug log.</p></div></div>
+        <div class="export-actions"><button id="exportZipBtn" type="button" class="action-primary big-action">DOWNLOAD REVIEW ZIP <span>↗</span></button><button id="shareZipBtn" type="button" class="action-secondary">SHARE VIA iPHONE <span>⇧</span></button></div>
+        <div class="handoff-instructions"><div class="handoff-index">NEXT<br>01—02</div><div><h3>GET THIS BACK TO CHATGPT</h3><p>Save the ZIP to Files, then attach it in this Chalkline conversation. I can review which pockets, rails, and diamonds were genuinely found versus inferred, with the original photos as evidence.</p><p class="privacy-line">PRIVATE BY DEFAULT. FIELDWORK DOES NOT UPLOAD ANY IMAGES.</p></div></div>
+      </section>
+    </main>
+
+    <aside class="context-panel" id="contextPanel"><div class="aside-top">INSTRUMENT PANEL <span>FW / 01</span></div>
+      <div class="instrument-content">
+        <div class="side-section"><h3>SESSION ID</h3><div id="asideSessionId" class="instrument-value">—</div><p id="asideSessionDate">Create a session to begin.</p></div>
+        <div class="side-section"><h3>TABLE SIZE</h3><label for="tableSizeSelect" class="visually-hidden">Table size</label><select id="tableSizeSelect"><option value="7">7 FT / BAR BOX</option><option value="8">8 FT / STANDARD</option><option value="9">9 FT / TOURNAMENT</option></select><p>Used for metadata and downstream geometry; it does not force unverified pixels into a successful result.</p></div>
+        <div class="side-section"><h3>SESSION HEALTH</h3><div class="aside-measure"><span>FRAMES</span><strong id="asideFrames">00 / 10</strong></div><div class="aside-measure"><span>TABLE FOUND</span><strong id="asideFound">00</strong></div><div class="aside-measure"><span>IN REVIEW</span><strong id="asideReview">00</strong></div></div>
+        <div class="side-section" id="evidenceReadout"><h3>SELECTED FRAME</h3><p>No frame selected.</p></div>
+      </div>
+      <div class="aside-bottom"><span>CHALKLINE / FIELDWORK</span><p>DEVICE-LOCAL ANALYSIS<br>VERSION 0.2.0 / EXPERIMENT</p></div>
+    </aside>
+  </div>
+  <footer class="global-footer"><span>F/WORK &nbsp;—&nbsp; 2026</span><span id="footerMessage">LOCAL EVIDENCE · NOT LIVE TRACKING</span><span>BUILD 0.2.0</span></footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="modal-backdrop" id="helpModal" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="closeHelpBtn" type="button" aria-label="Close">×</button><div class="eyebrow">FIELD GUIDE / 00</div><h2 id="modalTitle">FIELDWORK INSTRUCTIONS</h2><p>1. Start a session and select 7, 8, or 9-foot table.</p><p>2. Take 5–10 photos with all six pockets visible. Use either the live camera or the camera-roll picker.</p><p>3. Analyze images locally; four virtual corners come from the inner cushion-nose lines. These points are NOT physical pocket-opening centres.</p><p>4. Inspect the original, overlay and rectified images; adjust virtual corner references only when needed.</p><p>5. Download or share the ZIP and upload that ZIP to your Chalkline chat.</p><p><b>Scope:</b> Experimental color-segmentation and cushion-nose intersection baseline. Pocket openings, jaw tips and diamond detection have not been validated for scoring. The app does not save to a remote server.</p><button type="button" class="action-primary" id="helpContinueBtn">GOT IT <span>↗</span></button></div></div>
+</body>
+</html>

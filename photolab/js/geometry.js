@@ -72,6 +72,13 @@
     return [...h,1];
   }
   function project(H,u,v){const d=H[6]*u+H[7]*v+1;return d&&Number.isFinite(d)?[(H[0]*u+H[1]*v+H[2])/d,(H[3]*u+H[4]*v+H[5])/d]:[NaN,NaN];}
+  // Infinite straight-line intersection (not a pocket jaw, not a physical ball target).
+  function lineIntersection(a,b,c,d){
+    const vx=b[0]-a[0],vy=b[1]-a[1],wx=d[0]-c[0],wy=d[1]-c[1],den=vx*wy-vy*wx;
+    if(!Number.isFinite(den)||Math.abs(den)<1e-7)return null;
+    const t=((c[0]-a[0])*wy-(c[1]-a[1])*wx)/den;
+    const p=[a[0]+vx*t,a[1]+vy*t];return p.every(Number.isFinite)?p:null;
+  }
   function longRailQuad(quad,axis) {
     // axis=horizontal uses top/bottom edges; vertical rotates the rectangle 90 degrees.
     return axis==='vertical'?[quad[1],quad[2],quad[3],quad[0]]:quad.slice();
@@ -110,7 +117,7 @@
     }
     return {width:outWidth,height:outHeight,data:result};
   }
-  const api={area,distance,convexHull,bestQuad,orderedQuad,validQuad,solveLinear,homography,project,longRailQuad,rails,diamondProposals,expectedPockets,rectifiedPixels};
+  const api={area,distance,convexHull,bestQuad,orderedQuad,validQuad,solveLinear,homography,project,longRailQuad,lineIntersection,rails,diamondProposals,expectedPockets,rectifiedPixels};
   Object.assign(ns,api);
   if(typeof module==='object'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

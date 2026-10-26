@@ -6,7 +6,7 @@
   'use strict';
   const ns=root.Fieldwork || (root.Fieldwork={});
   const G=(typeof module==='object'&&module.exports)?require('./geometry.js'):ns;
-  const V='photo-heuristic/0.1.0',clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+  const V='photo-nose-lines/0.2.0',clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
   function hsv(r,g,b){
     r/=255;g/=255;b/=255;
     const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
@@ -40,7 +40,7 @@
     for(let y=0;y<h;y++)for(let x=0;x<w;x++){
       const ix=Math.min(W-1,x*st),iy=Math.min(H-1,y*st),i=y*w+x,j=(iy*W+ix)*4,[hh,s,v]=hsv(data[j],data[j+1],data[j+2]);
       hue[i]=hh;sat[i]=s;val[i]=v;
-      if(s>.26&&v>.12&&v<.97) hist[Math.floor(hh/10)%36]+=s*v;
+      if(s>.65&&v>.49&&v<.99) hist[Math.floor(hh/10)%36]+=s*v;
     }
     const peaks=Array.from({length:36},(_,i)=>[hist[i]*2+hist[(i+35)%36]+hist[(i+1)%36],i]).sort((a,b)=>b[0]-a[0]);
     let best=null;
@@ -49,7 +49,7 @@
       if(best&&hd(best.hue,i*10+5)<21)continue;
       if(best&&best.iterations>=4)break;
       const center=i*10+5,mask=new Uint8Array(w*h);
-      for(let k=0;k<mask.length;k++)if(hd(hue[k],center)<21&&sat[k]>.23&&val[k]>.13)mask[k]=1;
+      for(let k=0;k<mask.length;k++)if(hd(hue[k],center)<15&&sat[k]>.62&&val[k]>.45)mask[k]=1;
       const comp=largest(mask,w,h);if(!comp||comp.length<w*h*.045)continue;
       let border=0,xc=0,yc=0;
       const rl=new Int32Array(h).fill(w),rr=new Int32Array(h).fill(-1),ct=new Int32Array(w).fill(h),cb=new Int32Array(w).fill(-1);
@@ -123,8 +123,73 @@
       return {...d,point:observed?best.point:d.point,source:observed?'observed_candidate':'geometric_proposal',observed,confidence:observed?clamp(best.score):0,evidence:{brightContrastScore:+best.score.toFixed(3)}};
     });
   }
+  // Fit the INNER cushion noses. The initial HSV blob includes cushion faces; its hull
+  // is only a seed. Across each rail, scan inward for the last dark-to-felt transition,
+  // robustly fit that line, and INTERSECT adjacent lines. Those intersections are
+  // virtual playing-surface corners, NOT pocket centres or guaranteed pocket outcomes.
+  function fitCushionNoses(img,quad,clothHue){
+    const q=G.orderedQuad(quad),cx=q.reduce((s,p)=>s+p[0]/4,0),cy=q.reduce((s,p)=>s+p[1]/4,0);
+    const scale=Math.max(img.width,img.height)/1600,rails=[];
+    const sample=(x,y)=>{
+      const ix=Math.round(x),iy=Math.round(y);
+      if(ix<0||iy<0||ix>=img.width||iy>=img.height)return null;
+      const j=(iy*img.width+ix)*4,[h,s,v]=hsv(img.data[j],img.data[j+1],img.data[j+2]);
+      return {h,s,v};
+    };
+    function regression(pts,allowed){
+      let n=0,st=0,ss=0,stt=0,sts=0;
+      for(let i=0;i<pts.length;i++)if(allowed[i]){const t=pts[i].t-.5,s=pts[i].s;n++;st+=t;ss+=s;stt+=t*t;sts+=t*s;}
+      if(n<3)return null;
+      const den=n*stt-st*st;
+      const slope=Math.abs(den)>1e-8?(n*sts-st*ss)/den:0;
+      return {slope,offset:(ss-slope*st)/n};
+    }
+    for(let edge=0;edge<4;edge++){
+      const a=q[edge],b=q[(edge+1)%4],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1;
+      let nx=-dy/len,ny=dx/len;
+      const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
+      if((cx-mx)*nx+(cy-my)*ny<0){nx=-nx;ny=-ny;}
+      const pts=[];
+      const start=-18*scale,end=54*scale,step=2*scale,probe=9*scale;
+      for(let j=0;j<54;j++){
+        const t=.16+(.68*j/53),px=a[0]+dx*t,py=a[1]+dy*t;
+        let selected=null;
+        for(let z=start;z<=end;z+=step){
+          const dark=sample(px+nx*z,py+ny*z),inside=sample(px+nx*(z+probe),py+ny*(z+probe));
+          if(!dark||!inside)continue;
+          const contrast=inside.v-dark.v;
+          if(inside.s>.56&&inside.v>155/255&&hd(inside.h,clothHue)<20&&dark.v<185/255&&contrast>72/255){
+            // Last (most inward) supported transition eliminates outer cushion/trim edges.
+            selected={t,s:z};
+          }
+        }
+        if(selected)pts.push(selected);
+      }
+      let inliers=pts.map(()=>true),model=null;
+      for(let k=0;k<3;k++){
+        const f=regression(pts,inliers);if(!f)break;
+        model=f;const residuals=pts.filter((p,i)=>inliers[i]).map(p=>Math.abs(p.s-(f.offset+f.slope*(p.t-.5)))).sort((a,b)=>a-b);
+        const med=residuals[Math.floor(residuals.length/2)]||0,tol=Math.max(6*scale,2.4*med);
+        inliers=pts.map(p=>Math.abs(p.s-(f.offset+f.slope*(p.t-.5)))<=tol);
+      }
+      const count=inliers.filter(Boolean).length;
+      const extent=pts.length?(Math.max(...pts.map(p=>p.t))-Math.min(...pts.map(p=>p.t))):0;
+      const measured=!!(model&&pts.length>=22&&count>=18&&extent>.45&&Math.abs(model.slope)<.3*len);
+      const startOffset=measured?model.offset-model.slope/2:0,endOffset=measured?model.offset+model.slope/2:0;
+      const a0=[a[0]+nx*startOffset,a[1]+ny*startOffset],b0=[b[0]+nx*endOffset,b[1]+ny*endOffset];
+      rails.push({id:'nose_'+edge,a:a0,b:b0,source:measured?'image_transition_fit':'geometric_proposal',measured,
+        evidence:{samples:pts.length,inliers:count,coverage:+(count/54).toFixed(3),medianInwardOffset:measured?+model.offset.toFixed(2):null}});
+    }
+    const intersections=rails.map((r,i)=>G.lineIntersection(rails[(i+3)%4].a,rails[(i+3)%4].b,r.a,r.b));
+    const trusted=rails.every(r=>r.measured)&&intersections.every(Boolean)&&G.validQuad(intersections,img.width,img.height)&&
+      intersections.every((p,i)=>G.distance(p,q[i])<.115*Math.max(img.width,img.height)&&p[0]>=0&&p[0]<img.width&&p[1]>=0&&p[1]<img.height);
+    return {quad:trusted?intersections:q,rails,fitAccepted:!!trusted,seedQuad:q,
+      reason:trusted?null:'At least one cushion-nose line lacked sufficient supported image transitions',
+      geometrySource:trusted?'virtual_intersection_of_image_fitted_noses':'unverified_felt_hull'};
+  }
   function calculateGeometry(img,quad,opts={}){
     const W=img.width,H=img.height,base=G.orderedQuad(quad);
+    const nose=opts.noseFit||null;
     if(!G.validQuad(base,W,H))return {status:'fail',table:null,reason:'Invalid table corners: outline too small or self-crossing',version:V};
     let orientation=opts.orientation;
     let options;
@@ -137,13 +202,19 @@
         score+=clamp((elongation-1)*.03,-.05,.05);
         return {axis,score};
       });
-      options.sort((a,b)=>b.score-a.score);orientation=options[0].axis;
+      // Prefer the obviously longer pair of projected cushion edges. Dark shapes near
+      // trim, shadow, or pockets are not a reliable way to override unmistakable length.
+      const top=G.distance(base[0],base[1])+G.distance(base[2],base[3]);
+      const sides=G.distance(base[1],base[2])+G.distance(base[3],base[0]);
+      if(top>1.55*sides)orientation='horizontal';
+      else if(sides>1.55*top)orientation='vertical';
+      else{options.sort((a,b)=>b.score-a.score);orientation=options[0].axis;}
     }
     const q=G.longRailQuad(base,orientation),Hmat=G.homography(q);
     if(!Hmat)return {status:'fail',table:null,reason:'Perspective geometry is singular',version:V};
     const pockets=G.expectedPockets(Hmat).map(p=>{
       const ev=pocketEvidence(img,p.p,q,p.kind);
-      return {...p,source:ev.observed?'observed_candidate':'geometric_proposal',observed:ev.observed,confidence:+ev.confidence.toFixed(3),signal:{darkFraction:+ev.signal.fraction.toFixed(3),pixels:ev.signal.hits}};
+      return {...p,source:ev.observed?'observed_candidate':'geometric_proposal',observed:ev.observed,confidence:+ev.confidence.toFixed(3),signal:{darkFraction:+ev.signal.fraction.toFixed(3),pixels:ev.signal.hits,centroid:ev.signal.centroid}};
     });
     const diamonds=checkDiamonds(img,q,Hmat);
     const foundCorners=pockets.filter(p=>p.kind==='corner'&&p.observed).length;
@@ -155,23 +226,27 @@
     if(foundCorners<4)warnings.push(`${foundCorners}/4 corner pockets have independent dark-image evidence`);
     if(foundSides<2)warnings.push(`${foundSides}/2 side pockets have independent dark-image evidence`);
     if(!diamonds.some(d=>d.observed))warnings.push('No diamond markers met the conservative bright-mark test; placements are proposals only');
-    if(opts.method==='manual-adjusted')warnings.push('Table corners were manually adjusted; not an automatic success');
+    if(opts.method==='manual-adjusted')warnings.push('Four virtual intersections manually adjusted; not an automatic success');
+    if(nose&&!nose.fitAccepted)warnings.push('Cushion nose intersections could not be verified; rectification is provisional');
+    warnings.push('Pocket centres, jaw positions and ball drop acceptance are NOT identified by these virtual corners');
     // No PASS without independent pocket evidence. Geometry can still be useful for review.
-    const status=geomConfidence<.35?'fail':(foundCorners===4&&foundSides===2&&geomConfidence>=.7?'pass':'review');
-    return {status,version:V,reason:null,warnings,table:{corners:q,rawCorners:base,cornerSource:opts.method==='manual-adjusted'?'confirmed_by_user':'observed_candidate',orientation,homography:Hmat,geometryConfidence:+geomConfidence.toFixed(3),evidenceScore:+evidenceScore.toFixed(3),rails:G.rails(q),pockets,diamonds,rectifiedAspectRatio:2},metrics:{cornersObserved:foundCorners,sidesObserved:foundSides,diamondsObserved:diamonds.filter(d=>d.observed).length,diamondProposals:diamonds.length,pocketProposals:6,railProposals:4},method:opts.method||'auto-felt-segmentation',note:'Uncalibrated heuristic candidate detection; review against the original photo. Not validated on labeled real Chalkline photos.'};
+    const status=geomConfidence<.35?'fail':'review'; // Image-dark pixels and fitted lines alone cannot prove real pocket openings.
+    const railFit=nose?nose.rails:null;
+    const geometrySource=opts.method==='manual-adjusted'?'user_confirmed_virtual_intersections':(nose?.geometrySource||'unverified_felt_hull');
+    return {status,version:V,reason:null,warnings,table:{corners:q,virtualCorners:q,rawCorners:base,seedCorners:nose?.seedQuad||base,cornerSource:opts.method==='manual-adjusted'?'confirmed_by_user':geometrySource,geometrySource,orientation,homography:Hmat,geometryConfidence:+geomConfidence.toFixed(3),evidenceScore:+evidenceScore.toFixed(3),rails:G.rails(q).map((r,i)=>({...r,source:nose?.fitAccepted?'virtual_cushion_nose_fit':geometrySource})),railFit,pockets:pockets.map(p=>({...p,virtualReference:p.kind==='corner'?p.p:null,darkRegionCentroid:p.observed?p.signal?.centroid||null:null,openingCenterVerified:false,physicalPocketOutcome:'unknown'})),diamonds,rectifiedAspectRatio:2},metrics:{cornersObserved:foundCorners,sidesObserved:foundSides,diamondsObserved:diamonds.filter(d=>d.observed).length,diamondProposals:diamonds.length,pocketProposals:6,railProposals:4},method:opts.method||'auto-felt-segmentation',note:'Nose-line virtual corners are geometric references only; no pocket opening centre or guaranteed-ball-drop claim. Uncalibrated, review against original photo.'};
   }
   function analyzePixels(img,options={}){
     const t0=typeof performance!=='undefined'?performance.now():Date.now(),region=tableFromPixels(img);
     let analysis;
     if(!region.quad)analysis={status:'fail',reason:region.reasons[0],warnings:region.reasons,table:null,metrics:{cornersObserved:0,sidesObserved:0,diamondsObserved:0,diamondProposals:0,pocketProposals:0,railProposals:0},version:V,method:'auto-felt-segmentation'};
-    else analysis=calculateGeometry(img,region.quad,{geometryConfidence:region.geometryConfidence});
+    else {const nose=fitCushionNoses(img,region.quad,region.hue);analysis=calculateGeometry(img,nose.quad,{geometryConfidence:region.geometryConfidence,noseFit:nose});}
     analysis.imageSize={width:img.width,height:img.height};
     analysis.tableRegion=region.quad?{hue:region.hue,coverage:+region.coverage.toFixed(3),fill:+region.fill.toFixed(3),borderShare:+region.borderShare.toFixed(4)}:null;
     analysis.processingMs=Math.round((typeof performance!=='undefined'?performance.now():Date.now())-t0);
     analysis.options={tableSizeFeet:options.tableSizeFeet||7};
     return analysis;
   }
-  const api={VISION_VERSION:V,hsv,largest,tableFromPixels,lightDarkNear,outwardNormal,pocketEvidence,checkDiamonds,calculateGeometry,analyzePixels};
+  const api={VISION_VERSION:V,hsv,largest,tableFromPixels,fitCushionNoses,lightDarkNear,outwardNormal,pocketEvidence,checkDiamonds,calculateGeometry,analyzePixels};
   Object.assign(ns,api);
   if(typeof module==='object'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);
