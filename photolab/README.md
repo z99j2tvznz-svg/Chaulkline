@@ -8,9 +8,9 @@ This is a **separate Safari-targeted photo session application**, not a replacem
 
 On any HTTPS static website, serve this directory as `/photolab/` and open `https://your-website/photolab/`. For local desktop inspection, `fieldwork-standalone.html` embeds all scripts/styles and has no external dependencies. However, **the iPhone camera requires a secure context (HTTPS)**; opening an HTML file from Files may not provide camera or reliable local persistence. If camera permission is unavailable, use **Add from Camera Roll / Files**. Actual Safari/iPhone testing is still required.
 
-**Deployment status:** Not deployed. GitHub connector could read `z99j2tvznz-svg/Chaulkline` but `create_branch` returned HTTP 403 `Resource not accessible by integration`. Production `index.html`, main, and experimental branches were not modified.
+**Deployment status:** Not deployed. **GitHub branch created and code committed** to `chatgpt/fieldwork-photo-session-v01` (commit `4a31c017c34a456a1e7e941e9685e76c971eb97d`) with [draft PR #13](https://github.com/z99j2tvznz-svg/Chaulkline/pull/13) targeting the experimental `claude/project-thread-vl1o4a` branch. The production app and `main` were not modified. Initial create-branch attempt returned 403, but a later retry succeeded.
 
-Recommended GitHub integration: add the `photolab/` directory on a new, isolated branch based on the current experimental branch, review it, then deploy it to a separate HTTPS staging location. Do not silently merge to main or resume Three-Ball Runout.
+Recommended next step: independently review [draft PR #13](https://github.com/z99j2tvznz-svg/Chaulkline/pull/13), then deploy the isolated `/photolab/` page to a separate HTTPS staging location. Do not merge to `main` or resume Three-Ball Runout before real-table and device validation.
 
 ## What is implemented
 
