@@ -7,7 +7,7 @@
 1. User opens Safari on HTTPS and starts the camera, or loads a local still photograph.
 2. A real frame is frozen locally. User taps the **four inside playing-surface corners**, clockwise from top left.
 3. Dependency-free geometry code validates the four points, source dimensions, table-size preset (7, 8, or 9 feet), and revision.
-4. An interchangeable **OpenCV.js 4.10.0** adapter computes a planar perspective transform and displays a rectified view.
+4. The built-in **Canvas 2D** adapter computes a planar perspective transform and displays a rectified view without an external download; **OpenCV.js 4.10.0** is an optional, independently replaceable backend.
 5. Export calibration JSON with corner observations, normalized coordinates, table dimensions in inches, revision, image-to-output homography, and provider metadata.
 
 **Not implemented:** Automatic rail/corner detection, balls, cue stick, hands, player pose, shots, scoring, camera movement recovery, real-accuracy benchmarks. A perspective image is only a table-plane projection: the elevated surfaces of balls will not align perfectly with the felt plane.
@@ -16,7 +16,8 @@
 
 - `core/table-geometry.js`: canonical `createCalibration()` / `checkCorners()` / `projectPoint()`; **zero external dependencies**.
 - `adapters/browser-camera.js`: `open(video)`, `capture(video,canvas)`, `close(video)`; replace for uploaded video/recorder.
-- `adapters/opencv-perspective.js`: `ready()` and `rectify(sourceCanvas,calibration,outputCanvas)`; replace with alternative rectification backend without rewriting the UI/core.
+- `adapters/canvas-perspective.js`: `ready()` and `rectify(sourceCanvas,calibration,outputCanvas)`; no external runtime, works when OpenCV.js is blocked.
+- `adapters/opencv-perspective.js`: same interface, optional Apache-2.0 library loaded only when requested. Either backend can be replaced without rewriting the core.
 - `app.js`: thin browser orchestration; no drill or physics logic.
 - `tests/`: Node-based pure contract and fake-OpenCV tests; no browser/camera fixtures.
 
@@ -24,7 +25,7 @@
 
 ## Source and license
 
-OpenCV.js 4.10.0 is requested at runtime from `https://docs.opencv.org/4.10.0/opencv.js` (version-pinned **upstream** official binary, not copied into this repo); OpenCV 4.5+ is Apache License 2.0: https://opencv.org/license/. The app should preserve notices/attribution when bundling or distributing OpenCV. No camera frames are sent to a Chalkline backend. Loading the OpenCV script itself requires network access to the upstream documentation host; this is a documented limitation, not offline-ready deployment.
+OpenCV.js 4.10.0 is **optional** and requested at runtime from `https://docs.opencv.org/4.10.0/opencv.js` (version-pinned **upstream** official binary, not copied into this repo); OpenCV 4.5+ is Apache License 2.0: https://opencv.org/license/. The app should preserve notices/attribution when bundling or distributing OpenCV. No camera frames are sent to a Chalkline backend. Loading the optional OpenCV script requires network access to the upstream host; some Safari networks block it. The default Canvas engine performs perspective rectification without a remote dependency. This is an operational fallback rather than a claim of OpenCV-based processing.
 
 No BilliardsTrainer code has been copied in this stage. Its runtime is Python and its licensing/dependency chain must be separately checked before integrating it into a distributed Safari product.
 
@@ -39,3 +40,6 @@ From this folder: `npm test`. Serve the repository root over localhost (e.g. `py
 - Verify corner alignment with annotated footage and establish quantitative calibration error.
 - Confirm commercial license obligations before bundling dependencies.
 - **Do not connect ball detection or merge this into a production tracking pipeline without product-owner approval.**
+
+## Reliability fix (2026-10-25)
+When Safari cannot fetch the remote OpenCV.js library, the default Canvas 2D perspective adapter remains usable. Choose four corners and **Rectify table** directly; the OpenCV.js button is optional. A failed OpenCV request displays a warning, not a blocked workflow. Exported JSON records the actual `perspective.provider` that ran.

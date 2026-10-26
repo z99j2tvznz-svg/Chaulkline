@@ -100,3 +100,63 @@ test('BrowserCameraAdapter captures a local frame with bounded resolution', () =
 test('BrowserCameraAdapter blocks capture without a frame', () => {
   assert.throws(()=>new BrowserCameraAdapter({}).capture({videoWidth:0,videoHeight:0},{}),/not delivered/i);
 });
+
+const { CanvasPerspectiveAdapter, homography, invert3 } = require('../adapters/canvas-perspective.js');
+const pointNear = (got, exp, tol=1e-6) => {
+  assert.ok(Math.abs(got.x-exp.x) < tol && Math.abs(got.y-exp.y) < tol,
+    `expected ${JSON.stringify(exp)}, received ${JSON.stringify(got)}`);
+};
+
+test('Canvas perspective backend is replaceable and has no network dependency', async () => {
+  const backend = new CanvasPerspectiveAdapter();
+  assert.equal(await backend.ready(), backend);
+  assert.match(backend.id, /canvas2d-perspective/);
+});
+
+test('Canvas homography maps all four corners of a skewed table to the output rectangle', () => {
+  const h = homography(corners, 960, 480);
+  for (const [i, p] of corners.entries()) {
+    const expected = [{x:0,y:0},{x:960,y:0},{x:960,y:480},{x:0,y:480}][i];
+    pointNear(G.projectPoint(h,p),expected);
+  }
+});
+
+test('Canvas perspective inverse returns image-space positions for projected points', () => {
+  const h=homography(corners,960,480), inv=invert3(h);
+  for (const p of corners) pointNear(G.projectPoint(inv,G.projectPoint(h,p)),p,1e-6);
+});
+
+test('Canvas backend transforms actual pixels in the expected identity case', () => {
+  const width=200,height=100;
+  const pixels = new Uint8ClampedArray(width*height*4);
+  for(let y=0;y<height;y++) for(let x=0;x<width;x++){
+    const i=(y*width+x)*4;
+    pixels[i]=x;pixels[i+1]=y;pixels[i+2]=44;pixels[i+3]=255;
+  }
+  const source={width,height,getContext(){return {getImageData(){return {data:pixels}}};}};
+  let outputData;
+  const output={width:0,height:0,getContext(){return {
+    createImageData(w,h){return {data:new Uint8ClampedArray(w*h*4)}},
+    putImageData(im){outputData=im.data}
+  };}};
+  const cal=G.createCalibration({points:[{x:0,y:0},{x:200,y:0},{x:200,y:100},{x:0,y:100}],
+    imageWidth:width,imageHeight:height,sourceType:'image'});
+  const projection=new CanvasPerspectiveAdapter().rectify(source,cal,output,200);
+  assert.equal(output.width,200);assert.equal(output.height,100);
+  assert.equal(projection.heightPx,100);
+  assert.equal(projection.provider,'canvas2d-perspective@1');
+  for(const [x,y] of [[0,0],[100,50],[199,99]]){
+    const i=(y*width+x)*4;
+    assert.deepEqual(Array.from(outputData.subarray(i,i+4)),Array.from(pixels.subarray(i,i+4)));
+  }
+  const enriched=G.withProjection(cal,projection);
+  assert.equal(enriched.perspective.provider,'canvas2d-perspective@1');
+});
+
+test('Canvas backend rejects invalid source/geometry before allocating output', () => {
+  const b=new CanvasPerspectiveAdapter(),cal=G.createCalibration(args);
+  assert.throws(()=>b.rectify(null,cal,{},200),/source canvas/i);
+  assert.throws(()=>b.rectify({width:100,height:100},cal,{},20),/output width/i);
+  assert.throws(()=>homography([{x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0}],200,100),/stable/i);
+  assert.throws(()=>invert3([0,0,0,0,0,0,0,0,0]),/singular/i);
+});

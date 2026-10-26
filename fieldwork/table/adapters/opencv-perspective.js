@@ -25,7 +25,7 @@
       this._loading = new Promise((resolve, reject) => {
         let finished = false;
         const script = document.createElement('script');
-        const fail = reason => { if (!finished) { finished = true; clearTimeout(timer); clearInterval(check); this._loading = null; reject(new Error(reason)); } };
+        const fail = reason => { if (!finished) { finished = true; clearTimeout(timer); clearInterval(check); this._loading = null; script.remove(); reject(new Error(reason)); } };
         const check = setInterval(async () => {
           try {
             let cv = globalThis.cv;
@@ -35,10 +35,10 @@
             }
           } catch (e) { /* runtime may still initialize */ }
         }, 100);
-        const timer = setTimeout(() => fail('OpenCV.js did not initialize within 30 seconds. Check the network and reload.'), 30000);
+        const timer = setTimeout(() => fail('OpenCV.js was unavailable after 12 seconds. You can use the local Canvas backend instead.'), 12000);
         script.src = this.url;
         script.async = true;
-        script.onerror = () => fail('Unable to load the pinned OpenCV.js library. Check the internet connection.');
+        script.onerror = () => fail('Unable to download OpenCV.js from the external host.');
         document.head.appendChild(script);
       });
       return this._loading;
