@@ -1,6 +1,6 @@
 # Chalkline / Fieldwork — Photo Session Table Analyzer
 
-**Version:** `0.1.0` (experimental, 25 October 2026)
+**Version:** `0.2.0` (experimental; inner cushion-nose reference correction, 25 October 2026)
 
 This is a **separate Safari-targeted photo session application**, not a replacement for the published Chalkline `index.html`. It has a deliberately different **cream / navy / coral editorial field-journal UI** and an explicit five-stage workflow: **Setup → Capture → Analyze → Inspect → Export**. Nothing is uploaded by the application.
 
@@ -8,9 +8,9 @@ This is a **separate Safari-targeted photo session application**, not a replacem
 
 On any HTTPS static website, serve this directory as `/photolab/` and open `https://your-website/photolab/`. For local desktop inspection, `fieldwork-standalone.html` embeds all scripts/styles and has no external dependencies. However, **the iPhone camera requires a secure context (HTTPS)**; opening an HTML file from Files may not provide camera or reliable local persistence. If camera permission is unavailable, use **Add from Camera Roll / Files**. Actual Safari/iPhone testing is still required.
 
-**Deployment status:** The photo-session UI is served from the independent `/photolab/` GitHub Pages route. Version 0.2 is an isolated prototype, not the production Chalkline app. **GitHub branch created and code committed** to `chatgpt/fieldwork-photo-session-v01` (commit `4a31c017c34a456a1e7e941e9685e76c971eb97d`) with [draft PR #13](https://github.com/z99j2tvznz-svg/Chaulkline/pull/13) targeting the experimental `claude/project-thread-vl1o4a` branch. The production app and `main` were not modified. Initial create-branch attempt returned 403, but a later retry succeeded.
+**Deployment status:** Published as an **isolated experimental route** at https://z99j2tvznz-svg.github.io/Chaulkline/photolab/?v=0.2.0 . Current source is committed on `main` under `photolab/` only. The root `index.html`, existing `src/`, production tracking/drills, and `fieldwork/table/` are unchanged by this correction. The earlier draft PR #13 remains a historical prototype review; it is not the release source for v0.2.
 
-Recommended next step: independently review [draft PR #13](https://github.com/z99j2tvznz-svg/Chaulkline/pull/13), then deploy the isolated `/photolab/` page to a separate HTTPS staging location. Do not merge to `main` or resume Three-Ball Runout before real-table and device validation.
+Recommended next step: exercise the already published `/photolab/` v0.2 URL on the owner's iPhone, import or recapture five reference photos, reanalyze, and export a fresh ZIP. Freeze independent ground-truth nose lines before any further tuning. Do not integrate this detector into the shared tracker or resume Three-Ball Runout before approval.
 
 ## What is implemented
 
