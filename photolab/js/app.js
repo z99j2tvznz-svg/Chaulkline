@@ -1,4 +1,4 @@
-/* Chalkline Fieldwork 0.2 — Safari photo session UI. All image data stays local until a user exports/shares. */
+/* Chalkline Fieldwork 0.3 — Safari photo session UI. All image data stays local until a user exports/shares. */
 (function(root){
 'use strict';
 if(typeof document==='undefined')return;
@@ -110,8 +110,12 @@ function drawOverlay(canvas,analysis){
     ctx.beginPath();ctx.moveTo(...p);ctx.lineTo(...r);ctx.stroke();
   }
   ctx.save();ctx.lineCap='round';
-  // Cyan = the four inner cushion-nose lines. Segments across corner/side pocket
-  // gaps are dashed because no physical cushion exists through a pocket opening.
+  // Distinguish the REJECTED wood/cushion edge from the candidate inner
+  // nose when both are visible. This diagnostic is critical for oblique views.
+  for(const r of (table.railFit||[]))if(r.outerSeam){
+    ctx.lineWidth=1.8*scale;ctx.strokeStyle='#ff72a2';ctx.setLineDash([5*scale,6*scale]);
+    segment(r.outerSeam.a,r.outerSeam.b,.12,.88);
+  }
   table.rails.forEach((r,i)=>{
     ctx.lineWidth=3.5*scale;ctx.strokeStyle='#f9dd6e';ctx.setLineDash([]);
     if(i%2===0){segment(r.a,r.b,.07,.44);segment(r.a,r.b,.56,.93);}
@@ -152,8 +156,8 @@ function drawOverlay(canvas,analysis){
     ctx.beginPath();ctx.moveTo(x,y-rad);ctx.lineTo(x+rad,y);ctx.lineTo(x,y+rad);ctx.lineTo(x-rad,y);ctx.closePath();
     ctx.strokeStyle=d.observed?'#9af1c1':'#f9a980';ctx.lineWidth=1.7*scale;ctx.stroke();
   }
-  ctx.save();const nose=table.geometrySource==='virtual_intersection_of_image_fitted_noses';
-  const mode=analysis.method==='manual-adjusted'?'MANUAL VIRTUAL CORNERS':(nose?'NOSE LINES FIT':'NOSE LINES UNVERIFIED');
+  ctx.save();const nose=table.geometrySource==='virtual_intersections_from_provisional_edge_candidates';
+  const mode=analysis.method==='manual-adjusted'?'MANUAL VIRTUAL CORNERS':(nose?'INNER EDGE CANDIDATES':'NOSE POSITION UNVERIFIED');
   const text=`REVIEW • ${mode} • POCKET OPENINGS UNVERIFIED`;
   ctx.font=`bold ${13*scale}px monospace`;const rectW=Math.min(w-16,ctx.measureText(text).width+30*scale);
   ctx.fillStyle='rgba(19,37,47,.94)';ctx.fillRect(8,8,rectW,34*scale);ctx.fillStyle='#fff';ctx.textAlign='left';ctx.fillText(text,18*scale,26*scale);

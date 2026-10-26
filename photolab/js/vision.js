@@ -6,7 +6,7 @@
   'use strict';
   const ns=root.Fieldwork || (root.Fieldwork={});
   const G=(typeof module==='object'&&module.exports)?require('./geometry.js'):ns;
-  const V='photo-nose-lines/0.2.0',clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+  const V='photo-nose-lines/0.3.0',clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
   function hsv(r,g,b){
     r/=255;g/=255;b/=255;
     const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
@@ -144,13 +144,34 @@
       const slope=Math.abs(den)>1e-8?(n*sts-st*ss)/den:0;
       return {slope,offset:(ss-slope*st)/n};
     }
+    function median(values){
+      if(!values.length)return null;
+      const ordered=values.slice().sort((a,b)=>a-b);
+      return ordered[Math.floor(ordered.length/2)];
+    }
+    function robustFit(points){
+      let inliers=points.map(()=>true),model=null;
+      for(let iter=0;iter<3;iter++){
+        const candidate=regression(points,inliers);if(!candidate)break;
+        model=candidate;
+        const residuals=points.filter((p,i)=>inliers[i]).map(p=>Math.abs(p.s-(candidate.offset+candidate.slope*(p.t-.5)))).sort((a,b)=>a-b);
+        const med=residuals[Math.floor(residuals.length/2)]||0,tol=Math.max(5*scale,2.4*med);
+        inliers=points.map(p=>Math.abs(p.s-(candidate.offset+candidate.slope*(p.t-.5)))<=tol);
+      }
+      const inlierPts=points.filter((p,i)=>inliers[i]);
+      return {model,number:inlierPts.length,span:inlierPts.length?Math.max(...inlierPts.map(p=>p.t))-Math.min(...inlierPts.map(p=>p.t)):0,
+        samples:points.length,residualMedian:model&&inlierPts.length?median(inlierPts.map(p=>Math.abs(p.s-(model.offset+model.slope*(p.t-.5))))):null};
+    }
     for(let edge=0;edge<4;edge++){
       const a=q[edge],b=q[(edge+1)%4],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1;
       let nx=-dy/len,ny=dx/len;
       const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
       if((cx-mx)*nx+(cy-my)*ny<0){nx=-nx;ny=-ny;}
-      const pts=[];
+      const firstEdges=[],clothNoseEdges=[];
       const start=-18*scale,end=54*scale,step=2*scale,probe=9*scale;
+      // Scan outside -> inside. The first dark->blue transition may be the
+      // WOOD/CUSHION SEAM, not the physical nose. Require a second coherent
+      // colour-plane transition when a blue cushion face is visible.
       for(let j=0;j<54;j++){
         const t=.16+(.68*j/53),px=a[0]+dx*t,py=a[1]+dy*t;
         let selected=null;
@@ -159,33 +180,66 @@
           if(!dark||!inside)continue;
           const contrast=inside.v-dark.v;
           if(inside.s>.56&&inside.v>155/255&&hd(inside.h,clothHue)<20&&dark.v<185/255&&contrast>72/255){
-            // Last (most inward) supported transition eliminates outer cushion/trim edges.
             selected={t,s:z};
           }
         }
-        if(selected)pts.push(selected);
+        if(!selected)continue;
+        firstEdges.push(selected);
+        const seam=selected.s;
+        function saturationBand(lo,hi){
+          const values=[];
+          for(let z=lo;z<=hi;z+=2*scale){
+            const c=sample(px+nx*z,py+ny*z);
+            if(c&&hd(c.h,clothHue)<23)values.push(c.s*255);
+          }
+          return values.length>=2?median(values):null;
+        }
+        const face=saturationBand(seam+5*scale,seam+14*scale);
+        const cloth=saturationBand(seam+44*scale,seam+65*scale);
+        if(face==null||cloth==null||face<=155||cloth<195||cloth-face<9)continue;
+        const target=face+.63*(cloth-face);
+        let crossing=null;
+        for(let zz=seam+15*scale;zz<=seam+50*scale;zz+=scale){
+          const before=saturationBand(zz-12*scale,zz-5*scale);
+          const after=saturationBand(zz+4*scale,zz+10*scale);
+          const sustained=saturationBand(zz+11*scale,zz+19*scale);
+          if(before!=null&&after!=null&&sustained!=null&&after>target&&sustained>target-4&&after-before>7&&before>face-18){
+            crossing=zz;break;
+          }
+        }
+        if(crossing!=null)clothNoseEdges.push({t,s:crossing,chromaticGain:cloth-face,seam});
       }
-      let inliers=pts.map(()=>true),model=null;
-      for(let k=0;k<3;k++){
-        const f=regression(pts,inliers);if(!f)break;
-        model=f;const residuals=pts.filter((p,i)=>inliers[i]).map(p=>Math.abs(p.s-(f.offset+f.slope*(p.t-.5)))).sort((a,b)=>a-b);
-        const med=residuals[Math.floor(residuals.length/2)]||0,tol=Math.max(6*scale,2.4*med);
-        inliers=pts.map(p=>Math.abs(p.s-(f.offset+f.slope*(p.t-.5)))<=tol);
-      }
-      const count=inliers.filter(Boolean).length;
-      const extent=pts.length?(Math.max(...pts.map(p=>p.t))-Math.min(...pts.map(p=>p.t))):0;
-      const measured=!!(model&&pts.length>=22&&count>=18&&extent>.45&&Math.abs(model.slope)<.3*len);
-      const startOffset=measured?model.offset-model.slope/2:0,endOffset=measured?model.offset+model.slope/2:0;
+      const primary=robustFit(firstEdges),secondary=robustFit(clothNoseEdges);
+      const primaryOK=!!(primary.model&&primary.samples>=22&&primary.number>=18&&primary.span>.45&&Math.abs(primary.model.slope)<.3*len);
+      const secondaryOK=!!(secondary.model&&primaryOK&&secondary.number>=17&&secondary.span>=.30&&
+        Math.abs(secondary.model.slope)<.3*len&&secondary.residualMedian<=5*scale&&
+        median(clothNoseEdges.map(p=>p.s-p.seam))>=12*scale);
+      const chosen=secondaryOK?secondary:primary;
+      const measured=secondaryOK||primaryOK;
+      const fit=measured?chosen.model:null;
+      const startOffset=fit?fit.offset-fit.slope/2:0,endOffset=fit?fit.offset+fit.slope/2:0;
       const a0=[a[0]+nx*startOffset,a[1]+ny*startOffset],b0=[b[0]+nx*endOffset,b[1]+ny*endOffset];
-      rails.push({id:'nose_'+edge,a:a0,b:b0,source:measured?'image_transition_fit':'geometric_proposal',measured,
-        evidence:{samples:pts.length,inliers:count,coverage:+(count/54).toFixed(3),medianInwardOffset:measured?+model.offset.toFixed(2):null}});
+      const outer=primaryOK?{a:[a[0]+nx*(primary.model.offset-primary.model.slope/2),a[1]+ny*(primary.model.offset-primary.model.slope/2)],
+        b:[b[0]+nx*(primary.model.offset+primary.model.slope/2),b[1]+ny*(primary.model.offset+primary.model.slope/2)]}:null;
+      rails.push({id:'nose_'+edge,a:a0,b:b0,
+        source:secondaryOK?'inner_blue_face_to_felt_candidate':(primaryOK?'dark_to_blue_edge_unverified':'geometric_proposal'),measured,
+        outerSeam:secondaryOK?outer:null,
+        evidence:{samples:chosen.samples,inliers:chosen.number,coverage:+(chosen.number/54).toFixed(3),
+          span:+chosen.span.toFixed(3),medianInwardOffset:fit?+fit.offset.toFixed(2):null,
+          firstDarkEdgeSamples:primary.samples,innerBlueEdgeSamples:secondary.samples,
+          innerBlueEdgeInliers:secondary.number,innerBlueEdgeSpan:+secondary.span.toFixed(3),
+          edgeClass:secondaryOK?'chromatic_cushion_face_to_cloth_candidate':primaryOK?'dark_to_blue_transition_only':'not_supported',
+          independentlyVerifiedPhysicalNose:false}});
     }
     const intersections=rails.map((r,i)=>G.lineIntersection(rails[(i+3)%4].a,rails[(i+3)%4].b,r.a,r.b));
-    const trusted=rails.every(r=>r.measured)&&intersections.every(Boolean)&&G.validQuad(intersections,img.width,img.height)&&
+    const geometricUsable=rails.every(r=>r.measured)&&intersections.every(Boolean)&&G.validQuad(intersections,img.width,img.height)&&
       intersections.every((p,i)=>G.distance(p,q[i])<.115*Math.max(img.width,img.height)&&p[0]>=0&&p[0]<img.width&&p[1]>=0&&p[1]<img.height);
-    return {quad:trusted?intersections:q,rails,fitAccepted:!!trusted,seedQuad:q,
-      reason:trusted?null:'At least one cushion-nose line lacked sufficient supported image transitions',
-      geometrySource:trusted?'virtual_intersection_of_image_fitted_noses':'unverified_felt_hull'};
+    // Colour transitions can identify candidate cloth/cushion boundaries, but
+    // they do not independently verify a physical nose position. Never PASS.
+    const fullyVerified=false;
+    return {quad:geometricUsable?intersections:q,rails,fitAccepted:fullyVerified&&geometricUsable,fitCandidate:!!geometricUsable,seedQuad:q,
+      reason:geometricUsable?'Cushion-nose references are image-derived candidates, not independently verified physical cushion noses':'Not all rails have enough image support for a safe virtual-corner intersection',
+      geometrySource:geometricUsable?'virtual_intersections_from_provisional_edge_candidates':'unverified_felt_hull'};
   }
   function calculateGeometry(img,quad,opts={}){
     const W=img.width,H=img.height,base=G.orderedQuad(quad);
@@ -227,18 +281,20 @@
     if(foundSides<2)warnings.push(`${foundSides}/2 side pockets have independent dark-image evidence`);
     if(!diamonds.some(d=>d.observed))warnings.push('No diamond markers met the conservative bright-mark test; placements are proposals only');
     if(opts.method==='manual-adjusted')warnings.push('Four virtual intersections manually adjusted; not an automatic success');
-    if(nose&&!nose.fitAccepted)warnings.push('Cushion nose intersections could not be verified; rectification is provisional');
+    if(nose&&!nose.fitAccepted)warnings.push('Cushion-nose geometry remains provisional; inspect especially the wood/cushion seam versus inner cloth edge');
+    if(nose?.rails?.some(r=>r.source==='inner_blue_face_to_felt_candidate'&&r.evidence.coverage<.5))warnings.push('At least one inner-edge candidate has limited rail coverage; virtual corners extrapolate beyond observed edge segments');
+    if(nose?.rails?.some(r=>r.source==='dark_to_blue_edge_unverified'))warnings.push('Some rails have only a dark-to-blue edge; these could be wood seams, not cushion noses');
     warnings.push('Pocket centres, jaw positions and ball drop acceptance are NOT identified by these virtual corners');
     // No PASS without independent pocket evidence. Geometry can still be useful for review.
     const status=geomConfidence<.35?'fail':'review'; // Image-dark pixels and fitted lines alone cannot prove real pocket openings.
     const railFit=nose?nose.rails:null;
     const geometrySource=opts.method==='manual-adjusted'?'user_confirmed_virtual_intersections':(nose?.geometrySource||'unverified_felt_hull');
-    return {status,version:V,reason:null,warnings,table:{corners:q,virtualCorners:q,rawCorners:base,seedCorners:nose?.seedQuad||base,cornerSource:opts.method==='manual-adjusted'?'confirmed_by_user':geometrySource,geometrySource,orientation,homography:Hmat,geometryConfidence:+geomConfidence.toFixed(3),evidenceScore:+evidenceScore.toFixed(3),rails:G.rails(q).map((r,i)=>({...r,source:nose?.fitAccepted?'virtual_cushion_nose_fit':geometrySource})),railFit,pockets:pockets.map(p=>({...p,virtualReference:p.kind==='corner'?p.p:null,darkRegionCentroid:p.observed?p.signal?.centroid||null:null,openingCenterVerified:false,physicalPocketOutcome:'unknown'})),diamonds,rectifiedAspectRatio:2},metrics:{cornersObserved:foundCorners,sidesObserved:foundSides,diamondsObserved:diamonds.filter(d=>d.observed).length,diamondProposals:diamonds.length,pocketProposals:6,railProposals:4},method:opts.method||'auto-felt-segmentation',note:'Nose-line virtual corners are geometric references only; no pocket opening centre or guaranteed-ball-drop claim. Uncalibrated, review against original photo.'};
+    return {status,version:V,reason:null,warnings,table:{corners:q,virtualCorners:q,rawCorners:base,seedCorners:nose?.seedQuad||base,cornerSource:opts.method==='manual-adjusted'?'confirmed_by_user':geometrySource,geometrySource,orientation,homography:Hmat,geometryConfidence:+geomConfidence.toFixed(3),evidenceScore:+evidenceScore.toFixed(3),rails:G.rails(q).map((r,i)=>({...r,source:nose?.fitAccepted?'virtual_cushion_nose_fit':geometrySource})),railFit,pockets:pockets.map(p=>({...p,virtualReference:p.kind==='corner'?p.p:null,darkRegionCentroid:p.observed?p.signal?.centroid||null:null,openingCenterVerified:false,physicalPocketOutcome:'unknown'})),diamonds,rectifiedAspectRatio:2},metrics:{cornersObserved:foundCorners,sidesObserved:foundSides,diamondsObserved:diamonds.filter(d=>d.observed).length,diamondProposals:diamonds.length,pocketProposals:6,railProposals:4},method:opts.method||'auto-cushion-cloth-candidates',note:'Virtual intersections come from image-derived rail-edge CANDIDATES, not independently verified physical cushion noses. Actual jaw tips and pocket openings are unknown.'};
   }
   function analyzePixels(img,options={}){
     const t0=typeof performance!=='undefined'?performance.now():Date.now(),region=tableFromPixels(img);
     let analysis;
-    if(!region.quad)analysis={status:'fail',reason:region.reasons[0],warnings:region.reasons,table:null,metrics:{cornersObserved:0,sidesObserved:0,diamondsObserved:0,diamondProposals:0,pocketProposals:0,railProposals:0},version:V,method:'auto-felt-segmentation'};
+    if(!region.quad)analysis={status:'fail',reason:region.reasons[0],warnings:region.reasons,table:null,metrics:{cornersObserved:0,sidesObserved:0,diamondsObserved:0,diamondProposals:0,pocketProposals:0,railProposals:0},version:V,method:'auto-cushion-cloth-candidates'};
     else {const nose=fitCushionNoses(img,region.quad,region.hue);analysis=calculateGeometry(img,nose.quad,{geometryConfidence:region.geometryConfidence,noseFit:nose});}
     analysis.imageSize={width:img.width,height:img.height};
     analysis.tableRegion=region.quad?{hue:region.hue,coverage:+region.coverage.toFixed(3),fill:+region.fill.toFixed(3),borderShare:+region.borderShare.toFixed(4)}:null;

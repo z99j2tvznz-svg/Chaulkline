@@ -1,6 +1,6 @@
 # Chalkline / Fieldwork — Photo Session Table Analyzer
 
-**Version:** `0.2.0` (experimental; inner cushion-nose reference correction, 25 October 2026)
+**Version:** `0.3.0` (experimental, 26 October 2026)
 
 This is a **separate Safari-targeted photo session application**, not a replacement for the published Chalkline `index.html`. It has a deliberately different **cream / navy / coral editorial field-journal UI** and an explicit five-stage workflow: **Setup → Capture → Analyze → Inspect → Export**. Nothing is uploaded by the application.
 
@@ -8,26 +8,26 @@ This is a **separate Safari-targeted photo session application**, not a replacem
 
 On any HTTPS static website, serve this directory as `/photolab/` and open `https://your-website/photolab/`. For local desktop inspection, `fieldwork-standalone.html` embeds all scripts/styles and has no external dependencies. However, **the iPhone camera requires a secure context (HTTPS)**; opening an HTML file from Files may not provide camera or reliable local persistence. If camera permission is unavailable, use **Add from Camera Roll / Files**. Actual Safari/iPhone testing is still required.
 
-**Deployment status:** Published as an **isolated experimental route** at https://z99j2tvznz-svg.github.io/Chaulkline/photolab/?v=0.2.0 . Current source is committed on `main` under `photolab/` only. The root `index.html`, existing `src/`, production tracking/drills, and `fieldwork/table/` are unchanged by this correction. The earlier draft PR #13 remains a historical prototype review; it is not the release source for v0.2.
+**Deployment status:** The isolated experimental PhotoLab is published at https://z99j2tvznz-svg.github.io/Chaulkline/photolab/?v=0.3.0 through the repository's GitHub Pages deployment. Only files under `photolab/` are changed for v0.3; the root Chalkline app and separate `fieldwork/table/` Stage 01 are untouched. Draft PR #13 documents the original v0.1 experiment, not the v0.3 release.
 
-Recommended next step: exercise the already published `/photolab/` v0.2 URL on the owner's iPhone, import or recapture five reference photos, reanalyze, and export a fresh ZIP. Freeze independent ground-truth nose lines before any further tuning. Do not integrate this detector into the shared tracker or resume Three-Ball Runout before approval.
+Recommended next step: import the existing five-photo ZIP on iPhone, select **Analyze All Photos** to refresh old v0.1/v0.2 results, and inspect the yellow/rose near rail overlay of photos 3 and 5 before accepting geometry. This tool is not yet a validated table calibration or pocket model.
 
 ## What is implemented
 
 - New local photo session, table-size selection (7, 8, 9 ft), saved session list using IndexedDB, deletion, ZIP import.
 - Live back-camera capture using `getUserMedia` with `playsinline`; native photo picker fallback. Maximum 10; 5–10 recommended, fewer allowed for diagnostics.
-- Automatic heuristic **felt surface candidate** via HSV segmentation, largest connected region, convex boundary and four-corner geometry. Independent candidate scoring for **four corner + two side pockets** from near-black image evidence; **rail positions derived from the cloth outline**; **18 expected diamond positions** with conservative bright-mark candidate search. These are candidates, **not independently validated detections**.
+- Automatic heuristic **felt surface candidate** via HSV segmentation, largest connected region, convex boundary and four-corner geometry. Independent candidate scoring for **four corner + two side pockets** from near-black image evidence; **provisional rail-edge positions from colour transitions (with cloth-outline fallback)**; **18 expected diamond positions** with conservative bright-mark candidate search. These are candidates, **not independently validated detections**.
 - Two image representations: raw **source original when available** and the downscaled JPEG that the detector actually analyzed (maximum side 1600 px). The JSON documents the normalization.
-- Overlaid photo (red geometry, green image-evidence candidates, hollow unverified proposals), proposed projective top-down JPEG, per-image status and measurements.
+- Overlaid photo (yellow inner-edge candidates, magenta dashed rejected outer seam where visible, green image-evidence candidates, hollow unverified proposals), proposed projective top-down JPEG, per-image status and measurements.
 - Manual four-corner adjustments by dragging on the review image, **tagged `manual-adjusted`**, with revert to automatic; never treated as an automatic success.
-- Each image has separate `pass`, `review`, `fail` outcomes. `pass` is a **heuristic gate requiring 4/4 corner + 2/2 side pocket image evidence and sufficient cloth shape score**; not a probability that detection is correct. Diamond problems do not suppress a valid table but are reported.
+- Each image has `review` and `fail` outcomes in v0.3. Heuristic signals never upgrade a frame to `pass` without independently validated pocket and physical rail geometry. Diamond problems do not suppress a valid table but are reported.
 - Export ZIP with per-image JPEG input, original uploaded source file bytes (where available), overlay JPEG, top-down JPEG, analysis JSON, `session_summary.json`, `debug_log.txt`, README. Supports Apple Share Sheet when browser allows file sharing, otherwise a ZIP download. ZIP import is limited to this application's own **stored/uncompressed** format and verifies CRC32.
 
 ## Evidence vs inference
 
-All coordinates and heuristic confidence fields refer to **the analyzed JPEG pixels** (not necessarily the original file's size). Every pocket and diamond has `source: "observed_candidate"` only when there is a supporting image signal; otherwise `source: "geometric_proposal"`, `observed: false`. Rails are `inferred_from_cloth`. These signals are **not calibrated probabilities**; a dark mark does not prove a real pocket and a bright point does not prove a real diamond. The perspective view is a projective warp, not a metric 3-D reconstruction.
+All coordinates and heuristic confidence fields refer to **the analyzed JPEG pixels** (not necessarily the original file's size). Every pocket and diamond has `source: "observed_candidate"` only when there is a supporting image signal; otherwise `source: "geometric_proposal"`, `observed: false`. Rail edges are image-derived candidates or geometric fallbacks, never verified physical cushion noses. These signals are **not calibrated probabilities**; a dark mark does not prove a real pocket and a bright point does not prove a real diamond. The perspective view is a projective warp, not a metric 3-D reconstruction.
 
-**Accuracy:** The v0.1 baseline had not been validated. For v0.2, five real photos from one user-provided private review bundle were used for regression checks and to correct the nose geometry. All five produced an image-supported four-rail fit, but there were no independent, manually measured ground-truth corner coordinates: **no pixel-accuracy or physical pocket-scoring accuracy claim**. Synthetic test image results must never be included in product accuracy measurements.
+**Accuracy:** The v0.1 baseline had not been validated. The v0.2 pass on five real reference photos did not establish physical nose accuracy: photos 3 and 5 still included the wood/cushion seam. v0.3 corrects the specific visible failure, but no independent, manually measured ground-truth corner coordinates exist: **no pixel-accuracy or physical pocket-scoring accuracy claim**. Synthetic test image results must never be included in product accuracy measurements.
 
 ## ZIP layout
 
@@ -70,9 +70,19 @@ The smoke test uses a self-contained HTML page with `about:blank` because this e
 4. Revisit existing Chalkline `src/vision.js` auto-calibration and other open-source candidates on this **same frozen footage** before deciding which detector to productionize. This prototype borrows the existing Chalkline color-segmentation *approach* but does not include OpenCV.js or an unreviewed third-party model.
 5. Integrate any successful detector behind the shared physical state interface only after acceptance; don't turn geometric proposals into authoritative tracking events.
 
+## Geometry correction — v0.3: distinguish cushion face from outer wood seam
+
+On real user photos 3 and 5, v0.2 was still following the dark-to-blue transition where the blue cushion face meets the grey wood/rail trim on the **near long rail**, rather than the inner cushion nose. This was documented as a correctness defect even though v0.2 exported high geometric fit coverage. The algorithm's chosen first high-contrast edge cannot prove cushion geometry.
+
+v0.3 uses a two-stage transition scan along inward normals: (1) detect the dark-to-blue boundary; (2) where a distinct blue cushion-face band is visible, detect a sustained chromatic transition into the flat felt plane. The second transition is fitted across the rail using robust regression and a minimum support/span gate. Its proposed line is **yellow**; the rejected outer boundary is shown **magenta dashed** for comparison. Both are explicitly candidates, not proof of a physical nose.
+
+This is deliberately not a claim of true pocket-opening or jaw-tip detection. All calculated tables remain `REVIEW`; no physically measured reference-line coordinates are available, and photos from this table were used while developing the heuristic. Manual confirmation remains necessary. On a surface with no distinct chromatic boundary, the nose position is ambiguous and must **not** silently default to the wood seam as verified. The exported `railFit` records include `edgeClass`, support counts, span and `outerSeam` when distinct, to make incorrect edges diagnosable. We do not infer a ball will drop merely because it crosses a virtual corner.
+
+**Privacy:** Owner's real table photos and session ZIPs are NOT in the public repository.
+
 ## Geometry correction — v0.2
 
-The October 25 real five-photo review bundle demonstrated that v0.1 followed outside-rail edges and even expanded into the room on capture 001. It also marked capture 002 PASS despite wrong physical reference. v0.2 anchors the playing surface to **inner cushion-nose lines** and computes **virtual sharp intersections** where each pair of extended lines meets at the four corner pockets. These **four reference coordinates are not pocket-opening centres**. Six pockets still have separately labelled candidate locations and dark-region evidence; actual jaw-tip positions, opening centres and ball acceptance geometry remain **unknown**. The app deliberately reports **REVIEW** until real labels/physical mouth criteria are established; no synthetic/heuristic PASS assertion is accepted.
+The October 25 real five-photo review bundle demonstrated that v0.1 followed outside-rail edges and even expanded into the room on capture 001. It also marked capture 002 PASS despite wrong physical reference. v0.2 attempted to anchor the playing surface to **inner cushion-nose lines** but photos 3 and 5 exposed residual wood-seam confusion and computes **virtual sharp intersections** where each pair of extended lines meets at the four corner pockets. These **four reference coordinates are not pocket-opening centres**. Six pockets still have separately labelled candidate locations and dark-region evidence; actual jaw-tip positions, opening centres and ball acceptance geometry remain **unknown**. The app deliberately reports **REVIEW** until real labels/physical mouth criteria are established; no synthetic/heuristic PASS assertion is accepted.
 
 Automatic detection uses a high-chroma felt mask, robustly fits the *last dark-to-felt transition* across each of four projected edges, then intersects adjacent extended lines. Per-rail inlier counts, masks and corner provenance are exported. If any rail lacks support, the app falls back to an unverified felt outline and raises a review warning. This is a conservative heuristic prototype: coloured cushions, green cloth, severe glare, hidden rails, steep foreshortening or different table geometry may require an alternate provider. Please send a v0.2 ZIP for actual iPhone validation.
 

@@ -99,3 +99,29 @@ test('manually adjusted points remain explicitly user-confirmed and do not imply
  assert.equal(r.table.cornerSource,'confirmed_by_user');
  assert.equal(r.status,'review');
 });
+
+test('blue cushion band and blue flat felt must not be conflated with wood seam',()=>{
+ const im=pixels(900,600,[109,107,102]);
+ fillRect(im,145,120,755,520,[34,174,235,255]); // blue cushion face begins at wood seam
+ fillRect(im,172,145,728,495,[0,168,246,255]); // high-chroma flat felt starts at inner nose
+ const q=[[145,120],[755,120],[755,520],[145,520]];
+ const fit=V.fitCushionNoses(im,q,198);
+ assert.equal(fit.rails.length,4);
+ for(const rail of fit.rails){
+  assert.equal(rail.source,'inner_blue_face_to_felt_candidate');
+  assert.ok(rail.outerSeam,'outer wood-to-blue seam retained as negative evidence');
+  assert.ok(rail.evidence.innerBlueEdgeInliers>=17);
+  assert.equal(rail.evidence.independentlyVerifiedPhysicalNose,false);
+ }
+ assert.ok(fit.quad[0][0]>=163&&fit.quad[0][0]<=182,'virtual top-left beyond outer seam');
+ assert.ok(fit.quad[0][1]>=136&&fit.quad[0][1]<=153,'virtual top-left beyond outer seam');
+ assert.equal(fit.fitAccepted,false,'even strong synthetic chroma evidence is not a verified physical nose');
+});
+
+test('flat uniform felt does not invent an interior cushion-nose edge',()=>{
+ const im=pixels(900,600,[109,107,102]);
+ fillRect(im,145,120,755,520,[0,168,246,255]);
+ const fit=V.fitCushionNoses(im,[[145,120],[755,120],[755,520],[145,520]],198);
+ assert.ok(fit.rails.every(r=>r.source!=='inner_blue_face_to_felt_candidate'));
+ assert.ok(fit.rails.every(r=>r.outerSeam===null));
+});
