@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f3f0e7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Table Lab">
-<title>Table Lab / Chalkline Fieldwork</title>
+<title>Table Lab v0.3.1 / Chalkline Fieldwork</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#142735;background:#f3f0e7;font-synthesis:none}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-width:320px}button,select,input{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #d9794c;outline-offset:3px}button:disabled{cursor:not-allowed;opacity:.45}
@@ -45,5 +45,5 @@
 <section class="card" id="output-card"><div class="cardhead"><h2>03 / PERSPECTIVE-CORRECTED VIEW</h2><span class="micro">REPLACEABLE PERSPECTIVE ENGINE</span></div><div class="output"><div id="output-empty" class="empty">Calibrate four corners and select <strong>Rectify table</strong>.<br>The rectified image will appear here.</div><canvas id="output" hidden aria-label="OpenCV rectified pool table image"></canvas></div><div class="caption" id="output-caption">OUTPUT: NO PERSPECTIVE TRANSFORM YET.</div></section>
 <section class="card"><div class="cardhead"><h2>MODULE CONTRACT</h2><span class="micro">VERSION 1</span></div><div class="flow"><div class="smallprint"><strong>Inputs:</strong> camera/image pixels, four manually observed corners, selected table size, calibration revision.<br><br><strong>Outputs:</strong> normalized corners, physical dimensions (inches), 3×3 image-to-table projection, and provider ID.<br><br><strong>What this proves:</strong> real image rectification and a replaceable software boundary.<br><br><strong>What it does not prove:</strong> automatic table recognition, ball identity, stroke detection, optical accuracy or physics.</div><div class="status warn">Next component is NOT automatically connected. Ball detection requires a separate approval and measured trials on actual pool footage.</div></div></section>
 </div><footer class="footer">FIELDWORK / CHATGPT-OWNED EXPERIMENTAL BUILD &nbsp; · &nbsp; OPEN SOURCE FIRST &nbsp; · &nbsp; NO CAMERA FRAMES UPLOADED &nbsp; · &nbsp; NO CHANGE TO THE EXISTING POOL APP<br>OpenCV.js is optional and is available under Apache License 2.0. The Canvas fallback is local JavaScript and does not require a library download. Calibration is a manually selected, planar image transform and must not be treated as verified ball coordinates.</footer></div>
-<script src="./core/table-geometry.js"></script><script src="./adapters/browser-camera.js"></script><script src="./adapters/opencv-perspective.js"></script><script src="./adapters/canvas-perspective.js"></script><script src="./app.js"></script>
+<script src="./core/table-geometry.js?v=0.3.1"></script><script src="./adapters/browser-camera.js?v=0.3.1"></script><script src="./adapters/opencv-perspective.js?v=0.3.1"></script><script src="./adapters/canvas-perspective.js?v=0.3.1"></script><script src="./app.js?v=0.3.1"></script>
 </body></html>
