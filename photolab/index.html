@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f3ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fieldwork">
+<meta name="description" content="Chalkline Fieldwork: offline-first pool table photo geometry and evidence export.">
+<title>Chalkline / Fieldwork — Photo Sessions</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="js/geometry.js"></script>
+<script defer src="js/vision.js"></script>
+<script defer src="js/bundle.js"></script>
+<script defer src="js/store.js"></script>
+<script defer src="js/app.js"></script>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <a class="logo-block" href="#" id="brandHome" aria-label="Fieldwork home"><span class="logo-symbol"><i></i><i></i><i></i><i></i></span><span class="logo-text"><small>CHALKLINE / RESEARCH DIVISION</small><strong>FIELDWORK<span class="period">.</span></strong></span></a>
+    <div class="header-centre"><span class="live-dot"></span> PHOTO EVIDENCE STATION <span class="header-slash">/</span> <span id="sessionTopName">NO SESSION</span></div>
+    <div class="head-actions"><span class="local-label"><span class="tiny-square"></span> ON-DEVICE</span><button type="button" class="header-button" id="helpBtn" aria-label="Open instructions">?</button></div>
+  </header>
+  <div class="work-layout">
+    <nav class="stage-nav" aria-label="Session workflow">
+      <div class="nav-title">WORKFLOW <span>01—05</span></div>
+      <button type="button" class="step active" data-step="home"><span class="step-no">01</span><span><b>SETUP</b><small>Prepare a session</small></span><span class="step-end">↗</span></button>
+      <button type="button" class="step" data-step="capture"><span class="step-no">02</span><span><b>CAPTURE</b><small>Photograph the table</small></span><span class="step-end">↗</span></button>
+      <button type="button" class="step" data-step="analyze"><span class="step-no">03</span><span><b>ANALYZE</b><small>Run image geometry</small></span><span class="step-end">↗</span></button>
+      <button type="button" class="step" data-step="review"><span class="step-no">04</span><span><b>INSPECT</b><small>Audit the evidence</small></span><span class="step-end">↗</span></button>
+      <button type="button" class="step" data-step="export"><span class="step-no">05</span><span><b>EXPORT</b><small>Build review package</small></span><span class="step-end">↗</span></button>
+      <div class="nav-foot"><div class="nav-foot-mark">FW <span>0.1</span></div><p>OBSERVE FIRST.<br>NEVER INVENT EVIDENCE.</p></div>
+    </nav>
+
+    <main class="screens" id="mainContent">
+      <section id="screen-home" class="screen" aria-labelledby="homeHeading">
+        <div class="eyebrow"><span class="eyebrow-index">FIELD NOTE NO. 001</span> / TABLE CALIBRATION</div>
+        <div class="hero-grid">
+          <div class="hero-copy"><span class="outline-flag">EXPERIMENTAL / LOCAL ONLY</span>
+            <h1 id="homeHeading">SEE THE TABLE.<br><em>KEEP THE PROOF.</em></h1>
+            <p class="intro">Capture 5–10 table photos. Detect the playing surface, inspect pocket and rail evidence, and export the complete session for independent review.</p>
+            <div class="home-main-actions"><button id="newSessionBtn" type="button" class="action-primary">START NEW SESSION <span>↗</span></button><button id="demoBtn" type="button" class="action-secondary">TRY A SYNTHETIC DEMO</button></div>
+            <p class="micro-note">No account. No server. Photos remain in your browser until you choose to export them.</p>
+          </div>
+          <div class="hero-illustration" aria-label="Stylized four-corner pool table registration illustration" role="img">
+            <svg viewBox="0 0 460 345" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><defs><pattern id="gridlines" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#ded8cd" stroke-width=".8"/></pattern></defs><rect x="0" y="0" width="460" height="345" fill="url(#gridlines)"/><path d="M68 83L360 50L415 242L32 286Z" fill="#f2e7d6" stroke="#223948" stroke-width="2.5"/><path d="M80 94L346 67L391 230L52 268Z" fill="#d1dcb9" stroke="#243c3f" stroke-width="2"/><path d="M80 94L346 67L391 230L52 268Z" fill="none" stroke="#f26845" stroke-width="2" stroke-dasharray="7 5"/><path d="M80 94L391 230M346 67L52 268" stroke="#f26845" stroke-width="1" opacity=".65"/><g fill="#f26845" stroke="#fdf8f0" stroke-width="2"><circle cx="80" cy="94" r="7"/><circle cx="346" cy="67" r="7"/><circle cx="391" cy="230" r="7"/><circle cx="52" cy="268" r="7"/></g><g fill="#1c3743"><circle cx="211" cy="78" r="7"/><circle cx="222" cy="251" r="7"/></g><g fill="#f26845" font-family="monospace" font-size="11" font-weight="bold"><text x="60" y="76">P01</text><text x="351" y="48">P03</text><text x="402" y="253">P04</text><text x="17" y="296">P06</text></g><path d="M322 315H446" stroke="#1b303b" stroke-width="1.5"/><text x="322" y="307" font-size="11" fill="#1b303b" font-family="monospace">REFERENCE / NOT TO SCALE</text></svg>
+            <div class="art-stamp">GEOMETRY<br>IN REVIEW <small>FIG. 01</small></div>
+          </div>
+        </div>
+        <div class="section-head"><h2>YOUR SESSIONS</h2><span id="sessionCount">0 LOCAL RECORDS</span></div>
+        <div id="sessionsList" class="session-list"><div class="empty-sessions">No saved sessions yet. Start with photos or try the synthetic demo.</div></div>
+        <div class="import-bar"><span>HAVE A REVIEW BUNDLE?</span><label for="importInput" class="quiet-link">IMPORT A FIELDWORK ZIP <span>↗</span></label><input id="importInput" class="hidden-input" type="file" accept=".zip,application/zip"></div>
+      </section>
+
+      <section id="screen-capture" class="screen" hidden aria-labelledby="captureHeading">
+        <div class="eyebrow"><span class="eyebrow-index">STATION 02</span> / OPTICAL COLLECTION</div>
+        <div class="screen-header"><div><h1 id="captureHeading">PHOTO <em>SESSION.</em></h1><p>Keep the iPhone near its intended operating position. Fit the entire table and all pockets into each photo.</p></div><div class="count-big"><strong id="captureCounter">00<span>/10</span></strong><small>IMAGES ACQUIRED</small></div></div>
+        <div class="capture-stack">
+          <div class="camera-shell"><div class="camera-banner"><span><span class="red-rec"></span> <span id="cameraStatus">CAMERA OFF</span></span><span>INPUT 01 / OPTICAL</span></div>
+            <div class="camera-body" id="cameraBody"><video id="cameraVideo" playsinline autoplay muted></video><div class="camera-placeholder" id="cameraPlaceholder"><div class="viewfinder"><i></i><i></i><i></i><i></i><div class="viewfinder-caption">READY FOR ACQUISITION</div></div><p>Start your camera or choose existing table photos.</p></div></div>
+            <div class="camera-foot"><button type="button" id="startCameraBtn" class="action-secondary">START CAMERA</button><button type="button" id="stopCameraBtn" class="action-secondary" disabled>STOP</button><button type="button" id="takePhotoBtn" class="action-primary" disabled>CAPTURE FRAME <span>●</span></button></div>
+          </div>
+          <div class="capture-import"><label for="photosInput" class="file-pick">＋ ADD FROM CAMERA ROLL / FILES</label><input type="file" id="photosInput" class="hidden-input" accept="image/*" multiple><span>Use this on iOS if live camera access isn't available. A maximum of 10 captures is supported.</span></div>
+          <div class="section-head compact"><h2>CAPTURED FRAMES</h2><span id="captureStatusText">0 OF 5 MINIMUM RECOMMENDED</span></div>
+          <div id="captureThumbs" class="thumb-grid"><div class="empty-thumbs">YOUR IMAGES WILL APPEAR HERE.</div></div>
+        </div>
+        <div class="bottom-next"><p id="captureHint">Aim for 5–10 usable views from the tripod position.</p><button id="captureNextBtn" class="action-primary" type="button">CONTINUE TO ANALYSIS <span>↗</span></button></div>
+      </section>
+
+      <section id="screen-analyze" class="screen" hidden aria-labelledby="analyzeHeading">
+        <div class="eyebrow"><span class="eyebrow-index">STATION 03</span> / ON-DEVICE PROCESSING</div>
+        <div class="screen-header"><div><h1 id="analyzeHeading">FIND THE <em>TABLE.</em></h1><p>Evaluate each frame independently. Observed features are separated from unverified geometry proposals.</p></div><span class="outline-flag" id="analysisBadge">NOT RUN</span></div>
+        <div class="analyze-summary"><span class="analytic-blob"><i></i></span><div><div class="analysis-score" id="analysisProgressNumber">00<span>%</span></div><p id="analysisProgressText">Ready to inspect the recorded frames.</p></div></div>
+        <div class="meter-track"><div id="analysisMeter" class="meter-fill"></div></div>
+        <div id="analysisFrameList" class="analysis-rows"></div>
+        <div class="bottom-next"><div class="inline-note">A high heuristic score is <strong>not a measured detection accuracy</strong>. Missing features will remain unverified in the export.</div><div class="button-combo"><button type="button" class="action-secondary" id="runAnalysisBtn">ANALYZE PHOTOS</button><button type="button" class="action-primary" id="analysisNextBtn">INSPECT RESULTS <span>↗</span></button></div></div>
+      </section>
+
+      <section id="screen-review" class="screen" hidden aria-labelledby="reviewHeading">
+        <div class="eyebrow"><span class="eyebrow-index">STATION 04</span> / HUMAN VERIFICATION</div>
+        <div class="screen-header review-header"><div><h1 id="reviewHeading">EVIDENCE <em>BOARD.</em></h1><p>Orange outlines are model geometry. Green markers have supporting image evidence. Hollow markers are proposals.</p></div><span id="reviewFrameCount" class="outline-flag">FRAME —</span></div>
+        <div class="review-tools"><div class="toggle-group" role="group" aria-label="Review display"><button type="button" class="toggle active" data-view="overlay">OVERLAY</button><button type="button" class="toggle" data-view="original">ORIGINAL</button></div><button type="button" id="editCornersBtn" class="action-secondary small-action">ADJUST 4 CORNERS</button><button type="button" id="resetCornersBtn" class="action-secondary small-action" hidden>REVERT AUTO</button></div>
+        <div class="review-stage"><canvas id="reviewCanvas" width="1280" height="720" aria-label="Image analysis review canvas"></canvas><div id="reviewPlaceholder" class="review-placeholder">CHOOSE A FRAME TO INSPECT</div><div id="canvasEditBanner" class="canvas-edit-banner" hidden>DRAG CORNER MARKERS. YOUR CHANGE IS LABELED MANUAL.</div></div>
+        <div class="review-legend"><span><i class="key-line"></i> TABLE / RAIL MODEL</span><span><i class="key-dot observed"></i> IMAGE EVIDENCE</span><span><i class="key-dot proposed"></i> GEOMETRY ONLY</span></div>
+        <div class="filmstrip" id="reviewFilmstrip"></div>
+        <div class="topdown-block"><div class="section-head compact"><h2>RECTIFIED PLAN</h2><span>GEOMETRY PROPOSAL / NOT A MEASUREMENT</span></div><img id="topdownImage" alt="Proposed projectively rectified top-down table"/><div id="noTopdown" class="topdown-empty" hidden>No valid table geometry in this image.</div></div>
+        <div class="bottom-next"><p>Review failures are valuable. Export original photographs even if analysis fails.</p><button id="reviewNextBtn" type="button" class="action-primary">PACKAGE EVIDENCE <span>↗</span></button></div>
+      </section>
+
+      <section id="screen-export" class="screen" hidden aria-labelledby="exportHeading">
+        <div class="eyebrow"><span class="eyebrow-index">STATION 05</span> / EVIDENCE TRANSFER</div>
+        <div class="screen-header"><div><h1 id="exportHeading">PACK IT <em>ALL.</em></h1><p>Every capture, annotated result, top-down proposal, machine-readable coordinate and log in one ZIP.</p></div><span class="outline-flag">USER CONTROLLED</span></div>
+        <div class="metrics-row"><div><span>FRAMES</span><strong id="exportImages">00</strong></div><div><span>PASS / PROVISIONAL</span><strong id="exportPass">00 / 00</strong></div><div><span>NEEDS REVIEW</span><strong id="exportReview">00</strong></div></div>
+        <div class="package-panel"><div class="package-icon">ZIP</div><div><span class="package-label">EVIDENCE ARCHIVE / UNCOMPRESSED</span><h2 id="exportFilename">chalkline_fieldwork_session.zip</h2><p>Includes source frames, overlays, rectified images, analysis JSON per frame, session summary and debug log.</p></div></div>
+        <div class="export-actions"><button id="exportZipBtn" type="button" class="action-primary big-action">DOWNLOAD REVIEW ZIP <span>↗</span></button><button id="shareZipBtn" type="button" class="action-secondary">SHARE VIA iPHONE <span>⇧</span></button></div>
+        <div class="handoff-instructions"><div class="handoff-index">NEXT<br>01—02</div><div><h3>GET THIS BACK TO CHATGPT</h3><p>Save the ZIP to Files, then attach it in this Chalkline conversation. I can review which pockets, rails, and diamonds were genuinely found versus inferred, with the original photos as evidence.</p><p class="privacy-line">PRIVATE BY DEFAULT. FIELDWORK DOES NOT UPLOAD ANY IMAGES.</p></div></div>
+      </section>
+    </main>
+
+    <aside class="context-panel" id="contextPanel"><div class="aside-top">INSTRUMENT PANEL <span>FW / 01</span></div>
+      <div class="instrument-content">
+        <div class="side-section"><h3>SESSION ID</h3><div id="asideSessionId" class="instrument-value">—</div><p id="asideSessionDate">Create a session to begin.</p></div>
+        <div class="side-section"><h3>TABLE SIZE</h3><label for="tableSizeSelect" class="visually-hidden">Table size</label><select id="tableSizeSelect"><option value="7">7 FT / BAR BOX</option><option value="8">8 FT / STANDARD</option><option value="9">9 FT / TOURNAMENT</option></select><p>Used for metadata and downstream geometry; it does not force unverified pixels into a successful result.</p></div>
+        <div class="side-section"><h3>SESSION HEALTH</h3><div class="aside-measure"><span>FRAMES</span><strong id="asideFrames">00 / 10</strong></div><div class="aside-measure"><span>TABLE FOUND</span><strong id="asideFound">00</strong></div><div class="aside-measure"><span>IN REVIEW</span><strong id="asideReview">00</strong></div></div>
+        <div class="side-section" id="evidenceReadout"><h3>SELECTED FRAME</h3><p>No frame selected.</p></div>
+      </div>
+      <div class="aside-bottom"><span>CHALKLINE / FIELDWORK</span><p>DEVICE-LOCAL ANALYSIS<br>VERSION 0.1.0 / EXPERIMENT</p></div>
+    </aside>
+  </div>
+  <footer class="global-footer"><span>F/WORK &nbsp;—&nbsp; 2026</span><span id="footerMessage">LOCAL EVIDENCE · NOT LIVE TRACKING</span><span>BUILD 0.1.0</span></footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="modal-backdrop" id="helpModal" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="closeHelpBtn" type="button" aria-label="Close">×</button><div class="eyebrow">FIELD GUIDE / 00</div><h2 id="modalTitle">FIELDWORK INSTRUCTIONS</h2><p>1. Start a session and select 7, 8, or 9-foot table.</p><p>2. Take 5–10 photos with all six pockets visible. Use either the live camera or the camera-roll picker.</p><p>3. Analyze images locally; proposed geometry is explicitly separated from visually supported pockets and diamond candidates.</p><p>4. Inspect the original, overlay and rectified images; adjust table corners only when needed.</p><p>5. Download or share the ZIP and upload that ZIP to your Chalkline chat.</p><p><b>Scope:</b> Experimental color-segmentation baseline. Camera geometry and diamond detection are not validated against your real footage yet. The app does not save to a remote server.</p><button type="button" class="action-primary" id="helpContinueBtn">GOT IT <span>↗</span></button></div></div>
+</body>
+</html>
