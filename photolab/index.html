@@ -8,19 +8,20 @@
 <meta name="apple-mobile-web-app-title" content="Fieldwork">
 <meta name="description" content="Chalkline Fieldwork: offline-first pool table photo geometry and evidence export.">
 <title>Chalkline / Fieldwork — Photo Sessions</title>
-<link rel="stylesheet" href="style.css?v=0.3.0">
-<script defer src="js/geometry.js?v=0.3.0"></script>
-<script defer src="js/vision.js?v=0.3.0"></script>
-<script defer src="js/bundle.js?v=0.3.0"></script>
-<script defer src="js/store.js?v=0.3.0"></script>
-<script defer src="js/app.js?v=0.3.0"></script>
+<link rel="stylesheet" href="style.css?v=0.4.0">
+<script defer src="js/geometry.js?v=0.4.0"></script>
+<script defer src="js/pockets.js?v=0.4.0"></script>
+<script defer src="js/vision.js?v=0.4.0"></script>
+<script defer src="js/bundle.js?v=0.4.0"></script>
+<script defer src="js/store.js?v=0.4.0"></script>
+<script defer src="js/app.js?v=0.4.0"></script>
 </head>
 <body>
 <div class="page">
   <header class="masthead">
     <a class="logo-block" href="#" id="brandHome" aria-label="Fieldwork home"><span class="logo-symbol"><i></i><i></i><i></i><i></i></span><span class="logo-text"><small>CHALKLINE / RESEARCH DIVISION</small><strong>FIELDWORK<span class="period">.</span></strong></span></a>
     <div class="header-centre"><span class="live-dot"></span> PHOTO EVIDENCE STATION <span class="header-slash">/</span> <span id="sessionTopName">NO SESSION</span></div>
-    <div class="head-actions"><span class="local-label"><span class="tiny-square"></span> ON-DEVICE</span><button type="button" class="header-button" id="helpBtn" aria-label="Open instructions">?</button></div>
+    <div class="head-actions"><span class="revision-badge" id="revisionBadge" aria-label="Chalkline Fieldwork revision">REV <b>0.4.0</b></span><span class="local-label"><span class="tiny-square"></span> ON-DEVICE</span><button type="button" class="header-button" id="helpBtn" aria-label="Open instructions">?</button></div>
   </header>
   <div class="work-layout">
     <nav class="stage-nav" aria-label="Session workflow">
@@ -30,7 +31,7 @@
       <button type="button" class="step" data-step="analyze"><span class="step-no">03</span><span><b>ANALYZE</b><small>Run image geometry</small></span><span class="step-end">↗</span></button>
       <button type="button" class="step" data-step="review"><span class="step-no">04</span><span><b>INSPECT</b><small>Audit the evidence</small></span><span class="step-end">↗</span></button>
       <button type="button" class="step" data-step="export"><span class="step-no">05</span><span><b>EXPORT</b><small>Build review package</small></span><span class="step-end">↗</span></button>
-      <div class="nav-foot"><div class="nav-foot-mark">FW <span>0.3</span></div><p>OBSERVE FIRST.<br>NEVER INVENT EVIDENCE.</p></div>
+      <div class="nav-foot"><div class="nav-foot-mark">FW <span>0.2</span></div><p>OBSERVE FIRST.<br>NEVER INVENT EVIDENCE.</p></div>
     </nav>
 
     <main class="screens" id="mainContent">
@@ -70,7 +71,7 @@
 
       <section id="screen-analyze" class="screen" hidden aria-labelledby="analyzeHeading">
         <div class="eyebrow"><span class="eyebrow-index">STATION 03</span> / ON-DEVICE PROCESSING</div>
-        <div class="screen-header"><div><h1 id="analyzeHeading">FIND THE <em>TABLE.</em></h1><p>Evaluate each frame independently. Observed features are separated from unverified geometry proposals.</p></div><span class="outline-flag" id="analysisBadge">NOT RUN</span></div>
+        <div class="screen-header"><div><h1 id="analyzeHeading">FIND THE <em>TABLE &amp; JAWS.</em></h1><p>Fit cushion lines, then inspect six pockets and possible jaw endpoints. Image-derived candidates remain unverified until reviewed.</p></div><span class="outline-flag" id="analysisBadge">NOT RUN</span></div>
         <div class="analyze-summary"><span class="analytic-blob"><i></i></span><div><div class="analysis-score" id="analysisProgressNumber">00<span>%</span></div><p id="analysisProgressText">Ready to inspect the recorded frames.</p></div></div>
         <div class="meter-track"><div id="analysisMeter" class="meter-fill"></div></div>
         <div id="analysisFrameList" class="analysis-rows"></div>
@@ -79,10 +80,11 @@
 
       <section id="screen-review" class="screen" hidden aria-labelledby="reviewHeading">
         <div class="eyebrow"><span class="eyebrow-index">STATION 04</span> / HUMAN VERIFICATION</div>
-        <div class="screen-header review-header"><div><h1 id="reviewHeading">EVIDENCE <em>BOARD.</em></h1><p>Orange outlines are model geometry. Green markers have supporting image evidence. Hollow markers are proposals.</p></div><span id="reviewFrameCount" class="outline-flag">FRAME —</span></div>
+        <div class="screen-header review-header"><div><h1 id="reviewHeading">EVIDENCE <em>BOARD.</em></h1><p>Yellow lines follow candidate cushion noses. Cyan markers indicate possible jaw ends; they are not confirmed contacts or pocket outcomes.</p></div><span id="reviewFrameCount" class="outline-flag">FRAME —</span></div>
         <div class="review-tools"><div class="toggle-group" role="group" aria-label="Review display"><button type="button" class="toggle active" data-view="overlay">OVERLAY</button><button type="button" class="toggle" data-view="original">ORIGINAL</button></div><button type="button" id="editCornersBtn" class="action-secondary small-action">ADJUST 4 VIRTUAL CORNERS</button><button type="button" id="resetCornersBtn" class="action-secondary small-action" hidden>REVERT AUTO</button></div>
         <div class="review-stage"><canvas id="reviewCanvas" width="1280" height="720" aria-label="Image analysis review canvas"></canvas><div id="reviewPlaceholder" class="review-placeholder">CHOOSE A FRAME TO INSPECT</div><div id="canvasEditBanner" class="canvas-edit-banner" hidden>DRAG VIRTUAL INTERSECTIONS. THIS IS A MANUAL TABLE REFERENCE, NOT A POCKET CENTRE.</div></div>
-        <div class="review-legend"><span><i class="key-line"></i> INNER CUSHION NOSES</span><span><i class="key-dot observed"></i> DARK REGION (UNVERIFIED)</span><span><i class="key-dot proposed"></i> VIRTUAL SHARP (V1–V4)</span></div>
+        <div class="review-legend"><span><i class="key-line"></i> CUSHION-NOSE CANDIDATE</span><span><i class="key-jaw"></i> JAW END CANDIDATE</span><span><i class="key-dot observed"></i> DARK POCKET EVIDENCE</span><span><i class="key-dot proposed"></i> VIRTUAL SHARP V1–V4</span></div>
+        <p class="jaw-caution">J1/J2 mark image-supported <strong>provisional</strong> cushion termination points. Hollow P markers are predicted pocket locations; physical jaw tips, mouth width, and ball drop are not yet verified.</p>
         <div class="filmstrip" id="reviewFilmstrip"></div>
         <div class="topdown-block"><div class="section-head compact"><h2>RECTIFIED PLAN</h2><span>GEOMETRY PROPOSAL / NOT A MEASUREMENT</span></div><img id="topdownImage" alt="Proposed projectively rectified top-down table"/><div id="noTopdown" class="topdown-empty" hidden>No valid table geometry in this image.</div></div>
         <div class="bottom-next"><p>Review failures are valuable. Export original photographs even if analysis fails.</p><button id="reviewNextBtn" type="button" class="action-primary">PACKAGE EVIDENCE <span>↗</span></button></div>
@@ -90,11 +92,11 @@
 
       <section id="screen-export" class="screen" hidden aria-labelledby="exportHeading">
         <div class="eyebrow"><span class="eyebrow-index">STATION 05</span> / EVIDENCE TRANSFER</div>
-        <div class="screen-header"><div><h1 id="exportHeading">PACK IT <em>ALL.</em></h1><p>Every capture, annotated result, top-down proposal, machine-readable coordinate and log in one ZIP.</p></div><span class="outline-flag">USER CONTROLLED</span></div>
+        <div class="screen-header"><div><h1 id="exportHeading">PACK IT <em>ALL.</em></h1><p>Every capture, jaw and pocket evidence, top-down proposal, coordinates, and debug log in one ZIP.</p></div><span class="outline-flag">USER CONTROLLED</span></div>
         <div class="metrics-row"><div><span>FRAMES</span><strong id="exportImages">00</strong></div><div><span>PASS / REVIEW</span><strong id="exportPass">00 / 00</strong></div><div><span>NEEDS REVIEW</span><strong id="exportReview">00</strong></div></div>
         <div class="package-panel"><div class="package-icon">ZIP</div><div><span class="package-label">EVIDENCE ARCHIVE / UNCOMPRESSED</span><h2 id="exportFilename">chalkline_fieldwork_session.zip</h2><p>Includes source frames, overlays, rectified images, analysis JSON per frame, session summary and debug log.</p></div></div>
         <div class="export-actions"><button id="exportZipBtn" type="button" class="action-primary big-action">DOWNLOAD REVIEW ZIP <span>↗</span></button><button id="shareZipBtn" type="button" class="action-secondary">SHARE VIA iPHONE <span>⇧</span></button></div>
-        <div class="handoff-instructions"><div class="handoff-index">NEXT<br>01—02</div><div><h3>GET THIS BACK TO CHATGPT</h3><p>Save the ZIP to Files, then attach it in this Chalkline conversation. I can review which pockets, rails, and diamonds were genuinely found versus inferred, with the original photos as evidence.</p><p class="privacy-line">PRIVATE BY DEFAULT. FIELDWORK DOES NOT UPLOAD ANY IMAGES.</p></div></div>
+        <div class="handoff-instructions"><div class="handoff-index">NEXT<br>01—02</div><div><h3>GET THIS BACK TO CHATGPT</h3><p>Save the ZIP to Files, then attach it in this Chalkline conversation. I can review which pocket and jaw candidates have supporting evidence versus inferred placement, with the original photos as evidence.</p><p class="privacy-line">PRIVATE BY DEFAULT. FIELDWORK DOES NOT UPLOAD ANY IMAGES.</p></div></div>
       </section>
     </main>
 
@@ -105,12 +107,12 @@
         <div class="side-section"><h3>SESSION HEALTH</h3><div class="aside-measure"><span>FRAMES</span><strong id="asideFrames">00 / 10</strong></div><div class="aside-measure"><span>TABLE FOUND</span><strong id="asideFound">00</strong></div><div class="aside-measure"><span>IN REVIEW</span><strong id="asideReview">00</strong></div></div>
         <div class="side-section" id="evidenceReadout"><h3>SELECTED FRAME</h3><p>No frame selected.</p></div>
       </div>
-      <div class="aside-bottom"><span>CHALKLINE / FIELDWORK</span><p>DEVICE-LOCAL ANALYSIS<br>VERSION 0.3.0 / EXPERIMENT</p></div>
+      <div class="aside-bottom"><span>CHALKLINE / FIELDWORK</span><p>DEVICE-LOCAL ANALYSIS<br>VERSION 0.4.0 / POCKET LAB</p></div>
     </aside>
   </div>
-  <footer class="global-footer"><span>F/WORK &nbsp;—&nbsp; 2026</span><span id="footerMessage">LOCAL EVIDENCE · NOT LIVE TRACKING</span><span>BUILD 0.3.0</span></footer>
+  <footer class="global-footer"><span>F/WORK &nbsp;—&nbsp; 2026</span><span id="footerMessage">LOCAL EVIDENCE · NOT LIVE TRACKING</span><span>BUILD 0.4.0</span></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-<div class="modal-backdrop" id="helpModal" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="closeHelpBtn" type="button" aria-label="Close">×</button><div class="eyebrow">FIELD GUIDE / 00</div><h2 id="modalTitle">FIELDWORK INSTRUCTIONS</h2><p>1. Start a session and select 7, 8, or 9-foot table.</p><p>2. Take 5–10 photos with all six pockets visible. Use either the live camera or the camera-roll picker.</p><p>3. Analyze images locally; four virtual corners are calculated from provisional inner cushion-edge candidates, not verified nose locations or actual pocket-opening centres.</p><p>4. Inspect the original, overlay and rectified images; adjust virtual corner references only when needed.</p><p>5. Download or share the ZIP and upload that ZIP to your Chalkline chat.</p><p><b>Scope:</b> Experimental color-segmentation and cushion-nose intersection baseline. Pocket openings, jaw tips and diamond detection have not been validated for scoring. The app does not save to a remote server.</p><button type="button" class="action-primary" id="helpContinueBtn">GOT IT <span>↗</span></button></div></div>
+<div class="modal-backdrop" id="helpModal" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="closeHelpBtn" type="button" aria-label="Close">×</button><div class="eyebrow">FIELD GUIDE / 00</div><h2 id="modalTitle">FIELDWORK INSTRUCTIONS</h2><p>1. Start a session and select 7, 8, or 9-foot table.</p><p>2. Take 5–10 photos with all six pockets visible. Use either the live camera or the camera-roll picker.</p><p>3. Analyze images locally; four virtual corners come from the inner cushion-nose lines. These points are NOT physical pocket-opening centres.</p><p>4. Inspect the original, overlay and rectified images; adjust virtual corner references only when needed.</p><p>5. Inspect P01–P06 and J1/J2 candidates (some may be unresolved). Download the ZIP and upload it to this Chalkline chat.</p><p><b>Scope:</b> Experimental color-segmentation and cushion-nose intersection baseline. Pocket mouths/jaws are provisional image-derived candidates, NOT physical measurements or ball-pocketing predictions. Diamonds are future coaching landmarks; no reliable diamond recognition yet. The app does not save to a remote server.</p><button type="button" class="action-primary" id="helpContinueBtn">GOT IT <span>↗</span></button></div></div>
 </body>
 </html>

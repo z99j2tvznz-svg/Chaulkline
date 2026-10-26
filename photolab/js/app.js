@@ -1,8 +1,8 @@
-/* Chalkline Fieldwork 0.3 — Safari photo session UI. All image data stays local until a user exports/shares. */
+/* Chalkline Fieldwork 0.2 — Safari photo session UI. All image data stays local until a user exports/shares. */
 (function(root){
 'use strict';
 if(typeof document==='undefined')return;
-const F=root.Fieldwork;const $=id=>document.getElementById(id);const show=(el,visible)=>{el.hidden=!visible;};
+const F=root.Fieldwork;F.APP_REVISION='0.4.0';const $=id=>document.getElementById(id);const show=(el,visible)=>{el.hidden=!visible;};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));const pad=i=>String(i).padStart(2,'0');
 const state={session:null,sessions:[],step:'home',selection:0,view:'overlay',editing:false,dragIndex:-1,
   camera:null,busy:false,saveError:null,bundle:null,bundleFor:null,dragChanged:false};
@@ -20,7 +20,13 @@ function metaSummary(frames){
   const counts={pass:0,review:0,fail:0,pending:0};
   frames.forEach(fr=>{const s=fr.analysis?.status||'pending';counts[s]=(counts[s]||0)+1;});return counts;
 }
-function setSession(s){state.session=s;state.selection=0;state.editing=false;state.bundle=null;state.bundleFor=null;state.busy=false;state.dragIndex=-1;updateAll();}
+function setSession(s){
+  // An imported or locally cached old overlay must never masquerade as this revision.
+  // Preserve the old analysis for audit but require reanalysis before review.
+  for(const fr of (s?.frames||[]))if(fr.analysis&&fr.analysis.version!==F.VISION_VERSION){
+    fr.previousAnalysis=fr.analysis;fr.analysis=null;fr.autoAnalysis=null;fr.overlay=null;fr.rectified=null;
+  }
+  state.session=s;state.selection=0;state.editing=false;state.bundle=null;state.bundleFor=null;state.busy=false;state.dragIndex=-1;updateAll();}
 function navigate(step){
   if(!state.session&&step!=='home'){toast('Start or load a session first.',true);return;}
   if(step==='capture'&&state.step!=='capture'){}
@@ -145,10 +151,46 @@ function drawOverlay(canvas,analysis){
       const [px,py]=p.darkRegionCentroid;
       ctx.fillStyle='#9af1c1';ctx.fillRect(px-2.5*scale,py-2.5*scale,5*scale,5*scale);
     }
-    if(p.kind==='side'){
-      ctx.textAlign='left';ctx.font=`bold ${14*scale}px monospace`;ctx.fillStyle='#fff9de';ctx.strokeStyle='#162935';ctx.lineWidth=3*scale;
-      ctx.strokeText('S?',x+9*scale,y-9*scale);ctx.fillText('S?',x+9*scale,y-9*scale);
+    // Side pockets use P2 and P5 badges with the same candidate semantics.
+  });
+  // The six pocket hypotheses remain geometric; J1/J2 appear only when two
+  // independent cushion-end signals support a provisional mouth. Do not claim
+  // the projected segments are measured physical jaw tips.
+  table.pockets.forEach((p,i)=>{
+    const m=p.mouth;if(!m?.jawTips?.length)return;
+    const good=m.status==='paired_image_candidate';
+    const lineColor=good?'#39e2d5':'#dca17b';
+    if(good&&m.jawTips.length===2){
+      ctx.save();ctx.strokeStyle='#39e2d5';ctx.lineWidth=1.8*scale;ctx.setLineDash([4*scale,5*scale]);
+      ctx.beginPath();ctx.moveTo(...m.jawTips[0].point);ctx.lineTo(...m.jawTips[1].point);ctx.stroke();ctx.restore();
     }
+    m.jawTips.forEach((jaw,j)=>{
+      const [x,y]=jaw.point,r=7*scale;
+      ctx.beginPath();ctx.moveTo(x,y-r);ctx.lineTo(x+r,y);ctx.lineTo(x,y+r);ctx.lineTo(x-r,y);ctx.closePath();
+      ctx.fillStyle=good?'rgba(12,44,52,.95)':'rgba(59,41,39,.91)';ctx.strokeStyle=lineColor;
+      ctx.lineWidth=2.5*scale;ctx.fill();ctx.stroke();
+      // Jaw tips are deliberately unnumbered on the photo: two adjacent labels
+      // overprint one another at iPhone review scale. The pocket badge below
+      // names the pair and the exported JSON lists tip A/B separately.
+    });
+  });
+  // One clearly legible pocket label, offset INTO the playing surface to avoid
+  // crowding physical jaw endpoints and rail trim. Cyan means paired image
+  // signals; coral means prediction/unresolved. Neither is a verified jaw.
+  const tableCentre=q.reduce((p,v)=>[p[0]+v[0]/4,p[1]+v[1]/4],[0,0]);
+  table.pockets.forEach((p,i)=>{
+    const m=p.mouth,paired=m?.status==='paired_image_candidate';
+    const anchor=paired&&m.openingCenterCandidate?m.openingCenterCandidate:p.p;
+    let dx=tableCentre[0]-anchor[0],dy=tableCentre[1]-anchor[1];
+    const ll=Math.hypot(dx,dy)||1;dx/=ll;dy/=ll;
+    const x=anchor[0]+dx*24*scale,y=anchor[1]+dy*24*scale;
+    const hasSignal=paired||['partial_dark_gap','partial_two_rail_truncation'].includes(m?.status);
+    const label=`P${i+1}${paired?' / 2J?':hasSignal?' / GAP':' / ?'}`;
+    ctx.font=`bold ${12*scale}px monospace`;ctx.textBaseline='middle';ctx.textAlign='center';
+    const width=ctx.measureText(label).width+14*scale,ht=20*scale;
+    ctx.fillStyle='rgba(17,37,49,.95)';ctx.fillRect(x-width/2,y-ht/2,width,ht);
+    ctx.strokeStyle=paired?'#3ce4d6':hasSignal?'#f9cc7b':'#fb9a74';ctx.lineWidth=1.1*scale;ctx.strokeRect(x-width/2,y-ht/2,width,ht);
+    ctx.fillStyle=paired?'#dcffff':hasSignal?'#fff1c9':'#ffe8db';ctx.fillText(label,x,y+1*scale);
   });
   // Diamond proposals may not be true rail markings: show them as small outlines.
   for(const d of table.diamonds){
@@ -158,7 +200,7 @@ function drawOverlay(canvas,analysis){
   }
   ctx.save();const nose=table.geometrySource==='virtual_intersections_from_provisional_edge_candidates';
   const mode=analysis.method==='manual-adjusted'?'MANUAL VIRTUAL CORNERS':(nose?'INNER EDGE CANDIDATES':'NOSE POSITION UNVERIFIED');
-  const text=`REVIEW • ${mode} • POCKET OPENINGS UNVERIFIED`;
+  const text=`REV 0.4.0 • ${mode} • JAWS PROVISIONAL`;
   ctx.font=`bold ${13*scale}px monospace`;const rectW=Math.min(w-16,ctx.measureText(text).width+30*scale);
   ctx.fillStyle='rgba(19,37,47,.94)';ctx.fillRect(8,8,rectW,34*scale);ctx.fillStyle='#fff';ctx.textAlign='left';ctx.fillText(text,18*scale,26*scale);
   ctx.restore();ctx.restore();
@@ -186,7 +228,7 @@ async function analyzeFrame(i,manualQuad=null){
   }else analysis=F.analyzePixels(pix,{tableSizeFeet:state.session.tableSizeFeet});
   if(!manualQuad){fr.autoAnalysis=structuredClone(analysis);}
   fr.analysis=analysis;await buildDerived(fr,canvas);
-  log(`Analyzed ${i+1}: ${analysis.status} ${analysis.method} ${analysis.metrics?.cornersObserved||0}/4 corners ${analysis.metrics?.sidesObserved||0}/2 sides ${analysis.metrics?.diamondsObserved||0}/18 diamonds`);
+  log(`Rev 0.4.0 analyzed ${i+1}: ${analysis.status} ${analysis.method} ${analysis.metrics?.pairedMouthCandidates||0}/6 paired jaw mouth candidates, ${analysis.metrics?.jawTipCandidates||0}/12 jaw tip candidates`);
   state.bundle=null;state.bundleFor=null;
   return analysis;
 }
@@ -240,7 +282,7 @@ function renderSessions(){const node=$('sessionsList');node.replaceChildren();$(
     const body=document.createElement('div');const b=document.createElement('b');b.textContent=(s.synthetic?'SYNTHETIC / ':'SESSION / ')+s.id.slice(0,8).toUpperCase();
     const sub=document.createElement('small');const n=metaSummary(s.frames);sub.textContent=`${formatDate(s.createdAt)} · ${s.frames.length} photos · ${n.pass} pass / ${n.review} review / ${n.fail} fail`;
     body.append(b,sub);const buttons=document.createElement('div');buttons.className='session-actions';
-    const open=document.createElement('button');open.textContent='OPEN ↗';open.type='button';open.addEventListener('click',()=>{setSession(s);navigate(s.frames.some(fr=>fr.analysis)?'review':'capture');});
+    const open=document.createElement('button');open.textContent='OPEN ↗';open.type='button';open.addEventListener('click',()=>{setSession(s);navigate(s.frames.every(fr=>fr.analysis)?'review':s.frames.length?'analyze':'capture');});
     const del=document.createElement('button');del.textContent='DELETE';del.type='button';del.className='delete';del.addEventListener('click',async()=>{if(!confirm('Delete this locally stored session and all photos?'))return;try{await F.deleteSession(s.id);if(state.session?.id===s.id)state.session=null;await refreshSessions();renderSessions();updateAll();}catch(e){toast(e.message,true);}});
     buttons.append(open,del);row.append(letter,body,buttons);node.append(row);
   }
@@ -250,7 +292,7 @@ function renderAnalysisList(){const node=$('analysisFrameList');node.replaceChil
   s.frames.forEach((fr,i)=>{const el=document.createElement('div');el.className='analysis-row';
     const first=document.createElement('span');first.className='frame-index';first.textContent=pad(i+1);
     const title=document.createElement('div'),b=document.createElement('strong');b.textContent=fr.filename||`Capture ${i+1}`;const sm=document.createElement('small');
-    sm.textContent=fr.analysis?`${fr.analysis.metrics?.cornersObserved??0}/4 corners · ${fr.analysis.metrics?.sidesObserved??0}/2 sides · ${fr.analysis.metrics?.diamondsObserved??0}/18 diamonds`:'Not yet analyzed';title.append(b,sm);
+    sm.textContent=fr.analysis?`${fr.analysis.metrics?.mouthEvidenceCount??0}/6 gap signals · ${fr.analysis.metrics?.pairedMouthCandidates??0}/6 tentative jaw pairs`:'Not yet analyzed';title.append(b,sm);
     const tag=document.createElement('span');tag.className=`status-tag ${frameStatus(fr)}`;tag.textContent=frameStatus(fr)==='review'?'REVIEW':frameStatus(fr).toUpperCase();
     const btn=document.createElement('button');btn.type='button';btn.textContent='VIEW ↗';btn.onclick=()=>{state.selection=i;navigate('review');};
     el.append(first,title,tag,btn);node.append(el);
@@ -268,7 +310,11 @@ function renderInstrument(){const node=$('evidenceReadout');node.replaceChildren
   const row=(a,b)=>{const div=document.createElement('div');div.className='readout-item';const l=document.createElement('span');l.textContent=a;const v=document.createElement('strong');v.textContent=String(b);div.append(l,v);node.append(div);};
   row('FRAME',`${state.selection+1} / ${state.session.frames.length}`);row('STATUS',frameStatus(fr).toUpperCase());
   row('MODE',fr.analysis?.method||'NOT RUN');row('CORNERS',`${fr.analysis?.metrics?.cornersObserved||0} / 4`);
-  row('SIDE POCKETS',`${fr.analysis?.metrics?.sidesObserved||0} / 2`);row('DIAMONDS',`${fr.analysis?.metrics?.diamondsObserved||0} / 18`);
+  row('DARK SIDE SIGNALS',`${fr.analysis?.metrics?.sidesObserved||0} / 2`);
+  row('PAIR-JAW MOUTHS',`${fr.analysis?.metrics?.pairedMouthCandidates||0} / 6`);
+  row('JAW CANDIDATES',`${fr.analysis?.metrics?.jawTipCandidates||0} / 12`);
+  row('MOUTH SIGNALS',`${fr.analysis?.metrics?.mouthEvidenceCount||0} / 6`);
+  row('DIAMONDS (FUTURE)',`${fr.analysis?.metrics?.diamondsObserved||0} / 18`);
   row('GEOM. SCORE',table?.geometryConfidence?.toFixed(2)??'—');
   if(fr.analysis?.warnings?.length){const p=document.createElement('p');p.textContent=fr.analysis.warnings.join(' • ');node.append(p);}
   else if(fr.analysis?.reason){const p=document.createElement('p');p.textContent=fr.analysis.reason;node.append(p);}
@@ -339,7 +385,7 @@ async function exportZip(share){
   }catch(e){toast('Could not export ZIP: '+e.message,true);}finally{btn.disabled=false;btn.textContent=prev;}
 }
 async function importBundle(file){
-  try{const s=await F.zipToSession(file);setSession(s);await persist();await refreshSessions();renderSessions();navigate('review');toast('Bundle imported into local storage.');}
+  try{const s=await F.zipToSession(file);setSession(s);await persist();await refreshSessions();renderSessions();navigate(s.frames.every(fr=>fr.analysis)?'review':'analyze');toast(s.frames.every(fr=>fr.analysis)?'Bundle imported. Inspect the evidence.':'Older analysis detected. Select ANALYZE PHOTOS for this revision.');}
   catch(e){toast('Import rejected: '+e.message,true);}
 }
 function drawDemo(canvas,shift=0){
@@ -416,7 +462,16 @@ function listen(){
   document.addEventListener('keydown',e=>{if(e.key==='Escape')show($('helpModal'),false);});
   root.addEventListener('pagehide',stopCamera);
 }
-async function init(){listen();await refreshSessions();renderSessions();updateAll();navigate('home');
+async function init(){
+  listen();
+  // The badge is tied to the actually loaded detector, not only static HTML.
+  const liveRevision=String(F.VISION_VERSION||'missing').split('/').pop();
+  const badge=$('revisionBadge');
+  if(liveRevision!==F.APP_REVISION || badge.querySelector('b')?.textContent!==F.APP_REVISION){
+    badge.textContent=`REV MISMATCH / ${liveRevision}`;
+    badge.classList.add('revision-mismatch');
+  }else badge.title=`PhotoLab revision ${F.APP_REVISION} / detector ${F.VISION_VERSION}`;
+  await refreshSessions();renderSessions();updateAll();navigate('home');
   root.FieldworkApp={state,makeSession,makeID,captureFromSource,analyzeFrame,analyzeAll,navigate,importBundle,exportZip,addDemo};
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();

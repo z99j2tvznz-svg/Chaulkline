@@ -15,6 +15,16 @@
 @media(max-width:700px){.masthead{height:71px;grid-template-columns:1fr auto}.logo-block{border-right:0;padding-left:17px}.logo-text strong{font-size:23px}.header-centre{display:none}.head-actions{gap:12px}.local-label{font-size:9px}.work-layout{display:block;min-height:unset}.stage-nav{display:flex;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--ink);width:100%;position:sticky;top:0;background:var(--paper);z-index:10}.nav-title,.nav-foot{display:none}.step{min-height:58px;min-width:0;flex:1;display:flex;gap:5px;justify-content:center;border:0;border-right:1px solid var(--line);padding:11px 5px;text-align:center}.step .step-no{font-size:9px;align-self:center;padding:0}.step b{font-size:9px;letter-spacing:0}.step small,.step-end{display:none}.screens{padding:23px 17px 50px}.eyebrow{margin-bottom:17px}.hero-grid{display:block;min-height:0}.hero-copy h1{font-size:clamp(45px,11vw,67px);margin-top:20px}.intro{font-size:13px}.hero-illustration{max-height:245px;overflow:hidden;margin-top:25px}.hero-illustration svg{height:240px;object-fit:cover}.home-main-actions{gap:8px}.action-primary,.action-secondary{min-height:45px;font-size:10px}.section-head{margin-top:26px}.screen-header{margin-bottom:20px;align-items:flex-start}.screen-header h1{font-size:clamp(42px,9vw,58px)}.screen-header p{font-size:12px}.count-big strong{font-size:34px}.count-big strong span{font-size:14px}.count-big small{font-size:8px}.camera-body{height:55vw;min-height:220px}.camera-foot{padding:10px;justify-content:space-between;gap:7px}.camera-foot .action-primary{flex:1}.capture-import{display:block}.capture-import span{display:block;margin-top:16px}.capture-import label{display:inline-block}.thumb-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.bottom-next>.action-primary,.bottom-next .button-combo{width:100%}.bottom-next .button-combo>*{flex:1}.review-legend{gap:10px}.review-stage{min-height:170px}.review-header{display:block}.review-header .outline-flag{margin-top:13px}.review-tools{justify-content:flex-start}.review-tools .small-action{font-size:9px}.analysis-row{grid-template-columns:27px minmax(95px,1fr) 80px;gap:6px}.analysis-row button{grid-column:3;text-align:center;font-size:8px;padding:4px}.status-tag{font-size:8px;padding:5px 2px}.analysis-row strong{font-size:11px}.analysis-row small{font-size:9px}.metrics-row strong{font-size:32px}.metrics-row>div{padding:12px 9px}.metrics-row span{font-size:8px}.package-panel{padding:18px;gap:11px}.package-icon{min-width:48px;height:60px;font-size:14px}.handoff-instructions{grid-template-columns:50px 1fr;gap:12px}.handoff-index{font-size:18px}.global-footer{padding:0 13px;font-size:8px}.global-footer span:nth-child(2){display:none}}
 @media(max-width:380px){.head-actions{gap:6px}.local-label{display:none}.step .step-no{display:none}.logo-text strong{font-size:22px}.home-main-actions>*{width:100%}.count-big{display:none}}
 
+/* Pocket Lab revision, always in the mobile masthead (not hidden in sidebar/footer). */
+.revision-badge{flex:none;display:inline-flex;align-items:center;gap:5px;background:#182f3a;color:#fff;border:1px solid #182f3a;border-radius:3px;padding:7px 9px;font:bold 11px/1 'Courier New',monospace;white-space:nowrap;letter-spacing:.01em}
+.revision-badge b{color:#ffe29a;font-size:12px}
+.key-jaw{width:11px;height:11px;border:2px solid #34ded2;transform:rotate(45deg);display:inline-block;vertical-align:middle;margin:0 7px 0 2px;background:#172e36}
+.jaw-caution{font:11px/1.55 'Courier New',monospace;color:#53656b;margin:10px 0 0}
+@media(max-width:700px){.masthead{grid-template-columns:minmax(0,1fr) auto}.head-actions{gap:7px;padding:0 12px}.local-label{display:none}.revision-badge{font-size:10px;padding:7px 7px}.revision-badge b{font-size:11px}.logo-block{padding-left:12px;gap:8px}.logo-text strong{font-size:21px}.logo-text small{font-size:7px}.logo-symbol{width:30px;height:30px;flex:none}}
+@media(max-width:380px){.logo-text small{display:none}.logo-block{gap:6px}.head-actions{padding:0 8px}.revision-badge{font-size:9px;padding:7px 5px}}
+
+.revision-badge.revision-mismatch{background:#9e302a;border-color:#9e302a;color:#fff}
+
 </style>
 <script>
 /* Chalkline Fieldwork / geometry v0.1 — no dependencies, pure functions.
@@ -140,6 +150,167 @@
   Object.assign(ns,api);
   if(typeof module==='object'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);
+
+</script>
+<script>
+/* Chalkline Fieldwork: pocket mouth evidence v0.4.
+ * Pure, replaceable adapter. It DOES NOT declare actual jaw tips, exact pocket
+ * centres, legal contacts, or made balls. Its endpoints are image-derived
+ * projected nose-line candidates with explicit uncertainty and evidence.
+ * Input: RGBA image; four virtual cushion-line intersections, normalized-table H;
+ * cloth hue (degrees). Output: six pocket records with optional mouth candidates.
+ */
+(function(root){
+  'use strict';
+  const ns=root.Fieldwork||(root.Fieldwork={});
+  const G=(typeof module==='object'&&module.exports)?require('./geometry.js'):ns;
+  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+  const vadd=(a,b)=>[a[0]+b[0],a[1]+b[1]];
+  const vscale=(a,t)=>[a[0]*t,a[1]*t];
+  const DIST=G.distance;
+  const DELTAS=[-2,0,2];
+  const round=(x)=>Math.round(x*1000)/1000;
+  function sample(img,x,y,hue){
+    const ix=Math.round(x),iy=Math.round(y),w=img.width,h=img.height;
+    if(ix<0||iy<0||ix>=w||iy>=h)return null;
+    const k=(iy*w+ix)*4,r=img.data[k]/255,g=img.data[k+1]/255,b=img.data[k+2]/255;
+    const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;
+    let hh=0;if(d){if(mx===r)hh=((g-b)/d)%6;else if(mx===g)hh=(b-r)/d+2;else hh=(r-g)/d+4;hh=(hh*60+360)%360;}
+    const chromaDiff=Math.min(Math.abs(hh-hue),360-Math.abs(hh-hue));
+    return {blue:chromaDiff<25&&d/(mx||1)>.43&&mx>.31, dark:mx<.34,
+      value:mx};
+  }
+  function basis(q,edge){
+    const a=q[edge],b=q[(edge+1)%4],len=DIST(a,b),t=[(b[0]-a[0])/len,(b[1]-a[1])/len];
+    let n=[-t[1],t[0]];
+    const mid=[(a[0]+b[0])/2,(a[1]+b[1])/2],c=q.reduce((s,p)=>vadd(s,vscale(p,.25)),[0,0]);
+    if((c[0]-mid[0])*n[0]+(c[1]-mid[1])*n[1]>0)n=vscale(n,-1);
+    return {a,b,len,t,n};
+  }
+  function profile(img,B,along,offset,hue){
+    let blue=0,dark=0,count=0;
+    for(const d of DELTAS){
+      const p=vadd(vadd(B.a,vscale(B.t,along)),vscale(B.n,offset+d));
+      const s=sample(img,p[0],p[1],hue);
+      if(s){blue+=s.blue?1:0;dark+=s.dark?1:0;count++;}
+    }
+    return {blue:count?blue/count:0,dark:count?dark/count:0,valid:count===DELTAS.length};
+  }
+  function average(arr,from,to,key){let sum=0,n=0;for(let i=Math.max(0,from);i<Math.min(arr.length,to);i++){sum+=arr[i][key]||0;n++;}return n?sum/n:0;}
+  // Blue cushion face interrupted by a dark side-pocket mouth, flanked by
+  // blue on BOTH sides. A mere dark spot/wood area is not enough.
+  function findSideGap(img,B,expected,hue){
+    const center=(expected[0]-B.a[0])*B.t[0]+(expected[1]-B.a[1])*B.t[1];
+    const M=clamp(B.len*.07,14,52),reach=M*1.7,step=1.5,span=Math.ceil(reach*2/step),options=[];
+    const offsets=[0,4,8,12,16,20,24,28,32,38,44].map(v=>v*Math.max(.55,Math.min(1.25,Math.max(img.width,img.height)/1600)));
+    for(const offset of offsets){
+      const start=center-reach,series=[];
+      for(let j=0;j<=span;j++)series.push(profile(img,B,start+j*step,offset,hue));
+      const tags=series.map((_,i)=>average(series,i-1,i+2,'dark')>=.52 && average(series,i-1,i+2,'blue')<=.37);
+      for(let i=0;i<tags.length;){
+        if(!tags[i]){i++;continue;}
+        let j=i;while(j+1<tags.length&&tags[j+1])j++;
+        const len=(j-i+1)*step,lo=start+i*step,hi=start+j*step;
+        const mid=(lo+hi)/2,dist=Math.abs(mid-center);
+        const flank=Math.max(5,Math.round(Math.min(M*.38,21)/step));
+        const blueBefore=average(series,i-flank,i-2,'blue'),blueAfter=average(series,j+3,j+flank+1,'blue');
+        const voidMean=average(series,i,j+1,'dark');
+        if(len>=Math.max(4.5,M*.13)&&len<M*1.55&&dist<M*.95&&blueBefore>=.54&&blueAfter>=.54&&voidMean>=.57){
+          const score=(Math.min(blueBefore,blueAfter)*.6+voidMean*.4)*(1-.26*dist/M);
+          options.push({lo,hi,score,offset,voidMean,blueBefore,blueAfter,dist,px:len});
+        }
+        i=j+1;
+      }
+    }
+    if(!options.length)return {status:'unresolved',reason:'No dark gap bounded by continuous cushion colour on both sides',jawTips:[],openingCenterCandidate:null};
+    // Avoid choosing an isolated single pixel or wood seam. Select the strongest
+    // offset and report how many independent offsets support this gap.
+    options.sort((a,b)=>b.score-a.score);
+    const best=options[0],agree=options.filter(o=>Math.abs((o.lo+o.hi-best.lo-best.hi)/2)<Math.max(8,M*.23));
+    if(agree.length<2)return {status:'unresolved',reason:'Single cross-rail sampling depth; jaw break not reproducible',jawTips:[],openingCenterCandidate:null};
+    const raw=[best.lo,best.hi].map(s=>vadd(B.a,vscale(B.t,s)));
+    const midpoint=vscale(vadd(raw[0],raw[1]),.5);
+    // A tiny black core is *not* the full opening or the two physical jaw ends.
+    // Make the size constraint conservative relative to the perspective rail.
+    const plausible=best.px>=Math.max(9,B.len*.028);
+    return {status:plausible?'paired_image_candidate':'partial_dark_gap',source:'dark_gap_between_cushion_colour_segments',
+      jawTips:plausible?raw.map((pt,i)=>({point:pt,source:'image_derived_nose_line_candidate',
+        label:i?'B':'A',physicalJawVerified:false,positionUncertaintyPx:round(Math.max(14,B.len*.035,best.offset*.65))})):[],
+      openingCenterCandidate:midpoint,openingCenterVerified:false,
+      evidence:{score:round(best.score),scanOffsetPx:round(best.offset),spanPx:round(best.px),darkFraction:round(best.voidMean),
+        blueFlankA:round(best.blueBefore),blueFlankB:round(best.blueAfter),supportingDepths:agree.length,
+        predictedToMouthOffsetPx:round(best.dist),source:'dark break with blue cushion on both sides',
+        candidateWidthMinPx:round(Math.max(9,B.len*.028)),fullOpeningWidthEstablished:false},
+      warning:plausible?'These jaw candidates are derived from a dark core; the true endpoints and width require human verification.':'Dark core detected, but its width is too narrow to claim the real cushion ends.'};
+  }
+  // At a corner the opening truncates two different cushions. One-sided
+  // dark -> blue evidence is required on EACH incoming rail independently.
+  function cornerTip(img,B,startAt,hue){
+    const reach=clamp(B.len*.15,18,75),search=clamp(B.len*.045,9,32),step=1.5;
+    const offsets=[0,4,8,12,16,20,24,28,34].map(v=>v*Math.max(.55,Math.min(1.25,Math.max(img.width,img.height)/1600)));
+    const found=[];
+    for(const offset of offsets){
+      const series=[];
+      for(let j=0;j<Math.ceil((reach+search)/step);j++){
+        const inward=-search+j*step,along=startAt?inward:B.len-inward;
+        series.push(profile(img,B,along,offset,hue));
+      }
+      const at=i=>-search+i*step;
+      for(let i=4;i<series.length-9;i++){
+        const where=at(i);
+        if(where<2||where>Math.min(reach*.76,55))continue;
+        const darkLead=average(series,Math.max(0,i-Math.ceil(search/step)),i-2,'dark');
+        const blueAfter=average(series,i+3,i+9,'blue');
+        const blueBefore=average(series,Math.max(0,i-7),i-1,'blue');
+        // Must transition from a dark pocket area to a supported cushion.
+        if(darkLead>=.51&&blueAfter>=.75&&blueBefore<=.47){
+          const strength=Math.min(darkLead,blueAfter)*(.75+.25*(1-where/reach));
+          found.push({inward:where,offset,score:strength});
+        }
+      }
+    }
+    if(!found.length)return null;
+    found.sort((a,b)=>b.score-a.score);
+    const best=found[0],agree=found.filter(f=>Math.abs(f.inward-best.inward)<Math.max(7,reach*.12));
+    if(agree.length<2)return null;
+    const along=startAt?best.inward:B.len-best.inward;
+    return {point:vadd(B.a,vscale(B.t,along)),source:'image_derived_nose_line_candidate',
+      physicalJawVerified:false,positionUncertaintyPx:round(Math.max(5,best.offset*.45)),
+      evidence:{score:round(best.score),scanOffsetPx:round(best.offset),supportingDepths:agree.length,inwardDistancePx:round(best.inward)}};
+  }
+  function detectPocketMouths(img,q,H,hue){
+    const basisByEdge=[0,1,2,3].map(i=>basis(q,i)),expected=G.expectedPockets(H);
+    const ids=['corner_TL','side_top','corner_TR','corner_BR','side_bottom','corner_BL'];
+    const cornerEdges={corner_TL:[[0,true],[3,false]],corner_TR:[[0,false],[1,true]],
+      corner_BR:[[1,false],[2,true]],corner_BL:[[2,false],[3,true]]};
+    return expected.map((p,i)=>{
+      let mouth;
+      if(p.kind==='side')mouth=findSideGap(img,basisByEdge[p.id==='side_top'?0:2],p.p,hue);
+      else{
+        const tips=cornerEdges[p.id].map(([e,start])=>cornerTip(img,basisByEdge[e],start,hue));
+        if(tips.every(Boolean)){
+          const pairGap=DIST(tips[0].point,tips[1].point),limit=Math.max(9,Math.min(basisByEdge[cornerEdges[p.id][0][0]].len,basisByEdge[cornerEdges[p.id][1][0]].len)*.035);
+          const plausible=pairGap>=limit;
+          mouth={status:plausible?'paired_image_candidate':'partial_two_rail_truncation',source:'two_rail_dark_to_blue_truncations',
+            jawTips:plausible?tips:[],openingCenterCandidate:plausible?vscale(vadd(tips[0].point,tips[1].point),.5):null,
+            openingCenterVerified:false,
+            evidence:{score:round(Math.min(tips[0].evidence.score,tips[1].evidence.score)),supportingRails:2,
+              candidateSpanPx:round(pairGap),candidateWidthMinPx:round(limit),fullOpeningWidthEstablished:false},
+            warning:plausible?'Two rail truncation candidates; physical jaw tips remain unverified.':'Image edge transitions cluster too close to the virtual corner to establish two physical jaw tips.'};
+        }else mouth={status:'unresolved',reason:`${tips.filter(Boolean).length} of 2 cushion termination points have supporting dark-to-blue evidence`,
+            jawTips:[],openingCenterCandidate:null,openingCenterVerified:false,
+            evidence:{supportedSingleRailCount:tips.filter(Boolean).length}};
+      }
+      // Every result has an explicit unknown physical outcome and no implicit ball scoring.
+      return {id:p.id,kind:p.kind,virtualReference:p.kind==='corner'?p.p:null,
+        predictedLocation:p.p,mouth,physicalPocketOutcome:'unknown',openingCenterVerified:false};
+    });
+  }
+  const api={detectPocketMouths,findSideGap,cornerTip};
+  Object.assign(ns,api);
+  if(typeof module==='object'&&module.exports)module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);
+
 </script>
 <script>
 /* Chalkline Fieldwork — automatic PHOTO candidate detector, fully on device.
@@ -150,7 +321,8 @@
   'use strict';
   const ns=root.Fieldwork || (root.Fieldwork={});
   const G=(typeof module==='object'&&module.exports)?require('./geometry.js'):ns;
-  const V='photo-nose-lines/0.3.0',clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+  const P=(typeof module==='object'&&module.exports)?require('./pockets.js'):ns;
+  const V='photo-pockets/0.4.0',clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
   function hsv(r,g,b){
     r/=255;g/=255;b/=255;
     const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
@@ -410,9 +582,11 @@
     }
     const q=G.longRailQuad(base,orientation),Hmat=G.homography(q);
     if(!Hmat)return {status:'fail',table:null,reason:'Perspective geometry is singular',version:V};
+    const mouthRecords=P.detectPocketMouths(img,q,Hmat,opts.clothHue??(() => {const k=(Math.floor(H/2)*W+Math.floor(W/2))*4;return hsv(img.data[k],img.data[k+1],img.data[k+2])[0];})());
+    const byMouth=new Map(mouthRecords.map(r=>[r.id,r]));
     const pockets=G.expectedPockets(Hmat).map(p=>{
       const ev=pocketEvidence(img,p.p,q,p.kind);
-      return {...p,source:ev.observed?'observed_candidate':'geometric_proposal',observed:ev.observed,confidence:+ev.confidence.toFixed(3),signal:{darkFraction:+ev.signal.fraction.toFixed(3),pixels:ev.signal.hits,centroid:ev.signal.centroid}};
+      return {...p,source:ev.observed?'observed_candidate':'geometric_proposal',observed:ev.observed,confidence:+ev.confidence.toFixed(3),signal:{darkFraction:+ev.signal.fraction.toFixed(3),pixels:ev.signal.hits,centroid:ev.signal.centroid},mouth:byMouth.get(p.id)?.mouth??{status:'unresolved',jawTips:[],openingCenterCandidate:null}};
     });
     const diamonds=checkDiamonds(img,q,Hmat);
     const foundCorners=pockets.filter(p=>p.kind==='corner'&&p.observed).length;
@@ -428,18 +602,22 @@
     if(nose&&!nose.fitAccepted)warnings.push('Cushion-nose geometry remains provisional; inspect especially the wood/cushion seam versus inner cloth edge');
     if(nose?.rails?.some(r=>r.source==='inner_blue_face_to_felt_candidate'&&r.evidence.coverage<.5))warnings.push('At least one inner-edge candidate has limited rail coverage; virtual corners extrapolate beyond observed edge segments');
     if(nose?.rails?.some(r=>r.source==='dark_to_blue_edge_unverified'))warnings.push('Some rails have only a dark-to-blue edge; these could be wood seams, not cushion noses');
-    warnings.push('Pocket centres, jaw positions and ball drop acceptance are NOT identified by these virtual corners');
+    const jawCandidateCount=pockets.reduce((n,p)=>n+(p.mouth?.jawTips?.length||0),0);
+    const mouthEvidenceCount=pockets.filter(p=>['paired_image_candidate','partial_dark_gap','partial_two_rail_truncation'].includes(p.mouth?.status)).length;
+    const pairedMouthCount=pockets.filter(p=>p.mouth?.status==='paired_image_candidate').length;
+    if(pairedMouthCount<6)warnings.push(`${pairedMouthCount}/6 pocket mouths have two image-supported cushion-end candidates; the others remain unresolved`);
+    warnings.push('Image-derived jaw candidates are provisional; pocket centres, physical jaw geometry, and ball drop acceptance are not verified');
     // No PASS without independent pocket evidence. Geometry can still be useful for review.
     const status=geomConfidence<.35?'fail':'review'; // Image-dark pixels and fitted lines alone cannot prove real pocket openings.
     const railFit=nose?nose.rails:null;
     const geometrySource=opts.method==='manual-adjusted'?'user_confirmed_virtual_intersections':(nose?.geometrySource||'unverified_felt_hull');
-    return {status,version:V,reason:null,warnings,table:{corners:q,virtualCorners:q,rawCorners:base,seedCorners:nose?.seedQuad||base,cornerSource:opts.method==='manual-adjusted'?'confirmed_by_user':geometrySource,geometrySource,orientation,homography:Hmat,geometryConfidence:+geomConfidence.toFixed(3),evidenceScore:+evidenceScore.toFixed(3),rails:G.rails(q).map((r,i)=>({...r,source:nose?.fitAccepted?'virtual_cushion_nose_fit':geometrySource})),railFit,pockets:pockets.map(p=>({...p,virtualReference:p.kind==='corner'?p.p:null,darkRegionCentroid:p.observed?p.signal?.centroid||null:null,openingCenterVerified:false,physicalPocketOutcome:'unknown'})),diamonds,rectifiedAspectRatio:2},metrics:{cornersObserved:foundCorners,sidesObserved:foundSides,diamondsObserved:diamonds.filter(d=>d.observed).length,diamondProposals:diamonds.length,pocketProposals:6,railProposals:4},method:opts.method||'auto-cushion-cloth-candidates',note:'Virtual intersections come from image-derived rail-edge CANDIDATES, not independently verified physical cushion noses. Actual jaw tips and pocket openings are unknown.'};
+    return {status,version:V,reason:null,warnings,table:{corners:q,virtualCorners:q,rawCorners:base,seedCorners:nose?.seedQuad||base,cornerSource:opts.method==='manual-adjusted'?'confirmed_by_user':geometrySource,geometrySource,orientation,homography:Hmat,geometryConfidence:+geomConfidence.toFixed(3),evidenceScore:+evidenceScore.toFixed(3),rails:G.rails(q).map((r,i)=>({...r,source:nose?.fitAccepted?'virtual_cushion_nose_fit':geometrySource})),railFit,pockets:pockets.map(p=>({...p,virtualReference:p.kind==='corner'?p.p:null,darkRegionCentroid:p.observed?p.signal?.centroid||null:null,openingCenterVerified:false,physicalPocketOutcome:'unknown'})),diamonds,rectifiedAspectRatio:2},metrics:{cornersObserved:foundCorners,sidesObserved:foundSides,diamondsObserved:diamonds.filter(d=>d.observed).length,diamondProposals:diamonds.length,pocketProposals:6,railProposals:4,jawTipCandidates:jawCandidateCount,pairedMouthCandidates:pairedMouthCount,mouthEvidenceCount,diamondStage:'future_coaching_landmarks_only'},method:opts.method||'auto-cushion-cloth-candidates',note:'Virtual intersections come from image-derived rail-edge CANDIDATES, not independently verified physical cushion noses. Image-derived jaw/mouth candidates are unverified, and ball acceptance is unknown.'};
   }
   function analyzePixels(img,options={}){
     const t0=typeof performance!=='undefined'?performance.now():Date.now(),region=tableFromPixels(img);
     let analysis;
-    if(!region.quad)analysis={status:'fail',reason:region.reasons[0],warnings:region.reasons,table:null,metrics:{cornersObserved:0,sidesObserved:0,diamondsObserved:0,diamondProposals:0,pocketProposals:0,railProposals:0},version:V,method:'auto-cushion-cloth-candidates'};
-    else {const nose=fitCushionNoses(img,region.quad,region.hue);analysis=calculateGeometry(img,nose.quad,{geometryConfidence:region.geometryConfidence,noseFit:nose});}
+    if(!region.quad)analysis={status:'fail',reason:region.reasons[0],warnings:region.reasons,table:null,metrics:{cornersObserved:0,sidesObserved:0,diamondsObserved:0,diamondProposals:0,pocketProposals:0,railProposals:0,jawTipCandidates:0,pairedMouthCandidates:0},version:V,method:'auto-cushion-cloth-candidates'};
+    else {const nose=fitCushionNoses(img,region.quad,region.hue);analysis=calculateGeometry(img,nose.quad,{geometryConfidence:region.geometryConfidence,noseFit:nose,clothHue:region.hue});}
     analysis.imageSize={width:img.width,height:img.height};
     analysis.tableRegion=region.quad?{hue:region.hue,coverage:+region.coverage.toFixed(3),fill:+region.fill.toFixed(3),borderShare:+region.borderShare.toFixed(4)}:null;
     analysis.processingMs=Math.round((typeof performance!=='undefined'?performance.now():Date.now())-t0);
@@ -450,6 +628,7 @@
   Object.assign(ns,api);
   if(typeof module==='object'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);
+
 </script>
 <script>
 /* Self-contained ZIP writer / reader. STORE (no compression) by design: supports Safari offline, no CDN.
@@ -523,11 +702,11 @@
  function rectifiedName(i){return 'rectified/capture_'+String(i+1).padStart(3,'0')+'_topdown.jpg';}
  function analysisName(i){return 'analysis/capture_'+String(i+1).padStart(3,'0')+'.analysis.json';}
  async function sessionToZip(session){
-   const entries=[],m={schema:'chalkline.photo-session/1',app:'Chalkline Fieldwork',version:'0.2.0',
+   const entries=[],m={schema:'chalkline.photo-session/1',app:'Chalkline Fieldwork',version:'0.4.0',
      id:session.id,createdAt:session.createdAt,exportedAt:new Date().toISOString(),tableSizeFeet:session.tableSizeFeet,synthetic:!!session.synthetic,
-     captureCount:session.frames.length,completeCaptureCount:session.frames.length>=5,
+     captureCount:session.frames.length,detectorVersion:ns.VISION_VERSION||'unknown',completeCaptureCount:session.frames.length>=5,
      device:session.device||{},imageResults:[],privacy:'All images processed locally; this ZIP can contain images of private property.'};
-   const lines=[`Session ${session.id}`,`Started ${session.createdAt}`,`Detector: ${ns.VISION_VERSION||'photo-nose-lines/0.2.0'}`];
+   const lines=[`App revision ${ns.APP_REVISION||'0.4.0'}`,`Session ${session.id}`,`Started ${session.createdAt}`,`Detector: ${ns.VISION_VERSION||'photo-pockets/0.4.0'}`];
    for(let i=0;i<session.frames.length;i++){
      const fr=session.frames[i],result=fr.analysis||null;
      entries.push({name:photoName(i),data:fr.original});
@@ -540,14 +719,14 @@
      if(fr.rectified)entries.push({name:rectifiedName(i),data:fr.rectified});
      entries.push({name:analysisName(i),data:jsonString({schema:'chalkline.photo-analysis/1',captureIndex:i+1,filename:fr.filename||photoName(i),capturedAt:fr.capturedAt,dimensions:fr.dimensions,normalization:fr.normalization||null,synthetic:!!fr.synthetic,analysis:result})});
      m.imageResults.push({captureIndex:i+1,status:result?.status||'not_analyzed',geometryConfidence:result?.table?.geometryConfidence??null,geometrySource:result?.table?.geometrySource??null,
-       cornersObserved:result?.metrics?.cornersObserved??0,sidesObserved:result?.metrics?.sidesObserved??0,diamondsObserved:result?.metrics?.diamondsObserved??0,method:result?.method??null,synthetic:!!fr.synthetic,sourceFilename:fr.sourceFilename||null,normalization:fr.normalization||null});
+       mouthEvidenceCount:result?.metrics?.mouthEvidenceCount??0,cornersObserved:result?.metrics?.cornersObserved??0,sidesObserved:result?.metrics?.sidesObserved??0,diamondsObserved:result?.metrics?.diamondsObserved??0,pairedMouthCandidates:result?.metrics?.pairedMouthCandidates??0,jawTipCandidates:result?.metrics?.jawTipCandidates??0,method:result?.method??null,synthetic:!!fr.synthetic,sourceFilename:fr.sourceFilename||null,normalization:fr.normalization||null});
      lines.push(`Photo ${i+1}: ${result?.status||'not_analyzed'}, ${result?.reason||result?.warnings?.join('; ')||'no error'}`);
    }
    const statuses=m.imageResults.reduce((s,i)=>(s[i.status]=(s[i.status]||0)+1,s),{});
    m.statusCounts=statuses;
    entries.push({name:'session_summary.json',data:jsonString(m)});
    entries.push({name:'debug_log.txt',data:lines.concat(session.log||[]).join('\n')+'\n'});
-   entries.push({name:'README.txt',data:'Chalkline Fieldwork evidence bundle v0.2.\nphotos/ contains the JPEG image inputs analyzed by the detector (max 1600px).\nsource_originals/ contains original uploaded photo bytes when available; camera snapshots are already JPEG.\noverlays/ contains illustrated geometry and evidence status.\nrectified/ contains proposed perspective warp.\nanalysis/ has model-derived coordinates and heuristic scores; NOT ground-truth.\nVirtual corners = intersections of inner cushion-nose lines; pocket-opening centres and ball capture are NOT verified.\nCompare images against independently checked annotations before quoting accuracy.\nNo images were uploaded by the app. Upload this ZIP to ChatGPT yourself.\n'});
+   entries.push({name:'README.txt',data:'Chalkline Fieldwork evidence bundle v0.4.0.\nphotos/ contains the JPEG image inputs analyzed by the detector (max 1600px).\nsource_originals/ contains original uploaded photo bytes when available; camera snapshots are already JPEG.\noverlays/ contains illustrated geometry and evidence status.\nrectified/ contains proposed perspective warp.\nanalysis/ has model-derived coordinates and heuristic scores; NOT ground-truth.\nVirtual corners = fitted cushion-line intersections; paired jaw candidates are IMAGE-DERIVED and UNVERIFIED. Pocket outcomes and true diamond landmarks are NOT verified.\nCompare images against independently checked annotations before quoting accuracy.\nNo images were uploaded by the app. Upload this ZIP to ChatGPT yourself.\n'});
    return createZip(entries);
  }
  function imageType(b){return b.length>3&&b[0]===0xff&&b[1]===0xd8?'image/jpeg':'application/octet-stream';}
@@ -568,8 +747,7 @@
        dimensions:an.dimensions,normalization:an.normalization||null,synthetic:!!an.synthetic,source:originalRaw?new Blob([originalRaw[1]],{type:'application/octet-stream'}):null,
        sourceFilename:m.imageResults[i].sourceFilename||null,original:new Blob([original],{type:imageType(original)}),
        overlay:ob?new Blob([ob],{type:'image/jpeg'}):null,rectified:rb?new Blob([rb],{type:'image/jpeg'}):null,
-       analysis:an.analysis||null});
-   }
+       analysis:an.analysis||null});   }
    return {id:root.crypto?.randomUUID?.()||('imported-'+Date.now()),createdAt:m.createdAt||new Date().toISOString(),
      tableSizeFeet:[7,8,9].includes(m.tableSizeFeet)?m.tableSizeFeet:7,synthetic:!!m.synthetic,
      device:m.device||{},frames,log:['Imported ZIP '+new Date().toISOString(),'Original session '+m.id],importedFrom:m.id};
@@ -577,6 +755,7 @@
  const api={crc32,createZip,parseZip,sessionToZip,zipToSession,photoName,analysisName};
  Object.assign(ns,api);if(typeof module==='object'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);
+
 </script>
 <script>
 /* IndexedDB session persistence. Full-resolution photo Blobs never leave this browser without export. */
@@ -615,11 +794,11 @@
 
 </script>
 <script>
-/* Chalkline Fieldwork 0.3 — Safari photo session UI. All image data stays local until a user exports/shares. */
+/* Chalkline Fieldwork 0.2 — Safari photo session UI. All image data stays local until a user exports/shares. */
 (function(root){
 'use strict';
 if(typeof document==='undefined')return;
-const F=root.Fieldwork;const $=id=>document.getElementById(id);const show=(el,visible)=>{el.hidden=!visible;};
+const F=root.Fieldwork;F.APP_REVISION='0.4.0';const $=id=>document.getElementById(id);const show=(el,visible)=>{el.hidden=!visible;};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));const pad=i=>String(i).padStart(2,'0');
 const state={session:null,sessions:[],step:'home',selection:0,view:'overlay',editing:false,dragIndex:-1,
   camera:null,busy:false,saveError:null,bundle:null,bundleFor:null,dragChanged:false};
@@ -637,7 +816,13 @@ function metaSummary(frames){
   const counts={pass:0,review:0,fail:0,pending:0};
   frames.forEach(fr=>{const s=fr.analysis?.status||'pending';counts[s]=(counts[s]||0)+1;});return counts;
 }
-function setSession(s){state.session=s;state.selection=0;state.editing=false;state.bundle=null;state.bundleFor=null;state.busy=false;state.dragIndex=-1;updateAll();}
+function setSession(s){
+  // An imported or locally cached old overlay must never masquerade as this revision.
+  // Preserve the old analysis for audit but require reanalysis before review.
+  for(const fr of (s?.frames||[]))if(fr.analysis&&fr.analysis.version!==F.VISION_VERSION){
+    fr.previousAnalysis=fr.analysis;fr.analysis=null;fr.autoAnalysis=null;fr.overlay=null;fr.rectified=null;
+  }
+  state.session=s;state.selection=0;state.editing=false;state.bundle=null;state.bundleFor=null;state.busy=false;state.dragIndex=-1;updateAll();}
 function navigate(step){
   if(!state.session&&step!=='home'){toast('Start or load a session first.',true);return;}
   if(step==='capture'&&state.step!=='capture'){}
@@ -762,10 +947,46 @@ function drawOverlay(canvas,analysis){
       const [px,py]=p.darkRegionCentroid;
       ctx.fillStyle='#9af1c1';ctx.fillRect(px-2.5*scale,py-2.5*scale,5*scale,5*scale);
     }
-    if(p.kind==='side'){
-      ctx.textAlign='left';ctx.font=`bold ${14*scale}px monospace`;ctx.fillStyle='#fff9de';ctx.strokeStyle='#162935';ctx.lineWidth=3*scale;
-      ctx.strokeText('S?',x+9*scale,y-9*scale);ctx.fillText('S?',x+9*scale,y-9*scale);
+    // Side pockets use P2 and P5 badges with the same candidate semantics.
+  });
+  // The six pocket hypotheses remain geometric; J1/J2 appear only when two
+  // independent cushion-end signals support a provisional mouth. Do not claim
+  // the projected segments are measured physical jaw tips.
+  table.pockets.forEach((p,i)=>{
+    const m=p.mouth;if(!m?.jawTips?.length)return;
+    const good=m.status==='paired_image_candidate';
+    const lineColor=good?'#39e2d5':'#dca17b';
+    if(good&&m.jawTips.length===2){
+      ctx.save();ctx.strokeStyle='#39e2d5';ctx.lineWidth=1.8*scale;ctx.setLineDash([4*scale,5*scale]);
+      ctx.beginPath();ctx.moveTo(...m.jawTips[0].point);ctx.lineTo(...m.jawTips[1].point);ctx.stroke();ctx.restore();
     }
+    m.jawTips.forEach((jaw,j)=>{
+      const [x,y]=jaw.point,r=7*scale;
+      ctx.beginPath();ctx.moveTo(x,y-r);ctx.lineTo(x+r,y);ctx.lineTo(x,y+r);ctx.lineTo(x-r,y);ctx.closePath();
+      ctx.fillStyle=good?'rgba(12,44,52,.95)':'rgba(59,41,39,.91)';ctx.strokeStyle=lineColor;
+      ctx.lineWidth=2.5*scale;ctx.fill();ctx.stroke();
+      // Jaw tips are deliberately unnumbered on the photo: two adjacent labels
+      // overprint one another at iPhone review scale. The pocket badge below
+      // names the pair and the exported JSON lists tip A/B separately.
+    });
+  });
+  // One clearly legible pocket label, offset INTO the playing surface to avoid
+  // crowding physical jaw endpoints and rail trim. Cyan means paired image
+  // signals; coral means prediction/unresolved. Neither is a verified jaw.
+  const tableCentre=q.reduce((p,v)=>[p[0]+v[0]/4,p[1]+v[1]/4],[0,0]);
+  table.pockets.forEach((p,i)=>{
+    const m=p.mouth,paired=m?.status==='paired_image_candidate';
+    const anchor=paired&&m.openingCenterCandidate?m.openingCenterCandidate:p.p;
+    let dx=tableCentre[0]-anchor[0],dy=tableCentre[1]-anchor[1];
+    const ll=Math.hypot(dx,dy)||1;dx/=ll;dy/=ll;
+    const x=anchor[0]+dx*24*scale,y=anchor[1]+dy*24*scale;
+    const hasSignal=paired||['partial_dark_gap','partial_two_rail_truncation'].includes(m?.status);
+    const label=`P${i+1}${paired?' / 2J?':hasSignal?' / GAP':' / ?'}`;
+    ctx.font=`bold ${12*scale}px monospace`;ctx.textBaseline='middle';ctx.textAlign='center';
+    const width=ctx.measureText(label).width+14*scale,ht=20*scale;
+    ctx.fillStyle='rgba(17,37,49,.95)';ctx.fillRect(x-width/2,y-ht/2,width,ht);
+    ctx.strokeStyle=paired?'#3ce4d6':hasSignal?'#f9cc7b':'#fb9a74';ctx.lineWidth=1.1*scale;ctx.strokeRect(x-width/2,y-ht/2,width,ht);
+    ctx.fillStyle=paired?'#dcffff':hasSignal?'#fff1c9':'#ffe8db';ctx.fillText(label,x,y+1*scale);
   });
   // Diamond proposals may not be true rail markings: show them as small outlines.
   for(const d of table.diamonds){
@@ -775,7 +996,7 @@ function drawOverlay(canvas,analysis){
   }
   ctx.save();const nose=table.geometrySource==='virtual_intersections_from_provisional_edge_candidates';
   const mode=analysis.method==='manual-adjusted'?'MANUAL VIRTUAL CORNERS':(nose?'INNER EDGE CANDIDATES':'NOSE POSITION UNVERIFIED');
-  const text=`REVIEW • ${mode} • POCKET OPENINGS UNVERIFIED`;
+  const text=`REV 0.4.0 • ${mode} • JAWS PROVISIONAL`;
   ctx.font=`bold ${13*scale}px monospace`;const rectW=Math.min(w-16,ctx.measureText(text).width+30*scale);
   ctx.fillStyle='rgba(19,37,47,.94)';ctx.fillRect(8,8,rectW,34*scale);ctx.fillStyle='#fff';ctx.textAlign='left';ctx.fillText(text,18*scale,26*scale);
   ctx.restore();ctx.restore();
@@ -803,7 +1024,7 @@ async function analyzeFrame(i,manualQuad=null){
   }else analysis=F.analyzePixels(pix,{tableSizeFeet:state.session.tableSizeFeet});
   if(!manualQuad){fr.autoAnalysis=structuredClone(analysis);}
   fr.analysis=analysis;await buildDerived(fr,canvas);
-  log(`Analyzed ${i+1}: ${analysis.status} ${analysis.method} ${analysis.metrics?.cornersObserved||0}/4 corners ${analysis.metrics?.sidesObserved||0}/2 sides ${analysis.metrics?.diamondsObserved||0}/18 diamonds`);
+  log(`Rev 0.4.0 analyzed ${i+1}: ${analysis.status} ${analysis.method} ${analysis.metrics?.pairedMouthCandidates||0}/6 paired jaw mouth candidates, ${analysis.metrics?.jawTipCandidates||0}/12 jaw tip candidates`);
   state.bundle=null;state.bundleFor=null;
   return analysis;
 }
@@ -857,7 +1078,7 @@ function renderSessions(){const node=$('sessionsList');node.replaceChildren();$(
     const body=document.createElement('div');const b=document.createElement('b');b.textContent=(s.synthetic?'SYNTHETIC / ':'SESSION / ')+s.id.slice(0,8).toUpperCase();
     const sub=document.createElement('small');const n=metaSummary(s.frames);sub.textContent=`${formatDate(s.createdAt)} · ${s.frames.length} photos · ${n.pass} pass / ${n.review} review / ${n.fail} fail`;
     body.append(b,sub);const buttons=document.createElement('div');buttons.className='session-actions';
-    const open=document.createElement('button');open.textContent='OPEN ↗';open.type='button';open.addEventListener('click',()=>{setSession(s);navigate(s.frames.some(fr=>fr.analysis)?'review':'capture');});
+    const open=document.createElement('button');open.textContent='OPEN ↗';open.type='button';open.addEventListener('click',()=>{setSession(s);navigate(s.frames.every(fr=>fr.analysis)?'review':s.frames.length?'analyze':'capture');});
     const del=document.createElement('button');del.textContent='DELETE';del.type='button';del.className='delete';del.addEventListener('click',async()=>{if(!confirm('Delete this locally stored session and all photos?'))return;try{await F.deleteSession(s.id);if(state.session?.id===s.id)state.session=null;await refreshSessions();renderSessions();updateAll();}catch(e){toast(e.message,true);}});
     buttons.append(open,del);row.append(letter,body,buttons);node.append(row);
   }
@@ -867,7 +1088,7 @@ function renderAnalysisList(){const node=$('analysisFrameList');node.replaceChil
   s.frames.forEach((fr,i)=>{const el=document.createElement('div');el.className='analysis-row';
     const first=document.createElement('span');first.className='frame-index';first.textContent=pad(i+1);
     const title=document.createElement('div'),b=document.createElement('strong');b.textContent=fr.filename||`Capture ${i+1}`;const sm=document.createElement('small');
-    sm.textContent=fr.analysis?`${fr.analysis.metrics?.cornersObserved??0}/4 corners · ${fr.analysis.metrics?.sidesObserved??0}/2 sides · ${fr.analysis.metrics?.diamondsObserved??0}/18 diamonds`:'Not yet analyzed';title.append(b,sm);
+    sm.textContent=fr.analysis?`${fr.analysis.metrics?.mouthEvidenceCount??0}/6 gap signals · ${fr.analysis.metrics?.pairedMouthCandidates??0}/6 tentative jaw pairs`:'Not yet analyzed';title.append(b,sm);
     const tag=document.createElement('span');tag.className=`status-tag ${frameStatus(fr)}`;tag.textContent=frameStatus(fr)==='review'?'REVIEW':frameStatus(fr).toUpperCase();
     const btn=document.createElement('button');btn.type='button';btn.textContent='VIEW ↗';btn.onclick=()=>{state.selection=i;navigate('review');};
     el.append(first,title,tag,btn);node.append(el);
@@ -885,7 +1106,11 @@ function renderInstrument(){const node=$('evidenceReadout');node.replaceChildren
   const row=(a,b)=>{const div=document.createElement('div');div.className='readout-item';const l=document.createElement('span');l.textContent=a;const v=document.createElement('strong');v.textContent=String(b);div.append(l,v);node.append(div);};
   row('FRAME',`${state.selection+1} / ${state.session.frames.length}`);row('STATUS',frameStatus(fr).toUpperCase());
   row('MODE',fr.analysis?.method||'NOT RUN');row('CORNERS',`${fr.analysis?.metrics?.cornersObserved||0} / 4`);
-  row('SIDE POCKETS',`${fr.analysis?.metrics?.sidesObserved||0} / 2`);row('DIAMONDS',`${fr.analysis?.metrics?.diamondsObserved||0} / 18`);
+  row('DARK SIDE SIGNALS',`${fr.analysis?.metrics?.sidesObserved||0} / 2`);
+  row('PAIR-JAW MOUTHS',`${fr.analysis?.metrics?.pairedMouthCandidates||0} / 6`);
+  row('JAW CANDIDATES',`${fr.analysis?.metrics?.jawTipCandidates||0} / 12`);
+  row('MOUTH SIGNALS',`${fr.analysis?.metrics?.mouthEvidenceCount||0} / 6`);
+  row('DIAMONDS (FUTURE)',`${fr.analysis?.metrics?.diamondsObserved||0} / 18`);
   row('GEOM. SCORE',table?.geometryConfidence?.toFixed(2)??'—');
   if(fr.analysis?.warnings?.length){const p=document.createElement('p');p.textContent=fr.analysis.warnings.join(' • ');node.append(p);}
   else if(fr.analysis?.reason){const p=document.createElement('p');p.textContent=fr.analysis.reason;node.append(p);}
@@ -956,7 +1181,7 @@ async function exportZip(share){
   }catch(e){toast('Could not export ZIP: '+e.message,true);}finally{btn.disabled=false;btn.textContent=prev;}
 }
 async function importBundle(file){
-  try{const s=await F.zipToSession(file);setSession(s);await persist();await refreshSessions();renderSessions();navigate('review');toast('Bundle imported into local storage.');}
+  try{const s=await F.zipToSession(file);setSession(s);await persist();await refreshSessions();renderSessions();navigate(s.frames.every(fr=>fr.analysis)?'review':'analyze');toast(s.frames.every(fr=>fr.analysis)?'Bundle imported. Inspect the evidence.':'Older analysis detected. Select ANALYZE PHOTOS for this revision.');}
   catch(e){toast('Import rejected: '+e.message,true);}
 }
 function drawDemo(canvas,shift=0){
@@ -1033,11 +1258,21 @@ function listen(){
   document.addEventListener('keydown',e=>{if(e.key==='Escape')show($('helpModal'),false);});
   root.addEventListener('pagehide',stopCamera);
 }
-async function init(){listen();await refreshSessions();renderSessions();updateAll();navigate('home');
+async function init(){
+  listen();
+  // The badge is tied to the actually loaded detector, not only static HTML.
+  const liveRevision=String(F.VISION_VERSION||'missing').split('/').pop();
+  const badge=$('revisionBadge');
+  if(liveRevision!==F.APP_REVISION || badge.querySelector('b')?.textContent!==F.APP_REVISION){
+    badge.textContent=`REV MISMATCH / ${liveRevision}`;
+    badge.classList.add('revision-mismatch');
+  }else badge.title=`PhotoLab revision ${F.APP_REVISION} / detector ${F.VISION_VERSION}`;
+  await refreshSessions();renderSessions();updateAll();navigate('home');
   root.FieldworkApp={state,makeSession,makeID,captureFromSource,analyzeFrame,analyzeAll,navigate,importBundle,exportZip,addDemo};
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })(typeof window!=='undefined'?window:globalThis);
+
 </script>
 </head>
 <body>
@@ -1045,7 +1280,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   <header class="masthead">
     <a class="logo-block" href="#" id="brandHome" aria-label="Fieldwork home"><span class="logo-symbol"><i></i><i></i><i></i><i></i></span><span class="logo-text"><small>CHALKLINE / RESEARCH DIVISION</small><strong>FIELDWORK<span class="period">.</span></strong></span></a>
     <div class="header-centre"><span class="live-dot"></span> PHOTO EVIDENCE STATION <span class="header-slash">/</span> <span id="sessionTopName">NO SESSION</span></div>
-    <div class="head-actions"><span class="local-label"><span class="tiny-square"></span> ON-DEVICE</span><button type="button" class="header-button" id="helpBtn" aria-label="Open instructions">?</button></div>
+    <div class="head-actions"><span class="revision-badge" id="revisionBadge" aria-label="Chalkline Fieldwork revision">REV <b>0.4.0</b></span><span class="local-label"><span class="tiny-square"></span> ON-DEVICE</span><button type="button" class="header-button" id="helpBtn" aria-label="Open instructions">?</button></div>
   </header>
   <div class="work-layout">
     <nav class="stage-nav" aria-label="Session workflow">
@@ -1055,7 +1290,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       <button type="button" class="step" data-step="analyze"><span class="step-no">03</span><span><b>ANALYZE</b><small>Run image geometry</small></span><span class="step-end">↗</span></button>
       <button type="button" class="step" data-step="review"><span class="step-no">04</span><span><b>INSPECT</b><small>Audit the evidence</small></span><span class="step-end">↗</span></button>
       <button type="button" class="step" data-step="export"><span class="step-no">05</span><span><b>EXPORT</b><small>Build review package</small></span><span class="step-end">↗</span></button>
-      <div class="nav-foot"><div class="nav-foot-mark">FW <span>0.3</span></div><p>OBSERVE FIRST.<br>NEVER INVENT EVIDENCE.</p></div>
+      <div class="nav-foot"><div class="nav-foot-mark">FW <span>0.2</span></div><p>OBSERVE FIRST.<br>NEVER INVENT EVIDENCE.</p></div>
     </nav>
 
     <main class="screens" id="mainContent">
@@ -1095,7 +1330,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
       <section id="screen-analyze" class="screen" hidden aria-labelledby="analyzeHeading">
         <div class="eyebrow"><span class="eyebrow-index">STATION 03</span> / ON-DEVICE PROCESSING</div>
-        <div class="screen-header"><div><h1 id="analyzeHeading">FIND THE <em>TABLE.</em></h1><p>Evaluate each frame independently. Observed features are separated from unverified geometry proposals.</p></div><span class="outline-flag" id="analysisBadge">NOT RUN</span></div>
+        <div class="screen-header"><div><h1 id="analyzeHeading">FIND THE <em>TABLE &amp; JAWS.</em></h1><p>Fit cushion lines, then inspect six pockets and possible jaw endpoints. Image-derived candidates remain unverified until reviewed.</p></div><span class="outline-flag" id="analysisBadge">NOT RUN</span></div>
         <div class="analyze-summary"><span class="analytic-blob"><i></i></span><div><div class="analysis-score" id="analysisProgressNumber">00<span>%</span></div><p id="analysisProgressText">Ready to inspect the recorded frames.</p></div></div>
         <div class="meter-track"><div id="analysisMeter" class="meter-fill"></div></div>
         <div id="analysisFrameList" class="analysis-rows"></div>
@@ -1104,10 +1339,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
       <section id="screen-review" class="screen" hidden aria-labelledby="reviewHeading">
         <div class="eyebrow"><span class="eyebrow-index">STATION 04</span> / HUMAN VERIFICATION</div>
-        <div class="screen-header review-header"><div><h1 id="reviewHeading">EVIDENCE <em>BOARD.</em></h1><p>Orange outlines are model geometry. Green markers have supporting image evidence. Hollow markers are proposals.</p></div><span id="reviewFrameCount" class="outline-flag">FRAME —</span></div>
+        <div class="screen-header review-header"><div><h1 id="reviewHeading">EVIDENCE <em>BOARD.</em></h1><p>Yellow lines follow candidate cushion noses. Cyan markers indicate possible jaw ends; they are not confirmed contacts or pocket outcomes.</p></div><span id="reviewFrameCount" class="outline-flag">FRAME —</span></div>
         <div class="review-tools"><div class="toggle-group" role="group" aria-label="Review display"><button type="button" class="toggle active" data-view="overlay">OVERLAY</button><button type="button" class="toggle" data-view="original">ORIGINAL</button></div><button type="button" id="editCornersBtn" class="action-secondary small-action">ADJUST 4 VIRTUAL CORNERS</button><button type="button" id="resetCornersBtn" class="action-secondary small-action" hidden>REVERT AUTO</button></div>
         <div class="review-stage"><canvas id="reviewCanvas" width="1280" height="720" aria-label="Image analysis review canvas"></canvas><div id="reviewPlaceholder" class="review-placeholder">CHOOSE A FRAME TO INSPECT</div><div id="canvasEditBanner" class="canvas-edit-banner" hidden>DRAG VIRTUAL INTERSECTIONS. THIS IS A MANUAL TABLE REFERENCE, NOT A POCKET CENTRE.</div></div>
-        <div class="review-legend"><span><i class="key-line"></i> INNER CUSHION NOSES</span><span><i class="key-dot observed"></i> DARK REGION (UNVERIFIED)</span><span><i class="key-dot proposed"></i> VIRTUAL SHARP (V1–V4)</span></div>
+        <div class="review-legend"><span><i class="key-line"></i> CUSHION-NOSE CANDIDATE</span><span><i class="key-jaw"></i> JAW END CANDIDATE</span><span><i class="key-dot observed"></i> DARK POCKET EVIDENCE</span><span><i class="key-dot proposed"></i> VIRTUAL SHARP V1–V4</span></div>
+        <p class="jaw-caution">J1/J2 mark image-supported <strong>provisional</strong> cushion termination points. Hollow P markers are predicted pocket locations; physical jaw tips, mouth width, and ball drop are not yet verified.</p>
         <div class="filmstrip" id="reviewFilmstrip"></div>
         <div class="topdown-block"><div class="section-head compact"><h2>RECTIFIED PLAN</h2><span>GEOMETRY PROPOSAL / NOT A MEASUREMENT</span></div><img id="topdownImage" alt="Proposed projectively rectified top-down table"/><div id="noTopdown" class="topdown-empty" hidden>No valid table geometry in this image.</div></div>
         <div class="bottom-next"><p>Review failures are valuable. Export original photographs even if analysis fails.</p><button id="reviewNextBtn" type="button" class="action-primary">PACKAGE EVIDENCE <span>↗</span></button></div>
@@ -1115,11 +1351,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
       <section id="screen-export" class="screen" hidden aria-labelledby="exportHeading">
         <div class="eyebrow"><span class="eyebrow-index">STATION 05</span> / EVIDENCE TRANSFER</div>
-        <div class="screen-header"><div><h1 id="exportHeading">PACK IT <em>ALL.</em></h1><p>Every capture, annotated result, top-down proposal, machine-readable coordinate and log in one ZIP.</p></div><span class="outline-flag">USER CONTROLLED</span></div>
+        <div class="screen-header"><div><h1 id="exportHeading">PACK IT <em>ALL.</em></h1><p>Every capture, jaw and pocket evidence, top-down proposal, coordinates, and debug log in one ZIP.</p></div><span class="outline-flag">USER CONTROLLED</span></div>
         <div class="metrics-row"><div><span>FRAMES</span><strong id="exportImages">00</strong></div><div><span>PASS / REVIEW</span><strong id="exportPass">00 / 00</strong></div><div><span>NEEDS REVIEW</span><strong id="exportReview">00</strong></div></div>
         <div class="package-panel"><div class="package-icon">ZIP</div><div><span class="package-label">EVIDENCE ARCHIVE / UNCOMPRESSED</span><h2 id="exportFilename">chalkline_fieldwork_session.zip</h2><p>Includes source frames, overlays, rectified images, analysis JSON per frame, session summary and debug log.</p></div></div>
         <div class="export-actions"><button id="exportZipBtn" type="button" class="action-primary big-action">DOWNLOAD REVIEW ZIP <span>↗</span></button><button id="shareZipBtn" type="button" class="action-secondary">SHARE VIA iPHONE <span>⇧</span></button></div>
-        <div class="handoff-instructions"><div class="handoff-index">NEXT<br>01—02</div><div><h3>GET THIS BACK TO CHATGPT</h3><p>Save the ZIP to Files, then attach it in this Chalkline conversation. I can review which pockets, rails, and diamonds were genuinely found versus inferred, with the original photos as evidence.</p><p class="privacy-line">PRIVATE BY DEFAULT. FIELDWORK DOES NOT UPLOAD ANY IMAGES.</p></div></div>
+        <div class="handoff-instructions"><div class="handoff-index">NEXT<br>01—02</div><div><h3>GET THIS BACK TO CHATGPT</h3><p>Save the ZIP to Files, then attach it in this Chalkline conversation. I can review which pocket and jaw candidates have supporting evidence versus inferred placement, with the original photos as evidence.</p><p class="privacy-line">PRIVATE BY DEFAULT. FIELDWORK DOES NOT UPLOAD ANY IMAGES.</p></div></div>
       </section>
     </main>
 
@@ -1130,12 +1366,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         <div class="side-section"><h3>SESSION HEALTH</h3><div class="aside-measure"><span>FRAMES</span><strong id="asideFrames">00 / 10</strong></div><div class="aside-measure"><span>TABLE FOUND</span><strong id="asideFound">00</strong></div><div class="aside-measure"><span>IN REVIEW</span><strong id="asideReview">00</strong></div></div>
         <div class="side-section" id="evidenceReadout"><h3>SELECTED FRAME</h3><p>No frame selected.</p></div>
       </div>
-      <div class="aside-bottom"><span>CHALKLINE / FIELDWORK</span><p>DEVICE-LOCAL ANALYSIS<br>VERSION 0.3.0 / EXPERIMENT</p></div>
+      <div class="aside-bottom"><span>CHALKLINE / FIELDWORK</span><p>DEVICE-LOCAL ANALYSIS<br>VERSION 0.4.0 / POCKET LAB</p></div>
     </aside>
   </div>
-  <footer class="global-footer"><span>F/WORK &nbsp;—&nbsp; 2026</span><span id="footerMessage">LOCAL EVIDENCE · NOT LIVE TRACKING</span><span>BUILD 0.3.0</span></footer>
+  <footer class="global-footer"><span>F/WORK &nbsp;—&nbsp; 2026</span><span id="footerMessage">LOCAL EVIDENCE · NOT LIVE TRACKING</span><span>BUILD 0.4.0</span></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-<div class="modal-backdrop" id="helpModal" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="closeHelpBtn" type="button" aria-label="Close">×</button><div class="eyebrow">FIELD GUIDE / 00</div><h2 id="modalTitle">FIELDWORK INSTRUCTIONS</h2><p>1. Start a session and select 7, 8, or 9-foot table.</p><p>2. Take 5–10 photos with all six pockets visible. Use either the live camera or the camera-roll picker.</p><p>3. Analyze images locally; four virtual corners are calculated from provisional inner cushion-edge candidates, not verified nose locations or actual pocket-opening centres.</p><p>4. Inspect the original, overlay and rectified images; adjust virtual corner references only when needed.</p><p>5. Download or share the ZIP and upload that ZIP to your Chalkline chat.</p><p><b>Scope:</b> Experimental color-segmentation and cushion-nose intersection baseline. Pocket openings, jaw tips and diamond detection have not been validated for scoring. The app does not save to a remote server.</p><button type="button" class="action-primary" id="helpContinueBtn">GOT IT <span>↗</span></button></div></div>
+<div class="modal-backdrop" id="helpModal" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="closeHelpBtn" type="button" aria-label="Close">×</button><div class="eyebrow">FIELD GUIDE / 00</div><h2 id="modalTitle">FIELDWORK INSTRUCTIONS</h2><p>1. Start a session and select 7, 8, or 9-foot table.</p><p>2. Take 5–10 photos with all six pockets visible. Use either the live camera or the camera-roll picker.</p><p>3. Analyze images locally; four virtual corners come from the inner cushion-nose lines. These points are NOT physical pocket-opening centres.</p><p>4. Inspect the original, overlay and rectified images; adjust virtual corner references only when needed.</p><p>5. Inspect P01–P06 and J1/J2 candidates (some may be unresolved). Download the ZIP and upload it to this Chalkline chat.</p><p><b>Scope:</b> Experimental color-segmentation and cushion-nose intersection baseline. Pocket mouths/jaws are provisional image-derived candidates, NOT physical measurements or ball-pocketing predictions. Diamonds are future coaching landmarks; no reliable diamond recognition yet. The app does not save to a remote server.</p><button type="button" class="action-primary" id="helpContinueBtn">GOT IT <span>↗</span></button></div></div>
 </body>
 </html>

@@ -6,7 +6,8 @@
   'use strict';
   const ns=root.Fieldwork || (root.Fieldwork={});
   const G=(typeof module==='object'&&module.exports)?require('./geometry.js'):ns;
-  const V='photo-nose-lines/0.3.0',clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+  const P=(typeof module==='object'&&module.exports)?require('./pockets.js'):ns;
+  const V='photo-pockets/0.4.0',clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
   function hsv(r,g,b){
     r/=255;g/=255;b/=255;
     const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
@@ -266,9 +267,11 @@
     }
     const q=G.longRailQuad(base,orientation),Hmat=G.homography(q);
     if(!Hmat)return {status:'fail',table:null,reason:'Perspective geometry is singular',version:V};
+    const mouthRecords=P.detectPocketMouths(img,q,Hmat,opts.clothHue??(() => {const k=(Math.floor(H/2)*W+Math.floor(W/2))*4;return hsv(img.data[k],img.data[k+1],img.data[k+2])[0];})());
+    const byMouth=new Map(mouthRecords.map(r=>[r.id,r]));
     const pockets=G.expectedPockets(Hmat).map(p=>{
       const ev=pocketEvidence(img,p.p,q,p.kind);
-      return {...p,source:ev.observed?'observed_candidate':'geometric_proposal',observed:ev.observed,confidence:+ev.confidence.toFixed(3),signal:{darkFraction:+ev.signal.fraction.toFixed(3),pixels:ev.signal.hits,centroid:ev.signal.centroid}};
+      return {...p,source:ev.observed?'observed_candidate':'geometric_proposal',observed:ev.observed,confidence:+ev.confidence.toFixed(3),signal:{darkFraction:+ev.signal.fraction.toFixed(3),pixels:ev.signal.hits,centroid:ev.signal.centroid},mouth:byMouth.get(p.id)?.mouth??{status:'unresolved',jawTips:[],openingCenterCandidate:null}};
     });
     const diamonds=checkDiamonds(img,q,Hmat);
     const foundCorners=pockets.filter(p=>p.kind==='corner'&&p.observed).length;
@@ -284,18 +287,22 @@
     if(nose&&!nose.fitAccepted)warnings.push('Cushion-nose geometry remains provisional; inspect especially the wood/cushion seam versus inner cloth edge');
     if(nose?.rails?.some(r=>r.source==='inner_blue_face_to_felt_candidate'&&r.evidence.coverage<.5))warnings.push('At least one inner-edge candidate has limited rail coverage; virtual corners extrapolate beyond observed edge segments');
     if(nose?.rails?.some(r=>r.source==='dark_to_blue_edge_unverified'))warnings.push('Some rails have only a dark-to-blue edge; these could be wood seams, not cushion noses');
-    warnings.push('Pocket centres, jaw positions and ball drop acceptance are NOT identified by these virtual corners');
+    const jawCandidateCount=pockets.reduce((n,p)=>n+(p.mouth?.jawTips?.length||0),0);
+    const mouthEvidenceCount=pockets.filter(p=>['paired_image_candidate','partial_dark_gap','partial_two_rail_truncation'].includes(p.mouth?.status)).length;
+    const pairedMouthCount=pockets.filter(p=>p.mouth?.status==='paired_image_candidate').length;
+    if(pairedMouthCount<6)warnings.push(`${pairedMouthCount}/6 pocket mouths have two image-supported cushion-end candidates; the others remain unresolved`);
+    warnings.push('Image-derived jaw candidates are provisional; pocket centres, physical jaw geometry, and ball drop acceptance are not verified');
     // No PASS without independent pocket evidence. Geometry can still be useful for review.
     const status=geomConfidence<.35?'fail':'review'; // Image-dark pixels and fitted lines alone cannot prove real pocket openings.
     const railFit=nose?nose.rails:null;
     const geometrySource=opts.method==='manual-adjusted'?'user_confirmed_virtual_intersections':(nose?.geometrySource||'unverified_felt_hull');
-    return {status,version:V,reason:null,warnings,table:{corners:q,virtualCorners:q,rawCorners:base,seedCorners:nose?.seedQuad||base,cornerSource:opts.method==='manual-adjusted'?'confirmed_by_user':geometrySource,geometrySource,orientation,homography:Hmat,geometryConfidence:+geomConfidence.toFixed(3),evidenceScore:+evidenceScore.toFixed(3),rails:G.rails(q).map((r,i)=>({...r,source:nose?.fitAccepted?'virtual_cushion_nose_fit':geometrySource})),railFit,pockets:pockets.map(p=>({...p,virtualReference:p.kind==='corner'?p.p:null,darkRegionCentroid:p.observed?p.signal?.centroid||null:null,openingCenterVerified:false,physicalPocketOutcome:'unknown'})),diamonds,rectifiedAspectRatio:2},metrics:{cornersObserved:foundCorners,sidesObserved:foundSides,diamondsObserved:diamonds.filter(d=>d.observed).length,diamondProposals:diamonds.length,pocketProposals:6,railProposals:4},method:opts.method||'auto-cushion-cloth-candidates',note:'Virtual intersections come from image-derived rail-edge CANDIDATES, not independently verified physical cushion noses. Actual jaw tips and pocket openings are unknown.'};
+    return {status,version:V,reason:null,warnings,table:{corners:q,virtualCorners:q,rawCorners:base,seedCorners:nose?.seedQuad||base,cornerSource:opts.method==='manual-adjusted'?'confirmed_by_user':geometrySource,geometrySource,orientation,homography:Hmat,geometryConfidence:+geomConfidence.toFixed(3),evidenceScore:+evidenceScore.toFixed(3),rails:G.rails(q).map((r,i)=>({...r,source:nose?.fitAccepted?'virtual_cushion_nose_fit':geometrySource})),railFit,pockets:pockets.map(p=>({...p,virtualReference:p.kind==='corner'?p.p:null,darkRegionCentroid:p.observed?p.signal?.centroid||null:null,openingCenterVerified:false,physicalPocketOutcome:'unknown'})),diamonds,rectifiedAspectRatio:2},metrics:{cornersObserved:foundCorners,sidesObserved:foundSides,diamondsObserved:diamonds.filter(d=>d.observed).length,diamondProposals:diamonds.length,pocketProposals:6,railProposals:4,jawTipCandidates:jawCandidateCount,pairedMouthCandidates:pairedMouthCount,mouthEvidenceCount,diamondStage:'future_coaching_landmarks_only'},method:opts.method||'auto-cushion-cloth-candidates',note:'Virtual intersections come from image-derived rail-edge CANDIDATES, not independently verified physical cushion noses. Image-derived jaw/mouth candidates are unverified, and ball acceptance is unknown.'};
   }
   function analyzePixels(img,options={}){
     const t0=typeof performance!=='undefined'?performance.now():Date.now(),region=tableFromPixels(img);
     let analysis;
-    if(!region.quad)analysis={status:'fail',reason:region.reasons[0],warnings:region.reasons,table:null,metrics:{cornersObserved:0,sidesObserved:0,diamondsObserved:0,diamondProposals:0,pocketProposals:0,railProposals:0},version:V,method:'auto-cushion-cloth-candidates'};
-    else {const nose=fitCushionNoses(img,region.quad,region.hue);analysis=calculateGeometry(img,nose.quad,{geometryConfidence:region.geometryConfidence,noseFit:nose});}
+    if(!region.quad)analysis={status:'fail',reason:region.reasons[0],warnings:region.reasons,table:null,metrics:{cornersObserved:0,sidesObserved:0,diamondsObserved:0,diamondProposals:0,pocketProposals:0,railProposals:0,jawTipCandidates:0,pairedMouthCandidates:0},version:V,method:'auto-cushion-cloth-candidates'};
+    else {const nose=fitCushionNoses(img,region.quad,region.hue);analysis=calculateGeometry(img,nose.quad,{geometryConfidence:region.geometryConfidence,noseFit:nose,clothHue:region.hue});}
     analysis.imageSize={width:img.width,height:img.height};
     analysis.tableRegion=region.quad?{hue:region.hue,coverage:+region.coverage.toFixed(3),fill:+region.fill.toFixed(3),borderShare:+region.borderShare.toFixed(4)}:null;
     analysis.processingMs=Math.round((typeof performance!=='undefined'?performance.now():Date.now())-t0);

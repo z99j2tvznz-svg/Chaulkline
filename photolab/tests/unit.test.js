@@ -125,3 +125,61 @@ test('flat uniform felt does not invent an interior cushion-nose edge',()=>{
  assert.ok(fit.rails.every(r=>r.source!=='inner_blue_face_to_felt_candidate'));
  assert.ok(fit.rails.every(r=>r.outerSeam===null));
 });
+
+// Pocket Lab 0.4: a jaw must never be obtained from geometry or a dark patch
+// alone. A side mouth needs a bounded gap in continuous same-colour cushions.
+const PM=require('../js/pockets.js');
+function fillCircle(im,cx,cy,rad,color){
+ for(let y=Math.max(0,Math.floor(cy-rad));y<Math.min(im.height,Math.ceil(cy+rad));y++)
+  for(let x=Math.max(0,Math.floor(cx-rad));x<Math.min(im.width,Math.ceil(cx+rad));x++)
+   if(Math.hypot(x-cx,y-cy)<=rad){const k=(y*im.width+x)*4;im.data.set(color,k);}
+}
+test('pocket adapter provides six independent mouth records with explicit unverified physical outcomes',()=>{
+ const im=pixels(800,500,[10,164,239]),q=[[100,100],[700,100],[700,400],[100,400]],H=G.homography(q);
+ const p=PM.detectPocketMouths(im,q,H,200);
+ assert.equal(p.length,6);assert.deepEqual(p.map(x=>x.id),['corner_TL','side_top','corner_TR','corner_BR','side_bottom','corner_BL']);
+ assert.ok(p.every(x=>x.mouth.status==='unresolved' && x.mouth.jawTips.length===0));
+ assert.ok(p.every(x=>x.openingCenterVerified===false && x.physicalPocketOutcome==='unknown'));
+});
+test('side pocket dark opening bounded by coloured cushions produces a PAIR of provisional jaw endpoints',()=>{
+ const im=pixels(800,500,[7,160,234]),q=[[100,100],[700,100],[700,400],[100,400]],H=G.homography(q);
+ fillCircle(im,400,100,20,[8,14,18,255]);fillCircle(im,400,400,20,[8,14,18,255]);
+ const p=PM.detectPocketMouths(im,q,H,200),sides=p.filter(x=>x.kind==='side');
+ for(const side of sides){assert.equal(side.mouth.status,'paired_image_candidate',side.id);
+  assert.equal(side.mouth.jawTips.length,2);assert.ok(side.mouth.jawTips.every(j=>j.physicalJawVerified===false));
+  assert.equal(side.mouth.openingCenterVerified,false);assert.equal(side.physicalPocketOutcome,'unknown');
+  assert.ok(side.mouth.evidence.supportingDepths>=2);
+ }
+});
+test('a dark wall without flanking cushion evidence is not misclassified as a pocket',()=>{
+ const im=pixels(800,500,[11,12,15]),q=[[100,100],[700,100],[700,400],[100,400]];
+ const p=PM.detectPocketMouths(im,q,G.homography(q),200);
+ assert.ok(p.every(x=>x.mouth.status==='unresolved'));
+});
+test('unverified green felt quadrilateral has zero paired mouths despite six geometric proposals',()=>{
+ const im=pixels(600,400,[90,89,90]);fillRect(im,80,90,520,320,[28,142,116,255]);
+ const a=V.analyzePixels(im);
+ assert.equal(a.metrics.pairedMouthCandidates,0);assert.equal(a.metrics.jawTipCandidates,0);
+ assert.equal(a.table.pockets.length,6);assert.equal(a.status,'review');
+});
+test('even a complete synthetic mouth cannot grant a verified pocket or score a make',()=>{
+ const im=pixels(800,500,[7,160,234]),q=[[100,100],[700,100],[700,400],[100,400]],H=G.homography(q);
+ fillCircle(im,400,100,20,[8,14,18,255]);
+ const pk=PM.detectPocketMouths(im,q,H,200)[1];
+ assert.equal(pk.mouth.status,'paired_image_candidate');
+ assert.equal(pk.mouth.openingCenterVerified,false);
+ assert.equal(pk.physicalPocketOutcome,'unknown');
+});
+test('detector revision and export metadata are aligned to v0.4.0',()=>{
+ assert.ok(V.VISION_VERSION.includes('/0.4.0'));
+ const fs=require('fs'),html=fs.readFileSync(require('path').join(__dirname,'../index.html'),'utf8');
+ assert.match(html,/id="revisionBadge"/);assert.match(html,/BUILD 0\.4\.0/);
+ assert.match(html,/pockets\.js\?v=0\.4\.0/);
+});
+test('a tiny dark spot between blue cushions is evidence of a gap, not two physical jaw tips',()=>{
+ const im=pixels(800,500,[7,160,234]),q=[[100,100],[700,100],[700,400],[100,400]],H=G.homography(q);
+ fillCircle(im,400,100,6,[8,14,18,255]);
+ const m=PM.detectPocketMouths(im,q,H,200)[1].mouth;
+ assert.notEqual(m.status,'paired_image_candidate');
+ assert.equal(m.jawTips.length,0);
+});
