@@ -661,3 +661,31 @@ Truth checked by eye (scratchpad r7truth.py). Same balls as always.
   right 98-100% at home (in-sample: it was trained on these sessions) and 89% at the hall. real7-real9 have no labels yet.
   Outline check (saved spots vs the logged outline): median 2-11 px; real1 (digital zoom) and real4 highest.
 - Still missing: shot-level tests (need the V2.3.3 shot clips), labels for real7-real9, the old synthetic-video tests.
+
+## V3.0 (built Oct 27, after "build it") — new ball finder and reader, names ride with the balls
+Plan and reasons: `docs/V3-PLAN.md`. V2.3.3 stays at `/v2/`, byte for byte as it was.
+- Check page first (`/check/`), on the owner's iPhone 16 Pro Max (Safari 26.6): finder on the GPU (WebGPU) 77 ms at
+  960x544, 155 ms at 1280x736, 446 ms at 1920x1088; on the CPU about 480 ms at 1280 (too slow). Reader 35-46 ms for 10
+  balls on the CPU. All 10 spread-out balls found and read "sure" at every size. Two lessons: Safari kept an old copy of
+  one script and mixed it with a new page (every look failed) -> scripts carry version queries and the page checks
+  DET.VERSION; switching models in and out (the speed test) made Safari close the page -> the app loads one model once.
+- Owner's photo, balls bunched at one end, low side view: the finder missed the balls hidden behind others (960: 6 of
+  10). New: the finder looks only at the table strip, in one of 7 strip-shaped graphs (about 550 thousand pixels each,
+  one shared 10 MB weights file, `models/v3`), enlarged at most until near balls are about 23 px across. On that photo
+  8 of 10; on the 14 verified frames still 110 of 110.
+- Tracker (`src/track.js`) replaces the V2 naming rules. Each ball is followed in table inches; reads add up as votes
+  only while it rests (next to another ball only a sure read counts); names are shared out over all balls at once, each
+  number once, with "no number" allowed instead of a poor fit; a tap pins a name; hidden balls keep spot and name;
+  pocketed only when lost rolling at a pocket and gone 1 s; the first ball to roll after a still table is the cue ball
+  (and gets cue votes); several starting together = hands or racking; a rolling ball is expected to stop at the contact
+  point of a resting ball in its path, and the struck ball may leave along the line of centres (without that the cue
+  ball took the struck ball's name); new spots count as balls only after resting about a second and looking like one.
+  Measle cue (white, red dots) vs the 9 (yellow stripe): on a close cue/9 call the yellow share of the ball decides.
+- Screen: works upright or sideways (no rotate message); teal ring + number = sure, amber "?" = unsure, white "?" =
+  not named yet, dashed = hidden. Tap a ball: pick its number, "Not a ball" or "It went in". New rack button. A short
+  summary after each shot. Save debug: log (every look's spots, tracker events, shots), before/after pictures per shot,
+  and every tapped ball as a labelled picture (for retraining the reader on the owner's balls).
+- Tests: tracker 16 made-up cases (shot, pocket, scratch, hidden, arm, hands, tap, measle, bunch, break, ball in hand);
+  V3 end to end on a fake camera made from the owner's photo, sideways and upright (table found, 7-9 balls, 4-5 named,
+  a tap sticks, debug zip). Not tested here: real shots on real video, WebGPU (headless runs the CPU engine).
+- Not in V3.0: the lag drill (V3.1), head-rail choice, 8-ball, camera-bump recovery beyond "Find the table again".

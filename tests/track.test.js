@@ -14,7 +14,7 @@ function probs(num, p = 0.85, nb = 0.02) { const q = new Array(11).fill((1 - p -
 function look(tk, t, balls, read = true, jitter = 0.15) {
   const spots = balls.filter(b => !b.hide).map(b => {
     const x = b.x + noise(jitter), y = b.y + noise(jitter);
-    return { x, y, px: x * 12, py: y * 12, r: 13, score: 0.8, p: read && !b.moving ? (b.p || probs(b.num, 0.85, b.nb || 0.02)) : null, kind: (b.nb || 0) >= 0.5 ? 'not_a_ball' : 'sure', col: b.col || null };
+    return { x, y, px: x * 12, py: y * 12, r: 13, score: 0.8, p: read && !b.moving ? (b.p || probs(b.num, 0.85, b.nb || 0.02)) : null, kind: b.kind || ((b.nb || 0) >= 0.5 ? 'not_a_ball' : 'sure'), col: b.col || null };
   });
   return tk.update(t, spots, { read });
 }
@@ -115,8 +115,9 @@ test('measle cue ball vs the 9: the colour settles a close call', () => {
   const n = names(tk); assert.deepStrictEqual([n[9] && n[9][0], n[0] && n[0][0]], [20, 40]);
 });
 
-test('touching balls are not read: a bunch stays unnamed rather than guessed', () => {
-  const tk = makeTracker(P), balls = [{ num: 1, x: 40, y: 20, p: probs(5, 0.7) }, { num: 2, x: 42.25, y: 20, p: probs(5, 0.7) }];
+test('touching balls: unsure reads do not count, so a bunch stays unnamed rather than guessed', () => {
+  const unsure = n => { const q = probs(n, 0.45); return q; };
+  const tk = makeTracker(P), balls = [{ num: 1, x: 40, y: 20, p: unsure(5) }, { num: 2, x: 42.25, y: 20, p: unsure(5) }].map(b => ({ ...b, kind: 'unsure' }));
   settle(tk, 0, balls);
   assert.ok(tk.balls().length === 2 && tk.balls().every(b => b.num == null), JSON.stringify(names(tk)));
 });
@@ -166,7 +167,27 @@ test('a break: the cue ball alone first, then the rack scatters; one shot, first
   for (let i = 1; i <= 6; i++) { look(tk, t, [{ num: 0, x: 56 - i, y: 19.5, moving: true }, ...from.map((b, j) => ({ num: b.num, x: b.x + (out[j].x - b.x) * i / 6, y: b.y + (out[j].y - b.y) * i / 6, moving: true }))], false); t += 0.1; }
   settle(tk, t, [{ num: 0, x: 50, y: 19.5 }, ...out], 3);
   assert.strictEqual(tk.S.shots.length, 1, JSON.stringify(tk.S.events.filter(e => e.k !== 'named').slice(-8)));
-  // the pack is not read while its balls touch, so the head ball has no name when it is hit: unknown, not guessed
-  assert.strictEqual(tk.S.shots[0].break, true); assert.strictEqual(tk.S.shots[0].firstNum, null); assert.strictEqual(tk.S.shots[0].cueNum, 0);
+  // here the reader was sure of the racked balls, so the head ball was named before it was hit
+  assert.strictEqual(tk.S.shots[0].break, true); assert.strictEqual(tk.S.shots[0].firstNum, 1); assert.strictEqual(tk.S.shots[0].cueNum, 0);
   const n = names(tk); assert.ok([0, 1, 2, 3, 4, 5, 6].every(i => n[i]), JSON.stringify(n));
+});
+
+test('touching balls: a sure read still counts, each number once', () => {
+  const tk = makeTracker(P), balls = [{ num: 3, x: 40, y: 20 }, { num: 6, x: 42.25, y: 20 }];
+  settle(tk, 0, balls);
+  const n = names(tk); assert.ok(n[3] && n[6], JSON.stringify(n));
+});
+
+test('a break on an unread rack: the first ball stays unknown rather than take whatever its track ends on', () => {
+  const tk = makeTracker(P), rack = [], unsure = n => ({ p: probs(n, 0.45), kind: 'unsure' });
+  let k = 1; for (let row = 0; row < 3; row++) for (let j = 0; j <= row; j++) rack.push({ num: k++, x: 58 + row * 1.95, y: 19.5 + (j - row / 2) * 2.25, ...unsure(k - 1) });
+  let t = settle(tk, 0, [{ num: 0, x: 20, y: 19.5 }, ...rack]);
+  for (let i = 1; i <= 4; i++) { look(tk, t, [{ num: 0, x: 20 + i * 9, y: 19.5, moving: true }, ...rack], false); t += 0.1; }
+  look(tk, t, [{ num: 0, x: 56, y: 19.5, moving: true }, { ...rack[0], x: rack[0].x + 5, moving: true }, ...rack.slice(1)], false); t += 0.1;
+  const out = rack.map((b, i) => ({ num: b.num, x: Math.min(74, b.x + 6 + i * 2), y: Math.min(36, Math.max(3, b.y + (i % 2 ? 9 : -9))) }));
+  const from = rack.map((b, j) => j ? b : { ...b, x: b.x + 5 });
+  for (let i = 1; i <= 6; i++) { look(tk, t, [{ num: 0, x: 56 - i, y: 19.5, moving: true }, ...from.map((b, j) => ({ num: b.num, x: b.x + (out[j].x - b.x) * i / 6, y: b.y + (out[j].y - b.y) * i / 6, moving: true }))], false); t += 0.1; }
+  settle(tk, t, [{ num: 0, x: 50, y: 19.5 }, ...out], 3);
+  assert.strictEqual(tk.S.shots.length, 1); assert.strictEqual(tk.S.shots[0].break, true); assert.strictEqual(tk.S.shots[0].firstNum, null);
+  const n = names(tk); assert.ok([0, 1, 2, 3, 4, 5, 6].every(i => n[i]), 'named once spread: ' + JSON.stringify(n));
 });

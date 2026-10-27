@@ -1,6 +1,6 @@
 // ---------- V3 ball tracker: every ball followed in table inches, names kept with the balls ----------
 // Lessons from V2.x and the Oct 17-25 experiments, as rules this file keeps:
-//   - A ball's name rides with the ball. It is read while the ball rests on its own (not touching another ball), the reads
+//   - A ball's name rides with the ball. It is read while the ball rests (next to another ball only a sure read counts), the reads
 //     add up as votes, and the names are shared out over all balls at once (each number once). It is not re-guessed from
 //     one picture, and a moving (blurred) ball is never read.
 //   - A tap is the strongest evidence: a ball the player names keeps that name until it is pocketed or renamed.
@@ -33,7 +33,7 @@ function makeTracker(P, opts) {
     newRest: 0.9,       // s something new must rest on one spot before it counts as a ball
     newShare: 0.7,      // share of looks it must be seen in over that time
     newNb: 0.5,         // its average "not a ball" from the reader must stay under this
-    touchPx: 2.3,       // spot radii between centres: closer than this, the reader's crop is mixed, no vote
+    touchPx: 2.3,       // spot radii between centres: closer than this, the reader's crop also shows the neighbour
     voteKeep: 0.94,     // each new vote: old votes count this much less, so later evidence can win
     nameBonus: 0.25,    // a ball keeps its name unless another fits better by this much (average log-probability)
     rackCount: 3,       // this many balls starting to move on the same look without one first = hands or racking
@@ -198,7 +198,9 @@ function makeTracker(P, opts) {
   function votes(spots, matched) {
     for (const [tr, j] of matched) {
       const sp = spots[j]; if (!tr.ok || !sp.p || tr.state !== 'rest' || sp.kind === 'not_a_ball') continue;
-      if (spots.some((q, i) => i !== j && Math.hypot(q.px - sp.px, q.py - sp.py) < O.touchPx * Math.max(q.r, sp.r))) continue;
+      // next to another ball the crop shows both: only a sure read counts there (the Oct 20 benchmark: on balls within 2.5
+      // radii of another the reader was sure 8 times, all right, and unsure or "not a ball" the other 104 times)
+      if (sp.kind !== 'sure' && spots.some((q, i) => i !== j && Math.hypot(q.px - sp.px, q.py - sp.py) < O.touchPx * Math.max(q.r, sp.r))) continue;
       const p = sp.p.slice(0, 10), s = p.reduce((a, b) => a + b, 0) || 1;
       // the owner's cue ball (white, red dots) and the 9 (white, yellow stripe): the colour shares settle a close call
       if (sp.col) {

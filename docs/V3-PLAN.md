@@ -1,6 +1,6 @@
-# Chalkline V3 plan (agreed in discussion, Oct 27, 2026; not built yet)
+# Chalkline V3 plan (agreed in discussion, Oct 27, 2026)
 
-Nothing here is built until the owner says "build it". This replaces the Oct 17-25 rebuild path (offline cycles with
+Status: "build it" given Oct 27; V3.0 built the same day (see the V3.0 entry in `DESIGN NOTES.md`). The lag drill is next (V3.1). This replaces the Oct 17-25 rebuild path (offline cycles with
 pre-registered scoring), which took about ten days and put nothing new on the phone.
 
 ## Starting point

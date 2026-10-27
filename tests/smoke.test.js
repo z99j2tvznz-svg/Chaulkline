@@ -1,4 +1,4 @@
-// Browser smoke test: the built index.html loads in headless Chromium with a fake camera, shows the right version,
+// Browser smoke test: the kept V2.3.3 page (v2/index.html) loads in headless Chromium with a fake camera, shows the right version,
 // and each home-screen mode starts without a JavaScript error.
 // Run: node --test "tests/*.test.js"   (needs Playwright: npm install)
 const test = require('node:test');
@@ -17,14 +17,14 @@ test('index.html loads, shows its version, and every mode starts cleanly', async
     const ctx = await browser.newContext({ viewport: { width: 956, height: 440 }, permissions: ['camera', 'microphone'] });
     const page = await ctx.newPage(), errors = [];
     page.on('pageerror', e => errors.push(String(e)));
-    await page.goto(srv.url + '/index.html');
+    await page.goto(srv.url + '/v2/index.html');
     await page.waitForFunction(() => window.__chalk && window.__chalk.S);
     assert.strictEqual((await page.textContent('#verTag')).trim(), VERSION);
     for (const mode of ['watch', 'quick', 'drill']) {
       await page.evaluate(m => window.__chalk.startMode(m), mode);
       await page.waitForTimeout(1500);
       assert.ok(await page.evaluate(() => window.__chalk.S.live), `${mode}: camera running`);
-      await page.goto(srv.url + '/index.html');
+      await page.goto(srv.url + '/v2/index.html');
       await page.waitForFunction(() => window.__chalk && window.__chalk.S);
     }
     assert.deepStrictEqual(errors, []);

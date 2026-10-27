@@ -1,0 +1,122 @@
+<title>Chalkline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+<style>
+/* V3: same look as before (always dark, frosted glass, one teal accent). Works upright or sideways. */
+:root {
+  color-scheme: dark;
+  --bg: #0b1014; --fg: #eaf1f4; --muted: #8fa0aa; --line: rgba(255,255,255,.10);
+  --accent: #59d6e8; --on-accent: #04161a; --amber: #ffb84d; --good: #5be3a0; --bad: #ff7a70;
+  --glass: rgba(16,24,30,.62); --glass2: rgba(255,255,255,.08); --glass-line: rgba(255,255,255,.13);
+  --f: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; --f-mono: ui-monospace, Menlo, monospace;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--fg); font: 400 15px/1.45 var(--f); overflow: hidden; -webkit-text-size-adjust: 100%; }
+* { box-sizing: border-box; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.glass { background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); border-radius: 14px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--glass-line); background: var(--glass2); font-weight: 500; cursor: pointer; }
+.btn.primary { background: rgba(89,214,232,.26); border-color: rgba(89,214,232,.6); color: #eafcff; }
+.btn:disabled { opacity: .45; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.lbl { font: 500 13px var(--f); color: var(--muted); }
+.seg { display: inline-flex; background: var(--glass2); border-radius: 10px; padding: 3px; gap: 2px; }
+.seg button { border: 0; background: none; color: var(--muted); font: 500 14px var(--f); padding: 8px 14px; border-radius: 8px; min-height: 38px; cursor: pointer; }
+.seg button.on { background: rgba(89,214,232,.22); color: var(--fg); box-shadow: inset 0 0 0 1px rgba(89,214,232,.5); }
+
+/* ---------- home ---------- */
+#home { position: fixed; inset: 0; overflow-y: auto; padding: calc(env(safe-area-inset-top, 0px) + 22px) calc(env(safe-area-inset-right, 0px) + 16px) calc(env(safe-area-inset-bottom, 0px) + 28px) calc(env(safe-area-inset-left, 0px) + 16px);
+  background: radial-gradient(120% 60% at 50% -10%, rgba(89,214,232,.14), transparent 60%), var(--bg); }
+.wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.brand { font-weight: 300; font-size: 44px; letter-spacing: -.02em; line-height: 1; margin: 0; }
+.brand span { color: var(--accent); font-weight: 500; }
+.ver { font: 500 11px var(--f-mono); color: var(--muted); margin-left: 8px; letter-spacing: .04em; vertical-align: middle; }
+.lead { color: var(--muted); margin: 8px 0 0; }
+.card { padding: 14px 16px; }
+.card h2 { font-size: 15px; font-weight: 600; margin: 0 0 8px; }
+.card ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 14px; display: flex; flex-direction: column; gap: 4px; }
+.go { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center; text-align: left; padding: 16px 18px; min-height: 72px; cursor: pointer; background: rgba(89,214,232,.20); border-color: rgba(89,214,232,.5); }
+.go b { font-weight: 600; font-size: 19px; } .go small { grid-column: 1; color: var(--muted); font-size: 13px; } .go i { grid-row: 1 / span 2; grid-column: 2; font-style: normal; font-weight: 300; font-size: 28px; color: var(--accent); }
+.srow { display: grid; grid-template-columns: 30px 1fr; gap: 8px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.srow:first-child { border-top: 0; } .srow b { font: 500 12px var(--f-mono); color: var(--muted); }
+#homeMsg { color: var(--muted); min-height: 1.2em; } #homeMsg.bad { color: var(--bad); }
+a.old { color: var(--muted); font-size: 13px; }
+
+/* ---------- camera ---------- */
+#cam { position: fixed; inset: 0; background: #000; }
+#vid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+#ov { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: manipulation; }
+#top { position: absolute; left: calc(env(safe-area-inset-left, 0px) + 8px); right: calc(env(safe-area-inset-right, 0px) + 8px); top: calc(env(safe-area-inset-top, 0px) + 8px); display: flex; gap: 8px; align-items: flex-start; pointer-events: none; }
+#top > * { pointer-events: auto; }
+#status { flex: 1; min-width: 0; padding: 9px 12px; font: 500 13px/1.35 var(--f); }
+#status small { display: block; color: var(--muted); font-weight: 400; }
+#down { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; } #down:empty { display: none; }
+#down span { font: 600 11px var(--f-mono); padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,.1); }
+.tb { min-height: 40px; padding: 0 14px; cursor: pointer; font: 500 14px var(--f); border-radius: 12px; }
+#bar { position: absolute; left: calc(env(safe-area-inset-left, 0px) + 8px); right: calc(env(safe-area-inset-right, 0px) + 8px); bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; pointer-events: none; }
+#bar > * { pointer-events: auto; }
+#card { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 60px); width: min(94vw, 560px); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+#card b { font-weight: 600; } #card p { margin: 0; font-size: 14px; color: rgba(234,241,244,.88); }
+#toast { position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 70px); transform: translateX(-50%); padding: 9px 16px; font: 500 14px var(--f); z-index: 30; pointer-events: none; max-width: 92vw; text-align: center; }
+#sheet { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; z-index: 9; }
+.sheetBox { background: rgba(18,26,32,.94); border: 1px solid var(--glass-line); width: min(100%, 520px); border-radius: 20px 20px 0 0; padding: 16px 16px calc(env(safe-area-inset-bottom, 0px) + 16px); display: flex; flex-direction: column; gap: 12px; }
+@media (orientation: landscape) { #sheet { align-items: center; } .sheetBox { border-radius: 20px; } }
+.sheetBox h2 { margin: 0; font: 600 18px var(--f); }
+#pickGrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.chip { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 46px; border-radius: 12px; border: 1px solid var(--glass-line); background: var(--glass2); font: 600 15px var(--f); cursor: pointer; }
+.chip i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,.35); }
+.chip.on { box-shadow: 0 0 0 2px var(--accent) inset; }
+</style>
+
+<div id="home">
+  <div class="wrap">
+    <div><h1 class="brand">Chalk<span>line</span><span class="ver" id="verTag"></span></h1>
+      <p class="lead">Set the phone where it sees the whole table, upright or sideways, and tap Watch.</p></div>
+    <button class="go glass" id="goBtn"><b>Watch</b><small>Chalkline finds the table, names the balls and follows every shot: made balls, scratches, the first ball hit.</small><i>›</i></button>
+    <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
+    <div class="card glass"><h2>New in V3</h2><ul>
+      <li>A new ball finder and number reader, trained on your own balls.</li>
+      <li>Each ball keeps its name while it rolls. If a name is wrong, tap the ball and pick the right one: it sticks.</li>
+      <li>When it is not sure, it shows a "?" instead of guessing.</li>
+      <li>Upright or sideways, whichever suits the spot.</li>
+      <li>Racked balls get their names once the break spreads them out.</li>
+    </ul></div>
+    <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div></div>
+    <div class="row"><button class="btn" id="dbgHome">Save debug</button><a class="old" href="v2/">Old version (2.3.3)</a></div>
+    <div id="homeMsg"></div>
+  </div>
+</div>
+
+<div id="cam" hidden>
+  <video id="vid" playsinline muted autoplay></video>
+  <canvas id="ov" aria-label="Table camera"></canvas>
+  <div id="top"><div class="glass" id="status"></div><button class="tb glass" id="menuBtn">Menu</button></div>
+  <div id="card" class="glass" hidden></div>
+  <div id="bar"><button class="tb glass" id="rackBtn">New rack</button><button class="tb glass" id="dbgBtn">Save debug</button></div>
+</div>
+
+<div id="sheet" hidden><div class="sheetBox">
+  <h2 id="pickTitle">Which ball is this?</h2>
+  <div id="pickGrid"></div>
+  <div class="row"><button class="btn" id="pickNot">Not a ball</button><button class="btn" id="pickPocket">It went in</button><button class="btn" id="pickCancel">Cancel</button></div>
+</div></div>
+<div id="toast" class="glass" hidden></div>
+
+<script src="vendor/ort/ort.webgpu.min.js?v=1.29.0"></script>
+<script>
+/*CORE*/
+</script>
+<script>
+/*VISION*/
+</script>
+<script>
+/*DETECT*/
+</script>
+<script>
+/*TRACK*/
+</script>
+<script>
+/*APP*/
+</script>

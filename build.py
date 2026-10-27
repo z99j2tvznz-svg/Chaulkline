@@ -1,9 +1,12 @@
-"""Build index.html from the files in src/.
+"""Build the app pages from the files in src/.
 
-    python3 build.py           write index.html
-    python3 build.py --check   rebuild in memory and fail if it differs from index.html
+    python3 build.py           write index.html (V3) and v2/index.html (V2.3.3, kept as it was)
+    python3 build.py --check   rebuild in memory and fail if either differs from what is on disk
 
-index.html is the file the phone opens (GitHub Pages). Never edit it by hand: edit src/ and rebuild.
+index.html is the page the phone opens (GitHub Pages). Never edit it by hand: edit src/ and rebuild.
+V3: src/v3/page.html + core.js, vision.js (table finding), detect.js, track.js, v3/app.js. It loads ONNX Runtime Web from
+vendor/ort/ and the models from models/v3/ at run time, so it must be served from the repo root.
+V2.3.3: src/template.html + core.js, vision.js (with the old recognizer), app.js, unchanged.
 """
 import base64, io, os, re, sys
 from PIL import Image, ImageDraw
@@ -17,13 +20,28 @@ def read(name):
         return f.read()
 
 
-def build():
+strip = lambda s: re.sub(r"if \(typeof (window|module)[\s\S]*$", "", s)
+
+
+def build_v2():
     t = read('template.html')
-    strip = lambda s: re.sub(r"if \(typeof module[\s\S]*$", "", s)
     core = strip(read('core.js'))
     vis = strip(read('vision.js')).replace('/*RECOG_JSON*/null', read('recog.json').strip())
     app = read('app.js')
-    body = t.replace('/*CORE*/', core).replace('/*VISION*/', vis).replace('/*APP*/', app)
+    return page(t.replace('/*CORE*/', core).replace('/*VISION*/', vis).replace('/*APP*/', app))
+
+
+def build_v3():
+    t = read('v3/page.html')
+    parts = {'/*CORE*/': strip(read('core.js')), '/*VISION*/': strip(read('vision.js')), '/*DETECT*/': strip(read('detect.js')),
+             '/*TRACK*/': strip(read('track.js')), '/*APP*/': read('v3/app.js')}
+    for k, v in parts.items():
+        assert k in t, k
+        t = t.replace(k, v)
+    return page(t)
+
+
+def page(body):
     # home-screen icon
     im = Image.new('RGB', (180, 180), (13, 19, 24)); d = ImageDraw.Draw(im)
     d.rounded_rectangle((26, 50, 154, 130), 10, fill=(29, 107, 87), outline=(75, 53, 39), width=6)
@@ -42,13 +60,20 @@ def build():
 
 
 if __name__ == '__main__':
-    out = build()
-    target = os.path.join(ROOT, 'index.html')
-    if '--check' in sys.argv:
-        with open(target, encoding='utf-8') as f:
-            same = f.read() == out
-        print('index.html matches src/' if same else 'index.html is NOT what src/ builds: run python3 build.py')
-        sys.exit(0 if same else 1)
-    with open(target, 'w', encoding='utf-8') as f:
-        f.write(out)
-    print(len(out), 'bytes written to index.html')
+    ok = True
+    for rel, fn in (('index.html', build_v3), ('v2/index.html', build_v2)):
+        out, target = fn(), os.path.join(ROOT, rel)
+        if '--check' in sys.argv:
+            try:
+                with open(target, encoding='utf-8') as f:
+                    same = f.read() == out
+            except FileNotFoundError:
+                same = False
+            print(rel + (' matches src/' if same else ' is NOT what src/ builds: run python3 build.py'))
+            ok = ok and same
+            continue
+        os.makedirs(os.path.dirname(target), exist_ok=True)
+        with open(target, 'w', encoding='utf-8') as f:
+            f.write(out)
+        print(len(out), 'bytes written to', rel)
+    sys.exit(0 if ok else 1)

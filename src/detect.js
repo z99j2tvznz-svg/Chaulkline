@@ -15,10 +15,10 @@ const DET = (() => {
   const shapeFile = ([w, h]) => ({ file: 'models/v3/finder-' + w + 'x' + h + '.onnx', weights: 'models/v3/finder-v1.weights', w, h, fixed: true });
   function pickShape(bw, bh) { const a = Math.max(bw, bh) / Math.min(bw, bh); let best = SHAPES[0], bd = 1e9; for (const sh of SHAPES) { const d = Math.abs(Math.log(sh[0] / sh[1] / a)); if (d < bd) { bd = d; best = sh; } } return shapeFile(best); }
 
-  const bytes = new Map(); // url -> bytes, so changing the finder size or engine does not download again
-  async function fetchBytes(url, onProgress) {
-    if (bytes.has(url)) return bytes.get(url);
-    const b = await fetchNew(url, onProgress); bytes.set(url, b); return b;
+  const bytes = new Map(); // url -> download (a promise), so a file is fetched once even when asked for twice at the same time
+  function fetchBytes(url, onProgress) {
+    if (!bytes.has(url)) bytes.set(url, fetchNew(url, onProgress).catch(e => { bytes.delete(url); throw e; }));
+    return bytes.get(url);
   }
   async function fetchNew(url, onProgress) {
     const res = await fetch(url); if (!res.ok) throw new Error(url + ': ' + res.status);
@@ -144,7 +144,8 @@ const DET = (() => {
     });
     return spots;
   }
-  return { VERSION, load, setSize, find, read, letterbox, crop, resize, colours, pickShape, SHAPES, CLASSES, get ep() { return st.ep; }, get size() { return [st.w, st.h]; }, get fixed() { return st.fixed; } };
+  const prefetch = (base, path, onProgress) => fetchBytes(base + path, onProgress); // start a download early (cached for load)
+  return { VERSION, prefetch, load, setSize, find, read, letterbox, crop, resize, colours, pickShape, SHAPES, CLASSES, get ep() { return st.ep; }, get size() { return [st.w, st.h]; }, get fixed() { return st.fixed; } };
 })();
 if (typeof window !== 'undefined') window.DET = DET;
 if (typeof module !== 'undefined') module.exports = { DET };
