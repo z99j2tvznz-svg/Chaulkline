@@ -191,3 +191,34 @@ test('a break on an unread rack: the first ball stays unknown rather than take w
   assert.strictEqual(tk.S.shots.length, 1); assert.strictEqual(tk.S.shots[0].break, true); assert.strictEqual(tk.S.shots[0].firstNum, null);
   const n = names(tk); assert.ok([0, 1, 2, 3, 4, 5, 6].every(i => n[i]), 'named once spread: ' + JSON.stringify(n));
 });
+
+// The owner's phone looked every 0.23 s (V3.0.1, Oct 27). At that pace two looks never spanned the 0.3 s a ball must hold
+// still, so stopped balls stayed "rolling" and shots ran on for 20-40 s.
+test('at the phone\'s look rate (0.23 s) a shot ends soon after the balls stop', () => {
+  const tk = makeTracker(P), cue = { x: 15, y: 15 }, three = { x: 50, y: 26 };
+  const others = () => [{ num: 5, x: 30, y: 33 }, { num: 9, x: 62, y: 8 }];
+  let t = settle(tk, 0, [{ num: 0, ...cue }, { num: 3, ...three }, ...others()], 3, 0.23);
+  t = playShot(tk, t, cue, three, others, { dt: 0.23 });
+  assert.strictEqual(tk.S.shots.length, 1, JSON.stringify(tk.S.events.filter(e => e.k !== 'named').slice(-8)));
+  const sh = tk.S.shots[0]; assert.ok(sh.t1 - sh.t0 < 6, 'shot lasted ' + (sh.t1 - sh.t0).toFixed(1) + ' s');
+  assert.deepStrictEqual(sh.made.map(m => m.num), [3]);
+});
+
+test('a ball lost for a moment at a pocket and seen again is rolling, not "going in": the shot ends, no false pocket', () => {
+  const tk = makeTracker(P), others = [{ num: 4, x: 40, y: 30 }];
+  let t = settle(tk, 0, [{ num: 0, x: 60, y: 8 }, ...others], 3, 0.23);
+  // the cue ball rolls toward the bottom-right corner, vanishes twice near it, and stops 5 in short of the pocket
+  const path = [[64, 6], [68, 4.5], null, [71, 3.5], null, [72, 3.2], [72.3, 3.1], [72.3, 3.1], [72.3, 3.1], [72.3, 3.1]];
+  for (const p of path) { look(tk, t, (p ? [{ num: 0, x: p[0], y: p[1], moving: true }] : []).concat(others), false); t += 0.23; }
+  settle(tk, t, [{ num: 0, x: 72.3, y: 3.1 }, ...others], 3, 0.23);
+  assert.strictEqual(tk.S.shots.length, 1); assert.deepStrictEqual(tk.S.shots[0].made, []); assert.deepStrictEqual(tk.S.gone, []);
+  const cue = tk.balls().find(b => b.num === 0); assert.ok(cue && cue.state === 'rest', JSON.stringify(cue && cue.state));
+});
+
+test('the owner\'s V3.0.1 session (Oct 26, 23:12) replayed: every shot ends within 8 s, nothing called in while it sits there', () => {
+  const { replay } = require('../tools/v3/replay.js');
+  const d = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261026-2312.json'), 'utf8')), tk = replay(d);
+  assert.ok(tk.S.shots.length >= 6, 'shots: ' + tk.S.shots.length); // live V3.0.1 merged them into 4 that ran 11-40 s
+  for (const s of tk.S.shots) assert.ok(s.t1 - s.t0 <= 8, 'shot ' + s.n + ' lasted ' + (s.t1 - s.t0).toFixed(1) + ' s');
+  assert.ok(!tk.S.events.some(e => e.k === 'pocketed' && tk.S.events.some(f => f.k === 'back' && f.key === e.key && f.t > e.t - 3 && f.t < e.t)), 'a ball seen again was then called in');
+});

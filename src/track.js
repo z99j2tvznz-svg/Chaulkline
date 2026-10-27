@@ -145,16 +145,19 @@ function makeTracker(P, opts) {
       tr.x = sp.x; tr.y = sp.y; tr.sp = sp; tr.seenT = t; tr.seen++; tr.lostT = null;
       (tr.hist = tr.hist || []).push({ t, x: sp.x, y: sp.y }); while (tr.hist.length && t - tr.hist[0].t > 1) tr.hist.shift();
       if (sp.p) { tr.nbSum += sp.p[10]; tr.nbN++; }
-      if (was === 'pending') { ev('back', { key: tr.key, num: tr.num }); tr.pocket = null; }
+      // seen again after it was lost at a pocket: it did not go in (yet); back to rolling, and the rest test below decides
+      if (was === 'pending') { ev('back', { key: tr.key, num: tr.num }); tr.pocket = null; tr.state = 'moving'; }
       const away = Math.hypot(tr.x - tr.restX, tr.y - tr.restY);
       if (was === 'hidden') { tr.state = 'rest'; tr.restX = tr.x; tr.restY = tr.y; tr.restSince = t; tr.vx = tr.vy = 0; } // found again where it was hidden
       else if (was === 'rest' || (was === 'new' && tr.restSince != null)) {
         if (away > O.moveDist) { tr.state = was === 'new' ? 'new' : 'moving'; tr.movedT = t; tr.restSince = null; tr.vx = (tr.x - tr.restX) / gap; tr.vy = (tr.y - tr.restY) / gap; }
         else { tr.restX += 0.2 * (tr.x - tr.restX); tr.restY += 0.2 * (tr.y - tr.restY); tr.vx = tr.vy = 0; }
       } else {
-        // rolling (or a new spot not yet resting): resting once the last stopSpan seconds stayed within stopDist
-        const h = tr.hist.filter(q => t - q.t <= O.stopSpan + 0.01);
-        const span = h.length >= 2 && t - h[0].t >= O.stopSpan - 0.01 ? Math.max(...h.map(q => Math.hypot(q.x - tr.x, q.y - tr.y))) : 1e9;
+        // rolling (or a new spot not yet resting): resting once it stayed within stopDist for at least stopSpan seconds,
+        // measured over as many looks as that takes (the owner's phone looks every 0.23 s: two looks in a row never
+        // spanned 0.3 s, so a stopped ball stayed "rolling" until it happened to be hidden)
+        let i = tr.hist.length - 1; while (i > 0 && t - tr.hist[i].t < O.stopSpan - 0.01) i--;
+        const h = tr.hist.slice(i), span = h.length >= 2 && t - h[0].t >= O.stopSpan - 0.01 ? Math.max(...h.map(q => Math.hypot(q.x - tr.x, q.y - tr.y))) : 1e9;
         if (span <= O.stopDist) { if (was === 'moving') tr.state = 'rest'; tr.restSince = h[0].t; tr.restX = tr.x; tr.restY = tr.y; tr.vx = tr.vy = 0; }
       }
     }

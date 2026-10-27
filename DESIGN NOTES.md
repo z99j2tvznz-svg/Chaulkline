@@ -703,3 +703,18 @@ Plan and reasons: `docs/V3-PLAN.md`. V2.3.3 stays at `/v2/`, byte for byte as it
   picture of each corner and side pocket is kept when the table is accepted and found again on every look (within
   about 30 px); the outline moves with them, measured against the accepted outline so errors do not add up. On a fake
   camera rocking 10 px: the outline followed, every ball stayed at rest, no hands, no shots.
+
+## V3.0.2 (Oct 27) — shots end when the balls stop
+- Owner's V3.0.1 session (no crashes; 207 ms a look on 3 cores; balls named right): "after a shot it never stops
+  rolling". Shots ended 11-40 s late, and several real shots were merged into one. Two causes, both in `src/track.js`,
+  found by replaying the session's logged looks (`tools/v3/replay.js`):
+  1. A ball rests again once it has stayed within 0.8 in for 0.3 s, but the check only used looks inside the last
+     0.3 s; at the phone's 0.23 s between looks that was never two looks, so a stopped ball stayed "rolling" until it
+     happened to be hidden. Now it uses as many looks as it takes to cover 0.3 s.
+  2. A ball lost at a pocket and seen again logged "back" but stayed "may have gone in": the shot could not end, and
+     later the ball was called pocketed while it sat there (the "cue in" on the owner's screenshot). Now it is rolling.
+- Replayed: 7 shots instead of 4, each over in 3.5-7 s; no ball called in after it was seen again. The session's looks
+  are kept as a test (`tests/fixtures/v3/session-20261026-2312.json`), plus made-up shots at 0.23 s between looks.
+- Brainstorm, not built (owner): table size stays the standard 78 x 39 in for a 7 ft table unless evidence shows the
+  owner's tape measurement (79.06 x 39.03) is better. Table fit from cushion edges + diamonds (+ balls when present),
+  to replace corner finding; not started.
