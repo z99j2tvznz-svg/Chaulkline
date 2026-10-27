@@ -16,6 +16,7 @@ single web page, `index.html`, served by GitHub Pages and added to the home scre
 | `tools/replay-pictures.js` | Runs the current ball finder and recognizer over every saved picture of the real sessions and scores it against the hand-checked labels. |
 | `data/sessions.csv` | The real debug sessions: folder name, the name used in the design notes (real1 ...), app version, table, what was played. |
 | `library/manifest.csv` | Hand-checked ball labels (2,277 spots, sessions real1-real6): picture, position, the app's guess and the true label. |
+| `docs/FEATURES.md` | The running list of every feature and future capability (263 from the Oct 22 register, plus new ones), with what V3 does today. |
 | `DESIGN NOTES.md` | The running design log: every version, what failed in real sessions, and what was decided. |
 | `check/index.html` | V3 check page: the new ball finder and number reader live on the phone, with a speed test. Opens at `/check/`. |
 | `src/detect.js` | V3 ball finder (detector-v1) and number reader (reader v2) running in the browser. |
