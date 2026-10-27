@@ -689,3 +689,17 @@ Plan and reasons: `docs/V3-PLAN.md`. V2.3.3 stays at `/v2/`, byte for byte as it
   V3 end to end on a fake camera made from the owner's photo, sideways and upright (table found, 7-9 balls, 4-5 named,
   a tap sticks, debug zip). Not tested here: real shots on real video, WebGPU (headless runs the CPU engine).
 - Not in V3.0: the lag drill (V3.1), head-rail choice, 8-ball, camera-bump recovery beyond "Find the table again".
+
+## V3.0.1 (Oct 27, late) — no more crashes on the graphics chip, outline follows a swaying phone
+- Owner's V3.0 run (mirroring off): Safari closed the page about 10 s after the ball finder started on the graphics chip
+  (WebGPU); the check page did the same, while the processor ran 188 looks without trouble. Now the finder runs on the
+  processor by default, on several cores: `sw.js` (a service worker) adds the two headers Safari needs before a page may
+  use threads, which GitHub Pages cannot send; the first visit reloads once. 3 threads here: about 350 ms a look against
+  750 ms on one (the phone's own number is not measured yet). The graphics chip stays a choice on the home screen, and
+  if the app died there last time it switches back to the processor by itself.
+- Crash notes after every look (step, looks, engine, cores); the home screen says how the last session ended, and Save
+  debug carries it. The web font is gone (an isolated page blocks it).
+- Steady: the owner's tripod sways and the outline stayed put, so resting balls would look like they move. Now a small
+  picture of each corner and side pocket is kept when the table is accepted and found again on every look (within
+  about 30 px); the outline moves with them, measured against the accepted outline so errors do not add up. On a fake
+  camera rocking 10 px: the outline followed, every ball stayed at rest, no hands, no shots.

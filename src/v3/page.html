@@ -1,6 +1,16 @@
 <title>Chalkline</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+<script>
+// Several processor cores for the ball finder need a "cross-origin isolated" page; sw.js makes it so. The first visit
+// installs it and reloads once (only once: if the phone does not support it, the app runs on one core).
+(function () {
+  if (window.crossOriginIsolated || !('serviceWorker' in navigator) || !window.isSecureContext) return;
+  navigator.serviceWorker.register('sw.js').then(function () { return navigator.serviceWorker.ready; }).then(function () {
+    // this load did not come through the worker (the first visit): load once more, through it
+    try { if (sessionStorage.getItem('chalkline.coi')) return; sessionStorage.setItem('chalkline.coi', '1'); } catch (e) { return; }
+    location.reload();
+  }).catch(function () { });
+})();
+</script>
 <style>
 /* V3: same look as before (always dark, frosted glass, one teal accent). Works upright or sideways. */
 :root {
@@ -8,7 +18,7 @@
   --bg: #0b1014; --fg: #eaf1f4; --muted: #8fa0aa; --line: rgba(255,255,255,.10);
   --accent: #59d6e8; --on-accent: #04161a; --amber: #ffb84d; --good: #5be3a0; --bad: #ff7a70;
   --glass: rgba(16,24,30,.62); --glass2: rgba(255,255,255,.08); --glass-line: rgba(255,255,255,.13);
-  --f: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; --f-mono: ui-monospace, Menlo, monospace;
+  --f: system-ui, -apple-system, "Segoe UI", sans-serif; --f-mono: ui-monospace, Menlo, monospace;
 }
 [hidden] { display: none !important; }
 html, body { height: 100%; margin: 0; }
@@ -76,6 +86,7 @@ a.old { color: var(--muted); font-size: 13px; }
       <p class="lead">Set the phone where it sees the whole table, upright or sideways, and tap Watch.</p></div>
     <button class="go glass" id="goBtn"><b>Watch</b><small>Chalkline finds the table, names the balls and follows every shot: made balls, scratches, the first ball hit.</small><i>›</i></button>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
+    <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass"><h2>New in V3</h2><ul>
       <li>A new ball finder and number reader, trained on your own balls.</li>
       <li>Each ball keeps its name while it rolls. If a name is wrong, tap the ball and pick the right one: it sticks.</li>
@@ -84,6 +95,7 @@ a.old { color: var(--muted); font-size: 13px; }
       <li>Racked balls get their names once the break spreads them out.</li>
     </ul></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div></div>
+    <div class="card glass" id="crashCard" hidden><h2>Last time the app stopped unexpectedly</h2><p class="lbl" id="crashText" style="margin:0 0 10px"></p><div class="lbl">Tap Save debug below: the file includes that session.</div></div>
     <div class="row"><button class="btn" id="dbgHome">Save debug</button><a class="old" href="v2/">Old version (2.3.3)</a></div>
     <div id="homeMsg"></div>
   </div>

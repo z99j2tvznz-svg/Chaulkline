@@ -4,7 +4,7 @@
 // "Challenger B"), a small network on a 40 x 40 crop of 3.2 ball radii: right 97% of the time when sure, and the 9 is no
 // longer read as the cue ball on the test pictures (0 of 210, the old reader 120). Both need window.ort (vendor/ort).
 const DET = (() => {
-  const VERSION = 'det 4'; // pages check this, so a copy of this file Safari kept from before cannot be mixed with a newer page
+  const VERSION = 'det 5'; // pages check this, so a copy of this file Safari kept from before cannot be mixed with a newer page
   const CLASSES = ['cue', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'not a ball'];
   const NB = 10, READ_T = 0.6674199270850172, NB_T = 0.5, P_T = 0.6; // reader temperature and decision rule (benchmark config)
   const FIND_T = 0.35, NMS_IOU = 0.7, SIDE = 40, CROP = 3.2; // finder threshold of the v0.4 baseline (results barely change 0.25-0.7)
@@ -29,7 +29,9 @@ const DET = (() => {
   }
   // opts: base (site root, ends in /), ep ('webgpu' | 'wasm' | 'auto'), finder {file, w, h, fixed, weights?}, onProgress(text)
   async function load(opts) {
-    const ort = window.ort; ort.env.wasm.wasmPaths = opts.base + 'vendor/ort/'; ort.env.wasm.numThreads = 1; // no cross-origin isolation on GitHub Pages
+    // several cores only on a cross-origin isolated page (sw.js makes the V3 page one); set before the first session
+    const ort = window.ort; ort.env.wasm.wasmPaths = opts.base + 'vendor/ort/';
+    if (!st.read) ort.env.wasm.numThreads = window.crossOriginIsolated ? Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 4) - 1)) : 1;
     const wantGpu = opts.ep !== 'wasm' && !!navigator.gpu, eps = wantGpu ? ['webgpu', 'wasm'] : ['wasm'];
     const say = opts.onProgress || (() => { }), mb = n => (n / 1048576).toFixed(1);
     const prog = (g, t) => say('Downloading the ball finder ' + mb(g) + (t ? ' of ' + mb(t) : '') + ' MB');
@@ -145,7 +147,8 @@ const DET = (() => {
     return spots;
   }
   const prefetch = (base, path, onProgress) => fetchBytes(base + path, onProgress); // start a download early (cached for load)
-  return { VERSION, prefetch, load, setSize, find, read, letterbox, crop, resize, colours, pickShape, SHAPES, CLASSES, get ep() { return st.ep; }, get size() { return [st.w, st.h]; }, get fixed() { return st.fixed; } };
+  const threads = () => (window.ort && ort.env.wasm.numThreads) || 1;
+  return { VERSION, threads, prefetch, load, setSize, find, read, letterbox, crop, resize, colours, pickShape, SHAPES, CLASSES, get ep() { return st.ep; }, get size() { return [st.w, st.h]; }, get fixed() { return st.fixed; } };
 })();
 if (typeof window !== 'undefined') window.DET = DET;
 if (typeof module !== 'undefined') module.exports = { DET };

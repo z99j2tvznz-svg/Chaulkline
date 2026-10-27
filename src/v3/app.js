@@ -2,22 +2,34 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0';
+const VERSION = 'V3.0.1';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
 const LENS = 0.86;          // focal length / longer picture side of the main camera at 1x (the V2 value)
 const SMALL = 800;          // the table is looked for on a copy of the picture this many pixels across
 const BALL_PX_MAX = 23;     // the finder learned balls up to about this radius: the table strip is not enlarged past it
-const A = { ft: 7, live: false, stream: null, phase: 'home', W: 0, H: 0, quad: null, rot: 0, cam: null, P: null, tk: null, box: null, kmax: 1.5, shape: null,
+const A = { ft: 7, engine: 'cpu', live: false, stream: null, phase: 'home', W: 0, H: 0, quad: null, rot: 0, cam: null, P: null, tk: null, box: null, kmax: 1.5, shape: null,
   frame: document.createElement('canvas'), small: document.createElement('canvas'), fctx: null, looks: 0, errs: 0, nShots: 0, sess: null, lastSess: null,
   pics: new Map(), taps: [], stillPic: null, stillPicT: 0, pick: null, timing: [], camInfo: null, man: null, cand: null };
 const r1 = v => Math.round(v * 10) / 10, r2 = v => Math.round(v * 100) / 100, sleep = ms => new Promise(r => setTimeout(r, ms));
 const numName = n => n === 0 ? 'cue ball' : n == null ? 'unknown ball' : n + ' ball';
 
 // ---------- settings and the last session ----------
-function save() { try { localStorage.setItem(KEY, JSON.stringify({ ft: A.ft, lastSess: A.lastSess })); } catch (e) { } }
-try { const d = JSON.parse(localStorage.getItem(KEY) || 'null'); if (d) { if ([7, 8, 9].includes(d.ft)) A.ft = d.ft; A.lastSess = d.lastSess || null; } } catch (e) { }
+function save() { try { localStorage.setItem(KEY, JSON.stringify({ ft: A.ft, lastSess: A.lastSess, engine: A.engine })); } catch (e) { } }
+try { const d = JSON.parse(localStorage.getItem(KEY) || 'null'); if (d) { if ([7, 8, 9].includes(d.ft)) A.ft = d.ft; A.lastSess = d.lastSess || null; if (d.engine === 'gpu') A.engine = 'gpu'; } } catch (e) { }
+// ---------- crash notes: a few words in the phone's storage after every step, so if Safari closes the page we know where ----------
+// (V3.0 on the owner's iPhone: Safari closed the page seconds after the ball finder started on the graphics chip; the same
+// happened on the check page, while the processor ran 188 looks without trouble. So the processor is the default now.)
+const CRUMB = KEY + '.crumb';
+function crumb(step, extra) {
+  try { localStorage.setItem(CRUMB, JSON.stringify(Object.assign({ running: A.live, step, at: new Date().toISOString(), version: VERSION, engine: DET.ep, threads: DET.threads(), shape: A.shape, looks: A.looks,
+    phase: A.tk ? A.tk.S.phase : null, balls: A.tk ? A.tk.balls().length : 0, ms: A.timing.slice(-5).map(Math.round), secs: Math.round((Date.now() - DBG.t0) / 1000) }, extra || {}))); } catch (e) { }
+}
+function endCrumb() { try { const c = JSON.parse(localStorage.getItem(CRUMB) || 'null'); if (c && c.running) { c.running = false; localStorage.setItem(CRUMB, JSON.stringify(c)); } } catch (e) { } }
+let CRASH = null; try { const c = JSON.parse(localStorage.getItem(CRUMB) || 'null'); if (c && c.running && c.step !== 'hidden') CRASH = c; } catch (e) { }
+if (CRASH && CRASH.engine === 'webgpu') { A.engine = 'cpu'; save(); } // it died on the graphics chip: back to the processor
+window.addEventListener('pagehide', endCrumb);
 
 // ---------- debug log: kept for the session, stored every few seconds so a crash does not lose it ----------
 const DBG = { t0: Date.now(), ev: [], looks: [], drop: 0 };
@@ -26,11 +38,11 @@ function dbgPersist() { try { localStorage.setItem(KEY + '.dbg', JSON.stringify(
 let PREV = null; try { PREV = JSON.parse(localStorage.getItem(KEY + '.dbg') || 'null'); } catch (e) { }
 window.addEventListener('error', e => dbg('error', { m: String(e.message || e).slice(0, 200), at: (e.filename || '').split('/').pop() + ':' + e.lineno }));
 window.addEventListener('unhandledrejection', e => dbg('error', { m: 'promise: ' + String(e.reason && e.reason.message || e.reason).slice(0, 200) }));
-document.addEventListener('visibilitychange', () => { dbg('vis', { s: document.visibilityState }); if (document.hidden) dbgPersist(); else if (A.live) wakeLock(); });
+document.addEventListener('visibilitychange', () => { dbg('vis', { s: document.visibilityState }); if (A.live) crumb(document.hidden ? 'hidden' : 'visible'); if (document.hidden) dbgPersist(); else if (A.live) wakeLock(); });
 setInterval(() => { if (A.live) dbgPersist(); }, 10000);
 function header() {
   return { app: 'chalkline', build: VERSION, det: DET.VERSION, started: new Date(DBG.t0).toISOString(), ua: navigator.userAgent, screen: [screen.width, screen.height], dpr: window.devicePixelRatio || 1,
-    gpu: !!navigator.gpu, engine: DET.ep, shape: A.shape, kmax: r2(A.kmax), ft: A.ft, picture: [A.W, A.H], quad: A.quad && A.quad.map(p => [r1(p[0]), r1(p[1])]), rot: A.rot, box: A.box && A.box.map(Math.round),
+    gpu: !!navigator.gpu, engine: DET.ep, engineSetting: A.engine, threads: DET.threads(), isolated: !!window.crossOriginIsolated, cores: navigator.hardwareConcurrency || null, shape: A.shape, kmax: r2(A.kmax), ft: A.ft, picture: [A.W, A.H], quad: A.quad && A.quad.map(p => [r1(p[0]), r1(p[1])]), rot: A.rot, box: A.box && A.box.map(Math.round),
     camOk: A.cam ? A.cam.ok : null, cam: A.camInfo };
 }
 function shotRow(sh) { return { n: sh.n, t0: r2(sh.t0), t1: r2(sh.t1), cue: sh.cueNum, first: sh.firstNum, made: sh.made.map(m => ({ num: m.num, pocket: m.pocket, sure: m.sure })), scratch: sh.scratch, break: sh.break, hidden: sh.hidden, before: sh.before, after: sh.after }; }
@@ -40,6 +52,9 @@ function renderHome() {
   $('#verTag').textContent = VERSION;
   const sf = $('#segFt'); sf.innerHTML = '';
   for (const f of [7, 8, 9]) { const b = document.createElement('button'); b.textContent = f + ' ft'; b.className = f === A.ft ? 'on' : ''; b.onclick = () => { A.ft = f; save(); renderHome(); }; sf.appendChild(b); }
+  const se = $('#segEng'); if (se) { se.innerHTML = ''; for (const [v, l] of [['cpu', 'Processor'], ['gpu', 'Graphics chip']]) { const b = document.createElement('button'); b.textContent = l; b.className = v === A.engine ? 'on' : ''; b.onclick = () => { A.engine = v; save(); renderHome(); }; se.appendChild(b); } }
+  const eh = $('#engHint'); if (eh) eh.textContent = A.engine === 'gpu' ? 'Faster, but on your iPhone Safari has closed the page when the ball finder runs here.' : 'Steady. ' + (window.crossOriginIsolated ? 'Uses several cores.' : 'One core: reload the page once if this stays.');
+  if (CRASH) { $('#crashCard').hidden = false; $('#crashText').textContent = 'V' + String(CRASH.version || '').replace(/^V/, '') + ' stopped after ' + (CRASH.secs || 0) + ' s and ' + (CRASH.looks || 0) + ' looks, on the ' + (CRASH.engine === 'webgpu' ? 'graphics chip' : CRASH.engine === 'wasm' ? 'processor (' + (CRASH.threads || 1) + ' core' + ((CRASH.threads || 1) > 1 ? 's' : '') + ')' : 'way in') + ', while ' + ({ look: 'looking at the table', done: 'between looks', start: 'starting', camera: 'starting the camera', finder: 'starting the ball finder', table: 'finding the table' }[CRASH.step] || CRASH.step) + '.' + (CRASH.engine === 'webgpu' ? ' The processor is selected now.' : ''); }
   const L = A.lastSess, card = $('#lastCard');
   card.hidden = !(L && L.shots && L.shots.length);
   if (!card.hidden) $('#lastList').innerHTML = L.shots.slice(-12).map(s => '<div class="srow"><b>' + s.n + '</b><span>' + shotWords(s) + '</span></div>').join('') + (L.shots.length > 12 ? '<div class="lbl">… ' + L.shots.length + ' shots in all</div>' : '');
@@ -104,17 +119,17 @@ async function start() {
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
   A.P = makeP(A.ft); A.tk = makeTracker(A.P); A.sess = { t0: Date.now(), ft: A.ft, shots: [] };
   $('#home').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.live = true; setStatus('Starting the camera…');
-  dbg('start', { ft: A.ft, version: VERSION });
+  dbg('start', { ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
   // the weights (10 MB) download while the table is found
   DET.prefetch(BASE, 'models/v3/finder-v1.weights', (g, t) => { A.dl = t ? g / t : 0; }).catch(e => dbg('error', { m: 'weights ' + String(e).slice(0, 100) }));
   try { await openCamera(); } catch (e) {
     A.live = false; $('#cam').hidden = true; $('#home').hidden = false;
     homeMsg(e && e.name === 'NotAllowedError' ? 'Camera access was blocked. In Safari tap aA, then Website Settings, then Camera, then Allow. Reload and try again.' : 'The camera could not start: ' + (e && (e.message || e.name) || e), true); return;
   }
-  wakeLock(); requestAnimationFrame(drawLoop); findTable();
+  crumb('table'); wakeLock(); requestAnimationFrame(drawLoop); findTable();
 }
 function goHome() {
-  A.live = false; A.phase = 'home'; dbgPersist(); endSession();
+  A.live = false; A.phase = 'home'; dbgPersist(); endSession(); endCrumb();
   if (A.stream) A.stream.getTracks().forEach(t => { try { t.stop(); } catch (e) { } }); A.stream = null;
   try { if (wl) wl.release(); } catch (e) { } wl = null;
   $('#cam').hidden = true; $('#home').hidden = false; hideCard(); renderHome();
@@ -162,21 +177,21 @@ async function acceptTable() {
   for (const [x, y] of [[-m, -m], [L / 2, -m], [L + m, -m], [L + m, Wd / 2], [L + m, Wd + m], [L / 2, Wd + m], [-m, Wd + m], [-m, Wd / 2]]) for (const z of [0, 2 * R]) pts.push(A.cam.proj(x, y, z));
   const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]), pad = 12;
   const x0 = Math.max(0, Math.min(...xs) - pad), y0 = Math.max(0, Math.min(...ys) - pad), x1 = Math.min(A.W, Math.max(...xs) + pad), y1 = Math.min(A.H, Math.max(...ys) + pad);
-  A.box = [x0, y0, Math.max(32, x1 - x0), Math.max(32, y1 - y0)];
+  A.box = [x0, y0, Math.max(32, x1 - x0), Math.max(32, y1 - y0)]; A.box0 = A.box.slice();
   let rmax = 0; for (const [x, y] of [[R, R], [L - R, R], [L - R, Wd - R], [R, Wd - R], [L / 2, R], [L / 2, Wd - R]]) rmax = Math.max(rmax, A.cam.ballRad(x, y, R, R));
   A.kmax = Math.max(0.5, Math.min(2, BALL_PX_MAX / Math.max(4, rmax)));
   dbg('table', { quad: A.quad.map(p => p.map(Math.round)), rot: A.rot, camOk: A.cam.ok, box: A.box.map(Math.round), rmax: r1(rmax), kmax: r2(A.kmax), manual: !!c.manual });
   hideCard();
   const sh = DET.pickShape(A.box[2], A.box[3]), need = !A.shape || A.shape[0] !== sh.w || A.shape[1] !== sh.h;
   if (need) {
-    A.phase = 'load'; setStatus('Starting the ball finder…');
+    A.phase = 'load'; setStatus('Starting the ball finder…'); crumb('finder');
     try {
-      await DET.load({ base: BASE, ep: 'webgpu', finder: sh, onProgress: t => setStatus(t) });
-      A.shape = [sh.w, sh.h]; dbg('finder', { ep: DET.ep, shape: A.shape });
-      if (DET.ep !== 'webgpu') toast('This phone has no GPU engine for the finder: it will be slow.');
+      await DET.load({ base: BASE, ep: A.engine === 'gpu' ? 'webgpu' : 'wasm', finder: sh, onProgress: t => setStatus(t) });
+      A.shape = [sh.w, sh.h]; dbg('finder', { ep: DET.ep, shape: A.shape, threads: DET.threads(), isolated: !!window.crossOriginIsolated });
+      if (A.engine === 'gpu' && DET.ep !== 'webgpu') toast('The graphics chip is not available: using the processor.');
     } catch (e) { dbg('error', { m: 'finder load ' + String(e && e.message || e).slice(0, 160) }); setStatus('The ball finder could not start: ' + String(e && e.message || e).slice(0, 80)); return; }
   }
-  A.phase = 'run'; setStatus('Watching'); runLoop();
+  steadyRef(); A.phase = 'run'; setStatus('Watching'); runLoop();
 }
 function refind(msg) { A.phase = 'find'; setStatus(msg || 'Looking for the table…'); findTable(); }
 
@@ -195,6 +210,8 @@ async function runLoop() {
 }
 async function look() {
   if (!grab() || A.phase !== 'run') return;
+  crumb('look');
+  steady();
   const t = performance.now() / 1000, t0 = performance.now(), tk = A.tk, P = A.P, R = P.R;
   const found = await DET.find(A.frame, A.W, A.H, { box: A.box, kmax: A.kmax }), t1 = performance.now();
   const on = [];
@@ -211,7 +228,7 @@ async function look() {
   if (tk.S.shots.length > A.nShots) { for (const sh of tk.S.shots.slice(A.nShots)) onShotEnd(sh); A.nShots = tk.S.shots.length; }
   // a picture of the still table every 1.5 s, kept as the "before" of the next shot
   if (tk.S.phase === 'still' && performance.now() - A.stillPicT > 1500) { A.stillPicT = performance.now(); jpeg(960).then(b => { A.stillPic = b; }).catch(() => { }); }
-  statusRun();
+  statusRun(); crumb('done');
 }
 function onShotStart() { const sh = A.tk.S.shot; if (sh && A.stillPic) A.pics.set('shot' + String(sh.n).padStart(3, '0') + '-before.jpg', A.stillPic); dbg('shot_start', { n: sh && sh.n }); }
 function onShotEnd(sh) {
@@ -228,6 +245,63 @@ function jpeg(w) {
   return new Promise((res, rej) => c.toBlob(b => b ? b.arrayBuffer().then(a => res(new Uint8Array(a))) : rej(new Error('jpeg')), 'image/jpeg', 0.8));
 }
 
+// ---------- steady: the outline follows the table when the phone sways ----------
+// When the table is accepted, a small picture of each corner and side pocket is kept (the cloth's blue against the rails,
+// at half size). A few times a second each one is looked for again within about 30 px; if they agree on a move, the
+// outline (and with it every ball's table position) is moved to match. Always measured against the accepted outline, so
+// small errors do not add up. A ball or a hand over a pocket only removes that one picture from the vote.
+const STEADY = { ref: null, h: 20, S: 15, cv: document.createElement('canvas'), n: 0, last: null };
+function feat(d, n) { const o = new Float32Array(n); for (let i = 0, j = 0; i < n; i++, j += 4) o[i] = d[j + 2] - d[j]; return o; } // blue minus red: cloth high, rails and pockets low
+function steadyGrab() {
+  const w = Math.round(A.W / 2), h = Math.round(A.H / 2), c = STEADY.cv; if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+  const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(A.frame, 0, 0, w, h); return x;
+}
+function steadyPts() { const { L, Wd } = tableDims(A.ft); return [[0, 0], [L / 2, 0], [L, 0], [L, Wd], [L / 2, Wd], [0, Wd]].map(([x, y]) => A.cam.proj(x, y, 0)); }
+function steadyRef() {
+  try {
+    const x = steadyGrab(), h = STEADY.h, ref = [];
+    for (const [px, py] of steadyPts()) {
+      const cx = Math.round(px / 2), cy = Math.round(py / 2); if (cx - h < 0 || cy - h < 0 || cx + h > STEADY.cv.width || cy + h > STEADY.cv.height) { ref.push(null); continue; }
+      const f = feat(x.getImageData(cx - h, cy - h, 2 * h, 2 * h).data, 4 * h * h); let m = 0; for (const v of f) m += v; m /= f.length; let sd = 0; for (const v of f) sd += (v - m) ** 2; sd = Math.sqrt(sd / f.length);
+      ref.push(sd > 8 ? { cx, cy, f, m, sd } : null); // a flat patch (no edge in it) cannot show a move
+    }
+    STEADY.ref = ref; STEADY.quad0 = A.quad.map(p => p.slice()); STEADY.n = 0; STEADY.last = null;
+    dbg('steady_ref', { patches: ref.filter(Boolean).length });
+  } catch (e) { STEADY.ref = null; dbg('error', { m: 'steady ref ' + String(e).slice(0, 80) }); }
+}
+function ncc(f, m, sd, g, gw, ox, oy, h) {
+  let s = 0, s2 = 0, sx = 0; const n = 4 * h * h;
+  for (let y = 0; y < 2 * h; y++) { const row = (oy + y) * gw + ox; for (let x = 0; x < 2 * h; x++) { const v = g[row + x]; s += v; s2 += v * v; sx += v * f[y * 2 * h + x]; } }
+  const gm = s / n, gsd = Math.sqrt(Math.max(1e-6, s2 / n - gm * gm)); return (sx / n - gm * m) / (gsd * sd);
+}
+function steady() {
+  const R = STEADY.ref; if (!R || !A.cam) return;
+  STEADY.n++; // every look, on the same picture the finder is about to see, so the balls and the outline move together
+  const x = steadyGrab(), h = STEADY.h, S = STEADY.S, found = [];
+  R.forEach((r, i) => {
+    if (!r) return; const gw = 2 * (h + S), x0 = r.cx - h - S, y0 = r.cy - h - S;
+    if (x0 < 0 || y0 < 0 || x0 + gw > STEADY.cv.width || y0 + gw > STEADY.cv.height) return;
+    const g = feat(x.getImageData(x0, y0, gw, gw).data, gw * gw);
+    let best = -2, bx = 0, by = 0;
+    for (let dy = 0; dy <= 2 * S; dy += 2) for (let dx = 0; dx <= 2 * S; dx += 2) { const c = ncc(r.f, r.m, r.sd, g, gw, dx, dy, h); if (c > best) { best = c; bx = dx; by = dy; } }
+    for (let dy = Math.max(0, by - 1); dy <= Math.min(2 * S, by + 1); dy++) for (let dx = Math.max(0, bx - 1); dx <= Math.min(2 * S, bx + 1); dx++) { const c = ncc(r.f, r.m, r.sd, g, gw, dx, dy, h); if (c > best) { best = c; bx = dx; by = dy; } }
+    if (best >= 0.7) found.push({ i, x: r.cx * 2, y: r.cy * 2, dx: (bx - S) * 2, dy: (by - S) * 2, c: best });
+  });
+  if (found.length < 3) return;
+  // the move most of them agree on (median), then only the ones near it; a plain shift is what a sway on a tripod does
+  const med = a => { const b = a.slice().sort((p, q) => p - q); return b[b.length >> 1]; };
+  const mx = med(found.map(f => f.dx)), my = med(found.map(f => f.dy)), ok = found.filter(f => Math.hypot(f.dx - mx, f.dy - my) <= 3);
+  if (ok.length < 3) return;
+  const dx = ok.reduce((a, f) => a + f.dx, 0) / ok.length, dy = ok.reduce((a, f) => a + f.dy, 0) / ok.length;
+  const cur = A.quad[0], q0 = STEADY.quad0[0], moved = Math.hypot(q0[0] + dx - cur[0], q0[1] + dy - cur[1]);
+  if (moved < 1.5) return; // no real change
+  A.quad = STEADY.quad0.map(p => [p[0] + dx, p[1] + dy]);
+  const { L, Wd } = tableDims(A.ft); A.cam = makeCam(tableCornersFor(A.rot, L, Wd), A.quad, A.W, A.H, LENS * Math.max(A.W, A.H), [A.W / 2, A.H / 2]);
+  A.box = [Math.max(0, A.box0[0] + dx), Math.max(0, A.box0[1] + dy), A.box0[2], A.box0[3]];
+  STEADY.last = [r1(dx), r1(dy)]; dbgOnce('steady', 1000, { shift: STEADY.last, n: ok.length });
+}
+const dbgOnceT = {}; function dbgOnce(k, ms, d) { const t = Date.now(); if (dbgOnceT[k] && t - dbgOnceT[k] < ms) return; dbgOnceT[k] = t; dbg(k, d); }
+
 // ---------- status ----------
 function setStatus(t, sub) { const s = $('#status'); s.innerHTML = '<span>' + t + '</span>' + (sub ? '<small>' + sub + '</small>' : '') + '<div id="down"></div>'; renderDown(); }
 function renderDown() { const d = $('#down'); if (!d || !A.tk) return; d.innerHTML = A.tk.S.gone.length ? A.tk.S.gone.map(n => '<span>' + (n === 0 ? 'cue' : n) + ' in</span>').join('') : ''; }
@@ -235,7 +309,7 @@ function statusRun() {
   const tk = A.tk, b = tk.balls(), sure = b.filter(x => x.num != null && x.sure).length, uns = b.filter(x => x.num != null && !x.sure).length, none = b.filter(x => x.num == null).length, hid = b.filter(x => x.state === 'hidden').length;
   const ms = A.timing.length ? Math.round(A.timing.reduce((a, x) => a + x, 0) / A.timing.length) : 0;
   const head = tk.S.phase === 'shot' ? 'Shot ' + tk.S.shot.n + ' · rolling…' : tk.S.phase === 'hands' ? 'Hands on the table…' : b.length ? 'Ready · ' + b.length + ' ball' + (b.length === 1 ? '' : 's') : 'Put the balls on the table';
-  const sub = [sure ? sure + ' named' : '', uns ? uns + ' unsure' : '', none ? none + ' not named yet' : '', hid ? hid + ' hidden' : '', ms ? ms + ' ms a look' : ''].filter(Boolean).join(' · ');
+  const sub = [sure ? sure + ' named' : '', uns ? uns + ' unsure' : '', none ? none + ' not named yet' : '', hid ? hid + ' hidden' : '', ms ? ms + ' ms a look' + (DET.ep === 'webgpu' ? ' (graphics chip)' : ' (' + DET.threads() + ' core' + (DET.threads() > 1 ? 's' : '') + ')') : ''].filter(Boolean).join(' · ');
   setStatus(head, sub + (none && tk.S.phase !== 'shot' ? ' · tap a ball to name it' : ''));
 }
 
@@ -263,7 +337,7 @@ function drawLoop() {
     c.beginPath(); c.arc(s[0], s[1], r, 0, Math.PI * 2); c.stroke(); c.setLineDash([]);
     if (b.state === 'moving') continue;
     const t = b.num == null ? '?' : (b.num === 0 ? 'cue' : String(b.num)) + (b.sure ? '' : '?');
-    c.font = '600 13px Inter, system-ui, sans-serif'; const tw = c.measureText(t).width + 10;
+    c.font = '600 13px system-ui, -apple-system, sans-serif'; const tw = c.measureText(t).width + 10;
     c.fillStyle = 'rgba(11,16,20,.8)'; c.fillRect(s[0] - tw / 2, s[1] - r - 21, tw, 18);
     c.fillStyle = col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(t, s[0], s[1] - r - 12);
   }
@@ -348,7 +422,7 @@ function makeZip(files) {
 function packDebug() {
   const d = new Date(DBG.t0), pad = n => String(n).padStart(2, '0'), name = 'chalkline-v3-debug-' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + '.zip', enc = new TextEncoder();
   const log = { header: header(), events: DBG.ev, dropped: DBG.drop, tracker: A.tk ? A.tk.S.events : null, shots: A.tk ? A.tk.S.shots.map(shotRow) : [], looksFormat: ['ms', 'findMs', 'readMs', 'n', 'phase', '[x, y, num, kind, score]'], looks: DBG.looks,
-    taps: A.taps.map(({ png, ...r }) => r), previous: PREV && PREV.t0 !== DBG.t0 ? PREV : null };
+    taps: A.taps.map(({ png, ...r }) => r), previous: PREV && PREV.t0 !== DBG.t0 ? PREV : null, crash: CRASH || (() => { try { return JSON.parse(localStorage.getItem(CRUMB) || 'null'); } catch (e) { return null; } })() };
   const files = [{ name: 'log.json', data: enc.encode(JSON.stringify(log)) }];
   for (const [k, v] of [...A.pics.entries()].sort()) files.push({ name: k, data: v });
   for (const t of A.taps) files.push({ name: 'taps/' + String(t.n).padStart(3, '0') + '-' + (t.label === 0 ? 'cue' : t.label) + '.png', data: t.png });

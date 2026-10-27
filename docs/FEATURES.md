@@ -56,7 +56,7 @@ the Yes entries has been checked on real shots yet. The owner has not yet review
 | CA-017 | Low-friction guided recorder | Simple prompts, automatic files, manageable exports and player truth taps for tests. | Current emphasis | First drills |  |
 | CA-018 | Local-first processing and privacy | Prefer on-device analysis; do not upload private recordings without an intentional share. | Enduring goal | Initial product | Yes (all on the phone; files leave only via Save debug) |
 | CA-019 | Session pause/resume | Handle phone calls, camera permission restarts, screen changes, heat, battery and crashes. | Planned later | Initial product |  |
-| CA-020 | Battery/heat and long-session reliability | Avoid constant heavy work; verify sustained use over realistic practice durations (including 2-hour sessions). | Enduring goal | Initial product | Not checked (about 5 looks a second when still) |
+| CA-020 | Battery/heat and long-session reliability | Avoid constant heavy work; verify sustained use over realistic practice durations (including 2-hour sessions). | Enduring goal | Initial product | Partly (V3.0.1: processor by default after graphics-chip crashes; long sessions not checked) |
 | CA-021 | Eventual native iOS/Android options | Move beyond Safari/PWA if native camera, performance or product needs justify it. | Planned later | Expansion |  |
 
 ## Table geometry & environment

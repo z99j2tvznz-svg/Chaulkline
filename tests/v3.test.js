@@ -10,22 +10,27 @@ const { serve } = require('./lib/serve.js');
 const ROOT = path.join(__dirname, '..'), PHOTO = path.join(ROOT, 'tests/fixtures/v3/owner-20261027-bunched.jpg');
 const VERSION = fs.readFileSync(path.join(ROOT, 'src/v3/app.js'), 'utf8').match(/const VERSION = '([^']+)'/)[1];
 
-async function run(rot, viewport) {
+async function run(rot, viewport, sway) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'chalk-v3-')), y4m = path.join(dir, 'cam.y4m');
-  execFileSync('python3', [path.join(ROOT, 'tests/lib/y4m.py'), PHOTO, y4m, '3', String(rot)]);
+  execFileSync('python3', [path.join(ROOT, 'tests/lib/y4m.py'), PHOTO, y4m, sway ? '90' : '3', String(rot), String(sway || 0)]);
   const srv = await serve(ROOT);
   const browser = await chromium.launch({ args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--use-file-for-fake-video-capture=' + y4m, '--autoplay-policy=no-user-gesture-required'] });
   try {
     const ctx = await browser.newContext({ viewport, permissions: ['camera'], acceptDownloads: true }), page = await ctx.newPage(), errors = [];
     page.on('pageerror', e => errors.push(String(e)));
     await page.goto(srv.url + '/index.html');
+    // sw.js makes the page cross-origin isolated (the first visit reloads once), so the finder gets several cores
+    await page.waitForFunction(() => window.crossOriginIsolated === true && window.__v3, null, { timeout: 30000 });
     assert.strictEqual((await page.textContent('#verTag')).trim(), VERSION);
     await page.click('#goBtn');
     await page.waitForFunction(() => window.__v3.A.phase === 'verify', null, { timeout: 60000 });
     assert.match(await page.textContent('#card'), /Table found/);
     await page.click('[data-act=accept]');
     await page.waitForFunction(() => window.__v3.A.phase === 'run' && window.__v3.A.looks >= 12, null, { timeout: 200000 });
-    const st = await page.evaluate(() => { const A = window.__v3.A; return { balls: A.tk.balls().map(b => ({ key: b.key, num: b.num, sure: b.sure })), shots: A.tk.S.shots.length, phase: A.tk.S.phase }; });
+    const st = await page.evaluate(() => { const A = window.__v3.A, D = window.__v3.DBG; return { balls: A.tk.balls().map(b => ({ key: b.key, num: b.num, sure: b.sure, state: b.state })), shots: A.tk.S.shots.length, phase: A.tk.S.phase,
+      threads: DET.threads(), ep: DET.ep, hands: A.tk.S.events.filter(e => e.k === 'hands').length, steady: D.ev.filter(e => e.k === 'steady').map(e => e.shift) }; });
+    assert.ok(st.threads > 1, 'finder threads: ' + st.threads); assert.strictEqual(st.ep, 'wasm');
+    if (sway) { assert.ok(st.steady.some(s => Math.abs(s[0]) >= 4), 'the outline followed the sway: ' + JSON.stringify(st.steady)); assert.strictEqual(st.hands, 0); assert.ok(st.balls.every(b => b.state === 'rest'), 'balls rest while the phone sways'); }
     assert.ok(st.balls.length >= 7, 'balls on the table: ' + st.balls.length);
     assert.ok(st.balls.some(b => b.num === 0 && b.sure), 'the cue ball is named');
     assert.ok(st.balls.filter(b => b.num != null).length >= 4, 'named: ' + JSON.stringify(st.balls));
@@ -50,3 +55,4 @@ async function run(rot, viewport) {
 
 test('V3 sideways: table, balls, names, a tap that sticks, Save debug', { timeout: 400000 }, async () => { console.log('sideways:', JSON.stringify(await run(0, { width: 956, height: 440 }))); });
 test('V3 upright: the same with the phone standing up', { timeout: 400000 }, async () => { console.log('upright:', JSON.stringify(await run(90, { width: 440, height: 956 }))); });
+test('V3 on a swaying phone: the outline follows, the balls stay at rest, no hands or shots', { timeout: 500000 }, async () => { const st = await run(0, { width: 956, height: 440 }, 10); console.log('sway:', JSON.stringify({ steady: st.steady.slice(-6), threads: st.threads })); });
