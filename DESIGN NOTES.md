@@ -718,3 +718,26 @@ Plan and reasons: `docs/V3-PLAN.md`. V2.3.3 stays at `/v2/`, byte for byte as it
 - Brainstorm, not built (owner): table size stays the standard 78 x 39 in for a 7 ft table unless evidence shows the
   owner's tape measurement (79.06 x 39.03) is better. Table fit from cushion edges + diamonds (+ balls when present),
   to replace corner finding; not started.
+
+## V3.0.3 (Oct 27) — balls going in, the cue ball kept, the 9 on the rail
+- Owner's V3.0.2 session (Oct 26, 23:50; 18 shots, 9-ball): "missed pocketing a couple times, called a ball in that
+  wasn't, kept losing the cue ball, the 9 on the rail lost its name and couldn't be tapped, a one-rail miss wasn't seen
+  as a shot". All six matched the log. Truth for every shot was taken from the shot pictures
+  (`tests/fixtures/v3/session-20261026-2350.json`, scored by `tools/v3/score.js`). Live V3.0.2: 11 of 18 right,
+  5 balls missed, 5 called in that were not. Replayed with V3.0.3: 17 of 18 right, 1 missed, none called in wrongly.
+- Changes, all in `src/track.js` except the last:
+  1. The cloth edge allows the outline to be an inch off (the 9 frozen to the near rail came out 0.3 in from it and was
+     dropped as "off the cloth" every other look).
+  2. Fast balls: a ball lost while rolling may be found again up to its speed times the time since; a new spot that is
+     rolling fast, right after a ball went hidden, is that ball (the cue ball went 24 in in one look on the one-rail
+     miss, so no shot started). When two balls went hidden at once, white or not tells which.
+  3. A ball lost rolling toward a pocket is looked for along its path (up to half a second on, not through a cushion).
+     A ball resting by a pocket that vanishes the look another ball reaches it was knocked in.
+  4. In a collision the cue ball's track took the struck ball's spot (the 4 going in became "cue in"). Contacts are now
+     found after the fact along each rolling ball's path, and both balls' speeds are measured from the contact; a
+     speed that turned round (off a cushion) is taken as it is, not smoothed. White or not is part of every match.
+  5. Something not yet confirmed as a ball that vanishes at a pocket mid-shot is noted; 2.5 s after the shot, if as
+     many numbers are missing from the table as such entries were noted, those numbers went in.
+  6. `src/v3/app.js`: the number reader runs every look (10 ms against 220 for the finder), so the cue ball can be told
+     from the rest during a shot too. Shot looks are logged as "S" (they read "s", like still).
+- Left: the 8 at 7:37, sent out of sight right behind the cue ball and never seen again.

@@ -222,3 +222,32 @@ test('the owner\'s V3.0.1 session (Oct 26, 23:12) replayed: every shot ends with
   for (const s of tk.S.shots) assert.ok(s.t1 - s.t0 <= 8, 'shot ' + s.n + ' lasted ' + (s.t1 - s.t0).toFixed(1) + ' s');
   assert.ok(!tk.S.events.some(e => e.k === 'pocketed' && tk.S.events.some(f => f.k === 'back' && f.key === e.key && f.t > e.t - 3 && f.t < e.t)), 'a ball seen again was then called in');
 });
+
+test('a ball by a pocket that vanishes the look the cue ball reaches it was knocked in (Oct 27: the 6, 3 in from the corner)', () => {
+  const tk = makeTracker(P), others = [{ num: 8, x: 18.7, y: 36 }, { num: 3, x: 20.7, y: 13.3 }];
+  let t = settle(tk, 0, [{ num: 0, x: 44, y: 10.9 }, { num: 6, x: 74.5, y: 35.4 }, ...others], 3, 0.25);
+  // the cue ball at about 45 in/s; the 6 is gone the look it gets there, and the cue ball comes back off the end rail
+  const cue = [[51.9, 17.2], [66.5, 28.5], [75.9, 32.8], [72.4, 30.6], [69.8, 28.8], [66.8, 26.9], [64.1, 24.9], [61.8, 23.3], [60.5, 22.4], [60, 22], [60, 22]];
+  cue.forEach(([x, y], i) => { look(tk, t, [{ num: 0, x, y, moving: true }, ...(i < 2 ? [{ num: 6, x: 74.5, y: 35.4 }] : []), ...others], true, 0.1); t += 0.25; });
+  settle(tk, t, [{ num: 0, x: 60, y: 22 }, ...others], 4, 0.25);
+  assert.strictEqual(tk.S.shots.length, 1, JSON.stringify(tk.S.events.filter(e => e.k !== 'named').slice(-10)));
+  assert.deepStrictEqual(tk.S.shots[0].made.map(m => [m.num, m.pocket]), [[6, 5]]); assert.strictEqual(tk.S.shots[0].scratch, false);
+});
+
+test('the cue ball into the 4 faster than it was rolling: no swap, the 4 goes in, not the cue ball (Oct 27, 3:52)', () => {
+  const tk = makeTracker(P), others = [{ num: 5, x: 67.3, y: 24.8 }, { num: 7, x: 20.6, y: 13.2 }, { num: 6, x: 52.6, y: 3.1 }];
+  let t = settle(tk, 0, [{ num: 0, x: 60.6, y: 27.6 }, { num: 4, x: 33.9, y: 12.2 }, ...others], 3, 0.25);
+  // the owner's looks: the 4 is knocked toward the bottom-left corner (0, 0) and gone after two looks; the cue ball rolls on to 42, 2.7
+  const cue = [[50.8, 21.8], [36.1, 12.1], [37.2, 10.4], [38.3, 8.7], [39.3, 7], [40.1, 5.8], [40.7, 4.7], [41.5, 3.6], [42, 2.7], [42, 2.7]], four = [[33.9, 12.2], [28.7, 10], [15.2, 5.2]];
+  cue.forEach(([x, y], i) => { look(tk, t, [{ num: 0, x, y, moving: true }, ...(four[i] ? [{ num: 4, x: four[i][0], y: four[i][1], moving: i > 0 }] : []), ...others], true, 0.1); t += 0.25; });
+  settle(tk, t, [{ num: 0, x: 42, y: 2.7 }, ...others], 4, 0.25);
+  assert.strictEqual(tk.S.shots.length, 1, JSON.stringify(tk.S.events.filter(e => e.k !== 'named').slice(-10)));
+  const sh = tk.S.shots[0]; assert.deepStrictEqual(sh.made.map(m => m.num), [4]); assert.strictEqual(sh.scratch, false); assert.strictEqual(sh.firstNum, 4);
+});
+
+test('the owner\'s V3.0.2 session (Oct 26, 23:50) replayed against the pictures: 17 of 18 shots right, nothing called in that was not', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261026-2350.json'), 'utf8')));
+  // the one left: the 8 at 7:37, sent out of sight behind the cue ball and never seen again. Live V3.0.2 got 11 right.
+  assert.strictEqual(r.shots, 18); assert.ok(r.right >= 17, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
+});

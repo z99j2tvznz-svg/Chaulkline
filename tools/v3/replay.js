@@ -4,8 +4,8 @@
 // usage: node tools/v3/replay.js <log.json> [--events]
 const fs = require('fs'), path = require('path');
 const { makeP } = require(path.join(__dirname, '../../src/core.js')), { makeTracker } = require(path.join(__dirname, '../../src/track.js'));
-function replay(d, ft) {
-  const tk = makeTracker(makeP(ft || (d.header && d.header.ft) || 7));
+function replay(d, ft, opts) {
+  const tk = makeTracker(makeP(ft || (d.header && d.header.ft) || 7), opts);
   const probs = (n, k) => { const q = new Array(11).fill(0); if (k === 'n') { q[10] = 0.8; q[n] = 0.2; return q; } const top = k === 's' ? 0.9 : 0.5; q.fill((1 - top - 0.01) / 9); q[n] = top; q[10] = 0.01; return q; };
   for (const L of d.looks) {
     const spots = L[5].map(([x, y, num, kind, score]) => ({ x, y, px: x * 20, py: y * 20, r: 13.5, score, kind: kind === 's' ? 'sure' : kind === 'u' ? 'unsure' : kind === 'n' ? 'not_a_ball' : null, p: num == null ? null : probs(num, kind) }));

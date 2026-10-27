@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.2';
+const VERSION = 'V3.0.3';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -216,12 +216,13 @@ async function look() {
   const found = await DET.find(A.frame, A.W, A.H, { box: A.box, kmax: A.kmax }), t1 = performance.now();
   const on = [];
   for (const s of found) { const q = A.cam.unproj(s.px, s.py, R); s.x = q[0]; s.y = q[1]; if (s.x > -3 && s.y > -3 && s.x < P.L + 3 && s.y < P.W + 3) on.push(s); }
-  // the reader runs while the table is still or settling, never on blurred rolling balls
-  const read = tk.S.phase !== 'shot' || on.length <= 3; if (read) await DET.read(A.fctx, on);
+  // the reader runs every look (about 10 ms against 220 for the finder on the owner's phone). During a shot its numbers
+  // are not votes (the tracker votes on resting balls only), but white or not still tells the cue ball from the rest
+  const read = true; await DET.read(A.fctx, on);
   const t2 = performance.now(), before = tk.S.phase;
   tk.update(t, on, { read });
   A.looks++;
-  DBG.looks.push([Date.now() - DBG.t0, Math.round(t1 - t0), Math.round(t2 - t1), on.length, tk.S.phase[0], on.map(s => [r1(s.x), r1(s.y), s.num == null ? null : s.num, s.kind ? s.kind[0] : '-', r2(s.score)])]);
+  DBG.looks.push([Date.now() - DBG.t0, Math.round(t1 - t0), Math.round(t2 - t1), on.length, tk.S.phase === 'shot' ? 'S' : tk.S.phase[0], on.map(s => [r1(s.x), r1(s.y), s.num == null ? null : s.num, s.kind ? s.kind[0] : '-', r2(s.score)])]);
   if (DBG.looks.length > 4000) DBG.looks.splice(0, 400);
   A.timing.push(t1 - t0); if (A.timing.length > 30) A.timing.shift();
   if (before !== 'shot' && tk.S.phase === 'shot') onShotStart();
