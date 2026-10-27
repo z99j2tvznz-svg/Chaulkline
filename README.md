@@ -16,6 +16,7 @@ single web page, `index.html`, served by GitHub Pages and added to the home scre
 | `data/sessions.csv` | The real debug sessions: folder name, the name used in the design notes (real1 ...), app version, table, what was played. |
 | `library/manifest.csv` | Hand-checked ball labels (2,277 spots, sessions real1-real6): picture, position, the app's guess and the true label. |
 | `DESIGN NOTES.md` | The running design log: every version, what failed in real sessions, and what was decided. |
+| `archive/` | Set-aside work kept for reference only (ChatGPT's Fieldwork and PhotoLab experiments). Not built or tested. |
 
 The session pictures themselves are not in this repo (they are photos of the owner's home and a pool hall, and this
 repo is public). They live in the project's shared files under `chalkline-data/sessions/`, one folder per "Save debug"
