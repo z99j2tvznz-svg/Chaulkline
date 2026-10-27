@@ -89,6 +89,11 @@ button { font: inherit; color: inherit; }
       <input type="file" id="photo" accept="image/*" hidden>
     </div>
     <div id="homeMsg"></div>
+    <div class="glass card" id="crash" hidden>
+      <h2>Last time the page stopped unexpectedly</h2>
+      <p id="crashText" style="margin:0 0 10px;color:var(--muted)"></p>
+      <div class="row"><button class="btn primary" id="crashSave">Save that report</button></div>
+    </div>
   </div>
 </section>
 
@@ -112,7 +117,7 @@ button { font: inherit; color: inherit; }
 <script src="../vendor/ort/ort.webgpu.min.js"></script>
 <script src="../src/detect.js"></script>
 <script>
-const CHECK_VERSION = 'check 1';
+const CHECK_VERSION = 'check 2';
 const BASE = new URL('../', location.href).href;
 const SIZES = [{ file: 'models/detector-v1-960x544.onnx', w: 960, h: 544, fixed: true, name: '960' },
   { file: 'models/detector-v1-640x384.onnx', w: 640, h: 384, fixed: true, name: '640' },
@@ -135,7 +140,7 @@ function paintBar() {
   $('#sEngine').innerHTML = '<b>' + (DET.ep === 'webgpu' ? 'GPU' : 'CPU') + '</b> · ' + DET.size.join('×');
 }
 async function openCamera() {
-  const st = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+  const st = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }, audio: false });
   S.stream = st; vid.srcObject = st; await vid.play();
   for (let i = 0; i < 60 && !vid.videoWidth; i++) await new Promise(r => setTimeout(r, 50));
   const tr = st.getVideoTracks()[0];
@@ -149,7 +154,7 @@ async function start(fromPhoto) {
     if (!window.ort) throw new Error('The model library did not load. Check the connection and reload.');
     if (!fromPhoto) { if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) throw new Error('This browser cannot reach the camera. Open the page in Safari from its https address.'); await openCamera(); }
     await loadModels();
-    $('#home').hidden = true; $('#view').hidden = false; vid.hidden = !!fromPhoto; still.hidden = !fromPhoto; S.live = true; S.src = fromPhoto ? still : vid; loop();
+    $('#home').hidden = true; $('#view').hidden = false; vid.hidden = !!fromPhoto; still.hidden = !fromPhoto; S.live = true; S.src = fromPhoto ? still : vid; $('#crash').hidden = true; crumb('start'); loop();
   } catch (e) {
     const t = e && e.name === 'NotAllowedError' ? 'Camera access was blocked. In Safari tap aA, then Website Settings, then Camera, then Allow. Reload and try again.' : 'Could not start: ' + (e && (e.message || e.name) || e);
     msg(t, true); log('error', { m: String(t).slice(0, 200) });
@@ -163,26 +168,52 @@ function grab() {
   const src = S.src, W = src === vid ? vid.videoWidth : still.naturalWidth, H = src === vid ? vid.videoHeight : still.naturalHeight; if (!W || !H) return null;
   const cv = S.frame; if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
   const c = cv.getContext('2d', { willReadFrequently: true }); c.drawImage(src, 0, 0, W, H); S.W = W; S.H = H;
-  return c.getImageData(0, 0, W, H);
+  return c; // the reader reads only its crops out of it
 }
 async function look() {
   const img = grab(); if (!img) return null;
   const t0 = performance.now(), spots = await DET.find(S.frame, S.W, S.H), t1 = performance.now(); await DET.read(img, spots); const t2 = performance.now();
   return { spots, find: t1 - t0, read: t2 - t1, at: t2 };
 }
+// At most about 3 looks a second: a check page does not need more, and running the finder flat out heats the phone and
+// can make Safari close the page.
+const GAP_MS = 330;
 async function loop() {
   if (!S.live) return;
-  if (!S.paused && !S.busy && !S.speed) {
+  const t0 = performance.now();
+  if (!S.paused && !S.busy && !S.speed && !document.hidden) {
     S.busy = true;
     try {
+      crumb('look');
       const L = await look();
-      if (L) { S.balls = L.spots; S.last = L; S.times.push(L); if (S.times.length > 20) S.times.shift(); status(); draw(); }
-    } catch (e) { log('error', { m: String(e && e.message || e).slice(0, 200) }); $('#sTime').textContent = 'Error: ' + String(e && e.message || e).slice(0, 80); }
+      if (L) { S.balls = L.spots; S.last = L; S.looks = (S.looks || 0) + 1; S.times.push(L); if (S.times.length > 20) S.times.shift(); status(); draw(); crumb('done'); }
+    } catch (e) { log('error', { m: String(e && e.message || e).slice(0, 200) }); $('#sTime').textContent = 'Error: ' + String(e && e.message || e).slice(0, 80); crumb('error'); }
     S.busy = false;
   }
   if (S.src === still && S.last && !S.speed) { S.paused = true; $('#bFreeze').textContent = 'Look again'; }
-  setTimeout(loop, 30);
+  setTimeout(loop, Math.max(30, GAP_MS - (performance.now() - t0)));
 }
+// Notes kept in the phone's storage after every look, so if Safari closes the page we still know where it stopped.
+const CRUMB = 'chalkline-check-crumb';
+function crumb(step) {
+  try {
+    const T = S.times;
+    localStorage.setItem(CRUMB, JSON.stringify({ page: CHECK_VERSION, running: S.live, step, at: new Date().toISOString(), engine: DET.ep, size: DET.size, looks: S.looks || 0,
+      balls: S.balls.length, picture: [S.W, S.H], timing: T.slice(-8).map(t => [Math.round(t.find), Math.round(t.read)]), speed: S.speed || S.speedDone || null, device: navigator.userAgent, log: S.log.slice(-40) }));
+  } catch (e) { }
+}
+function lastCrash() { try { const c = JSON.parse(localStorage.getItem(CRUMB) || 'null'); return c && c.running ? c : null; } catch (e) { return null; } }
+function endCrumb() { try { const c = JSON.parse(localStorage.getItem(CRUMB) || 'null'); if (c) { c.running = false; localStorage.setItem(CRUMB, JSON.stringify(c)); } } catch (e) { } }
+window.addEventListener('pagehide', endCrumb);
+document.addEventListener('visibilitychange', () => { if (S.live) crumb(document.hidden ? 'hidden' : 'visible'); });
+(function showCrash() {
+  const c = lastCrash(); if (!c) return;
+  $('#crash').hidden = false;
+  $('#crashText').textContent = 'It stopped after ' + c.looks + ' looks, on the ' + (c.engine === 'webgpu' ? 'GPU' : 'CPU') + ' engine at size ' + (c.size || []).join('×') + ', while ' + (c.step === 'look' ? 'looking at the table' : c.step === 'hidden' ? 'Safari was in the background (the phone may simply have closed it)' : c.step.startsWith('speed') ? 'running the speed test (' + c.step.slice(6) + ')' : 'between looks') + ', with ' + c.balls + ' balls in view.' +
+    (c.engine === 'webgpu' ? ' This time it will start on the CPU engine instead; you can switch back with the Engine button.' : '');
+  if (c.engine === 'webgpu') S.ep = 'wasm';
+  $('#crashSave').onclick = () => shareFiles([new File([JSON.stringify(c, null, 1)], 'chalkline-check-crash-' + c.at.replace(/[-:]/g, '').slice(0, 13).replace('T', '-') + '.json', { type: 'application/json' })]);
+})();
 function status() {
   const T = S.times; if (!T.length) return;
   const f = med(T.map(t => t.find)), r = med(T.map(t => t.read)), span = T.length > 1 ? (T[T.length - 1].at - T[0].at) / (T.length - 1) : 0;
@@ -218,7 +249,7 @@ $('#pick').onclick = () => { $('#pick').hidden = true; };
 $('#bSize').onclick = async () => { const i = SIZES.indexOf(S.size); S.size = SIZES[(i + 1) % SIZES.length]; S.times = []; await loadModels(); if (S.src === still) { S.paused = false; } };
 $('#bEngine').onclick = async () => { S.ep = S.ep === 'wasm' ? 'auto' : 'wasm'; S.times = []; await loadModels(); };
 $('#bFreeze').onclick = () => { if (S.src === still) { S.paused = false; return; } S.paused = !S.paused; $('#bFreeze').textContent = S.paused ? 'Go on' : 'Pause'; if (S.paused) vid.pause(); else vid.play(); };
-$('#bBack').onclick = () => { S.live = false; if (S.stream) S.stream.getTracks().forEach(t => t.stop()); $('#view').hidden = true; $('#home').hidden = false; msg(''); };
+$('#bBack').onclick = () => { S.live = false; endCrumb(); if (S.stream) S.stream.getTracks().forEach(t => t.stop()); $('#view').hidden = true; $('#home').hidden = false; msg(''); };
 
 // Speed test: each finder size on each engine, on the current picture. 2 warm-up looks, then 6 timed.
 async function speedTest() {
@@ -227,7 +258,7 @@ async function speedTest() {
   try {
     for (const ep of eps) for (const size of SIZES) {
       box.innerHTML = '<h3>Speed test</h3><p>Testing ' + (ep === 'webgpu' ? 'GPU' : 'CPU') + ' at size ' + size.name + '… keep the phone still.</p>';
-      S.size = size; S.ep = ep; const info = await loadModels(); if (ep === 'webgpu' && info.ep !== 'webgpu') continue;
+      S.size = size; S.ep = ep; crumb('speed ' + ep + ' ' + size.name); const info = await loadModels(); if (ep === 'webgpu' && info.ep !== 'webgpu') continue;
       const f = [], r = [];
       for (let i = 0; i < 8; i++) { const L = await look(); if (L && i >= 2) { f.push(L.find); r.push(L.read); } }
       S.speed.push({ ep: info.ep, size: size.name, find: Math.round(med(f)), read: Math.round(med(r)), balls: S.balls.length, sure: S.balls.filter(b => b.kind === 'sure').length });
@@ -250,7 +281,9 @@ async function save() {
     balls: S.balls.map(b => ({ px: r1(b.px), py: r1(b.py), r: r1(b.r), score: Math.round(b.score * 100) / 100, kind: b.kind, num: b.num, p: b.p.map(v => Math.round(v * 1000) / 1000) })), log: S.log };
   const json = new File([JSON.stringify(data, null, 1)], 'chalkline-check-' + stamp + '.json', { type: 'application/json' });
   const jpg = await new Promise(res => S.frame.toBlob(b => res(new File([b], 'chalkline-check-' + stamp + '.jpg', { type: 'image/jpeg' })), 'image/jpeg', 0.9));
-  const files = [json, jpg];
+  await shareFiles([json, jpg]);
+}
+async function shareFiles(files) {
   if (navigator.canShare && navigator.canShare({ files })) { try { await navigator.share({ files }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
   for (const f of files) { const a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); }
 }

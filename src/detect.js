@@ -51,7 +51,7 @@ const DET = (() => {
     c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'medium';
     if (rot) { c.setTransform(0, -k, k, 0, left, top + k * W); c.drawImage(src, 0, 0, W, H); c.setTransform(1, 0, 0, 1, 0, 0); } // (x, y) -> (y, W - x)
     else c.drawImage(src, 0, 0, W, H, left, top, nw, nh);
-    const px = c.getImageData(0, 0, iw, ih).data, n = iw * ih, x = new Float32Array(3 * n);
+    const px = c.getImageData(0, 0, iw, ih).data, n = iw * ih, x = st.buf && st.buf.length === 3 * n ? st.buf : (st.buf = new Float32Array(3 * n)); // one input buffer, reused: the phone is short of memory
     for (let i = 0, j = 0; i < n; i++, j += 4) { x[i] = px[j] / 255; x[n + i] = px[j + 1] / 255; x[2 * n + i] = px[j + 2] / 255; }
     const back = rot ? (u, v) => [W - (v - top) / k, (u - left) / k] : (u, v) => [(u - left) / k, (v - top) / k];
     return { x, k, back, rot };
@@ -94,14 +94,18 @@ const DET = (() => {
     return out;
   }
   // The reader's crop: a square 3.2 radii wide on the spot, cut at whole pixels; outside the picture is black.
-  function crop(img, px, py, r) {
-    const s = CROP * r, x0 = Math.floor(px - s / 2), y0 = Math.floor(py - s / 2), n = Math.max(1, Math.ceil(s)), a = new Uint8Array(n * n * 3), W = img.width, H = img.height, d = img.data;
+  // src: ImageData of the whole picture, or the 2D context of a canvas holding it (then only the crop is read out, which
+  // keeps memory low on the phone; outside the canvas reads as transparent black, the same as black here).
+  function crop(src, px, py, r) {
+    const s = CROP * r, x0 = Math.floor(px - s / 2), y0 = Math.floor(py - s / 2), n = Math.max(1, Math.ceil(s)), a = new Uint8Array(n * n * 3);
+    if (src.getImageData) { const d = src.getImageData(x0, y0, n, n).data; for (let i = 0, j = 0; i < n * n; i++, j += 3) { a[j] = d[i * 4]; a[j + 1] = d[i * 4 + 1]; a[j + 2] = d[i * 4 + 2]; } return { a, n }; }
+    const W = src.width, H = src.height, d = src.data;
     for (let y = 0; y < n; y++) { const sy = y0 + y; if (sy < 0 || sy >= H) continue; for (let x = 0; x < n; x++) { const sx = x0 + x; if (sx < 0 || sx >= W) continue; const i = (sy * W + sx) * 4, j = (y * n + x) * 3; a[j] = d[i]; a[j + 1] = d[i + 1]; a[j + 2] = d[i + 2]; } }
     return { a, n };
   }
   function softmax(z, T) { const v = Array.from(z, x => x / T), mx = Math.max(...v), e = v.map(x => Math.exp(x - mx)), t = e.reduce((s, x) => s + x, 0); return e.map(x => x / t); }
   // Number for each spot: adds p (11 probabilities), num (0 = cue, 1-9), pTop, nb (not-a-ball) and kind
-  // ('sure' | 'unsure' | 'not_a_ball'). img: ImageData of the same picture the spots came from.
+  // ('sure' | 'unsure' | 'not_a_ball'). img: ImageData or 2D context of the same picture the spots came from.
   async function read(img, spots) {
     if (!spots.length) return spots;
     const ort = window.ort, x = new Float32Array(spots.length * 3 * SIDE * SIDE), P = SIDE * SIDE;
