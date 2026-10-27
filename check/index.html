@@ -114,14 +114,16 @@ button { font: inherit; color: inherit; }
   </div>
 </section>
 
-<script src="../vendor/ort/ort.webgpu.min.js"></script>
-<script src="../src/detect.js"></script>
+<script src="../vendor/ort/ort.webgpu.min.js?v=1.29.0"></script>
+<script src="../src/detect.js?v=check3"></script>
 <script>
-const CHECK_VERSION = 'check 2';
+const CHECK_VERSION = 'check 3', NEED_DET = 'det 3';
 const BASE = new URL('../', location.href).href;
-const SIZES = [{ file: 'models/detector-v1-960x544.onnx', w: 960, h: 544, fixed: true, name: '960' },
-  { file: 'models/detector-v1-640x384.onnx', w: 640, h: 384, fixed: true, name: '640' },
-  { file: 'models/detector-v1-1280x736.onnx', w: 1280, h: 736, fixed: true, name: '1280' }];
+// Default 1280: on the owner's photo of Oct 27 (low side view, balls bunched) 960 missed the purple 4 behind the others and
+// 1280 found it. 1920 needs the camera's full 1080p picture and is in the speed test to see what it costs.
+const SIZES = [{ file: 'models/detector-v1-1280x736.onnx', w: 1280, h: 736, fixed: true, name: '1280' },
+  { file: 'models/detector-v1-960x544.onnx', w: 960, h: 544, fixed: true, name: '960' },
+  { file: 'models/detector-v1-1920x1088.onnx', w: 1920, h: 1088, fixed: true, name: '1920' }];
 const $ = s => document.querySelector(s), vid = $('#vid'), still = $('#still'), ov = $('#ov');
 const S = { size: SIZES[0], ep: 'auto', live: false, paused: false, busy: false, stream: null, src: null, W: 0, H: 0,
   balls: [], times: [], last: null, cam: null, speed: null, log: [], frame: document.createElement('canvas') };
@@ -140,7 +142,7 @@ function paintBar() {
   $('#sEngine').innerHTML = '<b>' + (DET.ep === 'webgpu' ? 'GPU' : 'CPU') + '</b> · ' + DET.size.join('×');
 }
 async function openCamera() {
-  const st = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }, audio: false });
+  const st = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 } }, audio: false });
   S.stream = st; vid.srcObject = st; await vid.play();
   for (let i = 0; i < 60 && !vid.videoWidth; i++) await new Promise(r => setTimeout(r, 50));
   const tr = st.getVideoTracks()[0];
@@ -152,6 +154,7 @@ async function start(fromPhoto) {
   $('#go').disabled = $('#photoBtn').disabled = true;
   try {
     if (!window.ort) throw new Error('The model library did not load. Check the connection and reload.');
+    if (!window.DET || DET.VERSION !== NEED_DET) throw new Error('Safari mixed an old copy of this page with the new one. Close this tab, open the link again, and check the title says ' + CHECK_VERSION + '.');
     if (!fromPhoto) { if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) throw new Error('This browser cannot reach the camera. Open the page in Safari from its https address.'); await openCamera(); }
     await loadModels();
     $('#home').hidden = true; $('#view').hidden = false; vid.hidden = !!fromPhoto; still.hidden = !fromPhoto; S.live = true; S.src = fromPhoto ? still : vid; $('#crash').hidden = true; crumb('start'); loop();

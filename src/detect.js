@@ -4,6 +4,7 @@
 // "Challenger B"), a small network on a 40 x 40 crop of 3.2 ball radii: right 97% of the time when sure, and the 9 is no
 // longer read as the cue ball on the test pictures (0 of 210, the old reader 120). Both need window.ort (vendor/ort).
 const DET = (() => {
+  const VERSION = 'det 3'; // pages check this, so a copy of this file Safari kept from before cannot be mixed with a newer page
   const CLASSES = ['cue', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'not a ball'];
   const NB = 10, READ_T = 0.6674199270850172, NB_T = 0.5, P_T = 0.6; // reader temperature and decision rule (benchmark config)
   const FIND_T = 0.35, NMS_IOU = 0.7, SIDE = 40, CROP = 3.2; // finder threshold of the v0.4 baseline (results barely change 0.25-0.7)
@@ -120,7 +121,7 @@ const DET = (() => {
     });
     return spots;
   }
-  return { load, setSize, find, read, letterbox, crop, resize, CLASSES, get ep() { return st.ep; }, get size() { return [st.w, st.h]; }, get fixed() { return st.fixed; } };
+  return { VERSION, load, setSize, find, read, letterbox, crop, resize, CLASSES, get ep() { return st.ep; }, get size() { return [st.w, st.h]; }, get fixed() { return st.fixed; } };
 })();
 if (typeof window !== 'undefined') window.DET = DET;
 if (typeof module !== 'undefined') module.exports = { DET };
