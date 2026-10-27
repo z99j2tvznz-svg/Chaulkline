@@ -9,7 +9,7 @@ const { chromium } = require('playwright');
 const { serve } = require('./lib/serve.js');
 
 const ROOT = path.join(__dirname, '..'), FIX = path.join(ROOT, 'tests/fixtures/v3');
-const frames = fs.readdirSync(FIX).filter(f => f.endsWith('.json') && f !== 'reference-detections.json').map(f => f.slice(0, -5));
+const frames = fs.readdirSync(FIX).filter(f => f.endsWith('-end.json')).map(f => f.slice(0, -5)); // the 14 verified frames
 const REF = JSON.parse(fs.readFileSync(path.join(FIX, 'reference-detections.json'), 'utf8'));
 const jpgOf = name => fs.readdirSync(FIX).find(f => f.endsWith('.jpg') && f.replace(/\./g, '_').slice(0, -4) === name);
 
@@ -73,6 +73,30 @@ test('check page: a photo gets rings, an upright photo is turned for the finder,
     assert.ok(same >= flat.length - 1, 'upright picture: ' + same + ' of ' + flat.length + ' balls the same');
     const dl = page.waitForEvent('download'); await page.click('#bSave'); const d = await dl;
     assert.match(d.suggestedFilename(), /^chalkline-check-.*\.(json|jpg)$/);
+    assert.deepStrictEqual(errors, []);
+  } finally { await browser.close(); srv.close(); }
+});
+
+test('table strip on the owner\'s bunched photo: shared-weights graph, 8 of 10 balls, same when the phone is upright', { timeout: 300000 }, async () => {
+  const srv = await serve(ROOT), browser = await chromium.launch();
+  try {
+    const page = await browser.newPage(), errors = []; page.on('pageerror', e => errors.push(String(e)));
+    await page.goto(srv.url + '/check/index.html'); await page.waitForFunction(() => window.ort && window.DET);
+    const r = await page.evaluate(async () => {
+      const T = await (await fetch('../tests/fixtures/v3/owner-20261027-bunched.truth.json')).json(), [bx, by, bw, bh] = T.tableBox, sh = DET.pickShape(bw, bh);
+      await DET.load({ base: new URL('../', location.href).href, ep: 'wasm', finder: sh });
+      const im = new Image(); im.src = '../tests/fixtures/v3/owner-20261027-bunched.jpg'; await im.decode();
+      const cv = document.createElement('canvas'); cv.width = im.naturalWidth; cv.height = im.naturalHeight; cv.getContext('2d').drawImage(im, 0, 0);
+      const spots = await DET.find(cv, cv.width, cv.height, { box: T.tableBox, kmax: 1.5 });
+      const found = Object.entries(T.balls).filter(([n, [x, y]]) => spots.some(s => Math.hypot(s.px - x, s.py - y) < 7)).map(([n]) => n);
+      const H = cv.height, up = document.createElement('canvas'); up.width = H; up.height = cv.width; const u = up.getContext('2d'); u.translate(H, 0); u.rotate(Math.PI / 2); u.drawImage(cv, 0, 0);
+      const us = await DET.find(up, H, cv.width, { box: [H - (by + bh), bx, bh, bw], kmax: 1.5 });
+      const ufound = Object.entries(T.balls).filter(([n, [x, y]]) => us.some(s => Math.hypot(s.py - x, (H - s.px) - y) < 7)).map(([n]) => n);
+      return { shape: [sh.w, sh.h], found, ufound };
+    });
+    console.log('bunched photo:', r);
+    assert.deepStrictEqual(r.shape, [1568, 352]);
+    assert.ok(r.found.length >= 8, 'found ' + r.found); assert.deepStrictEqual(r.ufound.sort(), r.found.sort());
     assert.deepStrictEqual(errors, []);
   } finally { await browser.close(); srv.close(); }
 });
