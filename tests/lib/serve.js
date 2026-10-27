@@ -1,6 +1,6 @@
 // Tiny static file server for the browser tests: serves the repo root, and /data/ from CHALKLINE_DATA if set.
 const http = require('node:http'), fs = require('node:fs'), path = require('node:path');
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png', '.txt': 'text/plain', '.mp4': 'video/mp4', '.csv': 'text/csv' };
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png', '.txt': 'text/plain', '.mp4': 'video/mp4', '.csv': 'text/csv', '.mjs': 'text/javascript', '.wasm': 'application/wasm' };
 function serve(root, dataDir) {
   return new Promise(resolve => {
     const srv = http.createServer((req, res) => {

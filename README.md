@@ -16,6 +16,9 @@ single web page, `index.html`, served by GitHub Pages and added to the home scre
 | `data/sessions.csv` | The real debug sessions: folder name, the name used in the design notes (real1 ...), app version, table, what was played. |
 | `library/manifest.csv` | Hand-checked ball labels (2,277 spots, sessions real1-real6): picture, position, the app's guess and the true label. |
 | `DESIGN NOTES.md` | The running design log: every version, what failed in real sessions, and what was decided. |
+| `check/index.html` | V3 check page: the new ball finder and number reader live on the phone, with a speed test. Opens at `/check/`. |
+| `src/detect.js` | V3 ball finder (detector-v1) and number reader (reader v2) running in the browser. |
+| `models/`, `vendor/ort/` | The two trained models and ONNX Runtime Web, which runs them in Safari. Each has a README saying where it came from. |
 | `archive/` | Set-aside work kept for reference only (ChatGPT's Fieldwork and PhotoLab experiments). Not built or tested. |
 
 The session pictures themselves are not in this repo (they are photos of the owner's home and a pool hall, and this

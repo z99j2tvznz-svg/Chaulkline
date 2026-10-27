@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b1014">
+<title>Chalkline Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+<style>
+/* V3 check page: the new ball finder and number reader on the phone. Same look as the app: dark, glass, one teal accent. */
+:root {
+  color-scheme: dark;
+  --bg: #0b1014; --fg: #eaf1f4; --muted: #8fa0aa; --line: rgba(255,255,255,.10);
+  --accent: #59d6e8; --on-accent: #04161a; --amber: #ffb84d; --good: #5be3a0; --bad: #ff7a70;
+  --glass: rgba(16,24,30,.62); --glass-line: rgba(255,255,255,.13);
+  --f: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; --f-mono: ui-monospace, Menlo, monospace;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--fg); font: 400 15px/1.45 var(--f); -webkit-text-size-adjust: 100%; }
+* { box-sizing: border-box; }
+button { font: inherit; color: inherit; }
+.glass { background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); border-radius: 14px; }
+.btn { border: 1px solid var(--glass-line); background: rgba(255,255,255,.08); border-radius: 12px; padding: 12px 16px; min-height: 46px; cursor: pointer; font-weight: 500; }
+.btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 600; }
+.btn:disabled { opacity: .45; }
+
+#home { min-height: 100%; padding: calc(env(safe-area-inset-top, 0px) + 22px) 16px calc(env(safe-area-inset-bottom, 0px) + 28px);
+  background: radial-gradient(120% 60% at 50% -10%, rgba(89,214,232,.14), transparent 60%), var(--bg); }
+.wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.brand { font-weight: 300; font-size: 40px; letter-spacing: -.02em; line-height: 1; margin: 0; }
+.brand span { color: var(--accent); font-weight: 500; }
+.ver { font: 500 11px var(--f-mono); color: var(--muted); margin-left: 8px; letter-spacing: .04em; vertical-align: middle; }
+.lead { color: var(--muted); margin: 8px 0 0; }
+.card { padding: 16px; }
+.card h2 { font-size: 16px; font-weight: 600; margin: 0 0 8px; }
+.card ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.card li b { font-weight: 600; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row .btn { flex: 1 1 140px; }
+#homeMsg { color: var(--muted); min-height: 1.4em; }
+#homeMsg.bad { color: var(--bad); }
+
+#view { position: fixed; inset: 0; background: #000; }
+#vid, #still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+#ov { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: manipulation; }
+#top { position: absolute; left: calc(env(safe-area-inset-left, 0px) + 10px); right: calc(env(safe-area-inset-right, 0px) + 10px); top: calc(env(safe-area-inset-top, 0px) + 10px);
+  padding: 8px 12px; font: 500 12px/1.45 var(--f-mono); display: flex; flex-wrap: wrap; gap: 4px 14px; }
+#top b { color: var(--accent); font-weight: 600; }
+#bar { position: absolute; left: calc(env(safe-area-inset-left, 0px) + 10px); right: calc(env(safe-area-inset-right, 0px) + 10px); bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+  padding: 8px; display: flex; gap: 8px; overflow-x: auto; }
+#bar .btn { flex: 0 0 auto; padding: 10px 12px; min-height: 42px; font-size: 14px; }
+#pick { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(300px, calc(100% - 32px)); padding: 14px 16px; font-size: 14px; }
+#pick h3 { margin: 0 0 6px; font-size: 16px; }
+#pick .p { display: grid; grid-template-columns: 56px 1fr 44px; gap: 8px; align-items: center; margin: 4px 0; font-family: var(--f-mono); font-size: 13px; }
+#pick .bar { height: 8px; border-radius: 4px; background: var(--accent); }
+#speed { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(420px, calc(100% - 32px)); max-height: calc(100% - 140px); overflow: auto; padding: 14px 16px; }
+#speed h3 { margin: 0 0 8px; font-size: 16px; }
+#speed table { width: 100%; border-collapse: collapse; font: 13px var(--f-mono); }
+#speed td, #speed th { padding: 5px 4px; border-bottom: 1px solid var(--line); text-align: right; }
+#speed td:first-child, #speed th:first-child { text-align: left; }
+#speed p { color: var(--muted); margin: 8px 0 0; }
+</style>
+</head>
+<body>
+<section id="home">
+  <div class="wrap">
+    <div>
+      <h1 class="brand">Chalk<span>line</span><span class="ver" id="ver"></span></h1>
+      <p class="lead">V3 check: the new ball finder and number reader, on your phone. This page only looks and measures. It does not track shots.</p>
+    </div>
+    <div class="glass card">
+      <h2>What to do (about 10 minutes)</h2>
+      <ol>
+        <li>Set the phone where you'd normally put it. Upright or sideways both work.</li>
+        <li>Tap <b>Start camera</b>. The first time, it downloads about 36 MB, so use Wi-Fi.</li>
+        <li>Rack a few balls. Each ball should get a teal ring with its number. Amber with a "?" means the reader is unsure. A small red cross means the reader decided it's not a ball.</li>
+        <li><b>Phantom check:</b> lean your arm, your hand and the cue on the table. There should be no rings on them.</li>
+        <li><b>Measle check:</b> put the cue ball right next to the 9, then move them around. Tap a ball to see what the reader thinks of it.</li>
+        <li>Tap <b>Speed test</b> and wait about a minute without touching anything.</li>
+        <li>Tap <b>Save</b> and save both files to the <b>Chalkline test uploads</b> folder in Google Drive.</li>
+      </ol>
+    </div>
+    <div class="row">
+      <button class="btn primary" id="go">Start camera</button>
+      <button class="btn" id="photoBtn">Load a photo</button>
+      <input type="file" id="photo" accept="image/*" hidden>
+    </div>
+    <div id="homeMsg"></div>
+  </div>
+</section>
+
+<section id="view" hidden>
+  <video id="vid" playsinline muted autoplay></video>
+  <img id="still" alt="" hidden>
+  <canvas id="ov"></canvas>
+  <div id="top" class="glass"><span id="sEngine"></span><span id="sTime"></span><span id="sCount"></span></div>
+  <div id="pick" class="glass" hidden></div>
+  <div id="speed" class="glass" hidden></div>
+  <div id="bar" class="glass">
+    <button class="btn" id="bSize"></button>
+    <button class="btn" id="bEngine"></button>
+    <button class="btn" id="bFreeze">Pause</button>
+    <button class="btn" id="bSpeed">Speed test</button>
+    <button class="btn primary" id="bSave">Save</button>
+    <button class="btn" id="bBack">Back</button>
+  </div>
+</section>
+
+<script src="../vendor/ort/ort.webgpu.min.js"></script>
+<script src="../src/detect.js"></script>
+<script>
+const CHECK_VERSION = 'check 1';
+const BASE = new URL('../', location.href).href;
+const SIZES = [{ file: 'models/detector-v1-960x544.onnx', w: 960, h: 544, fixed: true, name: '960' },
+  { file: 'models/detector-v1-640x384.onnx', w: 640, h: 384, fixed: true, name: '640' },
+  { file: 'models/detector-v1-1280x736.onnx', w: 1280, h: 736, fixed: true, name: '1280' }];
+const $ = s => document.querySelector(s), vid = $('#vid'), still = $('#still'), ov = $('#ov');
+const S = { size: SIZES[0], ep: 'auto', live: false, paused: false, busy: false, stream: null, src: null, W: 0, H: 0,
+  balls: [], times: [], last: null, cam: null, speed: null, log: [], frame: document.createElement('canvas') };
+$('#ver').textContent = CHECK_VERSION;
+const log = (k, v) => { S.log.push({ t: Math.round(performance.now()), k, ...v }); if (S.log.length > 400) S.log.shift(); };
+const msg = (t, bad) => { const m = $('#homeMsg'); m.textContent = t; m.classList.toggle('bad', !!bad); };
+const r1 = x => Math.round(x * 10) / 10, med = a => { const b = [...a].sort((x, y) => x - y); return b.length ? b[b.length >> 1] : 0; };
+
+async function loadModels() {
+  const info = await DET.load({ base: BASE, ep: S.ep === 'auto' ? 'webgpu' : S.ep, finder: S.size, onProgress: t => { msg(t); $('#sEngine').textContent = t; } });
+  log('load', { ep: info.ep, size: S.size.name }); paintBar(); return info;
+}
+function paintBar() {
+  $('#bSize').textContent = 'Size ' + S.size.name;
+  $('#bEngine').textContent = S.ep === 'wasm' ? 'Engine: CPU' : 'Engine: ' + (DET.ep === 'webgpu' ? 'GPU' : 'CPU (no GPU)');
+  $('#sEngine').innerHTML = '<b>' + (DET.ep === 'webgpu' ? 'GPU' : 'CPU') + '</b> · ' + DET.size.join('×');
+}
+async function openCamera() {
+  const st = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+  S.stream = st; vid.srcObject = st; await vid.play();
+  for (let i = 0; i < 60 && !vid.videoWidth; i++) await new Promise(r => setTimeout(r, 50));
+  const tr = st.getVideoTracks()[0];
+  try { const c = tr.getCapabilities ? tr.getCapabilities() : null; if (c && c.zoom) await tr.applyConstraints({ advanced: [{ zoom: 1 }] }); } catch (e) { } // main camera at 1x, never the ultra-wide
+  try { S.cam = { label: tr.label, settings: tr.getSettings ? tr.getSettings() : null }; } catch (e) { }
+  log('camera', { w: vid.videoWidth, h: vid.videoHeight });
+}
+async function start(fromPhoto) {
+  $('#go').disabled = $('#photoBtn').disabled = true;
+  try {
+    if (!window.ort) throw new Error('The model library did not load. Check the connection and reload.');
+    if (!fromPhoto) { if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) throw new Error('This browser cannot reach the camera. Open the page in Safari from its https address.'); await openCamera(); }
+    await loadModels();
+    $('#home').hidden = true; $('#view').hidden = false; vid.hidden = !!fromPhoto; still.hidden = !fromPhoto; S.live = true; S.src = fromPhoto ? still : vid; loop();
+  } catch (e) {
+    const t = e && e.name === 'NotAllowedError' ? 'Camera access was blocked. In Safari tap aA, then Website Settings, then Camera, then Allow. Reload and try again.' : 'Could not start: ' + (e && (e.message || e.name) || e);
+    msg(t, true); log('error', { m: String(t).slice(0, 200) });
+  } finally { $('#go').disabled = $('#photoBtn').disabled = false; }
+}
+$('#go').onclick = () => start(false);
+$('#photoBtn').onclick = () => $('#photo').click();
+$('#photo').onchange = e => { const f = e.target.files[0]; if (!f) return; const u = URL.createObjectURL(f); still.onload = () => start(true); still.src = u; };
+
+function grab() {
+  const src = S.src, W = src === vid ? vid.videoWidth : still.naturalWidth, H = src === vid ? vid.videoHeight : still.naturalHeight; if (!W || !H) return null;
+  const cv = S.frame; if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+  const c = cv.getContext('2d', { willReadFrequently: true }); c.drawImage(src, 0, 0, W, H); S.W = W; S.H = H;
+  return c.getImageData(0, 0, W, H);
+}
+async function look() {
+  const img = grab(); if (!img) return null;
+  const t0 = performance.now(), spots = await DET.find(S.frame, S.W, S.H), t1 = performance.now(); await DET.read(img, spots); const t2 = performance.now();
+  return { spots, find: t1 - t0, read: t2 - t1, at: t2 };
+}
+async function loop() {
+  if (!S.live) return;
+  if (!S.paused && !S.busy && !S.speed) {
+    S.busy = true;
+    try {
+      const L = await look();
+      if (L) { S.balls = L.spots; S.last = L; S.times.push(L); if (S.times.length > 20) S.times.shift(); status(); draw(); }
+    } catch (e) { log('error', { m: String(e && e.message || e).slice(0, 200) }); $('#sTime').textContent = 'Error: ' + String(e && e.message || e).slice(0, 80); }
+    S.busy = false;
+  }
+  if (S.src === still && S.last && !S.speed) { S.paused = true; $('#bFreeze').textContent = 'Look again'; }
+  setTimeout(loop, 30);
+}
+function status() {
+  const T = S.times; if (!T.length) return;
+  const f = med(T.map(t => t.find)), r = med(T.map(t => t.read)), span = T.length > 1 ? (T[T.length - 1].at - T[0].at) / (T.length - 1) : 0;
+  $('#sTime').textContent = 'finder ' + Math.round(f) + ' ms · reader ' + Math.round(r) + ' ms' + (span ? ' · ' + r1(1000 / span) + ' looks/s' : '');
+  const k = S.balls.reduce((a, b) => (a[b.kind] = (a[b.kind] || 0) + 1, a), {});
+  $('#sCount').textContent = (k.sure || 0) + ' sure · ' + (k.unsure || 0) + ' unsure · ' + (k.not_a_ball || 0) + ' not a ball';
+}
+// where the picture sits on screen (object-fit: contain)
+function fit() {
+  const w = ov.clientWidth, h = ov.clientHeight, k = Math.min(w / S.W, h / S.H); return { k, x: (w - S.W * k) / 2, y: (h - S.H * k) / 2, w, h };
+}
+function draw() {
+  const dpr = window.devicePixelRatio || 1, F = fit(); if (ov.width !== Math.round(F.w * dpr) || ov.height !== Math.round(F.h * dpr)) { ov.width = Math.round(F.w * dpr); ov.height = Math.round(F.h * dpr); }
+  const c = ov.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, F.w, F.h);
+  for (const b of S.balls) {
+    const x = F.x + b.px * F.k, y = F.y + b.py * F.k, r = Math.max(6, b.r * F.k);
+    if (b.kind === 'not_a_ball') { c.strokeStyle = 'rgba(255,122,112,.75)'; c.lineWidth = 1.5; const q = Math.max(4, r * 0.5); c.beginPath(); c.moveTo(x - q, y - q); c.lineTo(x + q, y + q); c.moveTo(x + q, y - q); c.lineTo(x - q, y + q); c.stroke(); continue; }
+    const col = b.kind === 'sure' ? '#59d6e8' : '#ffb84d'; c.strokeStyle = col; c.lineWidth = 2; c.beginPath(); c.arc(x, y, r + 2, 0, Math.PI * 2); c.stroke();
+    const t = (b.num === 0 ? 'cue' : String(b.num)) + (b.kind === 'sure' ? '' : '?'); c.font = '600 13px Inter, system-ui, sans-serif';
+    const tw = c.measureText(t).width + 10; c.fillStyle = 'rgba(11,16,20,.78)'; c.fillRect(x - tw / 2, y - r - 22, tw, 18); c.fillStyle = col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(t, x, y - r - 13);
+  }
+}
+ov.addEventListener('click', e => {
+  if (!S.balls.length) return; const F = fit(), rc = ov.getBoundingClientRect(), x = (e.clientX - rc.left - F.x) / F.k, y = (e.clientY - rc.top - F.y) / F.k;
+  let best = null, bd = 1e9; for (const b of S.balls) { const d = Math.hypot(b.px - x, b.py - y); if (d < bd) { bd = d; best = b; } }
+  const p = $('#pick'); if (!best || bd > Math.max(30, best.r * 3)) { p.hidden = true; return; }
+  const top = best.p.map((v, i) => [v, i]).sort((a, b) => b[0] - a[0]).slice(0, 4);
+  p.innerHTML = '<h3>What the reader sees</h3>' + top.map(([v, i]) => '<div class="p"><span>' + DET.CLASSES[i] + '</span><div class="bar" style="width:' + Math.max(2, v * 100) + '%"></div><span>' + Math.round(v * 100) + '%</span></div>').join('') +
+    '<p style="color:var(--muted);margin:8px 0 0">Finder sure: ' + Math.round(best.score * 100) + '% · size ' + r1(best.r) + ' px. Tap anywhere to close.</p>';
+  p.hidden = false; log('tap', { at: [r1(best.px), r1(best.py)], p: best.p.map(v => Math.round(v * 1000) / 1000) });
+});
+$('#pick').onclick = () => { $('#pick').hidden = true; };
+$('#bSize').onclick = async () => { const i = SIZES.indexOf(S.size); S.size = SIZES[(i + 1) % SIZES.length]; S.times = []; await loadModels(); if (S.src === still) { S.paused = false; } };
+$('#bEngine').onclick = async () => { S.ep = S.ep === 'wasm' ? 'auto' : 'wasm'; S.times = []; await loadModels(); };
+$('#bFreeze').onclick = () => { if (S.src === still) { S.paused = false; return; } S.paused = !S.paused; $('#bFreeze').textContent = S.paused ? 'Go on' : 'Pause'; if (S.paused) vid.pause(); else vid.play(); };
+$('#bBack').onclick = () => { S.live = false; if (S.stream) S.stream.getTracks().forEach(t => t.stop()); $('#view').hidden = true; $('#home').hidden = false; msg(''); };
+
+// Speed test: each finder size on each engine, on the current picture. 2 warm-up looks, then 6 timed.
+async function speedTest() {
+  const box = $('#speed'); S.speed = []; box.hidden = false; const keep = { size: S.size, ep: S.ep };
+  const eps = navigator.gpu ? ['webgpu', 'wasm'] : ['wasm'];
+  try {
+    for (const ep of eps) for (const size of SIZES) {
+      box.innerHTML = '<h3>Speed test</h3><p>Testing ' + (ep === 'webgpu' ? 'GPU' : 'CPU') + ' at size ' + size.name + '… keep the phone still.</p>';
+      S.size = size; S.ep = ep; const info = await loadModels(); if (ep === 'webgpu' && info.ep !== 'webgpu') continue;
+      const f = [], r = [];
+      for (let i = 0; i < 8; i++) { const L = await look(); if (L && i >= 2) { f.push(L.find); r.push(L.read); } }
+      S.speed.push({ ep: info.ep, size: size.name, find: Math.round(med(f)), read: Math.round(med(r)), balls: S.balls.length, sure: S.balls.filter(b => b.kind === 'sure').length });
+    }
+  } catch (e) { S.speed.push({ error: String(e && e.message || e).slice(0, 200) }); }
+  S.size = keep.size; S.ep = keep.ep; await loadModels(); log('speed', { rows: S.speed });
+  box.innerHTML = '<h3>Speed test</h3><table><tr><th>Engine</th><th>Size</th><th>Finder</th><th>Reader</th><th>Balls</th></tr>' +
+    S.speed.map(s => s.error ? '<tr><td colspan="5">' + s.error + '</td></tr>' : '<tr><td>' + (s.ep === 'webgpu' ? 'GPU' : 'CPU') + '</td><td>' + s.size + '</td><td>' + s.find + ' ms</td><td>' + s.read + ' ms</td><td>' + s.sure + '/' + s.balls + '</td></tr>').join('') +
+    '</table><p>Done. Tap Save to keep these results. Tap here to close.</p>';
+  box.onclick = () => { box.hidden = true; }; const done = S.speed; S.speed = null; S.speedDone = done;
+}
+$('#bSpeed').onclick = () => { if (!S.speed) speedTest(); };
+
+// Save: results as JSON plus the current picture as JPEG, through the share sheet (Save to Files -> Google Drive).
+async function save() {
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 13).replace('T', '-');
+  const data = { page: CHECK_VERSION, saved: new Date().toISOString(), device: { ua: navigator.userAgent, screen: [screen.width, screen.height], dpr: window.devicePixelRatio, gpu: !!navigator.gpu },
+    camera: S.cam, picture: [S.W, S.H], engine: DET.ep, size: DET.size, speed: S.speedDone || null,
+    timing: S.times.map(t => ({ find: Math.round(t.find), read: Math.round(t.read) })),
+    balls: S.balls.map(b => ({ px: r1(b.px), py: r1(b.py), r: r1(b.r), score: Math.round(b.score * 100) / 100, kind: b.kind, num: b.num, p: b.p.map(v => Math.round(v * 1000) / 1000) })), log: S.log };
+  const json = new File([JSON.stringify(data, null, 1)], 'chalkline-check-' + stamp + '.json', { type: 'application/json' });
+  const jpg = await new Promise(res => S.frame.toBlob(b => res(new File([b], 'chalkline-check-' + stamp + '.jpg', { type: 'image/jpeg' })), 'image/jpeg', 0.9));
+  const files = [json, jpg];
+  if (navigator.canShare && navigator.canShare({ files })) { try { await navigator.share({ files }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+  for (const f of files) { const a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); }
+}
+$('#bSave').onclick = () => save();
+window.addEventListener('resize', () => { if (S.live) draw(); });
+window.CHECK = S; // for the automated test
+</script>
+</body>
+</html>
