@@ -4,10 +4,24 @@
 // usage: node tools/v3/replay.js <log.json> [--events]
 const fs = require('fs'), path = require('path');
 const { makeP } = require(path.join(__dirname, '../../src/core.js')), { makeTracker } = require(path.join(__dirname, '../../src/track.js'));
-function replay(d, ft, opts) {
-  const tk = makeTracker(makeP(ft || (d.header && d.header.ft) || 7), opts);
+// The player's actions during the session (New rack, taps) are applied at their times: a tap renames the ball nearest to
+// where it was tapped, "Not a ball" and "It went in" go to the ball with the number the live app had on it.
+function actions(d) {
+  const ev = (d.events || []).filter(e => ['new_rack', 'tap', 'tap_not', 'tap_pocketed'].includes(e.k)), tev = (d.tracker || []).filter(e => e.k === 'not_ball' || e.k === 'tap_pocketed');
+  let i = 0; return ev.map(e => (e.k === 'tap_not' || e.k === 'tap_pocketed') ? { ...e, num: (tev[i++] || {}).num } : e);
+}
+function replay(d, ft, opts, o2) {
+  const tk = makeTracker(makeP(ft || (d.header && d.header.ft) || 7), opts), acts = (o2 && o2.noActions) ? [] : actions(d);
+  const apply = a => {
+    if (a.k === 'new_rack') return tk.newRack();
+    const bs = tk.S.tracks.filter(tr => tr.ok && tr.state !== 'gone' && tr.state !== 'dropped');
+    if (a.k === 'tap') { let b = null, bd = 3; for (const tr of bs) { const q = Math.hypot(tr.x - a.at[0], tr.y - a.at[1]); if (q < bd) { bd = q; b = tr; } } if (b) tk.pin(b.key, a.num); return; }
+    const b = bs.find(tr => tr.num === a.num); if (!b) return;
+    if (a.k === 'tap_not') tk.notBall(b.key); else tk.inPocket(b.key);
+  };
   const probs = (n, k) => { const q = new Array(11).fill(0); if (k === 'n') { q[10] = 0.8; q[n] = 0.2; return q; } const top = k === 's' ? 0.9 : 0.5; q.fill((1 - top - 0.01) / 9); q[n] = top; q[10] = 0.01; return q; };
   for (const L of d.looks) {
+    while (acts.length && acts[0].t <= L[0]) apply(acts.shift());
     const spots = L[5].map(([x, y, num, kind, score]) => ({ x, y, px: x * 20, py: y * 20, r: 13.5, score, kind: kind === 's' ? 'sure' : kind === 'u' ? 'unsure' : kind === 'n' ? 'not_a_ball' : null, p: num == null ? null : probs(num, kind) }));
     tk.update(L[0] / 1000, spots, { read: spots.some(s => s.p) });
   }
