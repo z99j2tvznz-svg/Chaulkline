@@ -776,3 +776,25 @@ Plan and reasons: `docs/V3-PLAN.md`. V2.3.3 stays at `/v2/`, byte for byte as it
   session's shot pictures and stores per-picture cloth maps in the fixture (1 in grid), so the tests replay with it.
   Sessions live on the `sessions` branch.
 - Left: the 2 at 8:49 (its check needs a frame between the pictures; the live app has it).
+
+## V3.0.5 (Oct 28) — the cue ball named again after a scratch, colour trails
+- Owner's V3.0.4 session (Oct 27, 23:38; 2 racks, phone sideways after two tries upright with the corners tapped): 31
+  real shots; live V3.0.4 got 30 right (one false "3 in" on a scratch shot), and the "went in too" messages were right
+  all 9 times. Not right: two "shots" while rack 2 was rolled out by hand (one called a scratch), and after every scratch
+  the cue ball put back stayed "?" until tapped.
+- Cue ball after a scratch: a pocketed ball's number is kept out of the naming for the rest of the rack, and the cue ball
+  was treated the same. It always comes back, so its number now stays free: the reader names the ball put back (it reads
+  the cue ball "sure" almost always), and a ball first to move in a shot still gets a vote for the cue ball. No rule makes
+  an unknown ball the cue ball: a different ball put back is named by what it reads as. Replayed without the taps: the
+  cue ball is named again 8 to 11 s after each scratch.
+- The false "3 in": in the scratch shot the 3 was knocked from the far rail to the near one, unseen; its old spot showed
+  bare cloth and it was called in, while the real 3 sat there as a "?". Now the ghost rule waits (up to 8 s after the
+  shot) while a ball not yet named, seen since the vanished one went, could be it (same white or not); the reader then
+  names it and the ghost goes quietly.
+- Trails (owner): each rolling ball leaves a tail of where the tracker had it over the last 0.7 s, fading out, so it is
+  longer the faster the ball goes and jagged if the tracking jumps. Its colour is read from the ball itself while it rests
+  (median of its coloured pixels; mostly white, mostly black, or banded white and a colour), not from a fixed chart: ball
+  sets differ (a pink 4, a teal 2, a black 9 with a yellow band). A banded ball's tail alternates white and its colour.
+- Tried and dropped: counting new balls rolling about as "hands" (to stop the rack roll-out being taken for shots); it
+  also lost real shots. A hand moving a ball needs the player work (the not-cloth mask next to the ball) to tell apart.
+- The debug header keeps the picture size the table was accepted with (this session's phone turned upright again at the end).

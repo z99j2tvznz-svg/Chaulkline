@@ -45,6 +45,7 @@ function makeTracker(P, opts) {
     emptyLooks: 3,      // a hidden ball whose spot shows bare cloth on this many looks in a row ...
     emptyHold: 1.5,     // ... and that has been gone this many s is not there any more (see clearGone)
     afterHold: 1.0,     // s after a shot ends before a ball gone from it is counted in (the moved balls are named again first)
+    newcomerWait: 8,    // s it waits longer while a ball not yet named, that turned up since, could be the same one
     jawZone: 1.2,       // in past a pocket's circle: a ball resting this deep in the mouth that vanishes in a shot went in
     jumpGap: 0.45,      // s: a ball seen again this soon after it vanished, far off and reading the same, jumped there in one look
     jumpSpeed: 20,      // in/s it must have covered that distance at, at least
@@ -333,6 +334,12 @@ function makeTracker(P, opts) {
       if (tr.emptyN < O.emptyLooks || t - tr.lostT < O.emptyHold) continue;
       const sh = S.shots.find(s => s.t1 >= tr.lostT && (tr.lostT >= s.t0 - 0.6 || s.before.some(b => b.key === tr.key && b.state === 'hidden')));
       if (sh && t - sh.t1 < O.afterHold) continue;
+      // a ball not yet named that turned up since this one vanished may be this one, knocked across the table (Oct 27: the
+      // 3 went from the far rail to the near one in a scratch shot and was called in): give the reader time to name it.
+      // A newcomer of the other colour (the cue ball put back after a scratch) does not hold this up.
+      const wo = whiteOf(tr), newcomer = ballsNow().some(o => o !== tr && o.state !== 'hidden' && o.firstT >= tr.lostT - 0.5 && (o.num == null || !o.sure) &&
+        (wo == null || whiteOf(o) == null || Math.abs(whiteOf(o) - wo) <= O.cueVeto));
+      if (sh && newcomer && t - sh.t1 < O.newcomerWait) continue;
       if (!sh || tr.num == null) { tr.state = 'dropped'; ev('cleared', { key: tr.key, num: tr.num }); continue; }
       // which pocket: the one it was knocked toward, if one lies that way; else not known
       let pocket = null;
@@ -340,7 +347,7 @@ function makeTracker(P, opts) {
       // or the one pocket a ball was newly seen lying in since the shot started
       if (pocket == null) { const ks = Object.keys(S.bagNew).filter(k => S.bagNew[k] >= sh.t0 && !sh.made.some(m => m.pocket === +k)); if (ks.length === 1) pocket = +ks[0]; }
       tr.state = 'gone'; tr.goneT = t; const d = { key: tr.key, num: tr.num, sure: tr.sure, pocket, late: true };
-      if (!S.gone.includes(tr.num)) S.gone.push(tr.num);
+      if (tr.num !== 0 && !S.gone.includes(tr.num)) S.gone.push(tr.num); // the cue ball comes back (see pocketed)
       sh.made.push(d); if (tr.key === sh.cueKey || tr.num === 0) sh.scratch = true; sh.updated = t;
       ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
     }
@@ -349,7 +356,9 @@ function makeTracker(P, opts) {
 
   function pocketed(tr) {
     tr.state = 'gone'; tr.goneT = t0(); const d = { key: tr.key, num: tr.num, sure: tr.sure, pocket: tr.pocket };
-    if (tr.num != null && !S.gone.includes(tr.num)) S.gone.push(tr.num);
+    // a scratch: the cue ball is taken out and put back, so its number stays free for the ball put down (Oct 27: after the
+    // first scratch the cue ball was never named again, a "?" for the rest of the rack, since 0 counted as pocketed)
+    if (tr.num != null && tr.num !== 0 && !S.gone.includes(tr.num)) S.gone.push(tr.num);
     ev('pocketed', d); if (S.shot) S.shot.made.push(d);
   }
   const t0 = () => S.t;

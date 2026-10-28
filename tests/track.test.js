@@ -309,3 +309,23 @@ test('the owner\'s V3.0.3 session (Oct 27, 22:27) replayed with the cloth check 
   // live V3.0.3: 28 of these 41 right, 13 balls in missed, 1 false scratch
   assert.strictEqual(r.shots, 41); assert.ok(r.right >= 39, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
 });
+
+test('a ball knocked across the table and found again unnamed is not called in by the ghost rule (Oct 27: the 3 in a scratch shot)', () => {
+  const tk = makeTracker(P), sp = (num, x, y, p = 0.85, kind = 'sure') => ({ x, y, px: x * 12, py: y * 12, r: 13, score: 0.8, p: probs(num, p), kind });
+  let t = settleE(tk, 0, [{ num: 0, x: 40, y: 15 }, { num: 3, x: 24, y: 30 }, { num: 8, x: 60, y: 20 }], 3, 0.25, () => true);
+  // the cue ball rolls up to the 3 and stops; the 3 is never seen moving and turns up on the near rail, read unsure
+  for (const [x, y] of [[36, 19], [31, 23], [27, 27], [26.5, 27.5], [26.5, 27.5]]) { tk.update(t, [sp(0, x, y), ...(x > 30 ? [sp(3, 24, 30)] : []), sp(8, 60, 20)], { read: true, empty: () => true }); t += 0.25; }
+  for (let i = 0; i < 32; i++) { tk.update(t, [sp(0, 26.5, 27.5), sp(8, 60, 20), sp(3, 30, 2.5, 0.4, 'unsure')], { read: true, empty: () => true }); t += 0.25; }
+  assert.strictEqual(tk.S.shots.length, 1);
+  assert.ok(!tk.S.shots[0].made.some(m => m.num === 3), 'the 3 was called in: ' + JSON.stringify(tk.S.events.filter(e => e.k !== 'named').slice(-8)));
+});
+
+test('the owner\'s V3.0.4 session (Oct 27, 23:38) replayed: all 31 real shots right, and the cue ball is named again by itself after every scratch', () => {
+  const { score } = require('../tools/v3/score.js'), { replay } = require('../tools/v3/replay.js');
+  const d = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261027-2338.json'), 'utf8'));
+  const r = score(d); assert.ok(r.right >= 31, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
+  // without the owner's taps: after each real scratch the cue ball put back gets its name from the reader (live V3.0.4
+  // left it "?" for the rest of the rack)
+  const tk = replay(d, null, null, { noActions: true }), E = tk.S.events;
+  for (const t of [184.2, 323.6]) assert.ok(E.some(e => e.k === 'named' && e.num === 0 && e.t > t && e.t < t + 20), 'cue ball not named again after ' + t);
+});

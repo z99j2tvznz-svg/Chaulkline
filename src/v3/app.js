@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.4';
+const VERSION = 'V3.0.5';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -42,7 +42,7 @@ document.addEventListener('visibilitychange', () => { dbg('vis', { s: document.v
 setInterval(() => { if (A.live) dbgPersist(); }, 10000);
 function header() {
   return { app: 'chalkline', build: VERSION, det: DET.VERSION, started: new Date(DBG.t0).toISOString(), ua: navigator.userAgent, screen: [screen.width, screen.height], dpr: window.devicePixelRatio || 1,
-    gpu: !!navigator.gpu, engine: DET.ep, engineSetting: A.engine, threads: DET.threads(), isolated: !!window.crossOriginIsolated, cores: navigator.hardwareConcurrency || null, shape: A.shape, kmax: r2(A.kmax), ft: A.ft, picture: [A.W, A.H], quad: A.quad && A.quad.map(p => [r1(p[0]), r1(p[1])]), rot: A.rot, box: A.box && A.box.map(Math.round),
+    gpu: !!navigator.gpu, engine: DET.ep, engineSetting: A.engine, threads: DET.threads(), isolated: !!window.crossOriginIsolated, cores: navigator.hardwareConcurrency || null, shape: A.shape, kmax: r2(A.kmax), ft: A.ft, picture: A.tableWH || [A.W, A.H], pictureNow: [A.W, A.H], quad: A.quad && A.quad.map(p => [r1(p[0]), r1(p[1])]), rot: A.rot, box: A.box && A.box.map(Math.round),
     camOk: A.cam ? A.cam.ok : null, cam: A.camInfo };
 }
 function shotRow(sh) { return { n: sh.n, t0: r2(sh.t0), t1: r2(sh.t1), cue: sh.cueNum, first: sh.firstNum, made: sh.made.map(m => ({ num: m.num, pocket: m.pocket, sure: m.sure })), scratch: sh.scratch, break: sh.break, hidden: sh.hidden, before: sh.before, after: sh.after }; }
@@ -241,6 +241,7 @@ async function look() {
   if (before !== 'shot' && tk.S.phase === 'shot') onShotStart();
   if (tk.S.shots.length > A.nShots) { for (const sh of tk.S.shots.slice(A.nShots)) onShotEnd(sh); A.nShots = tk.S.shots.length; }
   // a picture of the still table every 1.5 s, kept as the "before" of the next shot
+  if (tk.S.phase !== 'shot' && performance.now() - (A.colT || 0) > 1000) { A.colT = performance.now(); ballColours(); }
   if (tk.S.phase === 'still' && performance.now() - A.stillPicT > 1500) { A.stillPicT = performance.now(); jpeg(960).then(b => { A.stillPic = b; }).catch(() => { }); }
   statusRun(); crumb('done');
 }
@@ -258,6 +259,32 @@ function onLateMade(n) {
   if (row && sh) { row.made = shotRow(sh).made; row.scratch = sh.scratch; }
   dbg('late_made', n); renderDown();
   toast('Shot ' + n.n + ': ' + (n.num === 0 ? 'the cue ball went in too (scratch)' : 'the ' + (n.num == null ? 'ball' : n.num) + ' went in too') + (n.pocket != null ? ' (' + POCKETS[n.pocket] + ')' : ''));
+}
+// Each ball's own colour, read from the picture while it rests (sets differ: a pink 4, a teal 2, a black 9 with a yellow
+// band), for its trail: the median of its coloured pixels, and whether it is mostly white, black or banded (white and a
+// colour). Kept per ball and blended over time, so one bad look does not change it.
+const BCOL = new Map();
+function ballColours() {
+  if (!A.fctx || !A.cloth) return;
+  for (const b of A.tk.balls()) {
+    if (b.state !== 'rest' || !b.sp || b.sp.px == null) continue;
+    const r = Math.max(4, b.sp.r || 10), s = Math.ceil(r), x0 = Math.round(b.sp.px) - s, y0 = Math.round(b.sp.py) - s;
+    if (x0 < 0 || y0 < 0 || x0 + 2 * s > A.W || y0 + 2 * s > A.H) continue;
+    const d = A.fctx.getImageData(x0, y0, 2 * s, 2 * s).data, rs = [], gs = [], bs = []; let n = 0, wh = 0, bk = 0;
+    for (let y = 0; y < 2 * s; y++) for (let x = 0; x < 2 * s; x++) {
+      const dx = x - s, dy = y - s; if (dx * dx + dy * dy > 0.64 * r * r) continue;
+      const o = (y * 2 * s + x) * 4, R = d[o], G = d[o + 1], B = d[o + 2], [h, sat, v] = rgb2hsv(R, G, B); n++;
+      if (isCloth(h, sat, v, A.cloth)) continue;
+      if (v < 0.22) { bk++; continue; } if (sat < 0.22 && v > 0.62) { wh++; continue; }
+      rs.push(R); gs.push(G); bs.push(B);
+    }
+    if (n < 12) continue;
+    const med = a => { a.sort((p, q) => p - q); return a[a.length >> 1]; }, cs = rs.length / n;
+    const now = { white: wh / n > 0.45 && cs < 0.15, black: bk / n > 0.35 && cs < 0.25, band: wh / n > 0.2 && cs > 0.15, rgb: cs > 0.08 ? [med(rs), med(gs), med(bs)] : null };
+    const old = BCOL.get(b.key);
+    if (old && old.rgb && now.rgb) now.rgb = old.rgb.map((v, i) => Math.round(0.7 * v + 0.3 * now.rgb[i])); else if (old && !now.rgb) now.rgb = old.rgb;
+    BCOL.set(b.key, now);
+  }
 }
 function trimPics() { const keys = [...A.pics.keys()].sort(); while (keys.length > 120) A.pics.delete(keys.shift()); }
 function jpeg(w) {
@@ -370,6 +397,23 @@ function drawBalls(c, S2, F) {
     const col = b.num == null ? 'rgba(234,241,244,.75)' : b.sure ? '#59d6e8' : '#ffb84d';
     const t = b.num == null ? '?' : (b.num === 0 ? 'Q' : String(b.num)) + (b.sure ? '' : '?');
     items.push({ b, s, r, col, t });
+  }
+  // trails: where each rolling ball was over the last 0.7 s (the tracker's own positions, so a jagged trail means a
+  // tracking problem), fading out, in the ball's colour; a banded ball's trail alternates white and its colour
+  const TR = 0.7;
+  for (const it of items) {
+    const h = (it.b.hist || []).filter(q => now - q.t <= TR); if (h.length < 1 || it.b.state === 'hidden') continue;
+    const pts = h.map(q => ({ s: S2(A.cam.proj(q.x, q.y, P.R)), a: 1 - (now - q.t) / TR })).concat([{ s: it.s, a: 1 }]);
+    const cl = BCOL.get(it.b.key), num = it.b.num, base = cl && cl.rgb ? 'rgb(' + cl.rgb.join(',') + ')' : num != null ? BALLCOL[num] : '#eaf1f4';
+    const col = cl && cl.white || num === 0 ? '#f4f1e8' : cl && cl.black || num === 8 ? '#0c0d0f' : base, band = cl ? cl.band : num === 9;
+    c.lineCap = 'round'; c.lineWidth = Math.max(2, it.r * 0.55);
+    for (let i = 1; i < pts.length; i++) {
+      const a = pts[i - 1], b2 = pts[i]; if (Math.hypot(b2.s[0] - a.s[0], b2.s[1] - a.s[1]) < 1) continue;
+      c.globalAlpha = Math.max(0, Math.min(a.a, b2.a)) * 0.85;
+      c.setLineDash([]); c.strokeStyle = band ? '#f4f1e8' : col; c.beginPath(); c.moveTo(a.s[0], a.s[1]); c.lineTo(b2.s[0], b2.s[1]); c.stroke();
+      if (band) { c.setLineDash([6, 6]); c.strokeStyle = col; c.stroke(); }
+    }
+    c.globalAlpha = 1; c.setLineDash([]); c.lineCap = 'butt';
   }
   c.lineWidth = 1.3;
   for (const it of items) { c.strokeStyle = it.col; c.setLineDash(it.b.state === 'hidden' || it.b.state === 'pending' ? [3, 3] : []); c.beginPath(); c.arc(it.s[0], it.s[1], it.r, 0, Math.PI * 2); c.stroke(); }
