@@ -362,53 +362,12 @@ learned looks had the wrong number; ~30 camera-moved corrections, many during sc
   weights (mlp24.json), library scripts. Crops not included: rebuild them from the session zips with library/build.py
   + the real6 append step (labels come from manifest.csv).
 
-## Saved for later: "The 10k break" (back burner, NOT for Chalkline yet — user, Oct 13)
-- The user and a friend go halves on the pool hall's break bucket; the friend finally hit it. Video IMG_0343.MOV (34 s,
-  filmed from the foot end), kept in library/breaks/10k/ with before/after stills and a break sequence.
-- Table: Diamond 9 ft, light-blue cloth (same hall as real6). 9-ball diamond rack, 1 at the apex facing the breaker,
-  racked on the foot spot (a chalk-drawn rack template visible after the break).
-- Cue ball: on/near the head string, close to the middle (only slightly off-centre; exact side to confirm from a better
-  angle). Firm break, cue ball stayed near the middle of the table on the head side (good cue-ball control).
-- After the break, still on the table: 1 (by the head rail), 2, 3, 4, 5, 6, 7 (probably), 8, cue ball.
-  Only the 9 went down: 9 on the break (confirmed by the user — that is what wins the bucket). It went in the
-  lower-left pocket from the video's view = the foot-end corner pocket nearest the camera, on the left of the video.
-- Idea for later: a "recreate the break" practice mode — same rack, same cue-ball spot, track how often the 9 or how
-  many balls drop, compare cue-ball finish position to this one.
-
 ## Home / Away and future modes (user, Oct 14)
 - V2.3: Home / Away switch instead of naming every venue. Home = the user's own table and balls (its own learned looks).
   Away = any other table: uses everything learned from away ball sets (pooled), and asks for the short
   "show me the balls" setup (place each ball on the ring, no shots) before playing. Learning at away never touches home.
 - V2.3 also: table-setup check (pocket circles on the outline, warning when a pocket is near the picture edge).
-- FUTURE (not V2.3):
-  - Rename "Play 9-ball" to "Train" with games: 9-ball, 8-ball, one pocket, banks, etc. (planner/coaching side).
-  - A separate "Play" mode = shot tracking only: makes, misses, runs per player; no need to know which ball or order
-    (the players know). Supports matches between 2 players (scores, stats, history).
-- FUTURE (user, Oct 14): tables differ in cloth speed, rail (cushion) bounce, and pocket size/shape (e.g. tight Diamond
-  pockets vs a bar table). Matters for predictions (Train / planner), not for tracking. Plan: a profile per table
-  (Home / Away) learned from tracked shots — cloth speed from how fast balls slow down, rail bounce from speed and
-  angle in vs out, pocket "tightness" from makes vs rattles near the jaws. V1 already had a pocket-style setting and
-  a cloth-speed calibration to build on.
-- FUTURE (user, Oct 14): other cue sports. Snooker (12 ft table, 22 smaller balls, 15 reds alike + 6 colours with
-  spots; balls re-spotted; scoring by colour), carom / 3-cushion (pocketless heated table, 3 balls: two cue balls
-  white + yellow/dotted and a red; scoring = cushion contacts before the last ball -> needs rail-contact tracking,
-  which the shot tracker partly has), also English billiards, Russian pyramid, etc. Different table sizes/shapes,
-  ball sizes and colours -> table and ball profiles must not assume a 6-pocket pool table.
-- FUTURE BUSINESS IDEA (user, Oct 14): a permanent pool-hall install (like Toptracer at golf ranges): a small box over
-  each table (overhead camera + small computer, extra sensors only if needed), low price per table to get halls on
-  board. Overhead view removes most problems (players blocking, perspective, far-rail balls). Later: live match
-  overlays for streams/spectators (shot suggestions vs what the player did, Fargo-based info — would need FargoRate's
-  cooperation/data), league and tournament stats. Revenue model: per-table monthly fee or revenue share with halls.
-  Needs hardware, installs, support and venue sales — a different business from the phone app; phone app first.
-- (user, Oct 14) The hall box pairs with projectors: the same overhead unit (camera + computer) drives a projector, so
-  players get projected drills/guides with our vision and app doing the tracking and scoring. Same software as the
-  phone app's projector mode; one product line (phone app -> projector add-on -> hall box with optional projector).
-
-## Naming (user, Oct 14)
-- "Chalkline" is a project codename only. Final name to be decided later, aiming for a name that can become the
-  generic word for the thing (like Kleenex / Hoover; in pool: Predator, Simonis, Diamond). Keep collecting candidates as
-  plans grow (phone app, projector add-on, hall box, streaming overlays, other cue sports). Check trademarks/domains
-  before committing.
+- Future modes, table profiles, other cue sports and business ideas from this day are kept with the private project plans.
 
 ## V2.3 (built Oct 14)
 - Camera zoom: starts at the zoom saved for this profile (else the widest, 0.5x), finds the table, then zooms to the
@@ -663,7 +622,7 @@ Truth checked by eye (scratchpad r7truth.py). Same balls as always.
 - Still missing: shot-level tests (need the V2.3.3 shot clips), labels for real7-real9, the old synthetic-video tests.
 
 ## V3.0 (built Oct 27, after "build it") — new ball finder and reader, names ride with the balls
-Plan and reasons: `docs/V3-PLAN.md`. V2.3.3 stays at `/v2/`, byte for byte as it was.
+V2.3.3 stays at `/v2/`, byte for byte as it was.
 - Check page first (`/check/`), on the owner's iPhone 16 Pro Max (Safari 26.6): finder on the GPU (WebGPU) 77 ms at
   960x544, 155 ms at 1280x736, 446 ms at 1920x1088; on the CPU about 480 ms at 1280 (too slow). Reader 35-46 ms for 10
   balls on the CPU. All 10 spread-out balls found and read "sure" at every size. Two lessons: Safari kept an old copy of

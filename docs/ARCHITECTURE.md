@@ -1,6 +1,6 @@
 # Chalkline architecture: table twin, physics, planning (Oct 19, 2026)
 
-Short and permanent. The product view is in `PRODUCT_SPEC.md`. **Verified** means a test or a run checks it; **not verified** means it is a target or model output only.
+Short and permanent. **Verified** means a test or a run checks it; **not verified** means it is a target or model output only.
 
 ## 1. Table state: the shared interface (`src/state.js`, new)
 

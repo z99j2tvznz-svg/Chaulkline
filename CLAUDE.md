@@ -3,6 +3,9 @@
 - Running work log (Google Doc, owner's Drive, folder "Chalkline test uploads"): "Chalkline Work Log",
   id 1ovBCSvR1TBgGqBpaxbLevIz4LyZMea5VsLk4Gm6h49w. Add an entry for every build, decision and reviewed session, and
   keep its "Current state" section up to date. DESIGN NOTES.md holds the per-build technical notes.
+- Product plans, the feature list and future ideas are private: Drive folder "Chalkline plans",
+  id 1tw2Vo7jwafisfyxJqHEul1cG-iS51dcY (feature list sheet 1FUEWdZcUKtbCoYRq3EoC5xgVI0dTP6E5yHRdZDKaS6E). This repo is
+  public: do not put plans, business ideas or future features in it.
 - Debug sessions: the owner attaches the app's debug zip to the chat. Unzip it and commit it to the `sessions` branch
   (not published by Pages), one folder per session, listed in that branch's README. Trimmed fixtures for tests go on
   main under tests/fixtures/v3/.
