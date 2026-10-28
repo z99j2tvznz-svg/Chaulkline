@@ -41,12 +41,21 @@ function makeTracker(P, opts) {
     reread: 0.3,        // after a shot, the votes of every ball that moved count this much: it is read again at rest
     reconWait: 2.5,
     cueCost: 10,        // in-equivalent cost per unit of white/not-white mismatch between a ball and a spot (see whiteness)
-    cueVeto: 0.7,       // a far jump (launch, refind) is refused when they disagree by more than this     // s after a shot ends, once the moved balls are read again, unfollowed pocket entries are matched up
+    cueVeto: 0.7,       // a far jump (launch, refind) is refused when they disagree by more than this
+    emptyLooks: 3,      // a hidden ball whose spot shows bare cloth on this many looks in a row ...
+    emptyHold: 1.5,     // ... and that has been gone this many s is not there any more (see clearGone)
+    afterHold: 1.0,     // s after a shot ends before a ball gone from it is counted in (the moved balls are named again first)
+    jawZone: 1.2,       // in past a pocket's circle: a ball resting this deep in the mouth that vanishes in a shot went in
+    jumpGap: 0.45,      // s: a ball seen again this soon after it vanished, far off and reading the same, jumped there in one look
+    jumpSpeed: 20,      // in/s it must have covered that distance at, at least
+    bagScore: 0.6,      // a spot on a pocket's bag line (see setBags) scoring under this is a ball lying in that pocket
+    bagDist: 1.5,       // in from the line
+    bags: [],
     ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
   }, opts || {});
   const R = P.R, L = P.L, W = P.W, EPS = 1e-4;
   let keyN = 0;
-  const S = { t: 0, tracks: [], phase: 'still', stillSince: null, shot: null, shots: [], gone: [], events: [], lastNames: '' };
+  const S = { t: 0, tracks: [], phase: 'still', stillSince: null, shot: null, shots: [], gone: [], events: [], lastNames: '', bagT: {}, bagNew: {}, notes: [] }; // notes: made balls found after their shot ended, for the app to tell
   const ev = (k, d) => { const e = Object.assign({ t: +S.t.toFixed(2), k }, d); S.events.push(e); if (S.events.length > 3000) S.events.splice(0, 300); return e; };
   const live = tr => tr.state !== 'gone' && tr.state !== 'dropped';
   const ballsNow = () => S.tracks.filter(tr => tr.ok && live(tr));
@@ -55,9 +64,13 @@ function makeTracker(P, opts) {
   // White or not: the one thing about a ball that stays readable when it is blurred. A ball's whiteness comes from its tap
   // or its votes; a spot's from the reader on this look (cue share among the ball classes). In a collision the cue ball
   // often blurs out for a look and the struck ball's track grabbed the white spot left behind (Oct 27: the cue ball called
-  // in, the struck ball left on the table), so matching weighs this.
-  const whiteOf = tr => tr.pin === 0 ? 1 : tr.pin != null ? 0 : tr.nVotes >= 1.5 ? Math.exp(tr.votes[O.ids.indexOf(0)] / tr.nVotes) : null;
-  const whiteSp = sp => sp.p && sp.p[10] < 0.5 ? sp.p[0] / (1 - sp.p[10]) : null; // a blurred "not a ball" read says nothing
+  // in, the struck ball left on the table), so matching weighs this. The 9 counts as white here: the owner's 9 is a white
+  // ball with a yellow band, and the reader takes the cue ball for the 9 now and then (Oct 26: the resting cue ball read
+  // "9, sure" once and its own track refused the spot). Cue ball or 9 is settled by the votes and the colour shares.
+  const wIds = [O.ids.indexOf(0), O.ids.indexOf(9)].filter(i => i >= 0);
+  const whiteOf = tr => tr.pin === 0 || tr.pin === 9 ? 1 : tr.pin != null ? 0 : tr.nVotes >= 1.5 ? wIds.reduce((a, i) => a + Math.exp(tr.votes[i] / tr.nVotes), 0) : null;
+  const whiteSp = sp => sp.p && sp.p[10] < 0.5 ? (sp.p[0] + sp.p[9]) / (1 - sp.p[10]) : null; // a blurred "not a ball" read says nothing
+  const topNum = p => { let b = 0; for (let i = 1; i < 10; i++) if (p[i] > p[b]) b = i; return b; };
   const wGap = (tr, sp) => { const a = whiteOf(tr), b = whiteSp(sp); return a == null || b == null ? 0 : Math.abs(a - b); };
 
   // ---- assignment: min-cost matching on a rectangular cost matrix (Infinity = not allowed) ----
@@ -83,6 +96,11 @@ function makeTracker(P, opts) {
   function newTrack(sp, t) {
     return { key: ++keyN, x: sp.x, y: sp.y, vx: 0, vy: 0, state: 'new', ok: false, firstT: t, seenT: t, looks: 1, seen: 1, nbSum: sp.p ? sp.p[10] : 0, nbN: sp.p ? 1 : 0, wS: whiteSp(sp) || 0, wN: whiteSp(sp) == null ? 0 : 1,
       restX: sp.x, restY: sp.y, restSince: t, hist: [{ t, x: sp.x, y: sp.y }], votes: new Float64Array(O.ids.length), nVotes: 0, num: null, sure: false, pin: null, lostT: null, pocket: null, sp };
+  }
+  function bagOf(sp) {
+    for (const b of O.bags) { const dx = b.bx - b.ax, dy = b.by - b.ay, u = Math.max(0, Math.min(1, ((sp.x - b.ax) * dx + (sp.y - b.ay) * dy) / (dx * dx + dy * dy || 1)));
+      if (Math.hypot(sp.x - b.ax - u * dx, sp.y - b.ay - u * dy) <= O.bagDist) return b.i; }
+    return null;
   }
   function pocketNear(x, y) {
     let best = null, bd = 1e9; for (let i = 0; i < P.pockets.length; i++) { const pk = P.pockets[i], d = Math.hypot(x - pk.x, y - pk.y) - pk.r; if (d < bd) { bd = d; best = i; } }
@@ -110,6 +128,9 @@ function makeTracker(P, opts) {
     // cloth" every other look, lost its name and could not be tapped), so the margin is wide, except near the pockets.
     const spots = [];
     for (const sp of spotsIn.slice().sort((a, b) => (b.score || 0) - (a.score || 0))) {
+      // a ball lying in a far pocket: not on the table, but a sign that a ball went into that pocket
+      const bag = (sp.score == null ? 1 : sp.score) < O.bagScore ? bagOf(sp) : null;
+      if (bag != null) { if (!(t - (S.bagT[bag] || -9) < 1.5)) { S.bagNew[bag] = t; ev('in_pocket_seen', { pocket: bag }); } S.bagT[bag] = t; continue; }
       const m = pocketNear(sp.x, sp.y).d < 3 ? R + 0.6 : R + 1.2; // at a pocket a ball in the mouth can sit right on the line
       if (sp.x < R - m || sp.y < R - m || sp.x > L - R + m || sp.y > W - R + m) continue;
       if (spots.some(q => Math.hypot(q.px - sp.px, q.py - sp.py) < 0.5 * Math.min(q.r, sp.r))) continue;
@@ -140,7 +161,12 @@ function makeTracker(P, opts) {
       const Q = p1.map(pred); // (fills struck)
       // a resting ball the rolling one reaches this look may already be on its way: forward along the line of centres
       const cost = p1.map((tr, i) => { const q = Q[i], k = struck.get(tr); return spots.map(sp => {
-        const d = Math.hypot(sp.x - q.x, sp.y - q.y), w = wGap(tr, sp); if (d <= q.g) return d + O.cueCost * w;
+        const d = Math.hypot(sp.x - q.x, sp.y - q.y), w = wGap(tr, sp);
+        // for a rolling ball, a sure read of the other colour is not this ball, even close by (Oct 27: the cue ball drew back
+        // off the 2, gone into the corner before the next look, and the 2's track took the cue ball: "cue in"). Not for a
+        // resting ball on its own spot: one sure misread there (the 9 read "7") would push it off.
+        if (tr.state === 'moving' && sp.kind === 'sure' && w > O.cueVeto) return Infinity;
+        if (d <= q.g) return d + O.cueCost * w;
         if (k && d <= O.launchGate && (sp.x - tr.x) * k.ux + (sp.y - tr.y) * k.uy > 0.5 * d && w <= O.cueVeto) return 0.5 + 0.1 * d + O.cueCost * w;
         return Infinity; }); });
       assign(cost, p1.length, spots.length).forEach((j, i) => { if (j >= 0) { matched.set(p1[i], j); used[j] = true; } });
@@ -191,6 +217,8 @@ function makeTracker(P, opts) {
       tr.x = sp.x; tr.y = sp.y; tr.sp = sp; tr.seenT = t; tr.seen++; tr.lostT = null;
       (tr.hist = tr.hist || []).push({ t, x: sp.x, y: sp.y }); while (tr.hist.length && t - tr.hist[0].t > 1) tr.hist.shift();
       if (sp.p) { tr.nbSum += sp.p[10]; tr.nbN++; } if (whiteSp(sp) != null) { tr.wS += whiteSp(sp); tr.wN++; }
+      if (!tr.ok && sp.p && sp.kind === 'sure') (tr.rd = tr.rd || []).push(topNum(sp.p));
+      tr.emptyN = 0;
       // seen again after it was lost at a pocket: it did not go in (yet); back to rolling, and the rest test below decides
       if (was === 'pending') { ev('back', { key: tr.key, num: tr.num }); tr.pocket = null; tr.state = 'moving'; }
       const away = Math.hypot(tr.x - tr.restX, tr.y - tr.restY);
@@ -217,16 +245,21 @@ function makeTracker(P, opts) {
         if (S.shot && !tr.anon && tr.seen <= 4 && tr.nbN < 2) { const near = pocketNear(tr.x, tr.y), pk = near.d <= O.pocketZone ? near.i : speed(tr) >= O.moveSpeed ? pocketFor(tr) : null; if (pk != null) { tr.anon = true; S.shot.anon.push({ pocket: pk, t, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)] }); ev('anon_entry', { pocket: pk, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)] }); } }
         if (t - tr.seenT > 0.6) { tr.state = 'dropped'; } continue;
       }
-      if (tr.state === 'pending') { if (t - tr.lostT >= O.pocketWait) pocketed(tr); continue; }
+      if (tr.state === 'pending') { if (t - tr.lostT >= O.pocketWait || S.bagNew[tr.pocket] >= tr.lostT - 0.3) pocketed(tr); continue; }
       if (tr.state === 'hidden') continue;
       let pk = tr.state === 'moving' ? pocketFor(tr) : null, hit = null;
       // a resting ball by a pocket that vanished just as another ball reached it was knocked in before the next look
       // (Oct 27: the 6, 3 in from the corner, gone in one look; it was left "hidden" and the shot showed nothing made).
       // Closer than two radii is not a hit but two touching balls found as one.
-      if (tr.state === 'rest' && S.shot) {
+      // The direction it was knocked is kept either way: it says which pocket it could have reached (see clearGone).
+      if (tr.state === 'rest') {
         const near = pocketNear(tr.x, tr.y);
         const still = new Set([...matched].filter(([o]) => o.state === 'rest').map(([, j]) => j));
-        if (near.d <= O.pocketZone) spots.forEach((sp, j) => { const d = Math.hypot(sp.x - tr.x, sp.y - tr.y); if (!hit && !still.has(j) && d <= 2 * R + 2.5 && d >= 2 * R - 0.2) { pk = near.i; hit = { ux: (tr.x - sp.x) / d, uy: (tr.y - sp.y) / d }; } });
+        spots.forEach((sp, j) => { const d = Math.hypot(sp.x - tr.x, sp.y - tr.y); if (!hit && !still.has(j) && d <= 2 * R + 2.5 && d >= 2 * R - 0.2) hit = { ux: (tr.x - sp.x) / d, uy: (tr.y - sp.y) / d }; });
+        if (!hit && struck.get(tr)) hit = struck.get(tr);
+        if (S.shot && hit && near.d <= O.pocketZone) pk = near.i;
+        // sitting in the mouth of a pocket: gone in a shot is in (Oct 27: the 1 in the jaws, hit by the cue ball)
+        if (S.shot && pk == null && near.d <= O.jawZone) pk = near.i;
       }
       tr.lostT = t; tr.vLost = tr.state === 'moving' ? speed(tr) : 0; tr.knock = hit;
       if (pk != null) { tr.state = 'pending'; tr.pocket = pk; ev('lost_at_pocket', { key: tr.key, num: tr.num, pocket: pk }); }
@@ -246,6 +279,7 @@ function makeTracker(P, opts) {
     }
     S.tracks = S.tracks.filter(tr => tr.state !== 'dropped');
     if (info.read) votes(spots, matched);
+    clearGone(t, info.empty);
     phase(t);
     name();
     return S;
@@ -255,19 +289,60 @@ function makeTracker(P, opts) {
   // goes hidden and the rolling ball shows up as something new, so no shot started. When a new spot has been seen twice,
   // rolling, and exactly one ball went hidden just before it appeared, from a spot the new one could have come from at its
   // speed, they are the same ball: the hidden one takes over and is rolling from then on.
+  // A ball can also jump in one look and stop (Oct 27: the cue ball went 20 in into the 5 between two looks and sat
+  // still; no shot was seen and the 5 stayed a ghost): a new spot that turns up at once, far off, and reads like a ball
+  // that vanished just before, is that ball. It counts as rolling, so a shot starts, dated back to when it was last seen.
   function relink(t) {
     for (const nw of S.tracks) {
-      if (nw.ok || nw.state !== 'new' || nw.restSince != null || nw.seen !== 2 || !nw.hist || nw.hist.length < 2) continue;
-      const v = Math.hypot(nw.vx, nw.vy); if (v < O.shotSpeed * 2) continue;
-      // reach: a struck ball is fastest at first (up to well over 100 in/s), so its speed now says little about how far it got
-      const first = nw.hist[0], cand = ballsNow().filter(o => o.state === 'hidden' && o.lostT != null && first.t - o.lostT >= -0.05 && first.t - o.lostT <= 0.8 &&
-        Math.hypot(first.x - o.x, first.y - o.y) <= Math.max(v, 80) * (first.t - o.lostT + 0.3) + 6);
+      if (nw.ok || nw.state !== 'new' || nw.seen !== 2 || !nw.hist || nw.hist.length < 2) continue;
+      const first = nw.hist[0], v = Math.hypot(nw.vx, nw.vy), rolling = nw.restSince == null && v >= O.shotSpeed * 2;
+      let cand;
+      if (rolling) {
+        // reach: a struck ball is fastest at first (up to well over 100 in/s), so its speed now says little about how far it got
+        cand = ballsNow().filter(o => o.state === 'hidden' && o.lostT != null && first.t - o.lostT >= -0.05 && first.t - o.lostT <= 0.8 &&
+          Math.hypot(first.x - o.x, first.y - o.y) <= Math.max(v, 80) * (first.t - o.lostT + 0.3) + 6);
+      } else {
+        const rd = nw.rd || [];
+        cand = ballsNow().filter(o => { const d = Math.hypot(first.x - o.x, first.y - o.y), gap = first.t - o.seenT;
+          if (!(o.state === 'hidden' && o.lostT != null && first.t - o.lostT >= -0.05 && first.t - o.lostT <= O.jumpGap && d >= 3 && d / Math.max(0.05, gap) >= O.jumpSpeed)) return false;
+          // it must read like that ball: its number, or (an unnamed ball) white or not the same
+          if (o.num != null) return rd.includes(o.num);
+          const a = whiteOf(o); return rd.length > 0 && nw.wN > 0 && (a == null || Math.abs(a - nw.wS / nw.wN) <= O.cueVeto); });
+      }
       // two balls went hidden (the cue ball and the ball it sent out of sight): white or not tells which one this is
       if (cand.length > 1 && nw.wN) { const w = nw.wS / nw.wN; for (let i = cand.length - 1; i >= 0; i--) { const a = whiteOf(cand[i]); if (a != null && Math.abs(a - w) > O.cueVeto) cand.splice(i, 1); } }
       if (cand.length !== 1) continue;
-      const o = cand[0]; ev('relink', { key: o.key, num: o.num, from: [+o.x.toFixed(1), +o.y.toFixed(1)], to: [+nw.x.toFixed(1), +nw.y.toFixed(1)] });
-      Object.assign(o, { x: nw.x, y: nw.y, vx: nw.vx, vy: nw.vy, state: 'moving', movedT: t, restSince: null, lostT: null, seenT: t, sp: nw.sp, hist: nw.hist.slice() });
+      const o = cand[0], from = { x: o.x, y: o.y, t: o.seenT, lost: o.lostT }; ev('relink', { key: o.key, num: o.num, from: [+o.x.toFixed(1), +o.y.toFixed(1)], to: [+nw.x.toFixed(1), +nw.y.toFixed(1)], jump: !rolling });
+      const jv = rolling ? null : { vx: (first.x - from.x) / Math.max(0.05, first.t - from.t), vy: (first.y - from.y) / Math.max(0.05, first.t - from.t) };
+      Object.assign(o, { x: nw.x, y: nw.y, vx: jv ? jv.vx : nw.vx, vy: jv ? jv.vy : nw.vy, state: 'moving', movedT: t, restSince: null, lostT: null, seenT: t, sp: nw.sp, hist: nw.hist.slice(), emptyN: 0, jumpFrom: jv ? from.t : null, relinkLost: from.lost });
       nw.state = 'dropped';
+    }
+    S.tracks = S.tracks.filter(tr => tr.state !== 'dropped');
+  }
+
+  // A hidden ball is kept where it was, but not forever: when its spot shows bare cloth (the app looks at the picture there:
+  // not the ball, not an arm) on several looks in a row, it is not there. Gone during a shot, or hidden when one started,
+  // it went in that shot (Oct 27: a struck ball gone before the next look stayed a dashed ghost for the rest of the rack,
+  // 9 of the 13 balls in that were missed). Gone with no shot since, it was taken off by hand. Without the picture check
+  // (info.empty) nothing is cleared.
+  function clearGone(t, empty) {
+    if (!empty || S.phase === 'shot') return;
+    for (const tr of ballsNow()) {
+      if (tr.state !== 'hidden' || tr.lostT == null) continue;
+      const e = empty(tr.x, tr.y); if (e === true) tr.emptyN = (tr.emptyN || 0) + 1; else if (e === false) tr.emptyN = 0;
+      if (tr.emptyN < O.emptyLooks || t - tr.lostT < O.emptyHold) continue;
+      const sh = S.shots.find(s => s.t1 >= tr.lostT && (tr.lostT >= s.t0 - 0.6 || s.before.some(b => b.key === tr.key && b.state === 'hidden')));
+      if (sh && t - sh.t1 < O.afterHold) continue;
+      if (!sh || tr.num == null) { tr.state = 'dropped'; ev('cleared', { key: tr.key, num: tr.num }); continue; }
+      // which pocket: the one it was knocked toward, if one lies that way; else not known
+      let pocket = null;
+      if (tr.knock) { let best = 0.9; P.pockets.forEach((pk, i) => { const dx = pk.x - tr.x, dy = pk.y - tr.y, d = Math.hypot(dx, dy) || 1, c = (dx * tr.knock.ux + dy * tr.knock.uy) / d; if (c > best) { best = c; pocket = i; } }); }
+      // or the one pocket a ball was newly seen lying in since the shot started
+      if (pocket == null) { const ks = Object.keys(S.bagNew).filter(k => S.bagNew[k] >= sh.t0 && !sh.made.some(m => m.pocket === +k)); if (ks.length === 1) pocket = +ks[0]; }
+      tr.state = 'gone'; tr.goneT = t; const d = { key: tr.key, num: tr.num, sure: tr.sure, pocket, late: true };
+      if (!S.gone.includes(tr.num)) S.gone.push(tr.num);
+      sh.made.push(d); if (tr.key === sh.cueKey || tr.num === 0) sh.scratch = true; sh.updated = t;
+      ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
     }
     S.tracks = S.tracks.filter(tr => tr.state !== 'dropped');
   }
@@ -339,7 +414,7 @@ function makeTracker(P, opts) {
     const wrong = sh.made.filter(m => m.num != null && held.has(m.num) && m.num !== 0);
     ev('reconcile', { n: sh.n, anon: sh.anon.length, missing, wrong: wrong.map(m => m.num) });
     if (!missing.length || missing.length !== sh.anon.length) return;
-    missing.forEach((num, i) => { const e = sh.anon[i], d = { key: null, num, sure: false, pocket: missing.length === 1 ? e.pocket : null, inferred: true }; sh.made.push(d); S.gone.push(num); ev('made_inferred', { n: sh.n, num, pocket: d.pocket }); });
+    missing.forEach((num, i) => { const e = sh.anon[i], d = { key: null, num, sure: false, pocket: missing.length === 1 ? e.pocket : null, inferred: true }; sh.made.push(d); S.gone.push(num); ev('made_inferred', { n: sh.n, num, pocket: d.pocket }); S.notes.push({ n: sh.n, num, pocket: d.pocket }); });
     sh.updated = t;
   }
 
@@ -378,8 +453,15 @@ function makeTracker(P, opts) {
     if (tr.pin == null && cueFit >= 0.05) voteFor(tr, 0, O.cueVote);
     // a break: five or more balls packed together (each touching another) when the shot starts
     const packed = ballsNow().filter(a => a !== tr && ballsNow().some(b => b !== a && b !== tr && dist(a, b) < 2 * R + 0.5)).length;
-    S.shot = { n: S.shots.length + 1, t0: t, cueKey: tr.key, cueNum: tr.num, first: null, made: [], anon: [], before: snapshot(), break: packed >= 5 };
+    const t0 = tr.jumpFrom != null && tr.movedT === t ? tr.jumpFrom : t, back = tr.movedT === t && tr.relinkLost != null ? Math.min(t0, tr.relinkLost) : t0; tr.jumpFrom = tr.relinkLost = null;
+    S.shot = { n: S.shots.length + 1, t0, cueKey: tr.key, cueNum: tr.num, first: null, made: [], anon: [], before: snapshot(), break: packed >= 5 };
     ev('shot', { n: S.shot.n, key: tr.key, num: tr.num, break: S.shot.break });
+    // a shot seen late (the cue ball found again only after it jumped): a ball that vanished since it started, by a pocket
+    // and struck or in the jaws, went in (Oct 27: the 1 in the jaws, gone the same look the cue ball reached it)
+    if (back < t) for (const b of ballsNow()) {
+      if (b.state !== 'hidden' || !(b.lostT >= back - 0.05) || b.vLost) continue; const near = pocketNear(b.x, b.y);
+      if (near.d <= O.jawZone || (b.knock && near.d <= O.pocketZone)) { b.state = 'pending'; b.pocket = near.i; ev('lost_at_pocket', { key: b.key, num: b.num, pocket: near.i }); }
+    }
   }
   function endShot(t) {
     const sh = S.shot; sh.t1 = t; sh.after = snapshot();
@@ -417,6 +499,7 @@ function makeTracker(P, opts) {
   function inPocket(key) { const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.pocket = null; ev('tap_pocketed', { key, num: tr.num }); pocketed(tr); name(); return true; }
   function newRack() { for (const tr of S.tracks) tr.state = 'dropped'; S.tracks = []; S.gone = []; S.phase = 'hands'; S.stillSince = null; S.shot = null; ev('new_rack', {}); }
 
-  return { S, O, update, pin, notBall, inPocket, newRack, balls: ballsNow, snapshot };
+  function setBags(b) { O.bags = b || []; }
+  return { S, O, update, pin, notBall, inPocket, newRack, setBags, balls: ballsNow, snapshot };
 }
 if (typeof module !== 'undefined') module.exports = { makeTracker };

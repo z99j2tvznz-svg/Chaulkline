@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.3';
+const VERSION = 'V3.0.4';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -59,8 +59,9 @@ function renderHome() {
   card.hidden = !(L && L.shots && L.shots.length);
   if (!card.hidden) $('#lastList').innerHTML = L.shots.slice(-12).map(s => '<div class="srow"><b>' + s.n + '</b><span>' + shotWords(s) + '</span></div>').join('') + (L.shots.length > 12 ? '<div class="lbl">… ' + L.shots.length + ' shots in all</div>' : '');
 }
+const POCKETS = ['bottom-left', 'bottom side', 'bottom-right', 'top-left', 'top side', 'top-right'];
 function shotWords(s) {
-  const pk = i => i == null ? '' : ' (' + ['bottom-left', 'bottom side', 'bottom-right', 'top-left', 'top side', 'top-right'][i] + ')';
+  const pk = i => i == null ? '' : ' (' + POCKETS[i] + ')';
   const made = s.made.filter(m => m.num !== s.cue && m.num !== 0);
   const w = [made.length ? made.map(m => (m.num == null ? 'a ball' : 'the ' + m.num) + pk(m.pocket)).join(', ') + ' in' : 'nothing in'];
   if (s.scratch) w.push('scratch'); if (s.break) w.unshift('Break:'); else if (s.first != null) w.push('first hit the ' + (s.first === 0 ? 'cue' : s.first));
@@ -191,7 +192,18 @@ async function acceptTable() {
       if (A.engine === 'gpu' && DET.ep !== 'webgpu') toast('The graphics chip is not available: using the processor.');
     } catch (e) { dbg('error', { m: 'finder load ' + String(e && e.message || e).slice(0, 160) }); setStatus('The ball finder could not start: ' + String(e && e.message || e).slice(0, 80)); return; }
   }
-  steadyRef(); A.phase = 'run'; setStatus('Watching'); runLoop();
+  steadyRef(); clothRef(); A.tk.setBags(pocketBags(A.cam, A.P)); A.phase = 'run'; setStatus('Watching'); runLoop();
+}
+// the cloth's colour, once the table is accepted: a hidden ball's spot that shows only this colour is bare (see bareCloth)
+function clothRef() {
+  try { grab(); A.cloth = sampleCloth(A.fctx.getImageData(0, 0, A.W, A.H), A.quad); dbg('cloth', A.cloth ? { h: Math.round(A.cloth.h), s: r2(A.cloth.s), v: r2(A.cloth.v) } : { none: true }); }
+  catch (e) { A.cloth = null; dbg('error', { m: 'cloth ' + String(e && e.message || e).slice(0, 120) }); }
+}
+function emptyAt(x, y) {
+  if (!A.cloth || !A.fctx || !A.cam) return null;
+  const p = A.cam.proj(x, y, A.P.R), r = A.cam.ballRad(x, y, A.P.R, A.P.R), s = Math.ceil(r) + 2, x0 = Math.round(p[0]) - s, y0 = Math.round(p[1]) - s;
+  if (x0 < 0 || y0 < 0 || x0 + 2 * s > A.W || y0 + 2 * s > A.H) return null;
+  return bareCloth(A.fctx.getImageData(x0, y0, 2 * s, 2 * s), p[0] - x0, p[1] - y0, r, A.cloth);
 }
 function refind(msg) { A.phase = 'find'; setStatus(msg || 'Looking for the table…'); findTable(); }
 
@@ -220,7 +232,8 @@ async function look() {
   // are not votes (the tracker votes on resting balls only), but white or not still tells the cue ball from the rest
   const read = true; await DET.read(A.fctx, on);
   const t2 = performance.now(), before = tk.S.phase;
-  tk.update(t, on, { read });
+  tk.update(t, on, { read, empty: emptyAt });
+  for (const n of tk.S.notes.splice(0)) onLateMade(n);
   A.looks++;
   DBG.looks.push([Date.now() - DBG.t0, Math.round(t1 - t0), Math.round(t2 - t1), on.length, tk.S.phase === 'shot' ? 'S' : tk.S.phase[0], on.map(s => [r1(s.x), r1(s.y), s.num == null ? null : s.num, s.kind ? s.kind[0] : '-', r2(s.score)])]);
   if (DBG.looks.length > 4000) DBG.looks.splice(0, 400);
@@ -238,6 +251,13 @@ function onShotEnd(sh) {
   jpeg(960).then(b => { A.pics.set('shot' + String(sh.n).padStart(3, '0') + '-after.jpg', b); trimPics(); }).catch(() => { });
   toast('Shot ' + sh.n + ': ' + shotWords(A.sess.shots[A.sess.shots.length - 1]));
   if (A.sess.shots.length % 3 === 0) { A.lastSess = A.sess; save(); }
+}
+// a ball found to have gone in after its shot ended (its spot is bare cloth now): the shot's line is corrected and said
+function onLateMade(n) {
+  const row = A.sess.shots.find(s => s.n === n.n), sh = A.tk.S.shots.find(s => s.n === n.n);
+  if (row && sh) { row.made = shotRow(sh).made; row.scratch = sh.scratch; }
+  dbg('late_made', n); renderDown();
+  toast('Shot ' + n.n + ': ' + (n.num === 0 ? 'the cue ball went in too (scratch)' : 'the ' + (n.num == null ? 'ball' : n.num) + ' went in too') + (n.pocket != null ? ' (' + POCKETS[n.pocket] + ')' : ''));
 }
 function trimPics() { const keys = [...A.pics.keys()].sort(); while (keys.length > 120) A.pics.delete(keys.shift()); }
 function jpeg(w) {
@@ -298,6 +318,7 @@ function steady() {
   if (moved < 1.5) return; // no real change
   A.quad = STEADY.quad0.map(p => [p[0] + dx, p[1] + dy]);
   const { L, Wd } = tableDims(A.ft); A.cam = makeCam(tableCornersFor(A.rot, L, Wd), A.quad, A.W, A.H, LENS * Math.max(A.W, A.H), [A.W / 2, A.H / 2]);
+  if (A.tk) A.tk.setBags(pocketBags(A.cam, A.P));
   A.box = [Math.max(0, A.box0[0] + dx), Math.max(0, A.box0[1] + dy), A.box0[2], A.box0[3]];
   STEADY.last = [r1(dx), r1(dy)]; dbgOnce('steady', 1000, { shift: STEADY.last, n: ok.length });
 }
@@ -331,17 +352,48 @@ function drawLoop() {
   }
   if (A.phase === 'manual' && A.man) for (const p of A.man) { const s = S2(p); c.fillStyle = '#ffb84d'; c.beginPath(); c.arc(s[0], s[1], 7, 0, Math.PI * 2); c.fill(); }
   if (A.phase !== 'run' || !A.tk || !A.cam) return;
-  for (const b of A.tk.balls()) {
-    const p = A.cam.proj(b.x, b.y, A.P.R), s = S2(p), r = Math.max(7, A.cam.ballRad(b.x, b.y, A.P.R, A.P.R) * F.k) + 3;
+  drawBalls(c, S2, F);
+}
+
+// Each ball: a thin ring just outside it (dashed while hidden) and a small label above. A rolling ball is drawn where it
+// should be by now (its last spot plus its speed times the time since that look, at most 0.3 s on and not past a
+// cushion), so the ring moves with the ball between looks instead of jumping after it. Labels that would cover another
+// label or ball try the other sides; in a tight bunch they go further out on a thin leader line. A label keeps the side it
+// had while that side stays free, so labels do not jump from look to look.
+const LAB = new Map(); // ball key -> side index it used last
+function drawBalls(c, S2, F) {
+  const tk = A.tk, P = A.P, now = performance.now() / 1000, items = [];
+  for (const b of tk.balls()) {
+    let x = b.x, y = b.y;
+    if (b.state === 'moving') { const dt = Math.min(0.3, Math.max(0, now - tk.S.t)); x = Math.min(P.L - P.R, Math.max(P.R, x + b.vx * dt)); y = Math.min(P.W - P.R, Math.max(P.R, y + b.vy * dt)); }
+    const s = S2(A.cam.proj(x, y, P.R)), r = Math.max(5, A.cam.ballRad(x, y, P.R, P.R) * F.k) + 1;
     const col = b.num == null ? 'rgba(234,241,244,.75)' : b.sure ? '#59d6e8' : '#ffb84d';
-    c.strokeStyle = col; c.lineWidth = 2.2; c.setLineDash(b.state === 'hidden' || b.state === 'pending' ? [4, 4] : []);
-    c.beginPath(); c.arc(s[0], s[1], r, 0, Math.PI * 2); c.stroke(); c.setLineDash([]);
-    if (b.state === 'moving') continue;
-    const t = b.num == null ? '?' : (b.num === 0 ? 'cue' : String(b.num)) + (b.sure ? '' : '?');
-    c.font = '600 13px system-ui, -apple-system, sans-serif'; const tw = c.measureText(t).width + 10;
-    c.fillStyle = 'rgba(11,16,20,.8)'; c.fillRect(s[0] - tw / 2, s[1] - r - 21, tw, 18);
-    c.fillStyle = col; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(t, s[0], s[1] - r - 12);
+    const t = b.num == null ? '?' : (b.num === 0 ? 'Q' : String(b.num)) + (b.sure ? '' : '?');
+    items.push({ b, s, r, col, t });
   }
+  c.lineWidth = 1.3;
+  for (const it of items) { c.strokeStyle = it.col; c.setLineDash(it.b.state === 'hidden' || it.b.state === 'pending' ? [3, 3] : []); c.beginPath(); c.arc(it.s[0], it.s[1], it.r, 0, Math.PI * 2); c.stroke(); }
+  c.setLineDash([]);
+  c.font = '600 11px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+  const H = 14, placed = [], hit = (a, q) => a.x < q.x + q.w && q.x < a.x + a.w && a.y < q.y + q.h && q.y < a.y + a.h;
+  const free = box => box.x >= 0 && box.y >= 0 && box.x + box.w <= F.w && box.y + box.h <= F.h && !placed.some(q => hit(box, q)) &&
+    !items.some(o => { const cx = Math.max(box.x, Math.min(o.s[0], box.x + box.w)), cy = Math.max(box.y, Math.min(o.s[1], box.y + box.h)); return Math.hypot(cx - o.s[0], cy - o.s[1]) < o.r; });
+  // sides: above, upper right, upper left, right, left, below; then the same further out (with a leader line)
+  const DIRS = [[0, -1], [0.75, -0.75], [-0.75, -0.75], [1, 0], [-1, 0], [0, 1]];
+  const at = (it, k) => { const far = k >= DIRS.length, [dx, dy] = DIRS[k % DIRS.length], w = c.measureText(it.t).width + 8, g = it.r + (far ? 2.6 * H : 2);
+    const cx = it.s[0] + dx * (g + w / 2 * Math.abs(dx)), cy = it.s[1] + dy * (g + H / 2 * Math.abs(dy)); return { x: cx - w / 2, y: cy - H / 2, w, h: H, cx, cy, far }; };
+  // bunched balls first, so they get first choice of the free sides
+  const crowd = it => items.filter(o => o !== it && Math.hypot(o.s[0] - it.s[0], o.s[1] - it.s[1]) < 4 * it.r).length;
+  for (const it of items.slice().sort((a, b) => crowd(b) - crowd(a))) {
+    const last = LAB.get(it.b.key), order = [...Array(DIRS.length * 2).keys()]; if (last != null) { order.splice(order.indexOf(last), 1); order.unshift(last); }
+    let box = null, k0 = 0; for (const k of order) { const q = at(it, k); if (free(q)) { box = q; k0 = k; break; } }
+    if (!box) { box = at(it, 0); k0 = 0; } // nowhere free: above, as before
+    LAB.set(it.b.key, k0); placed.push(box);
+    if (box.far) { c.strokeStyle = it.col; c.lineWidth = 1; c.beginPath(); const a = Math.atan2(box.cy - it.s[1], box.cx - it.s[0]); c.moveTo(it.s[0] + Math.cos(a) * it.r, it.s[1] + Math.sin(a) * it.r); c.lineTo(box.cx - Math.cos(a) * Math.min(box.w / 2, H / 2), box.cy - Math.sin(a) * H / 2); c.stroke(); }
+    c.fillStyle = 'rgba(11,16,20,.8)'; c.fillRect(box.x, box.y, box.w, box.h);
+    c.fillStyle = it.col; c.fillText(it.t, box.cx, box.cy + 0.5);
+  }
+  for (const k of [...LAB.keys()]) if (!items.some(it => it.b.key === k)) LAB.delete(k);
 }
 
 // ---------- taps: name a ball ----------

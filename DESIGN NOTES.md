@@ -741,3 +741,38 @@ Plan and reasons: `docs/V3-PLAN.md`. V2.3.3 stays at `/v2/`, byte for byte as it
   6. `src/v3/app.js`: the number reader runs every look (10 ms against 220 for the finder), so the cue ball can be told
      from the rest during a shot too. Shot looks are logged as "S" (they read "s", like still).
 - Left: the 8 at 7:37, sent out of sight right behind the cue ball and never seen again.
+
+## V3.0.4 (Oct 28) — ghosts clear themselves, shots seen in one look, balls lying in a pocket, new labels
+- Owner's V3.0.3 session (Oct 27, 22:27; 3 racks): first naming very good; a pocketed ball (the 5) left a dashed ghost
+  that never cleared; the ring lags a rolling ball. Truth for all 41 real shots taken from the pictures (rack 2 began
+  with the balls rolled out by hand, which live V3.0.3 counted as a shot). Live: 28 of 41 right, 13 balls in missed,
+  1 false scratch. Replayed with V3.0.4: 40 of 41 right, none called in wrongly; the Oct 26 23:50 session stays 17 of 18.
+- Most misses were one thing: the phone looks about 4 times a second, so a hard-hit ball is gone before the next look,
+  never seen moving, and was kept "hidden" for good (the ghost). Now (`src/track.js`, clearGone) a hidden ball whose spot
+  shows bare cloth on 3 looks in a row, 1.5 s after it vanished, is not there: gone during a shot (or hidden when one
+  started), it went in that shot, said by the app as "Shot n: the 8 went in too"; gone with no shot, it was taken off by
+  hand and is cleared. The cloth check is `bareCloth` (`src/v3/cloth.js`): the pixels within 0.7 ball radii of the spot,
+  against the cloth colour taken when the table is accepted (the V2 cloth test, which keeps the navy 2 apart from the
+  blue felt). An arm, the player or a ball over the spot is not cloth, so a ball behind the player keeps its spot.
+- A shot can happen in one look: the cue ball went 20 in into the 5 and stopped, so it was never "rolling" and no shot
+  started. A new spot that turns up at once, at least 3 in off and 20 in/s from where a ball just vanished, and reads
+  like that ball (its number, or white or not for an unnamed one), is that ball: a shot starts, dated back.
+- A ball sitting in the jaws that vanishes when the shot reaches it went in (the 1, shot 3).
+- Balls lying in a far pocket: the camera sees into the far pockets, and a ball in one maps onto the table 4 to 10 in in
+  front of it (the 7 "came back out" at 76, 33; the same phantom was in the Oct 26 session). `pocketBags` gives that line
+  for each pocket from the camera; a spot on it scoring under 0.6 (those score 0.3 to 0.5, balls on the cloth 0.7 to 0.9)
+  is a ball in that pocket: not tracked, and a ball lost at that pocket is in at once. It also names the pocket for a ball
+  found in late.
+- White or not counts the 9 as white (the owner's 9 is a white ball with a yellow band, and the resting cue ball was read
+  "9, sure" now and then). A rolling ball refuses a spot read surely as the other colour, even close by (the cue ball drew
+  back off the 2 and the 2's track took it: "cue in"); a resting ball on its own spot does not (one misread pushed the 9
+  off the rail).
+- Drawing (`src/v3/app.js`): rings 1 px outside the ball with a 1.3 px line (were 3 px out, 2.2 px); 11 px labels; Q for
+  the cue ball; labels on rolling balls too, so a lost name shows where it happens; a rolling ball's ring is drawn where
+  it should be by now (last spot plus speed times the time since, at most 0.3 s, not past a cushion). Labels that would
+  cover another label or ball try the other sides; with no side free they go further out on a leader line; each keeps
+  its side while it stays free.
+- Tools: `tools/v3/replay.js` applies the player's taps and New rack presses; `tools/v3/photos.js` runs the cloth check on a
+  session's shot pictures and stores per-picture cloth maps in the fixture (1 in grid), so the tests replay with it.
+  Sessions live on the `sessions` branch.
+- Left: the 2 at 8:49 (its check needs a frame between the pictures; the live app has it).

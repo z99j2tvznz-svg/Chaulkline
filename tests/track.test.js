@@ -251,3 +251,61 @@ test('the owner\'s V3.0.2 session (Oct 26, 23:50) replayed against the pictures:
   // the one left: the 8 at 7:37, sent out of sight behind the cue ball and never seen again. Live V3.0.2 got 11 right.
   assert.strictEqual(r.shots, 18); assert.ok(r.right >= 17, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
 });
+
+// ---- V3.0.4: ghosts, one-look jumps, balls lying in a pocket ----
+const settleE = (tk, t0, balls, secs, dt, empty) => { let t = t0; for (; t < t0 + secs; t += dt) tk.update(t, balls.map(b => ({ x: b.x, y: b.y, px: b.x * 12, py: b.y * 12, r: 13, score: 0.8, p: probs(b.num), kind: 'sure' })), { read: true, empty }); return t; };
+
+test('a struck ball gone before the next look is not left as a ghost: its spot shows bare cloth, so it went in that shot', () => {
+  const tk = makeTracker(P), others = [{ num: 5, x: 30, y: 33 }];
+  let t = settleE(tk, 0, [{ num: 0, x: 20, y: 20 }, { num: 8, x: 40, y: 20 }, ...others], 3, 0.25, () => true);
+  // the cue ball rolls into the 8; the 8 is never seen again (gone toward the far corner between looks); the cue ball stops
+  for (const x of [24, 29, 34, 37, 38, 38.5, 38.5, 38.5]) { t = settleE(tk, t, [{ num: 0, x, y: 20 }, ...(x < 34 ? [{ num: 8, x: 40, y: 20 }] : []), ...others], 0.25, 0.25, () => true); }
+  settleE(tk, t, [{ num: 0, x: 38.5, y: 20 }, ...others], 5, 0.25, () => true);
+  assert.strictEqual(tk.S.shots.length, 1, JSON.stringify(tk.S.events.filter(e => e.k !== 'named').slice(-8)));
+  assert.deepStrictEqual(tk.S.shots[0].made.map(m => m.num), [8]); assert.ok(!tk.balls().some(b => b.num === 8), 'no ghost of the 8');
+  assert.deepStrictEqual(tk.S.notes.map(n => n.num), [8]);
+});
+
+test('the same ball hidden behind the player (its spot not cloth) stays where it was, with its name', () => {
+  const tk = makeTracker(P), others = [{ num: 5, x: 30, y: 33 }];
+  let t = settleE(tk, 0, [{ num: 0, x: 20, y: 20 }, { num: 8, x: 60, y: 20 }, ...others], 3, 0.25, () => true);
+  t = settleE(tk, t, [{ num: 0, x: 20, y: 20 }, ...others], 6, 0.25, (x, y) => Math.hypot(x - 60, y - 20) < 3 ? false : true);
+  const b8 = tk.balls().find(b => b.num === 8); assert.ok(b8 && b8.state === 'hidden', JSON.stringify(b8 && b8.state));
+  assert.strictEqual(tk.S.shots.length, 0);
+});
+
+test('a ball taken off by hand with no shot since is cleared, not called in', () => {
+  const tk = makeTracker(P);
+  let t = settleE(tk, 0, [{ num: 0, x: 20, y: 20 }, { num: 4, x: 50, y: 25 }], 3, 0.25, () => true);
+  t = settleE(tk, t, [{ num: 0, x: 20, y: 20 }], 4, 0.25, () => true);
+  assert.ok(!tk.balls().some(b => b.num === 4)); assert.strictEqual(tk.S.shots.length, 0); assert.ok(tk.S.events.some(e => e.k === 'cleared' && e.num === 4));
+});
+
+test('the cue ball that jumps 20 in between two looks and stops starts a shot (Oct 27: the 5 at 5:58)', () => {
+  const tk = makeTracker(P), others = [{ num: 9, x: 34, y: 6 }, { num: 7, x: 67, y: 21 }];
+  let t = settleE(tk, 0, [{ num: 0, x: 30, y: 9 }, { num: 5, x: 53, y: 24 }, ...others], 3, 0.25, () => true);
+  t = settleE(tk, t, [{ num: 0, x: 51, y: 23 }, { num: 5, x: 53.2, y: 24.4 }, ...others], 0.25, 0.25, () => true);
+  t = settleE(tk, t, [{ num: 0, x: 50, y: 25 }, ...others], 0.25, 0.25, () => true);
+  t = settleE(tk, t, [{ num: 0, x: 49, y: 27 }, ...others], 0.25, 0.25, () => true);
+  settleE(tk, t, [{ num: 0, x: 48, y: 28 }, ...others], 5, 0.25, () => true);
+  assert.strictEqual(tk.S.shots.length, 1, JSON.stringify(tk.S.events.filter(e => e.k !== 'named').slice(-8)));
+  assert.deepStrictEqual(tk.S.shots[0].made.map(m => m.num), [5]); assert.strictEqual(tk.S.shots[0].scratch, false);
+});
+
+test('a ball seen lying in a far pocket is not a ball on the table: the ball that went there is in, not "back"', () => {
+  const tk = makeTracker(P, { bags: [{ i: 5, ax: 75.8, ay: 33.5, bx: 73.3, by: 27.1 }] });
+  let t = settleE(tk, 0, [{ num: 0, x: 40, y: 20 }, { num: 7, x: 63, y: 19 }], 3, 0.25);
+  const path = [[[46, 20], [63, 19]], [[52, 20], [63, 19]], [[58, 19.5], [63, 19]], [[60, 19], [67, 26]], [[61, 19], [72, 32]], [[61.5, 19], [75.5, 37]], [[62, 19]], [[62, 19]]];
+  for (const p of path) { tk.update(t, p.map(q => ({ x: q[0], y: q[1], px: q[0] * 12, py: q[1] * 12, r: 13, score: 0.8, p: null })), { read: false }); t += 0.25; }
+  // from now on the 7 shows up dimly in the pocket, mapped to 76, 33 (score 0.4)
+  for (let i = 0; i < 20; i++) { tk.update(t, [{ x: 62, y: 19, px: 744, py: 228, r: 13, score: 0.8, p: probs(0), kind: 'sure' }, { x: 76, y: 33, px: 912, py: 396, r: 13, score: 0.4, p: probs(7), kind: 'sure' }], { read: true }); t += 0.25; }
+  assert.strictEqual(tk.S.shots.length, 1); assert.deepStrictEqual(tk.S.shots[0].made.map(m => [m.num, m.pocket]), [[7, 5]]);
+  assert.ok(!tk.S.events.some(e => e.k === 'back'), 'no "back"'); assert.ok(!tk.balls().some(b => b.num === 7));
+});
+
+test('the owner\'s V3.0.3 session (Oct 27, 22:27) replayed with the cloth check on its pictures: 39 of 41 shots right, nothing called in that was not', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261027-2227.json'), 'utf8')));
+  // live V3.0.3: 28 of these 41 right, 13 balls in missed, 1 false scratch
+  assert.strictEqual(r.shots, 41); assert.ok(r.right >= 39, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
+});

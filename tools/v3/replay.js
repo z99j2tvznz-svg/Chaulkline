@@ -11,7 +11,12 @@ function actions(d) {
   let i = 0; return ev.map(e => (e.k === 'tap_not' || e.k === 'tap_pocketed') ? { ...e, num: (tev[i++] || {}).num } : e);
 }
 function replay(d, ft, opts, o2) {
-  const tk = makeTracker(makeP(ft || (d.header && d.header.ft) || 7), opts), acts = (o2 && o2.noActions) ? [] : actions(d);
+  const P = makeP(ft || (d.header && d.header.ft) || 7), tk = makeTracker(P, opts), acts = (o2 && o2.noActions) ? [] : actions(d);
+  // where a ball lying in a pocket shows up, from the camera in the log's header (as the app does once the table is set)
+  const h = d.header; if (h && h.quad && h.picture) {
+    global.D2R = global.D2R || Math.PI / 180; const { makeCam } = require(path.join(__dirname, '../../src/core.js')), V = require(path.join(__dirname, '../../src/vision.js')), { L, Wd } = V.tableDims(h.ft || 7);
+    tk.setBags(require(path.join(__dirname, '../../src/v3/cloth.js')).pocketBags(makeCam(V.tableCornersFor(h.rot || 0, L, Wd), h.quad, h.picture[0], h.picture[1], 0.86 * Math.max(h.picture[0], h.picture[1]), [h.picture[0] / 2, h.picture[1] / 2]), P));
+  }
   const apply = a => {
     if (a.k === 'new_rack') return tk.newRack();
     const bs = tk.S.tracks.filter(tr => tr.ok && tr.state !== 'gone' && tr.state !== 'dropped');
@@ -19,11 +24,13 @@ function replay(d, ft, opts, o2) {
     const b = bs.find(tr => tr.num === a.num); if (!b) return;
     if (a.k === 'tap_not') tk.notBall(b.key); else tk.inPocket(b.key);
   };
+  const emp = o2 && o2.empty ? o2.empty : (!o2 || !o2.noEmpty) && d.cloth ? require('./photos.js').emptyFromMaps(d.cloth) : null;
   const probs = (n, k) => { const q = new Array(11).fill(0); if (k === 'n') { q[10] = 0.8; q[n] = 0.2; return q; } const top = k === 's' ? 0.9 : 0.5; q.fill((1 - top - 0.01) / 9); q[n] = top; q[10] = 0.01; return q; };
   for (const L of d.looks) {
     while (acts.length && acts[0].t <= L[0]) apply(acts.shift());
     const spots = L[5].map(([x, y, num, kind, score]) => ({ x, y, px: x * 20, py: y * 20, r: 13.5, score, kind: kind === 's' ? 'sure' : kind === 'u' ? 'unsure' : kind === 'n' ? 'not_a_ball' : null, p: num == null ? null : probs(num, kind) }));
-    tk.update(L[0] / 1000, spots, { read: spots.some(s => s.p) });
+    // the log has no camera frames: the bare-cloth check uses the shot pictures' cloth maps kept in the fixture (photos.js)
+    tk.update(L[0] / 1000, spots, { read: spots.some(s => s.p), empty: emp ? emp(L[0] / 1000) : null });
   }
   return tk;
 }

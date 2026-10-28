@@ -2,8 +2,8 @@
 // real shot, or [[from, to], [made]] for a shot whose start is only known to lie in that window).
 // usage: node tools/v3/score.js <session.json> [--detail]
 const fs = require('fs'), path = require('path'), { replay } = require('./replay.js');
-function score(d, opts) {
-  const tk = replay(d, null, opts), shots = tk.S.shots.map(s => ({ t0: s.t0, made: s.made.map(m => m.num), scratch: s.scratch })), used = new Set(), rows = [];
+function score(d, opts, o2) {
+  const tk = replay(d, null, opts, o2), shots = tk.S.shots.map(s => ({ t0: s.t0, made: s.made.map(m => m.num), scratch: s.scratch })), used = new Set(), rows = [];
   for (const [when, made] of d.truth) {
     const [a, b] = Array.isArray(when) ? when : [when - 1.5, when + 1.5];
     const i = shots.findIndex((s, k) => !used.has(k) && s.t0 >= a && s.t0 <= b); if (i >= 0) used.add(i);
