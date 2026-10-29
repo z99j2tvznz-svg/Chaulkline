@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.8';
+const VERSION = 'V3.0.9';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -67,6 +67,29 @@ function shotWords(s) {
   if (s.scratch) w.push('scratch'); if (s.break) w.unshift('Break:'); else if (s.first != null) w.push('first hit the ' + (s.first === 0 ? 'cue' : s.first));
   return w.join(' · ');
 }
+// The tracking test (owner, Oct 28): how far the reviewed sessions are toward the targets for moving on to V3.1. The
+// numbers come from data/v3-gate.json, which Claude updates after reviewing each session's debug file.
+async function renderGate() {
+  try {
+    const g = await (await fetch('data/v3-gate.json?' + Date.now(), { cache: 'no-store' })).json(), T = g.target, S = g.sessions || [];
+    const sum = k => S.reduce((a, s) => a + (s[k] || 0), 0), shots = sum('shots'), pct = (a, b) => b ? Math.round(100 * a / b) : 0;
+    const spots = new Set(S.map(s => s.spot)).size, per50 = n => shots ? (50 * n / shots).toFixed(1) : '0';
+    const rows = [
+      ['Racks', sum('racks') + ' of ' + T.racks, sum('racks') / T.racks, sum('racks') >= T.racks],
+      ['Sessions', S.length + ' of ' + T.sessions, S.length / T.sessions, S.length >= T.sessions],
+      ['Camera spots', spots + ' of ' + T.spots + (spots ? ' (' + [...new Set(S.map(s => s.spot))].join(', ') + ')' : ''), spots / T.spots, spots >= T.spots],
+      ['Shots found', pct(sum('found'), shots) + '% of ' + shots + ' · need ' + Math.round(100 * T.found) + '%', shots ? sum('found') / shots : 0, shots > 0 && sum('found') / shots >= T.found],
+      ['What went in, called right', pct(sum('madeRight'), shots) + '% · need ' + Math.round(100 * T.madeRight) + '%', shots ? sum('madeRight') / shots : 0, shots > 0 && sum('madeRight') / shots >= T.madeRight],
+      ['False "in"', sum('falseIn') + ' (' + per50(sum('falseIn')) + ' per 50 shots) · at most ' + T.falseInPer50, shots ? 1 - Math.min(1, sum('falseIn') / Math.max(1, shots / 50 * T.falseInPer50)) : 0, shots > 0 && 50 * sum('falseIn') / shots <= T.falseInPer50],
+      ['False scratches', sum('falseScratch') + ' (' + per50(sum('falseScratch')) + ' per 50 shots) · at most ' + T.falseScratchPer50, shots ? 1 - Math.min(1, sum('falseScratch') / Math.max(1, shots / 50 * T.falseScratchPer50)) : 0, shots > 0 && 50 * sum('falseScratch') / shots <= T.falseScratchPer50],
+      ['Every ball named right after a shot', pct(sum('namesRight'), shots) + '% · need ' + Math.round(100 * T.namesRight) + '%', shots ? sum('namesRight') / shots : 0, shots > 0 && sum('namesRight') / shots >= T.namesRight]];
+    $('#gateRows').innerHTML = rows.map(([l, v, f, ok]) => '<div class="grow' + (ok ? ' ok' : '') + '"><div class="gl"><span>' + l + '</span><span>' + v + '</span></div><div class="gb"><i style="width:' + Math.round(100 * Math.max(0, Math.min(1, f))) + '%"></i></div></div>').join('');
+    const met = rows.filter(r => r[3]).length, extra = sum('extraShots');
+    $('#gateNote').textContent = met + ' of ' + rows.length + ' met. ' + (extra ? 'Also counted as shots but not shots: ' + extra + '. ' : '') + 'From ' + S.length + ' reviewed session' + (S.length === 1 ? '' : 's') + ' (' + S.map(s => s.when + ', ' + s.app).join('; ') + '). Updated ' + g.updated + '.';
+    $('#gateCard').hidden = false;
+  } catch (e) { $('#gateCard').hidden = true; }
+}
+renderGate();
 $('#goBtn').onclick = () => start();
 $('#dbgHome').onclick = () => saveDebug($('#dbgHome'));
 function homeMsg(t, bad) { const m = $('#homeMsg'); m.textContent = t || ''; m.classList.toggle('bad', !!bad); }
@@ -158,7 +181,7 @@ function renderSummary() {
 }
 $('#endBtn').onclick = () => endRun();
 $('#sumAgain').onclick = () => { $('#sum').hidden = true; start(); };
-$('#sumHome').onclick = () => { $('#sum').hidden = true; $('#home').hidden = false; A.phase = 'home'; renderHome(); };
+$('#sumHome').onclick = () => { $('#sum').hidden = true; $('#home').hidden = false; A.phase = 'home'; renderHome(); renderGate(); };
 $('#sumDbg').onclick = () => saveDebug($('#sumDbg'));
 
 // ---------- the table ----------

@@ -813,3 +813,11 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
 - The debug file now has the picture each table search ran on (find-NN.jpg) and the one the corners were set on
   (manual-NN.jpg), and the outline found, so a wrong outline can be looked at and the table finder fixed. (The finder
   itself is shared with V2.3.3 and stays unchanged until there are upright pictures to work from.)
+
+## V3.0.9 (Oct 29) — the tracking test on the home screen
+- Owner: show how far the testing is toward the targets for moving on to V3.1, in the app. The home screen has a
+  "Tracking test" card: racks (of 10), sessions (of 3), camera spots (of 2), shots found (98%), what went in called right
+  (95%), false "in" and false scratches (at most 1 per 50 shots each), every ball named right after a shot (97%), each
+  with a bar and a tick once met, and the shots counted that were not shots. The numbers are the live results of reviewed
+  sessions, from V3.0.6 on, kept in data/v3-gate.json and updated by Claude after each review (the app cannot know the
+  truth itself). First entry: Oct 28 18:08, 1 rack, 14 of 14 on everything (names checked on the after pictures).

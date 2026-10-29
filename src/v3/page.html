@@ -51,6 +51,10 @@ button { font: inherit; color: inherit; }
 .go b { font-weight: 600; font-size: 19px; } .go small { grid-column: 1; color: var(--muted); font-size: 13px; } .go i { grid-row: 1 / span 2; grid-column: 2; font-style: normal; font-weight: 300; font-size: 28px; color: var(--accent); }
 .srow { display: grid; grid-template-columns: 30px 1fr; gap: 8px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 14px; }
 .srow:first-child { border-top: 0; } .srow b { font: 500 12px var(--f-mono); color: var(--muted); }
+.grow { padding: 7px 0; border-top: 1px solid var(--line); } .grow:first-child { border-top: 0; }
+.grow .gl { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; } .grow .gl span:last-child { color: var(--muted); white-space: nowrap; }
+.grow .gb { height: 5px; border-radius: 3px; background: rgba(255,255,255,.1); margin-top: 5px; overflow: hidden; } .grow .gb i { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+.grow.ok .gb i { background: #5fd38d; } .grow.ok .gl span:first-child::after { content: ' ✓'; color: #5fd38d; }
 #homeMsg { color: var(--muted); min-height: 1.2em; } #homeMsg.bad { color: var(--bad); }
 a.old { color: var(--muted); font-size: 13px; }
 
@@ -94,6 +98,7 @@ a.old { color: var(--muted); font-size: 13px; }
     <button class="go glass" id="goBtn"><b>Watch</b><small>Chalkline finds the table, names the balls and follows every shot: made balls, scratches, the first ball hit.</small><i>›</i></button>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
+    <div class="card glass" id="gateCard" hidden><h2>Tracking test · to move on to V3.1</h2><div id="gateRows"></div><div class="lbl" id="gateNote" style="margin-top:8px"></div></div>
     <div class="card glass"><h2>New in V3</h2><ul>
       <li>A new ball finder and number reader, trained on your own balls.</li>
       <li>Each ball keeps its name while it rolls. If a name is wrong, tap the ball and pick the right one: it sticks.</li>

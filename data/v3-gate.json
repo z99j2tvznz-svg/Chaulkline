@@ -1,0 +1,8 @@
+{
+  "about": "Tracking test: what has to be true before V3.1 starts. Counted by Claude from each session's debug file, with the truth taken from the shot pictures. Live results of the app as it was in that session (not replays). Sessions from V3.0.6 on (Oct 28).",
+  "updated": "2026-10-29",
+  "target": { "racks": 10, "sessions": 3, "spots": 2, "found": 0.98, "madeRight": 0.95, "falseInPer50": 1, "falseScratchPer50": 1, "namesRight": 0.97 },
+  "sessions": [
+    { "when": "Oct 28 18:08", "app": "V3.0.6", "spot": "side", "racks": 1, "shots": 14, "found": 14, "madeRight": 14, "falseIn": 0, "falseScratch": 0, "namesRight": 14, "extraShots": 2 }
+  ]
+}

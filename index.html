@@ -57,6 +57,10 @@ button { font: inherit; color: inherit; }
 .go b { font-weight: 600; font-size: 19px; } .go small { grid-column: 1; color: var(--muted); font-size: 13px; } .go i { grid-row: 1 / span 2; grid-column: 2; font-style: normal; font-weight: 300; font-size: 28px; color: var(--accent); }
 .srow { display: grid; grid-template-columns: 30px 1fr; gap: 8px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 14px; }
 .srow:first-child { border-top: 0; } .srow b { font: 500 12px var(--f-mono); color: var(--muted); }
+.grow { padding: 7px 0; border-top: 1px solid var(--line); } .grow:first-child { border-top: 0; }
+.grow .gl { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; } .grow .gl span:last-child { color: var(--muted); white-space: nowrap; }
+.grow .gb { height: 5px; border-radius: 3px; background: rgba(255,255,255,.1); margin-top: 5px; overflow: hidden; } .grow .gb i { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+.grow.ok .gb i { background: #5fd38d; } .grow.ok .gl span:first-child::after { content: ' ✓'; color: #5fd38d; }
 #homeMsg { color: var(--muted); min-height: 1.2em; } #homeMsg.bad { color: var(--bad); }
 a.old { color: var(--muted); font-size: 13px; }
 
@@ -101,6 +105,7 @@ a.old { color: var(--muted); font-size: 13px; }
     <button class="go glass" id="goBtn"><b>Watch</b><small>Chalkline finds the table, names the balls and follows every shot: made balls, scratches, the first ball hit.</small><i>›</i></button>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
+    <div class="card glass" id="gateCard" hidden><h2>Tracking test · to move on to V3.1</h2><div id="gateRows"></div><div class="lbl" id="gateNote" style="margin-top:8px"></div></div>
     <div class="card glass"><h2>New in V3</h2><ul>
       <li>A new ball finder and number reader, trained on your own balls.</li>
       <li>Each ball keeps its name while it rolls. If a name is wrong, tap the ball and pick the right one: it sticks.</li>
@@ -2274,7 +2279,7 @@ function makeTracker(P, opts) {
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.8';
+const VERSION = 'V3.0.9';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -2339,6 +2344,29 @@ function shotWords(s) {
   if (s.scratch) w.push('scratch'); if (s.break) w.unshift('Break:'); else if (s.first != null) w.push('first hit the ' + (s.first === 0 ? 'cue' : s.first));
   return w.join(' · ');
 }
+// The tracking test (owner, Oct 28): how far the reviewed sessions are toward the targets for moving on to V3.1. The
+// numbers come from data/v3-gate.json, which Claude updates after reviewing each session's debug file.
+async function renderGate() {
+  try {
+    const g = await (await fetch('data/v3-gate.json?' + Date.now(), { cache: 'no-store' })).json(), T = g.target, S = g.sessions || [];
+    const sum = k => S.reduce((a, s) => a + (s[k] || 0), 0), shots = sum('shots'), pct = (a, b) => b ? Math.round(100 * a / b) : 0;
+    const spots = new Set(S.map(s => s.spot)).size, per50 = n => shots ? (50 * n / shots).toFixed(1) : '0';
+    const rows = [
+      ['Racks', sum('racks') + ' of ' + T.racks, sum('racks') / T.racks, sum('racks') >= T.racks],
+      ['Sessions', S.length + ' of ' + T.sessions, S.length / T.sessions, S.length >= T.sessions],
+      ['Camera spots', spots + ' of ' + T.spots + (spots ? ' (' + [...new Set(S.map(s => s.spot))].join(', ') + ')' : ''), spots / T.spots, spots >= T.spots],
+      ['Shots found', pct(sum('found'), shots) + '% of ' + shots + ' · need ' + Math.round(100 * T.found) + '%', shots ? sum('found') / shots : 0, shots > 0 && sum('found') / shots >= T.found],
+      ['What went in, called right', pct(sum('madeRight'), shots) + '% · need ' + Math.round(100 * T.madeRight) + '%', shots ? sum('madeRight') / shots : 0, shots > 0 && sum('madeRight') / shots >= T.madeRight],
+      ['False "in"', sum('falseIn') + ' (' + per50(sum('falseIn')) + ' per 50 shots) · at most ' + T.falseInPer50, shots ? 1 - Math.min(1, sum('falseIn') / Math.max(1, shots / 50 * T.falseInPer50)) : 0, shots > 0 && 50 * sum('falseIn') / shots <= T.falseInPer50],
+      ['False scratches', sum('falseScratch') + ' (' + per50(sum('falseScratch')) + ' per 50 shots) · at most ' + T.falseScratchPer50, shots ? 1 - Math.min(1, sum('falseScratch') / Math.max(1, shots / 50 * T.falseScratchPer50)) : 0, shots > 0 && 50 * sum('falseScratch') / shots <= T.falseScratchPer50],
+      ['Every ball named right after a shot', pct(sum('namesRight'), shots) + '% · need ' + Math.round(100 * T.namesRight) + '%', shots ? sum('namesRight') / shots : 0, shots > 0 && sum('namesRight') / shots >= T.namesRight]];
+    $('#gateRows').innerHTML = rows.map(([l, v, f, ok]) => '<div class="grow' + (ok ? ' ok' : '') + '"><div class="gl"><span>' + l + '</span><span>' + v + '</span></div><div class="gb"><i style="width:' + Math.round(100 * Math.max(0, Math.min(1, f))) + '%"></i></div></div>').join('');
+    const met = rows.filter(r => r[3]).length, extra = sum('extraShots');
+    $('#gateNote').textContent = met + ' of ' + rows.length + ' met. ' + (extra ? 'Also counted as shots but not shots: ' + extra + '. ' : '') + 'From ' + S.length + ' reviewed session' + (S.length === 1 ? '' : 's') + ' (' + S.map(s => s.when + ', ' + s.app).join('; ') + '). Updated ' + g.updated + '.';
+    $('#gateCard').hidden = false;
+  } catch (e) { $('#gateCard').hidden = true; }
+}
+renderGate();
 $('#goBtn').onclick = () => start();
 $('#dbgHome').onclick = () => saveDebug($('#dbgHome'));
 function homeMsg(t, bad) { const m = $('#homeMsg'); m.textContent = t || ''; m.classList.toggle('bad', !!bad); }
@@ -2430,7 +2458,7 @@ function renderSummary() {
 }
 $('#endBtn').onclick = () => endRun();
 $('#sumAgain').onclick = () => { $('#sum').hidden = true; start(); };
-$('#sumHome').onclick = () => { $('#sum').hidden = true; $('#home').hidden = false; A.phase = 'home'; renderHome(); };
+$('#sumHome').onclick = () => { $('#sum').hidden = true; $('#home').hidden = false; A.phase = 'home'; renderHome(); renderGate(); };
 $('#sumDbg').onclick = () => saveDebug($('#sumDbg'));
 
 // ---------- the table ----------

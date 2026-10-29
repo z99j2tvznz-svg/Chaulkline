@@ -9,5 +9,7 @@
 - Debug sessions: the owner attaches the app's debug zip to the chat. Unzip it and commit it to the `sessions` branch
   (not published by Pages), one folder per session, listed in that branch's README. Trimmed fixtures for tests go on
   main under tests/fixtures/v3/.
+- After reviewing a session, add its live results to data/v3-gate.json (the app's "Tracking test" card on the home
+  screen): sessions from V3.0.6 on, truth from the shot pictures, names checked on the after pictures.
 - Nothing big is built until the owner says "build it". Plain English, positions in diamonds. The owner does not use git:
   commit and push to main (Pages publishes it) and send the link https://z99j2tvznz-svg.github.io/Chaulkline/.
