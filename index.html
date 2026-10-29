@@ -2232,7 +2232,8 @@ function makeTracker(P, opts) {
     ev('shot_end', { n: sh.n, made: sh.made.map(m => m.num), scratch: sh.scratch, first: sh.firstNum, hidden: sh.hidden });
     return sh;
   }
-  function snapshot() { return ballsNow().map(tr => ({ key: tr.key, num: tr.num, sure: tr.sure, x: +tr.x.toFixed(2), y: +tr.y.toFixed(2), state: tr.state })); }
+  // (rx, ry: the spot the ball last rested on; for the cue ball at a shot's start, where it was struck from)
+  function snapshot() { return ballsNow().map(tr => ({ key: tr.key, num: tr.num, sure: tr.sure, x: +tr.x.toFixed(2), y: +tr.y.toFixed(2), rx: +tr.restX.toFixed(2), ry: +tr.restY.toFixed(2), state: tr.state })); }
 
   // ---- the player ----
   function pin(key, id) {
@@ -2257,7 +2258,7 @@ function makeTracker(P, opts) {
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.6';
+const VERSION = 'V3.0.7';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -2516,7 +2517,10 @@ function pathLook() {
   const tk = A.tk, sh = tk && (tk.S.shot || tk.S.shots[tk.S.shots.length - 1]); if (!sh) return;
   if (tk.S.phase !== 'shot' && !(tk.S.t - sh.t1 < 2)) return; // the last few looks after it ends: the balls settling
   for (const b of tk.balls()) {
-    const e = PATH.get(b.key) || { num: b.num, pts: [] }, lastT = e.pts.length ? e.pts[e.pts.length - 1].t : sh.t0 - 0.35;
+    // a path starts where the ball rested when the shot started, even if its first moments were not seen (owner, Oct 28)
+    let e = PATH.get(b.key);
+    if (!e) { const st = (sh.before || []).find(q => q.key === b.key); e = { num: b.num, pts: st && st.rx != null ? [{ t: sh.t0 - 1e-3, x: st.rx, y: st.ry }] : [] }; }
+    const lastT = e.pts.length ? e.pts[e.pts.length - 1].t : sh.t0 - 1e-3;
     for (const q of b.hist || []) if (q.t > lastT + 1e-3) e.pts.push({ t: q.t, x: q.x, y: q.y });
     if (e.pts.length > 400) e.pts.splice(0, e.pts.length - 400);
     e.num = b.num; if (e.pts.length) PATH.set(b.key, e);
@@ -2686,6 +2690,10 @@ function drawBalls(c, S2, F) {
     const it = items.find(i => i.b.key === key), pc = pathCol(key, it ? it.b.num : e.num), proj = q => S2(A.cam.proj(q.x, q.y, P.R));
     const pts = e.pts.map(q => ({ x: q.x, y: q.y })); if (it && it.b.state !== 'hidden') pts.push({ x: it.tx, y: it.ty });
     line(pts.map(proj), 1.3, 0.6, pc);
+    // a dot where the ball started, about half an inch across (a ball is 2 1/4 in)
+    const s0 = proj(pts[0]), rd = Math.max(2, A.cam.ballRad(pts[0].x, pts[0].y, P.R, 0.25) * F.k);
+    c.globalAlpha = 0.9; c.fillStyle = pc.col; c.strokeStyle = pc.col === '#0c0d0f' ? 'rgba(244,241,232,.8)' : 'rgba(11,16,20,.7)'; c.lineWidth = 1;
+    c.beginPath(); c.arc(s0[0], s0[1], rd, 0, Math.PI * 2); c.fill(); c.stroke();
     // the tail: its length in inches follows the ball's speed (smoothed, so it grows and shrinks rather than jumps)
     const v = it && it.b.state === 'moving' ? Math.hypot(it.b.vx, it.b.vy) : 0, tv = TAILV.get(key) || 0, sv = tv + (v - tv) * Math.min(1, dtv * 5); TAILV.set(key, sv);
     let len = Math.min(40, sv * 0.45); if (len < 0.5 || !it) continue;

@@ -790,3 +790,11 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   called in that was not, and no false scratch (the scorer now counts a scratch as the cue ball made).
 - Still open: setting balls out by hand and rolling out a rack count as shots (needs the player work: a hand next to a
   moving ball), and which pocket a ball knocked in unseen went into.
+
+## V3.0.7 (Oct 29) — paths start where the ball was
+- Owner's V3.0.6 session (Oct 28, 18:08; one rack of 8-ball practice, phone sideways): all 14 real shots right live,
+  including a scratch, two "went in too" and a ball left in the jaws then knocked in. Counted as shots: the owner moving
+  balls with the cue while setting up, and the cue laid on the table before the phone was turned. Replayed: 14 of 14.
+- Owner on the paths: keep them. Each path now starts at the centre of the spot the ball rested on when the shot started
+  (from the shot's "before", which now keeps each ball's resting spot as rx, ry), even when its first moments were not
+  seen, with a dot about half an inch across there. Later (owner, not now): a setting for how long the paths stay.

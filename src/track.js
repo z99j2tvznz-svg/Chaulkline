@@ -558,7 +558,8 @@ function makeTracker(P, opts) {
     ev('shot_end', { n: sh.n, made: sh.made.map(m => m.num), scratch: sh.scratch, first: sh.firstNum, hidden: sh.hidden });
     return sh;
   }
-  function snapshot() { return ballsNow().map(tr => ({ key: tr.key, num: tr.num, sure: tr.sure, x: +tr.x.toFixed(2), y: +tr.y.toFixed(2), state: tr.state })); }
+  // (rx, ry: the spot the ball last rested on; for the cue ball at a shot's start, where it was struck from)
+  function snapshot() { return ballsNow().map(tr => ({ key: tr.key, num: tr.num, sure: tr.sure, x: +tr.x.toFixed(2), y: +tr.y.toFixed(2), rx: +tr.restX.toFixed(2), ry: +tr.restY.toFixed(2), state: tr.state })); }
 
   // ---- the player ----
   function pin(key, id) {

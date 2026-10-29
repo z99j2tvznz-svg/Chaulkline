@@ -377,3 +377,16 @@ test('the owner\'s V3.0.5 session (Oct 28, 17:10, 8-ball practice, rack 2 hit ha
   assert.strictEqual(r.shots, 25); assert.ok(r.right >= 25, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
   assert.ok(r.extraShots <= 3, 'extra shots ' + r.extra);
 });
+
+test('the owner\'s V3.0.6 session (Oct 28, 18:08, one rack of 8-ball practice) replayed: all 14 real shots right, as live', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261028-1808.json'), 'utf8')));
+  assert.strictEqual(r.shots, 14); assert.strictEqual(r.right, 14, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
+});
+
+test('a shot\'s "before" keeps where each ball rested, so the cue ball\'s path can start where it was struck from', () => {
+  const tk = makeTracker(P);
+  let t = settleE(tk, 0, [{ num: 0, x: 20, y: 20 }, { num: 3, x: 50, y: 20 }], 3, 0.25, () => true);
+  for (const x of [26, 33, 40, 46.5, 46.5, 46.5, 46.5, 46.5, 46.5, 46.5, 46.5]) { tk.update(t, [spR(0, x, 20), spR(3, x > 46 ? 60 : 50, 20)], { read: true }); t += 0.25; }
+  const b = tk.S.shots[0].before.find(q => q.num === 0); assert.ok(Math.abs(b.rx - 20) < 0.5 && Math.abs(b.x - 26) < 0.5, JSON.stringify(b));
+});
