@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.5';
+const VERSION = 'V3.0.6';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -45,7 +45,7 @@ function header() {
     gpu: !!navigator.gpu, engine: DET.ep, engineSetting: A.engine, threads: DET.threads(), isolated: !!window.crossOriginIsolated, cores: navigator.hardwareConcurrency || null, shape: A.shape, kmax: r2(A.kmax), ft: A.ft, picture: A.tableWH || [A.W, A.H], pictureNow: [A.W, A.H], quad: A.quad && A.quad.map(p => [r1(p[0]), r1(p[1])]), rot: A.rot, box: A.box && A.box.map(Math.round),
     camOk: A.cam ? A.cam.ok : null, cam: A.camInfo };
 }
-function shotRow(sh) { return { n: sh.n, t0: r2(sh.t0), t1: r2(sh.t1), cue: sh.cueNum, first: sh.firstNum, made: sh.made.map(m => ({ num: m.num, pocket: m.pocket, sure: m.sure })), scratch: sh.scratch, break: sh.break, hidden: sh.hidden, before: sh.before, after: sh.after }; }
+function shotRow(sh) { return { n: sh.n, t0: r2(sh.t0), t1: r2(sh.t1), cue: sh.cueNum, first: sh.firstNum, made: sh.made.map(m => ({ num: m.num, pocket: m.pocket, sure: m.sure })), scratch: sh.scratch, break: sh.break, hidden: sh.hidden, before: sh.before, after: sh.after, paths: sh.paths }; }
 
 // ---------- home ----------
 function renderHome() {
@@ -234,6 +234,7 @@ async function look() {
   const t2 = performance.now(), before = tk.S.phase;
   tk.update(t, on, { read, empty: emptyAt });
   for (const n of tk.S.notes.splice(0)) onLateMade(n);
+  pathLook();
   A.looks++;
   DBG.looks.push([Date.now() - DBG.t0, Math.round(t1 - t0), Math.round(t2 - t1), on.length, tk.S.phase === 'shot' ? 'S' : tk.S.phase[0], on.map(s => [r1(s.x), r1(s.y), s.num == null ? null : s.num, s.kind ? s.kind[0] : '-', r2(s.score)])]);
   if (DBG.looks.length > 4000) DBG.looks.splice(0, 400);
@@ -245,14 +246,30 @@ async function look() {
   if (tk.S.phase === 'still' && performance.now() - A.stillPicT > 1500) { A.stillPicT = performance.now(); jpeg(960).then(b => { A.stillPic = b; }).catch(() => { }); }
   statusRun(); crumb('done');
 }
-function onShotStart() { const sh = A.tk.S.shot; if (sh && A.stillPic) A.pics.set('shot' + String(sh.n).padStart(3, '0') + '-before.jpg', A.stillPic); dbg('shot_start', { n: sh && sh.n }); }
+function onShotStart() { PATH.clear(); pathLook(); const sh = A.tk.S.shot; if (sh && A.stillPic) A.pics.set('shot' + String(sh.n).padStart(3, '0') + '-before.jpg', A.stillPic); dbg('shot_start', { n: sh && sh.n }); }
 function onShotEnd(sh) {
-  const row = shotRow(sh); A.sess.shots.push({ n: sh.n, cue: sh.cueNum, first: sh.firstNum, made: row.made, scratch: sh.scratch, break: sh.break, t: Date.now() });
+  sh.paths = pathsRow(sh); const row = shotRow(sh); A.sess.shots.push({ n: sh.n, cue: sh.cueNum, first: sh.firstNum, made: row.made, scratch: sh.scratch, break: sh.break, t: Date.now() });
   dbg('shot_end', { n: sh.n, made: row.made, scratch: sh.scratch, first: sh.firstNum });
   jpeg(960).then(b => { A.pics.set('shot' + String(sh.n).padStart(3, '0') + '-after.jpg', b); trimPics(); }).catch(() => { });
   toast('Shot ' + sh.n + ': ' + shotWords(A.sess.shots[A.sess.shots.length - 1]));
   if (A.sess.shots.length % 3 === 0) { A.lastSess = A.sess; save(); }
 }
+// Each ball's path in the shot: the tracker's positions from just before the shot started, kept after it ends (and for the
+// balls that went in) until the next shot starts, so a quick look at the phone after the shot shows the whole of it.
+const PATH = new Map(); // ball key -> { num, pts: [{ t, x, y }] }
+function pathLook() {
+  const tk = A.tk, sh = tk && (tk.S.shot || tk.S.shots[tk.S.shots.length - 1]); if (!sh) return;
+  if (tk.S.phase !== 'shot' && !(tk.S.t - sh.t1 < 2)) return; // the last few looks after it ends: the balls settling
+  for (const b of tk.balls()) {
+    const e = PATH.get(b.key) || { num: b.num, pts: [] }, lastT = e.pts.length ? e.pts[e.pts.length - 1].t : sh.t0 - 0.35;
+    for (const q of b.hist || []) if (q.t > lastT + 1e-3) e.pts.push({ t: q.t, x: q.x, y: q.y });
+    if (e.pts.length > 400) e.pts.splice(0, e.pts.length - 400);
+    e.num = b.num; if (e.pts.length) PATH.set(b.key, e);
+  }
+}
+const moved = pts => { let m = 0; for (const q of pts) m = Math.max(m, Math.hypot(q.x - pts[0].x, q.y - pts[0].y)); return m; };
+// for the debug file: each ball that moved, its path in table inches, 0.1 in and 0.01 s from the shot's start
+function pathsRow(sh) { const o = []; for (const [key, e] of PATH) if (moved(e.pts) > 1) o.push({ key, num: e.num, p: e.pts.map(q => [r2(q.t - sh.t0), r1(q.x), r1(q.y)]) }); return o; }
 // a ball found to have gone in after its shot ended (its spot is bare cloth now): the shot's line is corrected and said
 function onLateMade(n) {
   const row = A.sess.shots.find(s => s.n === n.n), sh = A.tk.S.shots.find(s => s.n === n.n);
@@ -388,6 +405,7 @@ function drawLoop() {
 // label or ball try the other sides; in a tight bunch they go further out on a thin leader line. A label keeps the side it
 // had while that side stays free, so labels do not jump from look to look.
 const LAB = new Map(); // ball key -> side index it used last
+const TAILV = new Map(); // ball key -> the speed its tail is drawn for
 function drawBalls(c, S2, F) {
   const tk = A.tk, P = A.P, now = performance.now() / 1000, items = [];
   for (const b of tk.balls()) {
@@ -396,25 +414,33 @@ function drawBalls(c, S2, F) {
     const s = S2(A.cam.proj(x, y, P.R)), r = Math.max(5, A.cam.ballRad(x, y, P.R, P.R) * F.k) + 1;
     const col = b.num == null ? 'rgba(234,241,244,.75)' : b.sure ? '#59d6e8' : '#ffb84d';
     const t = b.num == null ? '?' : (b.num === 0 ? 'Q' : String(b.num)) + (b.sure ? '' : '?');
-    items.push({ b, s, r, col, t });
+    items.push({ b, s, r, col, t, tx: x, ty: y });
   }
-  // trails: where each rolling ball was over the last 0.7 s (the tracker's own positions, so a jagged trail means a
-  // tracking problem), fading out, in the ball's colour; a banded ball's trail alternates white and its colour
-  const TR = 0.7;
-  for (const it of items) {
-    const h = (it.b.hist || []).filter(q => now - q.t <= TR); if (h.length < 1 || it.b.state === 'hidden') continue;
-    const pts = h.map(q => ({ s: S2(A.cam.proj(q.x, q.y, P.R)), a: 1 - (now - q.t) / TR })).concat([{ s: it.s, a: 1 }]);
-    const cl = BCOL.get(it.b.key), num = it.b.num, base = cl && cl.rgb ? 'rgb(' + cl.rgb.join(',') + ')' : num != null ? BALLCOL[num] : '#eaf1f4';
-    const col = cl && cl.white || num === 0 ? '#f4f1e8' : cl && cl.black || num === 8 ? '#0c0d0f' : base, band = cl ? cl.band : num === 9;
-    c.lineCap = 'round'; c.lineWidth = Math.max(2, it.r * 0.55);
-    for (let i = 1; i < pts.length; i++) {
-      const a = pts[i - 1], b2 = pts[i]; if (Math.hypot(b2.s[0] - a.s[0], b2.s[1] - a.s[1]) < 1) continue;
-      c.globalAlpha = Math.max(0, Math.min(a.a, b2.a)) * 0.85;
-      c.setLineDash([]); c.strokeStyle = band ? '#f4f1e8' : col; c.beginPath(); c.moveTo(a.s[0], a.s[1]); c.lineTo(b2.s[0], b2.s[1]); c.stroke();
-      if (band) { c.setLineDash([6, 6]); c.strokeStyle = col; c.stroke(); }
-    }
-    c.globalAlpha = 1; c.setLineDash([]); c.lineCap = 'butt';
+  // Trails, in each ball's own colour (a banded ball's alternates white and its colour), from the tracker's own positions,
+  // so a jagged one means a tracking problem: a thin line for the whole of the ball's path in the shot, kept until the
+  // next shot starts, and over it a tail behind a rolling ball, solid at the ball and fading and narrowing behind it,
+  // longer the faster the ball goes and shrinking away as it stops.
+  const pathCol = (key, num) => { const cl = BCOL.get(key), base = cl && cl.rgb ? 'rgb(' + cl.rgb.join(',') + ')' : num != null ? BALLCOL[num] : '#eaf1f4';
+    return { col: cl && cl.white || num === 0 ? '#f4f1e8' : cl && cl.black || num === 8 ? '#0c0d0f' : base, band: cl ? cl.band : num === 9 }; };
+  const line = (pts, w, a, pc) => { if (pts.length < 2) return; c.globalAlpha = a; c.lineWidth = w; c.beginPath(); pts.forEach((q, i) => i ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1]));
+    c.setLineDash([]); c.strokeStyle = pc.band ? '#f4f1e8' : pc.col; c.stroke(); if (pc.band) { c.setLineDash([5, 5]); c.strokeStyle = pc.col; c.stroke(); c.setLineDash([]); } };
+  c.lineCap = 'round'; c.lineJoin = 'round';
+  const dtv = Math.min(0.1, Math.max(0, now - (A.tailT || now))); A.tailT = now;
+  for (const [key, e] of PATH) {
+    if (e.pts.length < 2 || moved(e.pts) < 1) continue;
+    const it = items.find(i => i.b.key === key), pc = pathCol(key, it ? it.b.num : e.num), proj = q => S2(A.cam.proj(q.x, q.y, P.R));
+    const pts = e.pts.map(q => ({ x: q.x, y: q.y })); if (it && it.b.state !== 'hidden') pts.push({ x: it.tx, y: it.ty });
+    line(pts.map(proj), 1.3, 0.6, pc);
+    // the tail: its length in inches follows the ball's speed (smoothed, so it grows and shrinks rather than jumps)
+    const v = it && it.b.state === 'moving' ? Math.hypot(it.b.vx, it.b.vy) : 0, tv = TAILV.get(key) || 0, sv = tv + (v - tv) * Math.min(1, dtv * 5); TAILV.set(key, sv);
+    let len = Math.min(40, sv * 0.45); if (len < 0.5 || !it) continue;
+    const tail = [pts[pts.length - 1]];
+    for (let i = pts.length - 2; i >= 0 && len > 0; i--) { const a = tail[tail.length - 1], b = pts[i], d = Math.hypot(b.x - a.x, b.y - a.y); if (d <= len) { tail.push(b); len -= d; } else { tail.push({ x: a.x + (b.x - a.x) * len / d, y: a.y + (b.y - a.y) * len / d }); len = 0; } }
+    const sp = tail.map(proj), wMax = Math.max(2, it.r * 0.45), n = sp.length - 1;
+    for (let i = 1; i <= n; i++) { const u = (i - 0.5) / n; line([sp[i - 1], sp[i]], wMax * (1 - u) + 1.3 * u, 0.95 * (1 - u) + 0.25 * u, pc); }
   }
+  for (const k of [...TAILV.keys()]) if (!PATH.has(k)) TAILV.delete(k);
+  c.globalAlpha = 1; c.setLineDash([]); c.lineCap = 'butt'; c.lineJoin = 'miter';
   c.lineWidth = 1.3;
   for (const it of items) { c.strokeStyle = it.col; c.setLineDash(it.b.state === 'hidden' || it.b.state === 'pending' ? [3, 3] : []); c.beginPath(); c.arc(it.s[0], it.s[1], it.r, 0, Math.PI * 2); c.stroke(); }
   c.setLineDash([]);
@@ -441,6 +467,8 @@ function drawBalls(c, S2, F) {
 }
 
 // ---------- taps: name a ball ----------
+// a finger on the screen shakes the phone a little: the tracker does not start a shot for a moment after one
+ov.addEventListener('pointerdown', () => { if (A.tk) A.tk.touched(); });
 ov.addEventListener('click', e => {
   const F = fit(), rc = ov.getBoundingClientRect(), x = (e.clientX - rc.left - F.x) / F.k, y = (e.clientY - rc.top - F.y) / F.k;
   if (A.phase === 'manual' && A.man) { manualTap(x, y); return; }
@@ -491,7 +519,7 @@ $('#card').addEventListener('click', e => {
   else if (a === 'home') goHome(); else if (a === 'close') hideCard(); else if (a === 'refind') { hideCard(); refind(); }
 });
 $('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row"><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
-$('#rackBtn').onclick = () => { if (!A.tk) return; A.tk.newRack(); dbg('new_rack', {}); toast('New rack. Names come once the break spreads the balls.'); };
+$('#rackBtn').onclick = () => { if (!A.tk) return; A.tk.newRack(); PATH.clear(); dbg('new_rack', {}); toast('New rack. Names come once the break spreads the balls.'); };
 $('#dbgBtn').onclick = () => saveDebug($('#dbgBtn'));
 let toastT = 0;
 function toast(t) { dbg('toast', { s: t }); const e = $('#toast'); e.textContent = t; e.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { e.hidden = true; }, 3500); }

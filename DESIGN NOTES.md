@@ -757,3 +757,36 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
 - Tried and dropped: counting new balls rolling about as "hands" (to stop the rack roll-out being taken for shots); it
   also lost real shots. A hand moving a ball needs the player work (the not-cloth mask next to the ball) to tell apart.
 - The debug header keeps the picture size the table was accepted with (this session's phone turned upright again at the end).
+
+## V3.0.6 (Oct 29) — hard-hit balls followed by their reads, paths that stay
+- Owner's V3.0.5 session (Oct 28, 17:10; 8-ball runout practice with balls 1-9, 2 racks, phone sideways): 25 real shots;
+  live V3.0.5 got 22 right. Rack 1 (played softly) all right. Rack 2 (played hard) wrong 3 times: a bank shot with the 8
+  called "8 in, scratch" (nothing went in), the 8 into the bottom-right corner missed (the owner marked it), a hard shot at
+  the 9 called "9 in, scratch" (nothing went in). Also counted as shots: two while rack 1 was set out by hand, the rack 2
+  roll-out, and a tap on the screen to rename the 9.
+- What the looks show: on the hard shots the finder saw every ball on almost every look, and the reader was sure of most
+  of them even blurred (3,124 of 3,215 spots during shots read "sure"). The tracker lost them: the cue ball went 66 in in
+  under 0.3 s, unseen behind the cue when struck, and sat on the 8's spot by the next look (the 8's track took it, so the
+  shot was followed as "the 8 struck"); balls coming back off a cushion were looked for past it.
+- Now: a sure read of a ball's own number ties a spot to it, and a sure read of another number (not one the reader mixes
+  up with it: the 9 with the cue ball or the 1) rules the spot out for a rolling ball. A rolling ball read as itself may be
+  well past the prediction (up to 150 in/s since its last look). A rolling spot read twice, sure, as the number of a lost
+  ball (hidden, lost at a pocket, or called in during this shot) is that ball, however long ago and far off it was lost;
+  a ball called in that is found rolling on is taken back out. The cue ball struck hard is found past the launch gate by
+  its read; a white sure read on the spot of a ball that is not white, while the cue ball is out of sight, is not that
+  ball. The prediction comes back off a cushion (unless the ball is heading into a pocket).
+- The cue ball named on the table while a shot is still on did not go in: a "cue ball in" call is taken back, and it is
+  the shot's cue ball (two false scratches in the Oct 27 22:27 session, hidden until the scorer counted a scratch as the
+  cue ball made).
+- A finger on the screen shakes the phone: no shot starts for 0.7 s after a touch. (Tried first: taking off a shift that
+  all resting balls share. Real shots also move the balls a little together, and it lost two of them.)
+- A ball's name is "sure" also when it fits well among the numbers still free (the 9 by the far rail, read "1" now and
+  then, after the 1 went in).
+- Trails (owner): a thin line in the ball's colour for its whole path in the shot, kept after the shot ends (and for the
+  balls that went in) until the next shot starts; over it a tail behind a rolling ball, solid and wide at the ball,
+  narrowing and fading behind it, its length set by the ball's speed (0.45 s of travel, at most 40 in) and shrinking away
+  as it stops. Unnamed balls get them too. Each shot's paths go into the debug file (shots[].paths, table inches).
+- Replays: Oct 28 17:10 25 of 25 (live 22), Oct 27 23:38 31 of 31, Oct 27 22:27 40 of 41, Oct 26 23:50 17 of 18; nothing
+  called in that was not, and no false scratch (the scorer now counts a scratch as the cue ball made).
+- Still open: setting balls out by hand and rolling out a rack count as shots (needs the player work: a hand next to a
+  moving ball), and which pocket a ball knocked in unseen went into.

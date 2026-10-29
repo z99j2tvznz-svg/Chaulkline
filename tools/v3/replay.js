@@ -19,6 +19,7 @@ function replay(d, ft, opts, o2) {
   }
   const apply = a => {
     if (a.k === 'new_rack') return tk.newRack();
+    tk.touched(); // a tap on the screen (the app tells the tracker on every touch)
     const bs = tk.S.tracks.filter(tr => tr.ok && tr.state !== 'gone' && tr.state !== 'dropped');
     if (a.k === 'tap') { let b = null, bd = 3; for (const tr of bs) { const q = Math.hypot(tr.x - a.at[0], tr.y - a.at[1]); if (q < bd) { bd = q; b = tr; } } if (b) tk.pin(b.key, a.num); return; }
     const b = bs.find(tr => tr.num === a.num); if (!b) return;

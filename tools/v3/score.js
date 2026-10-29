@@ -3,7 +3,8 @@
 // usage: node tools/v3/score.js <session.json> [--detail]
 const fs = require('fs'), path = require('path'), { replay } = require('./replay.js');
 function score(d, opts, o2) {
-  const tk = replay(d, null, opts, o2), shots = tk.S.shots.map(s => ({ t0: s.t0, made: s.made.map(m => m.num), scratch: s.scratch })), used = new Set(), rows = [];
+  // a scratch counts as the cue ball made (the shot can call a scratch on a ball it took for the cue ball)
+  const tk = replay(d, null, opts, o2), shots = tk.S.shots.map(s => ({ t0: s.t0, made: s.made.map(m => m.num).concat(s.scratch && !s.made.some(m => m.num === 0) ? [0] : []), scratch: s.scratch })), used = new Set(), rows = [];
   for (const [when, made] of d.truth) {
     const [a, b] = Array.isArray(when) ? when : [when - 1.5, when + 1.5];
     const i = shots.findIndex((s, k) => !used.has(k) && s.t0 >= a && s.t0 <= b); if (i >= 0) used.add(i);

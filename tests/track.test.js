@@ -329,3 +329,51 @@ test('the owner\'s V3.0.4 session (Oct 27, 23:38) replayed: all 31 real shots ri
   const tk = replay(d, null, null, { noActions: true }), E = tk.S.events;
   for (const t of [184.2, 323.6]) assert.ok(E.some(e => e.k === 'named' && e.num === 0 && e.t > t && e.t < t + 20), 'cue ball not named again after ' + t);
 });
+
+// ---- V3.0.6: hard hits (Oct 28): the reader is sure of most rolling balls, so a sure read ties a lost ball to its spot ----
+const spR = (num, x, y, kind = 'sure', p = 0.85) => ({ x, y, px: x * 12, py: y * 12, r: 13, score: 0.8, p: probs(num, p), kind });
+
+test('a hard hit: the cue ball, unseen behind the cue, reaches the 8 before the next look; the 8 is lost and found 40 in away, read "8"', () => {
+  const tk = makeTracker(P);
+  let t = settleE(tk, 0, [{ num: 0, x: 70, y: 10 }, { num: 8, x: 10, y: 12 }, { num: 9, x: 25, y: 24 }], 3, 0.25, () => true);
+  // the cue ball behind the player's hand for a while
+  for (let i = 0; i < 8; i++) { tk.update(t, [spR(8, 10, 12), spR(9, 25, 24)], { read: true }); t += 0.25; }
+  // struck: next look it is where the 8 was, and the 8 is gone; then the cue ball rolls off the cushion and the 8 shows up
+  // rolling back along the near cushion, 50 in away
+  const looks = [[spR(0, 10.5, 12.5), spR(9, 25, 24)], [spR(0, 3, 19), spR(9, 25, 24)], [spR(0, 10, 23), spR(9, 25, 24)], [spR(0, 18, 26), spR(9, 25, 24), spR(8, 70, 4)],
+    [spR(0, 25, 30), spR(9, 25, 24), spR(8, 58, 4, 'unsure')], [spR(0, 32, 33), spR(9, 25, 24), spR(8, 48, 4)], [spR(0, 36, 34), spR(9, 25, 24), spR(8, 40, 4)], [spR(0, 38, 33), spR(9, 25, 24), spR(8, 35, 4)]];
+  for (const L of looks) { tk.update(t, L, { read: true }); t += 0.25; }
+  for (let i = 0; i < 16; i++) { tk.update(t, [spR(0, 38.5, 33), spR(9, 25, 24), spR(8, 33, 4)], { read: true }); t += 0.25; }
+  assert.strictEqual(tk.S.shots.length, 1); const sh = tk.S.shots[0];
+  assert.strictEqual(sh.cueNum, 0, 'the shot was followed as the 8 struck'); assert.deepStrictEqual(sh.made, []); assert.ok(!sh.scratch);
+  const n = names(tk); assert.ok(n[8] && Math.abs(n[8][0] - 33) <= 1 && n[0] && Math.abs(n[0][0] - 38) <= 1, JSON.stringify(n));
+});
+
+test('a ball hit hard off a cushion is still the same ball: the prediction comes back off the cushion', () => {
+  const tk = makeTracker(P);
+  let t = settleE(tk, 0, [{ num: 0, x: 30, y: 20 }, { num: 4, x: 60, y: 30 }], 3, 0.25, () => true);
+  // the cue ball at 55 in/s straight at the near cushion and back up (reads off: blurred), the 4 still
+  const path = [[30, 20], [30, 6.3], [30, 9.8], [30, 23.5], [30, 33], [30, 35.5], [30, 36], [30, 36], [30, 36], [30, 36]];
+  const keys = new Set();
+  for (const [x, y] of path) { tk.update(t, [{ x, y, px: x * 12, py: y * 12, r: 13, score: 0.8, p: null, kind: null }, spR(4, 60, 30)], { read: false }); t += 0.25; for (const b of tk.balls()) if (Math.abs(b.x - x) < 1 && Math.abs(b.y - y) < 1) keys.add(b.key); }
+  for (let i = 0; i < 12; i++) { tk.update(t, [spR(0, 30, 36), spR(4, 60, 30)], { read: true }); t += 0.25; }
+  assert.strictEqual(keys.size, 1, 'the cue ball was lost at the cushion and followed as something new');
+  assert.strictEqual(tk.S.shots.length, 1); assert.deepStrictEqual(tk.S.shots[0].made, []);
+});
+
+test('a finger on the screen shakes every ball a little for a look: not a shot', () => {
+  const tk = makeTracker(P), balls = [{ num: 0, x: 69, y: 19 }, { num: 8, x: 8, y: 11 }, { num: 2, x: 10, y: 36 }, { num: 9, x: 14, y: 27 }];
+  let t = settleE(tk, 0, balls, 3, 0.25, () => true);
+  tk.touched(); tk.update(t, [spR(0, 69.6, 19.8), spR(8, 7.4, 11.8), spR(2, 9, 37), spR(9, 13.4, 27.8)], { read: true }); t += 0.25;
+  for (let i = 0; i < 12; i++) { tk.update(t, balls.map(b => spR(b.num, b.x, b.y)), { read: true }); t += 0.25; }
+  assert.strictEqual(tk.S.shots.length, 0);
+});
+
+test('the owner\'s V3.0.5 session (Oct 28, 17:10, 8-ball practice, rack 2 hit hard) replayed: all 25 real shots right, no false pot or scratch', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261028-1710.json'), 'utf8')));
+  // live V3.0.5: 22 of the 25 right (the 8 and the cue ball called in on a bank shot, the 9 and the cue ball after a hard hit,
+  // the 8 into the corner missed); a tap to rename the 9 counted as a shot
+  assert.strictEqual(r.shots, 25); assert.ok(r.right >= 25, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
+  assert.ok(r.extraShots <= 3, 'extra shots ' + r.extra);
+});
