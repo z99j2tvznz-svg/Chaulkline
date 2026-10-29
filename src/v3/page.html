@@ -68,7 +68,14 @@ a.old { color: var(--muted); font-size: 13px; }
 #bar { position: absolute; left: calc(env(safe-area-inset-left, 0px) + 8px); right: calc(env(safe-area-inset-right, 0px) + 8px); bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; pointer-events: none; }
 #bar > * { pointer-events: auto; }
 #card { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 60px); width: min(94vw, 560px); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+#card.mini { left: auto; right: calc(env(safe-area-inset-right, 0px) + 8px); bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); transform: none; width: auto; padding: 6px; }
+#cam.manual #bar { display: none; }
 #card b { font-weight: 600; } #card p { margin: 0; font-size: 14px; color: rgba(234,241,244,.88); }
+#sum { position: fixed; inset: 0; overflow-y: auto; z-index: 5; padding: calc(env(safe-area-inset-top, 0px) + 22px) calc(env(safe-area-inset-right, 0px) + 16px) calc(env(safe-area-inset-bottom, 0px) + 28px) calc(env(safe-area-inset-left, 0px) + 16px); }
+#sum .wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.stats div { padding: 10px 8px; text-align: center; border-radius: 14px; border: 1px solid var(--glass-line); background: var(--glass2); }
+.stats b { display: block; font: 600 22px var(--f); } .stats span { font: 500 12px var(--f); color: var(--muted); }
 #toast { position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 70px); transform: translateX(-50%); padding: 9px 16px; font: 500 14px var(--f); z-index: 30; pointer-events: none; max-width: 92vw; text-align: center; }
 #sheet { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; z-index: 9; }
 .sheetBox { background: rgba(18,26,32,.94); border: 1px solid var(--glass-line); width: min(100%, 520px); border-radius: 20px 20px 0 0; padding: 16px 16px calc(env(safe-area-inset-bottom, 0px) + 16px); display: flex; flex-direction: column; gap: 12px; }
@@ -106,7 +113,16 @@ a.old { color: var(--muted); font-size: 13px; }
   <canvas id="ov" aria-label="Table camera"></canvas>
   <div id="top"><div class="glass" id="status"></div><button class="tb glass" id="menuBtn">Menu</button></div>
   <div id="card" class="glass" hidden></div>
-  <div id="bar"><button class="tb glass" id="rackBtn">New rack</button><button class="tb glass" id="dbgBtn">Save debug</button></div>
+  <div id="bar"><button class="tb glass" id="rackBtn">New rack</button><button class="tb glass" id="endBtn">End session</button></div>
+</div>
+
+<div id="sum" hidden>
+  <div class="wrap">
+    <div><h1 class="brand" style="font-size:22px">Session over</h1><div class="lbl" id="sumSub"></div></div>
+    <div class="stats" id="sumStats"></div>
+    <div class="card glass"><h2>Shots</h2><div id="sumList"></div></div>
+    <div class="row"><button class="btn primary" id="sumAgain">Start again</button><button class="btn" id="sumDbg">Save debug</button><button class="btn" id="sumHome">Home</button></div>
+  </div>
 </div>
 
 <div id="sheet" hidden><div class="sheetBox">

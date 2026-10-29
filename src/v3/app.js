@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.7';
+const VERSION = 'V3.0.8';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -96,6 +96,7 @@ async function restartCamera() {
 }
 // the whole camera picture, every look (and the small copy the table is found on)
 function grab() {
+  if (A.frozen) return true; // the corners are being set on a still picture
   const W = vid.videoWidth, H = vid.videoHeight; if (!W || !H) return false;
   if (A.frame.width !== W || A.frame.height !== H) { A.frame.width = W; A.frame.height = H; A.fctx = A.frame.getContext('2d', { willReadFrequently: true }); }
   if (!A.fctx) A.fctx = A.frame.getContext('2d', { willReadFrequently: true });
@@ -119,7 +120,7 @@ async function start() {
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
   A.P = makeP(A.ft); A.tk = makeTracker(A.P); A.sess = { t0: Date.now(), ft: A.ft, shots: [] };
-  $('#home').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.live = true; setStatus('Starting the camera…');
+  $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
   // the weights (10 MB) download while the table is found
   DET.prefetch(BASE, 'models/v3/finder-v1.weights', (g, t) => { A.dl = t ? g / t : 0; }).catch(e => dbg('error', { m: 'weights ' + String(e).slice(0, 100) }));
@@ -136,6 +137,29 @@ function goHome() {
   $('#cam').hidden = true; $('#home').hidden = false; hideCard(); renderHome();
 }
 function endSession() { if (A.sess && A.sess.shots.length) { A.lastSess = A.sess; save(); } }
+// End session (owner, Oct 28): the camera goes off and the session's numbers show, with Save debug, so the debug file is
+// saved with the phone put down and the camera no longer watching (turning the phone upright to save used to count as a
+// shot and send the app looking for the table again)
+function endRun() {
+  dbg('end_session', { shots: A.tk ? A.tk.S.shots.length : 0 });
+  A.live = false; A.phase = 'done'; dbgPersist(); endSession(); endCrumb();
+  if (A.stream) A.stream.getTracks().forEach(t => { try { t.stop(); } catch (e) { } }); A.stream = null;
+  try { if (wl) wl.release(); } catch (e) { } wl = null;
+  hideCard(); $('#cam').hidden = true; $('#sum').hidden = false; renderSummary();
+}
+function renderSummary() {
+  const sh = (A.sess && A.sess.shots) || [], mins = Math.max(1, Math.round((Date.now() - DBG.t0) / 60000));
+  const made = sh.reduce((a, s) => a + s.made.filter(m => m.num !== 0 && m.num !== s.cue).length, 0), scr = sh.filter(s => s.scratch).length;
+  const racks = 1 + DBG.ev.filter(e => e.k === 'new_rack').length;
+  $('#sumSub').textContent = mins + ' min · ' + A.ft + ' ft table · ' + racks + ' rack' + (racks > 1 ? 's' : '') + ' · ' + VERSION;
+  $('#sumStats').innerHTML = [[sh.length, 'shots'], [made, 'balls in'], [sh.filter(s => !s.scratch && !s.made.some(m => m.num !== 0)).length, 'nothing in'], [scr, 'scratches']].map(([n, l]) => '<div><b>' + n + '</b><span>' + l + '</span></div>').join('');
+  $('#sumList').innerHTML = sh.length ? sh.map(s => '<div class="srow"><b>' + s.n + '</b><span>' + shotWords(s) + '</span></div>').join('') : '<div class="lbl">No shots.</div>';
+  $('#sumDbg').textContent = 'Save debug';
+}
+$('#endBtn').onclick = () => endRun();
+$('#sumAgain').onclick = () => { $('#sum').hidden = true; start(); };
+$('#sumHome').onclick = () => { $('#sum').hidden = true; $('#home').hidden = false; A.phase = 'home'; renderHome(); };
+$('#sumDbg').onclick = () => saveDebug($('#sumDbg'));
 
 // ---------- the table ----------
 async function findTable() {
@@ -148,7 +172,10 @@ async function findTable() {
     await sleep(250);
   }
   if (!A.live || A.phase !== 'find') return;
-  dbg('table_find', best ? { conf: r2(best.conf), corners: best.corners, sides: best.sides, tips: best.tips } : { conf: 0 });
+  // the picture the table was looked for on, and the outline found, go into the debug file (Oct 28: upright, the outline
+  // kept landing on the outer edge of the rails, and there was no picture to see why)
+  const fn = 'find-' + String(++A.findN).padStart(2, '0') + '.jpg'; if (A.findN <= 20) jpeg(960).then(b => A.pics.set(fn, b)).catch(() => { });
+  dbg('table_find', best ? { conf: r2(best.conf), corners: best.corners, sides: best.sides, tips: best.tips, quad: best.quad.map(p => [r1(p[0] / best.k), r1(p[1] / best.k)]), pic: fn, wh: [A.W, A.H] } : { conf: 0, pic: fn, wh: [A.W, A.H] });
   if (best && best.quad) { A.cand = { quad: best.quad.map(p => [p[0] / best.k, p[1] / best.k]), rot: best.rot, conf: best.conf, tips: best.tips }; }
   else A.cand = null;
   showVerify();
@@ -161,13 +188,37 @@ function showVerify() {
     '<div class="row">' + (c ? '<button class="btn primary" data-act="accept">Looks right</button>' : '') + '<button class="btn" data-act="retry">Try again</button><button class="btn" data-act="manual">Tap the corners</button></div>');
   setStatus(good ? 'Check the outline' : 'Table');
 }
-function beginManual() { A.phase = 'manual'; A.man = []; showCard('<div><b>Tap the four corner pockets</b><p>In any order. Side pockets are assumed in the middle of the long rails.</p></div><div class="row"><button class="btn" data-act="undo">Undo</button><button class="btn" data-act="retry">Back to automatic</button></div>'); setStatus('Tap 1 of 4'); }
-function manualTap(x, y) {
-  A.man.push([x, y]); setStatus('Tap ' + Math.min(4, A.man.length + 1) + ' of 4');
-  if (A.man.length < 4) return;
-  const quad = orderQuad(A.man), { img, k } = smallImg(), rot = pickRot(img, quad.map(p => [p[0] * k, p[1] * k]));
-  A.cand = { quad, rot, conf: 1, manual: true }; A.man = null; dbg('table_manual', { quad: quad.map(p => p.map(Math.round)), rot }); showVerify();
+// Setting the corners by hand is done on a still picture (owner, Oct 28: a finger is not exact enough, and pressing the
+// screen moved the phone): the picture is frozen, each corner can be dragged with a magnifier above the finger, and once
+// the outline is accepted the steady check (see steady) measures how far the phone moved since that picture and moves the
+// outline with it. A corner goes on the corner of the cloth, where the two cushion noses would meet.
+function beginManual() {
+  if (!A.frozen) { grab(); A.frozen = true; } A.phase = 'manual'; A.man = []; A.drag = null; ov.style.touchAction = 'none';
+  const n = 'manual-' + String(++A.findN).padStart(2, '0') + '.jpg'; jpeg(960).then(b => A.pics.set(n, b)).catch(() => { }); A.manPic = n;
+  manualCard();
 }
+function manualCard() {
+  // the buttons only, small, in the bottom corner (a card in the middle covered the near pockets); what to do goes on top
+  const n = A.man.length;
+  showCard('<div class="row">' + (n === 4 ? '<button class="btn primary" data-act="useman">Use these corners</button>' : '') + '<button class="btn" data-act="undo">Undo</button><button class="btn" data-act="retry">Automatic</button></div>', true);
+  setStatus(n < 4 ? 'Corner pocket ' + (n + 1) + ' of 4: touch and slide, the magnifier shows the spot' : 'Drag any corner to adjust, then Use these corners',
+    'The picture is still, so the phone can move. Aim for the corner of the cloth, where the cushion edges would meet.');
+}
+function useManual() {
+  if (!A.man || A.man.length < 4) return;
+  const quad = orderQuad(A.man), { img, k } = smallImg(), rot = pickRot(img, quad.map(p => [p[0] * k, p[1] * k]));
+  A.cand = { quad, rot, conf: 1, manual: true }; dbg('table_manual', { quad: quad.map(p => p.map(r1)), rot, pic: A.manPic }); A.man = null; A.drag = null; ov.style.touchAction = ''; showVerify();
+}
+const picAt = e => { const F = fit(), rc = ov.getBoundingClientRect(); return { x: (e.clientX - rc.left - F.x) / F.k, y: (e.clientY - rc.top - F.y) / F.k, F }; };
+ov.addEventListener('pointerdown', e => {
+  if (A.phase !== 'manual' || !A.man) return; e.preventDefault(); const q = picAt(e);
+  let i = -1, bd = 40 / q.F.k; A.man.forEach((p, j) => { const d = Math.hypot(p[0] - q.x, p[1] - q.y); if (d < bd) { bd = d; i = j; } });
+  if (i < 0) { if (A.man.length >= 4) return; A.man.push([q.x, q.y]); i = A.man.length - 1; }
+  A.drag = { i, id: e.pointerId, fx: e.clientX, fy: e.clientY }; try { ov.setPointerCapture(e.pointerId); } catch (err) { }
+});
+ov.addEventListener('pointermove', e => { if (!A.drag || e.pointerId !== A.drag.id) return; const q = picAt(e); A.man[A.drag.i] = [q.x, q.y]; A.drag.fx = e.clientX; A.drag.fy = e.clientY; });
+const dragEnd = e => { if (!A.drag || e.pointerId !== A.drag.id) return; A.drag = null; if (A.phase === 'manual') manualCard(); };
+ov.addEventListener('pointerup', dragEnd); ov.addEventListener('pointercancel', dragEnd);
 async function acceptTable() {
   const c = A.cand; A.quad = c.quad; A.rot = c.rot;
   const { L, Wd } = tableDims(A.ft), f = LENS * Math.max(A.W, A.H);
@@ -192,7 +243,9 @@ async function acceptTable() {
       if (A.engine === 'gpu' && DET.ep !== 'webgpu') toast('The graphics chip is not available: using the processor.');
     } catch (e) { dbg('error', { m: 'finder load ' + String(e && e.message || e).slice(0, 160) }); setStatus('The ball finder could not start: ' + String(e && e.message || e).slice(0, 80)); return; }
   }
-  steadyRef(); clothRef(); A.tk.setBags(pocketBags(A.cam, A.P)); A.phase = 'run'; setStatus('Watching'); runLoop();
+  // (corners set on a still picture: the steady check's reference comes from that picture, so the outline follows the phone
+  // if it moved since)
+  steadyRef(); A.frozen = false; clothRef(); A.tk.setBags(pocketBags(A.cam, A.P)); A.phase = 'run'; setStatus('Watching'); runLoop();
 }
 // the cloth's colour, once the table is accepted: a hidden ball's spot that shows only this colour is bare (see bareCloth)
 function clothRef() {
@@ -205,7 +258,7 @@ function emptyAt(x, y) {
   if (x0 < 0 || y0 < 0 || x0 + 2 * s > A.W || y0 + 2 * s > A.H) return null;
   return bareCloth(A.fctx.getImageData(x0, y0, 2 * s, 2 * s), p[0] - x0, p[1] - y0, r, A.cloth);
 }
-function refind(msg) { A.phase = 'find'; setStatus(msg || 'Looking for the table…'); findTable(); }
+function refind(msg) { A.frozen = false; ov.style.touchAction = ''; A.phase = 'find'; setStatus(msg || 'Looking for the table…'); findTable(); }
 
 // ---------- watching ----------
 async function runLoop() {
@@ -390,6 +443,7 @@ function drawLoop() {
   if (ov.width !== Math.round(F.w * dpr) || ov.height !== Math.round(F.h * dpr)) { ov.width = Math.round(F.w * dpr); ov.height = Math.round(F.h * dpr); }
   const c = ov.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, F.w, F.h);
   const S2 = p => [F.x + p[0] * F.k, F.y + p[1] * F.k];
+  if (A.frozen && A.frame.width) c.drawImage(A.frame, F.x, F.y, A.W * F.k, A.H * F.k); // the still picture over the live one
   // the table outline: the candidate while checking it, the accepted one (faint) while watching
   const q = A.phase === 'verify' && A.cand ? A.cand.quad : A.phase === 'run' || A.phase === 'load' ? A.quad : null;
   if (q) {
@@ -397,9 +451,21 @@ function drawLoop() {
     q.forEach((p, i) => { const s = S2(p); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); }); c.closePath(); c.stroke();
     if (A.phase === 'verify') for (const p of q) { const s = S2(p); c.fillStyle = '#59d6e8'; c.beginPath(); c.arc(s[0], s[1], 6, 0, Math.PI * 2); c.fill(); }
   }
-  if (A.phase === 'manual' && A.man) for (const p of A.man) { const s = S2(p); c.fillStyle = '#ffb84d'; c.beginPath(); c.arc(s[0], s[1], 7, 0, Math.PI * 2); c.fill(); }
+  if (A.phase === 'manual' && A.man) drawManual(c, S2, F);
   if (A.phase !== 'run' || !A.tk || !A.cam) return;
   drawBalls(c, S2, F);
+}
+
+function drawManual(c, S2, F) {
+  const m = A.man; if (m.length === 4) { const q = orderQuad(m); c.strokeStyle = 'rgba(255,184,77,.9)'; c.lineWidth = 1.2; c.beginPath(); q.forEach((p, i) => { const s = S2(p); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); }); c.closePath(); c.stroke(); }
+  for (const p of m) { const s = S2(p); c.strokeStyle = '#ffb84d'; c.lineWidth = 1.5; c.beginPath(); c.arc(s[0], s[1], 9, 0, Math.PI * 2); c.stroke(); c.beginPath(); c.moveTo(s[0] - 13, s[1]); c.lineTo(s[0] + 13, s[1]); c.moveTo(s[0], s[1] - 13); c.lineTo(s[0], s[1] + 13); c.stroke(); }
+  // the magnifier: 4x the picture around the corner being placed, above the finger so the finger does not hide it
+  const d = A.drag; if (!d || !m[d.i]) return;
+  const rc = ov.getBoundingClientRect(), p = m[d.i], R = 58, Z = 4, cx = d.fx - rc.left, cy = Math.max(R + 8, d.fy - rc.top - R - 46);
+  c.save(); c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.clip();
+  const sw = 2 * R / (Z * F.k); c.drawImage(A.frame, p[0] - sw / 2, p[1] - sw / 2, sw, sw, cx - R, cy - R, 2 * R, 2 * R);
+  c.strokeStyle = '#ffb84d'; c.lineWidth = 1; c.beginPath(); c.moveTo(cx - R, cy); c.lineTo(cx + R, cy); c.moveTo(cx, cy - R); c.lineTo(cx, cy + R); c.stroke(); c.restore();
+  c.strokeStyle = 'rgba(234,241,244,.9)'; c.lineWidth = 2; c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.stroke();
 }
 
 // Each ball: a thin ring just outside it (dashed while hidden) and a small label above. A rolling ball is drawn where it
@@ -478,7 +544,6 @@ function drawBalls(c, S2, F) {
 ov.addEventListener('pointerdown', () => { if (A.tk) A.tk.touched(); });
 ov.addEventListener('click', e => {
   const F = fit(), rc = ov.getBoundingClientRect(), x = (e.clientX - rc.left - F.x) / F.k, y = (e.clientY - rc.top - F.y) / F.k;
-  if (A.phase === 'manual' && A.man) { manualTap(x, y); return; }
   if (A.phase !== 'run' || !A.tk) return;
   let best = null, bd = 1e9;
   for (const b of A.tk.balls()) { const p = A.cam.proj(b.x, b.y, A.P.R), d = Math.hypot(p[0] - x, p[1] - y), r = A.cam.ballRad(b.x, b.y, A.P.R, A.P.R); if (d < Math.max(30 / F.k, 2.6 * r) && d < bd) { bd = d; best = b; } }
@@ -515,19 +580,19 @@ function saveTap(b, label, was) {
 }
 
 // ---------- cards, menu, toast ----------
-function showCard(html) { const c = $('#card'); c.innerHTML = html; c.hidden = false; }
-function hideCard() { $('#card').hidden = true; }
+function showCard(html, mini) { const c = $('#card'); c.innerHTML = html; c.hidden = false; c.classList.toggle('mini', !!mini); $('#cam').classList.toggle('manual', !!mini); }
+function hideCard() { $('#card').hidden = true; $('#cam').classList.remove('manual'); }
 $('#card').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.ft) { A.ft = +b.dataset.ft; save(); A.P = makeP(A.ft); A.tk = makeTracker(A.P); A.nShots = 0; dbg('ft', { ft: A.ft }); refind('Table size ' + A.ft + ' ft: looking again…'); return; }
   const a = b.dataset.act;
   if (a === 'accept') acceptTable(); else if (a === 'retry') refind(); else if (a === 'manual') beginManual();
-  else if (a === 'undo') { if (A.man && A.man.length) A.man.pop(); setStatus('Tap ' + (A.man.length + 1) + ' of 4'); }
+  else if (a === 'undo') { if (A.man && A.man.length) A.man.pop(); if (A.man) manualCard(); }
   else if (a === 'home') goHome(); else if (a === 'close') hideCard(); else if (a === 'refind') { hideCard(); refind(); }
+  else if (a === 'dbg') saveDebug(b); else if (a === 'useman') useManual();
 });
-$('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row"><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
+$('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row"><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="dbg">Save debug</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
 $('#rackBtn').onclick = () => { if (!A.tk) return; A.tk.newRack(); PATH.clear(); dbg('new_rack', {}); toast('New rack. Names come once the break spreads the balls.'); };
-$('#dbgBtn').onclick = () => saveDebug($('#dbgBtn'));
 let toastT = 0;
 function toast(t) { dbg('toast', { s: t }); const e = $('#toast'); e.textContent = t; e.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { e.hidden = true; }, 3500); }
 

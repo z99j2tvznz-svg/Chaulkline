@@ -798,3 +798,18 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
 - Owner on the paths: keep them. Each path now starts at the centre of the spot the ball rested on when the shot started
   (from the shot's "before", which now keeps each ball's resting spot as rx, ry), even when its first moments were not
   seen, with a dot about half an inch across there. Later (owner, not now): a setting for how long the paths stay.
+
+## V3.0.8 (Oct 29) — End session, corners set on a still picture, table-finding pictures in the debug file
+- Owner: Save debug was pressed with the camera still watching, and turning the phone upright to do it counted as a shot
+  and sent the app looking for the table. Now the bar has New rack and End session. End session turns the camera off and
+  shows the session: minutes, table size, racks, shots, balls in, shots with nothing in, scratches, and every shot's line,
+  with Start again, Save debug and Home. Save debug is also in the Menu, for a mid-session save.
+- Owner: upright, the automatic outline kept landing on the outer edge of the rails (where the cushion top meets the
+  brown trim with the diamonds); tapping the pockets by hand was not exact, and pressing the screen moved the phone. Now
+  "Tap the corners" freezes the picture: a finger puts a corner down and slides it, with a 4x magnifier above the finger;
+  any corner can be dragged again; "Use these corners" when all four look right. Only small buttons show, in the bottom
+  corner (a card in the middle covered the near pockets). Once accepted, the steady check takes its reference from that
+  still picture, so if the phone moved while being touched, the outline moves with it.
+- The debug file now has the picture each table search ran on (find-NN.jpg) and the one the corners were set on
+  (manual-NN.jpg), and the outline found, so a wrong outline can be looked at and the table finder fixed. (The finder
+  itself is shared with V2.3.3 and stays unchanged until there are upright pictures to work from.)

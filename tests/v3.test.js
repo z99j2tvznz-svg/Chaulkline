@@ -1,6 +1,6 @@
 // V3 app end to end in headless Chromium: the camera is a video made from the owner's photo of Oct 27 (home 7 ft table,
 // low side view, balls bunched at one end). Sideways and upright: the table is found, the finder starts (CPU engine here),
-// the balls get rings and names, a tap renames a ball and the name sticks, Save debug gives a zip with the log.
+// the balls get rings and names, a tap renames a ball and the name sticks, End session turns the camera off, and Save debug there gives a zip with the log.
 const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('node:fs'), os = require('node:os'), path = require('node:path'), { execFileSync } = require('node:child_process');
@@ -45,9 +45,12 @@ async function run(rot, viewport, sway) {
     await page.waitForFunction(n => window.__v3.A.looks >= n + 4, n0, { timeout: 60000 });
     const after = await page.evaluate(k => { const b = window.__v3.A.tk.S.tracks.find(t => t.key === k); return b && [b.num, b.sure, b.pin]; }, target.key);
     assert.deepStrictEqual(after, [4, true, 4]);
-    // Save debug (no share sheet in headless Chromium: it downloads)
-    const dl = page.waitForEvent('download'); await page.click('#dbgBtn'); const d = await dl, zp = path.join(dir, 'dbg.zip'); await d.saveAs(zp);
-    const zip = fs.readFileSync(zp); assert.ok(zip.includes(Buffer.from('log.json')) && zip.includes(Buffer.from('taps/001-4.png')), 'zip holds the log and the tapped ball');
+    // End session: the camera goes off and the session screen shows; Save debug there (no share sheet in headless
+    // Chromium: it downloads)
+    await page.click('#endBtn'); await page.waitForFunction(() => !document.querySelector('#sum').hidden);
+    assert.deepStrictEqual(await page.evaluate(() => [window.__v3.A.live, !!window.__v3.A.stream, document.querySelector('#cam').hidden]), [false, false, true]);
+    const dl = page.waitForEvent('download'); await page.click('#sumDbg'); const d = await dl, zp = path.join(dir, 'dbg.zip'); await d.saveAs(zp);
+    const zip = fs.readFileSync(zp); assert.ok(zip.includes(Buffer.from('log.json')) && zip.includes(Buffer.from('taps/001-4.png')) && zip.includes(Buffer.from('find-01.jpg')), 'zip holds the log, the tapped ball and the table-finding picture');
     assert.deepStrictEqual(errors, []);
     return st;
   } finally { await browser.close(); srv.close(); fs.rmSync(dir, { recursive: true, force: true }); }
