@@ -26,10 +26,13 @@ function replay(d, ft, opts, o2) {
     if (a.k === 'tap_not') tk.notBall(b.key); else tk.inPocket(b.key);
   };
   const emp = o2 && o2.empty ? o2.empty : (!o2 || !o2.noEmpty) && d.cloth ? require('./photos.js').emptyFromMaps(d.cloth) : null;
-  const probs = (n, k) => { const q = new Array(11).fill(0); if (k === 'n') { q[10] = 0.8; q[n] = 0.2; return q; } const top = k === 's' ? 0.9 : 0.5; q.fill((1 - top - 0.01) / 9); q[n] = top; q[10] = 0.01; return q; };
+  // from V3.0.11 the log has the reader's share for its number and its second choice; older logs only sure / unsure
+  const probs = (n, k, pn, s2) => { const q = new Array(11).fill(0); if (k === 'n') { q[10] = 0.8; q[n] = 0.2; return q; }
+    const top = pn != null ? pn : k === 's' ? 0.9 : 0.5, two = s2 && s2[0] !== n ? s2 : null, rest = Math.max(0, 1 - top - (two ? two[1] : 0) - 0.01);
+    q.fill(rest / (two ? 8 : 9)); q[n] = top; if (two) q[two[0]] = two[1]; q[10] = 0.01; return q; };
   for (const L of d.looks) {
     while (acts.length && acts[0].t <= L[0]) apply(acts.shift());
-    const spots = L[5].map(([x, y, num, kind, score]) => ({ x, y, px: x * 20, py: y * 20, r: 13.5, score, kind: kind === 's' ? 'sure' : kind === 'u' ? 'unsure' : kind === 'n' ? 'not_a_ball' : null, p: num == null ? null : probs(num, kind) }));
+    const spots = L[5].map(([x, y, num, kind, score, pn, s2]) => ({ x, y, px: x * 20, py: y * 20, r: 13.5, score, kind: kind === 's' ? 'sure' : kind === 'u' ? 'unsure' : kind === 'n' ? 'not_a_ball' : null, p: num == null ? null : probs(num, kind, pn, s2) }));
     // the log has no camera frames: the bare-cloth check uses the shot pictures' cloth maps kept in the fixture (photos.js)
     tk.update(L[0] / 1000, spots, { read: spots.some(s => s.p), empty: emp ? emp(L[0] / 1000) : null });
   }

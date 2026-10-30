@@ -37,6 +37,34 @@
       "falseScratch": 3,
       "namesRight": 47,
       "extraShots": 4
+    },
+    {
+      "when": "Oct 29 17:50, end rail",
+      "session": "Oct 29 17:50",
+      "app": "V3.0.10",
+      "spot": "end rail",
+      "racks": 3,
+      "shots": 44,
+      "found": 44,
+      "madeRight": 42,
+      "falseIn": 1,
+      "falseScratch": 0,
+      "namesRight": 40,
+      "extraShots": 2
+    },
+    {
+      "when": "Oct 29 17:50, side",
+      "session": "Oct 29 17:50",
+      "app": "V3.0.10",
+      "spot": "side",
+      "racks": 1,
+      "shots": 11,
+      "found": 11,
+      "madeRight": 10,
+      "falseIn": 0,
+      "falseScratch": 0,
+      "namesRight": 10,
+      "extraShots": 0
     }
   ],
   "notCounted": [

@@ -853,3 +853,18 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   where the bare-cloth check cannot tell), and a 5 that vanished just after its shot was over.
 - Tracking test: the 4 sideways racks added (live: 51 found, 46 called right, 3 false scratches, names right after 47);
   the upright rack is not counted (the turned table).
+
+## V3.0.11 (Oct 30) — the end rail works; the reader's shares in the log
+- Owner's V3.0.10 session (Oct 29, 17:50; 9-ball practice): 3 racks with the phone upright at the end rail (corners set
+  by hand; the shape check turned the table the right way round, twice), then 1 rack sideways. The first session from a
+  second camera spot. Live, end rail: 44 real shots, 42 right; the 8 stopped in a far corner's jaws was called in, and
+  dropped on the next shot (counted as missed there). Names right after 40 (the 9 by the near left corner left unnamed
+  twice; the 8 in the jaws; the 9 hidden once). Side: 11 shots, 10 right; the 9 in the far corner read as the cue ball
+  (the real cue ball unnamed), and the last 9 not called (the session ended 5 s later). All shot and table pictures
+  were in the file (V3.0.10's trimming fix).
+- The replay of the end-rail racks scores 37 of 44 (live 42): the log kept only each read's number and sure / unsure,
+  and a replay makes every sure read 90%, which turns the votes harder than the phone's own reads. From V3.0.11 each
+  look also keeps the reader's share for its number and its second choice and share; the replay uses them when there.
+- Tracking test: the end rail is the second camera spot; one session can now hold racks from two spots (counted once).
+  Now 9 racks, 3 sessions, 2 spots, 120 shots: found 100%, called right 93% (need 95), 1 false "in", 3 false scratches
+  (1.25 per 50, need at most 1), names 92.5% (need 97).

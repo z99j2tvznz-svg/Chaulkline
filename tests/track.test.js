@@ -405,3 +405,11 @@ test('the owner\'s V3.0.9 session (Oct 29, 17:02, 4 racks sideways) replayed: th
   // live V3.0.9: 46 of 51 right; three times the 9 going in was called a scratch (the cue ball and 9 tracks swapped)
   assert.strictEqual(r.shots, 51); assert.ok(r.right >= 48, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
 });
+
+test('the owner\'s V3.0.10 session (Oct 29, 17:50, 3 racks upright at the end rail) replays without losing ground', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261029-1750.json'), 'utf8')));
+  // live V3.0.10: 42 of 44 right. The replay scores lower (37): this log keeps only "sure" or "unsure" for each read, not
+  // how sure, and a replay makes every sure read 90%; from V3.0.11 the log keeps the reader's shares
+  assert.strictEqual(r.shots, 44); assert.ok(r.right >= 37, JSON.stringify(r.rows.filter(x => !x.right))); assert.ok(r.falsePots <= 2);
+});

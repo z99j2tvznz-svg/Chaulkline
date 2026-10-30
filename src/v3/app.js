@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.10';
+const VERSION = 'V3.0.11';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -75,10 +75,11 @@ async function renderGate() {
   try {
     const g = await (await fetch('data/v3-gate.json?' + Date.now(), { cache: 'no-store' })).json(), T = g.target, S = g.sessions || [];
     const sum = k => S.reduce((a, s) => a + (s[k] || 0), 0), shots = sum('shots'), pct = (a, b) => b ? Math.round(100 * a / b) : 0;
+    const nSess = new Set(S.map(s => s.session || s.when)).size; // one session can have racks from two camera spots
     const spots = new Set(S.map(s => s.spot)).size, per50 = n => shots ? (50 * n / shots).toFixed(1) : '0';
     const rows = [
       ['Racks', sum('racks') + ' of ' + T.racks, sum('racks') / T.racks, sum('racks') >= T.racks],
-      ['Sessions', S.length + ' of ' + T.sessions, S.length / T.sessions, S.length >= T.sessions],
+      ['Sessions', nSess + ' of ' + T.sessions, nSess / T.sessions, nSess >= T.sessions],
       ['Camera spots', spots + ' of ' + T.spots + (spots ? ' (' + [...new Set(S.map(s => s.spot))].join(', ') + ')' : ''), spots / T.spots, spots >= T.spots],
       ['Shots found', pct(sum('found'), shots) + '% of ' + shots + ' · need ' + Math.round(100 * T.found) + '%', shots ? sum('found') / shots : 0, shots > 0 && sum('found') / shots >= T.found],
       ['What went in, called right', pct(sum('madeRight'), shots) + '% · need ' + Math.round(100 * T.madeRight) + '%', shots ? sum('madeRight') / shots : 0, shots > 0 && sum('madeRight') / shots >= T.madeRight],
@@ -87,7 +88,7 @@ async function renderGate() {
       ['Every ball named right after a shot', pct(sum('namesRight'), shots) + '% · need ' + Math.round(100 * T.namesRight) + '%', shots ? sum('namesRight') / shots : 0, shots > 0 && sum('namesRight') / shots >= T.namesRight]];
     $('#gateRows').innerHTML = rows.map(([l, v, f, ok]) => '<div class="grow' + (ok ? ' ok' : '') + '"><div class="gl"><span>' + l + '</span><span>' + v + '</span></div><div class="gb"><i style="width:' + Math.round(100 * Math.max(0, Math.min(1, f))) + '%"></i></div></div>').join('');
     const met = rows.filter(r => r[3]).length, extra = sum('extraShots');
-    $('#gateNote').textContent = met + ' of ' + rows.length + ' met. ' + (extra ? 'Also counted as shots but not shots: ' + extra + '. ' : '') + 'From ' + S.length + ' reviewed session' + (S.length === 1 ? '' : 's') + ' (' + S.map(s => s.when + ', ' + s.app).join('; ') + '). Updated ' + g.updated + '.' + (g.notCounted && g.notCounted.length ? ' Not counted: ' + g.notCounted.map(n => n.when + ' (' + n.why + ')').join('; ') + '.' : '');
+    $('#gateNote').textContent = met + ' of ' + rows.length + ' met. ' + (extra ? 'Also counted as shots but not shots: ' + extra + '. ' : '') + 'From ' + nSess + ' reviewed session' + (nSess === 1 ? '' : 's') + ' (' + S.map(s => s.when + ', ' + s.app).join('; ') + '). Updated ' + g.updated + '.' + (g.notCounted && g.notCounted.length ? ' Not counted: ' + g.notCounted.map(n => n.when + ' (' + n.why + ')').join('; ') + '.' : '');
     $('#gateCard').hidden = false;
   } catch (e) { $('#gateCard').hidden = true; }
 }
@@ -324,7 +325,7 @@ async function look() {
   for (const n of tk.S.notes.splice(0)) onLateMade(n);
   pathLook();
   A.looks++;
-  DBG.looks.push([Date.now() - DBG.t0, Math.round(t1 - t0), Math.round(t2 - t1), on.length, tk.S.phase === 'shot' ? 'S' : tk.S.phase[0], on.map(s => [r1(s.x), r1(s.y), s.num == null ? null : s.num, s.kind ? s.kind[0] : '-', r2(s.score)])]);
+  DBG.looks.push([Date.now() - DBG.t0, Math.round(t1 - t0), Math.round(t2 - t1), on.length, tk.S.phase === 'shot' ? 'S' : tk.S.phase[0], on.map(s => [r1(s.x), r1(s.y), s.num == null ? null : s.num, s.kind ? s.kind[0] : '-', r2(s.score), s.p ? r2(s.p[s.num]) : null, s.p ? second(s.p, s.num) : null])]);
   if (DBG.looks.length > 4000) DBG.looks.splice(0, 400);
   A.timing.push(t1 - t0); if (A.timing.length > 30) A.timing.shift();
   if (before !== 'shot' && tk.S.phase === 'shot') onShotStart();
@@ -334,6 +335,9 @@ async function look() {
   if (tk.S.phase === 'still' && performance.now() - A.stillPicT > 1500) { A.stillPicT = performance.now(); jpeg(960).then(b => { A.stillPic = b; }).catch(() => { }); }
   statusRun(); crumb('done');
 }
+// the reader's second choice and its share (from V3.0.11, so a replay can rebuild how sure the reader was: Oct 30, a replay
+// with every read made 90% sure scored 37 of 44 on a session that live got 42)
+function second(p, k) { let b = -1; for (let i = 0; i < 10; i++) if (i !== k && (b < 0 || p[i] > p[b])) b = i; return b < 0 ? null : [b, r2(p[b])]; }
 function onShotStart() { PATH.clear(); pathLook(); const sh = A.tk.S.shot; if (sh && A.stillPic) A.pics.set('shot' + String(sh.n).padStart(3, '0') + '-before.jpg', A.stillPic); dbg('shot_start', { n: sh && sh.n }); }
 function onShotEnd(sh) {
   sh.paths = pathsRow(sh); const row = shotRow(sh); A.sess.shots.push({ n: sh.n, cue: sh.cueNum, first: sh.firstNum, made: row.made, scratch: sh.scratch, break: sh.break, t: Date.now() });
@@ -655,7 +659,7 @@ function makeZip(files) {
 }
 function packDebug() {
   const d = new Date(DBG.t0), pad = n => String(n).padStart(2, '0'), name = 'chalkline-v3-debug-' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + '.zip', enc = new TextEncoder();
-  const log = { header: header(), events: DBG.ev, dropped: DBG.drop, tracker: A.tk ? A.tk.S.events : null, shots: A.tk ? A.tk.S.shots.map(shotRow) : [], looksFormat: ['ms', 'findMs', 'readMs', 'n', 'phase', '[x, y, num, kind, score]'], looks: DBG.looks,
+  const log = { header: header(), events: DBG.ev, dropped: DBG.drop, tracker: A.tk ? A.tk.S.events : null, shots: A.tk ? A.tk.S.shots.map(shotRow) : [], looksFormat: ['ms', 'findMs', 'readMs', 'n', 'phase', '[x, y, num, kind, score, pNum, [num2, p2]]'], looks: DBG.looks,
     taps: A.taps.map(({ png, ...r }) => r), previous: PREV && PREV.t0 !== DBG.t0 ? PREV : null, crash: CRASH || (() => { try { return JSON.parse(localStorage.getItem(CRUMB) || 'null'); } catch (e) { return null; } })() };
   const files = [{ name: 'log.json', data: enc.encode(JSON.stringify(log)) }];
   for (const [k, v] of [...A.pics.entries()].sort()) files.push({ name: k, data: v });
