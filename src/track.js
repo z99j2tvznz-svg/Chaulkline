@@ -49,7 +49,8 @@ function makeTracker(P, opts) {
     jawZone: 1.2,       // in past a pocket's circle: a ball resting this deep in the mouth that vanishes in a shot went in
     jumpGap: 0.45,      // s: a ball seen again this soon after it vanished, far off and reading the same, jumped there in one look
     jumpSpeed: 20,      // in/s it must have covered that distance at, at least
-    readReach: 150,     // in/s: a rolling ball read as its own number this look can be this far from its last spot
+    readReach: 150,
+    readCost: 2.5,      // in-equivalent cost of a sure read of another number on a ball's spot (any pair, the 9 and the cue ball too)     // in/s: a rolling ball read as its own number this look can be this far from its last spot
     touchHold: 0.7,     // s after a finger on the screen before a shot can start
     bagScore: 0.6,      // a spot on a pocket's bag line (see setBags) scoring under this is a ball lying in that pocket
     bagDist: 1.5,       // in from the line
@@ -174,7 +175,13 @@ function makeTracker(P, opts) {
     };
     // pass 1: every visible ball near where it should be
     const p1 = act.filter(tr => tr.state !== 'hidden' && tr.state !== 'pending');
-    const cueTr = act.find(tr => tr.ok && tr.num === 0), cueAway = !cueTr || cueTr.state === 'hidden' || cueTr.state === 'pending';
+    // the cue ball out of sight, or gone from its resting spot this very look (struck hard, it is already somewhere else)
+    const cueTr = act.find(tr => tr.ok && tr.num === 0), cueAway = !cueTr || cueTr.state === 'hidden' || cueTr.state === 'pending' ||
+      (cueTr.state === 'rest' && !spots.some(sp => Math.hypot(sp.x - cueTr.x, sp.y - cueTr.y) <= O.gateRest));
+    // (only when one spot alone reads as the cue ball: a shaken or blurred look can read two balls that way)
+    const oneCue = spots.filter(sp => readOf(sp) === 0).length === 1;
+    const notCue = (tr, sp) => tr.state === 'rest' && cueAway && oneCue && readOf(sp) === 0 && named(tr) && tr.num !== 0 && (tr.num === 9 ? cueTr && cueTr.state === 'rest' : whiteOf(tr) != null && whiteOf(tr) < 0.2);
+    const readPen = (tr, sp) => named(tr) && readOf(sp) != null && readOf(sp) !== tr.num ? O.readCost : 0;
     for (const tr of act) if (tr.state === 'new' && tr.restSince == null && tr.hist && tr.hist.length >= 2) { const a = tr.hist[tr.hist.length - 2], b = tr.hist[tr.hist.length - 1], g = Math.max(0.02, b.t - a.t); tr.vx = (b.x - a.x) / g; tr.vy = (b.y - a.y) / g; }
     if (p1.length && spots.length) {
       const Q = p1.map(pred); // (fills struck)
@@ -188,11 +195,17 @@ function makeTracker(P, opts) {
         // the cue ball, unseen (behind the cue or a hand) and struck hard, can reach a resting ball before the next look;
         // that ball is gone from its spot by then and the cue ball sits there (Oct 28: the 8's track took the cue ball and the
         // shot was followed as the 8 struck). A sure white read on the spot of a ball that is not white is not that ball.
-        if (tr.state === 'rest' && cueAway && readOf(sp) === 0 && named(tr) && tr.num !== 9 && whiteOf(tr) != null && whiteOf(tr) < 0.2) return Infinity;
-        if (d <= q.g) return d + O.cueCost * w;
+        // The 9 too, when the cue ball has just left its spot (Oct 29: the cue ball went 17 in to the 9 between two looks)
+        if (notCue(tr, sp)) return Infinity;
+        // A sure read of another number costs a match, even for the 9 and the cue ball, which the reader mixes up now and then:
+        // alone on its spot a ball still takes it, but a ball arriving there read as itself wins it (Oct 29: the cue ball hit
+        // the 9 hard and sat on the 9's spot by the next look, read "cue ball"; the 9's track took it, and the cue ball's
+        // track then took the 9 rolling away: the 9 going in was called a scratch, three times)
+        const rp = readPen(tr, sp);
+        if (d <= q.g) return d + O.cueCost * w + rp;
         // a rolling ball read as its own number: further on than the prediction allows (faster, or off a cushion)
         if (tr.state === 'moving' && readSame(tr, sp) && dist(sp, tr) <= O.readReach * dt + O.gateMove) return O.gateMove + 0.5 * Math.min(d, dist(sp, tr)) + O.cueCost * w;
-        if (k && d <= O.launchGate && (sp.x - tr.x) * k.ux + (sp.y - tr.y) * k.uy > 0.5 * d && w <= O.cueVeto) return 0.5 + 0.1 * d + O.cueCost * w;
+        if (k && d <= O.launchGate && (sp.x - tr.x) * k.ux + (sp.y - tr.y) * k.uy > 0.5 * d && w <= O.cueVeto) return 0.5 + 0.1 * d + O.cueCost * w + rp;
         return Infinity; }); });
       assign(cost, p1.length, spots.length).forEach((j, i) => { if (j >= 0) { matched.set(p1[i], j); used[j] = true; } });
     }
@@ -207,7 +220,8 @@ function makeTracker(P, opts) {
         if (tr.knock && tr.state === 'pending' && (sp.x - tr.x) * tr.knock.ux + (sp.y - tr.y) * tr.knock.uy < -0.5) return Infinity; // a knocked ball goes away from what hit it
         if (tr.state === 'hidden' || tr.state === 'pending') { const reach = O.hiddenGate + (tr.vLost || 0) * Math.min(1.5, S.t - (tr.lostT || S.t)) + (tr.state === 'pending' ? 1.5 : 0); return d <= Math.min(24, reach) ? d + O.cueCost * w : Infinity; }
         if (tr.state === 'rest' || tr.state === 'moving') {
-          if (d <= O.launchGate) return d + 2 + O.cueCost * w; // a far jump costs more than any near match
+          if (notCue(tr, sp)) return Infinity;
+          if (d <= O.launchGate) return d + 2 + O.cueCost * w + readPen(tr, sp); // a far jump costs more than any near match
           // the cue ball struck hard is past the launch gate by the next look (Oct 28: 27 in in 0.28 s, next to the 9 it hit)
           return tr.num === 0 && readSame(tr, sp) && d <= O.readReach * dt + O.gateMove ? d + 2 + O.cueCost * w : Infinity;
         }
@@ -348,7 +362,7 @@ function makeTracker(P, opts) {
       // two balls went hidden (the cue ball and the ball it sent out of sight): white or not tells which one this is
       if (cand.length > 1 && nw.wN) { const w = nw.wS / nw.wN; for (let i = cand.length - 1; i >= 0; i--) { const a = whiteOf(cand[i]); if (a != null && Math.abs(a - w) > O.cueVeto) cand.splice(i, 1); } }
       // a lost ball read as some other number is not this one
-      if (r != null) cand = cand.filter(o => !(named(o) && o.num !== r && !mixed(o.num, r)));
+      if (r != null) { cand = cand.filter(o => !(named(o) && o.num !== r && !mixed(o.num, r))); if (cand.some(o => o.num === r)) cand = cand.filter(o => o.num === r); }
       if (cand.length !== 1) continue;
       const o = cand[0];
       if (o.state === 'gone') { // called in a moment ago, but it is rolling on: it did not go in

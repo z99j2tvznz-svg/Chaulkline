@@ -821,3 +821,35 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   with a bar and a tick once met, and the shots counted that were not shots. The numbers are the live results of reviewed
   sessions, from V3.0.6 on, kept in data/v3-gate.json and updated by Claude after each review (the app cannot know the
   truth itself). First entry: Oct 28 18:08, 1 rack, 14 of 14 on everything (names checked on the after pictures).
+
+## V3.0.10 (Oct 30) — the table the right way round from the end rail, the right lens, the 9 hit hard
+- Owner's V3.0.9 session (Oct 29, 17:02; 9-ball practice, 5 racks): rack 1 with the phone upright at the end rail and the
+  corners set by hand ("tracking about 1.5 diamonds off"), then 4 racks sideways at the side rail, 51 real shots.
+- The 1.5 diamonds: the app had the table turned a quarter. Which way a table runs was decided by looking for the dark
+  side pockets at the middle of each pair of rails (pickRot); from the end, the dark floor and brown rails beyond the short
+  rails won. With the long and short rails swapped, the camera fitted to the outline does not fit it (the rings were drawn
+  up to 160 px from where the finder saw the balls) and every table position came out stretched. The finder had found the
+  balls in the right places all along. Now the way the table runs comes from the outline's shape: through the lens, the
+  four corners give the rectangle's true length to width, and a table is 2 to 1 (rotByShape, src/v3/cloth.js; pickRot is
+  kept for an outline that cannot tell). Every upright outline so far, the Oct 27 23:38 one too, had been turned.
+- The lens: the same check says the V2 value 0.86 (focal length over the long picture side) is wrong for the owner's
+  phone in video. Four sideways sessions come out exactly 2 to 1 at 0.71-0.72 (1.7 to 1 at 0.86), which also fits a
+  24 mm-equivalent main camera with the video stabilisation crop. LENS is now 0.72 and goes into the debug header (the
+  tools use the header's value, 0.86 for older logs).
+- An outline that is not about 2 to 1 (under 1.6 or over 2.5) gets a warning on the check card: it may be on the outer
+  edge of the rails (the owner's upright problem); set the corners by hand.
+- The debug file's table-finding pictures were thrown away first when the shot pictures were trimmed (they sort first):
+  now only shot pictures are trimmed.
+- The 9 hit hard (owner: the line drawn to the 9, then the cue ball takes another name): live, three times the 9 went in
+  and a scratch was called, and once the names swapped. The cue ball, struck hard, sits on the 9's spot by the next look
+  and reads "cue ball"; the 9's track took that spot (the cue ball and the 9 are a pair the reader mixes up, so its read
+  did not count against it), and the cue ball's track then took the 9 rolling away. Now a sure read of another number
+  costs a match for every pair (readCost 2.5 in): a ball alone on its spot still takes it, a ball arriving there read as
+  itself wins it. And when the cue ball has just left its resting spot and one spot alone reads as the cue ball, no other
+  resting ball, the 9 included, may take that spot, in either matching pass (two spots read as the cue ball, as in a
+  shaken look on Oct 27, is not clear enough). Replay of the 4 sideways racks: 48 of 51 (live 46), no false scratch; the
+  other sessions unchanged.
+- Still missed in replay: a 7 rolling into the far corner before the shot was seen (left hidden by the far cushion,
+  where the bare-cloth check cannot tell), and a 5 that vanished just after its shot was over.
+- Tracking test: the 4 sideways racks added (live: 51 found, 46 called right, 3 false scratches, names right after 47);
+  the upright rack is not counted (the turned table).

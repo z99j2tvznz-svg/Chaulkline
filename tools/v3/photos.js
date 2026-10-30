@@ -6,7 +6,7 @@
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 const { makeCam, makeP } = require(path.join(__dirname, '../../src/core.js'));
 const { tableDims, tableCornersFor, sampleCloth } = require(path.join(__dirname, '../../src/vision.js')), { bareCloth } = require(path.join(__dirname, '../../src/v3/cloth.js'));
-const LENS = 0.86; // as in src/v3/app.js
+const LENS0 = 0.86; // the lens before V3.0.10 (the debug header has it from then on)
 global.D2R = global.D2R || Math.PI / 180; // vision.js uses core.js's global in the page
 function loadPhotos(dir) {
   const out = path.join(dir, '.rgba'); fs.mkdirSync(out, { recursive: true });
@@ -26,7 +26,7 @@ for f in sorted(os.listdir(d)):
 }
 function emptyFromPhotos(dir, d) {
   const ph = loadPhotos(dir), h = d.header, [W, H] = h.picture, P = makeP(h.ft || 7), { L, Wd } = tableDims(h.ft || 7);
-  const cam = makeCam(tableCornersFor(h.rot || 0, L, Wd), h.quad, W, H, LENS * Math.max(W, H), [W / 2, H / 2]);
+  const cam = makeCam(tableCornersFor(h.rot || 0, L, Wd), h.quad, W, H, (h.lens || LENS0) * Math.max(W, H), [W / 2, H / 2]);
   // when each picture was taken: "after" at the shot's end, "before" up to 1.5 s before its start
   const ev = d.events || [], times = [];
   for (const e of ev) { if (e.k === 'shot_end') times.push({ t: e.t / 1000, f: 'shot' + String(e.n).padStart(3, '0') + '-after' }); if (e.k === 'shot_start') times.push({ t: e.t / 1000 - 0.75, f: 'shot' + String(e.n).padStart(3, '0') + '-before' }); }

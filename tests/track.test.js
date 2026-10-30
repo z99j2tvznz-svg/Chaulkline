@@ -390,3 +390,18 @@ test('a shot\'s "before" keeps where each ball rested, so the cue ball\'s path c
   for (const x of [26, 33, 40, 46.5, 46.5, 46.5, 46.5, 46.5, 46.5, 46.5, 46.5]) { tk.update(t, [spR(0, x, 20), spR(3, x > 46 ? 60 : 50, 20)], { read: true }); t += 0.25; }
   const b = tk.S.shots[0].before.find(q => q.num === 0); assert.ok(Math.abs(b.rx - 20) < 0.5 && Math.abs(b.x - 26) < 0.5, JSON.stringify(b));
 });
+
+test('which way the table runs comes from the outline\'s shape through the lens (Oct 29: from the end rail it was turned)', () => {
+  global.D2R = global.D2R || Math.PI / 180; const { rotByShape } = require('../src/v3/cloth.js'), f = W => 0.72 * W;
+  // sideways at the side rail (the owner's outlines): corners 0-1 are a long rail
+  for (const q of [[[453, 523], [1412, 523], [1629, 759], [199, 771]], [[459.7, 373.3], [1493, 373.3], [1751.5, 662.5], [214.4, 662.5]]]) { const r = rotByShape(q, 1920, 1080, f(1920)); assert.strictEqual(r.rot, 0); assert.ok(Math.abs(r.ratio - 2) < 0.1, r.ratio); }
+  // upright at the end rail (Oct 29, corners set by hand, and the automatic outline): corners 0-1 are a short rail
+  for (const q of [[[318.3, 816], [673.4, 818.5], [921.3, 1337.2], [104.7, 1326.5]], [[293.3, 824.6], [731.9, 833.5], [1022.4, 1366.4], [32, 1366.8]]]) assert.strictEqual(rotByShape(q, 1080, 1920, f(1920)).rot, 1);
+});
+
+test('the owner\'s V3.0.9 session (Oct 29, 17:02, 4 racks sideways) replayed: the 9 hit hard no longer turns into a scratch', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261029-1702.json'), 'utf8')));
+  // live V3.0.9: 46 of 51 right; three times the 9 going in was called a scratch (the cue ball and 9 tracks swapped)
+  assert.strictEqual(r.shots, 51); assert.ok(r.right >= 48, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
+});

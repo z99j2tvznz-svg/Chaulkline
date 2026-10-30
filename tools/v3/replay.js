@@ -15,7 +15,7 @@ function replay(d, ft, opts, o2) {
   // where a ball lying in a pocket shows up, from the camera in the log's header (as the app does once the table is set)
   const h = d.header; if (h && h.quad && h.picture) {
     global.D2R = global.D2R || Math.PI / 180; const { makeCam } = require(path.join(__dirname, '../../src/core.js')), V = require(path.join(__dirname, '../../src/vision.js')), { L, Wd } = V.tableDims(h.ft || 7);
-    tk.setBags(require(path.join(__dirname, '../../src/v3/cloth.js')).pocketBags(makeCam(V.tableCornersFor(h.rot || 0, L, Wd), h.quad, h.picture[0], h.picture[1], 0.86 * Math.max(h.picture[0], h.picture[1]), [h.picture[0] / 2, h.picture[1] / 2]), P));
+    tk.setBags(require(path.join(__dirname, '../../src/v3/cloth.js')).pocketBags(makeCam(V.tableCornersFor(h.rot || 0, L, Wd), h.quad, h.picture[0], h.picture[1], (h.lens || 0.86) * Math.max(h.picture[0], h.picture[1]), [h.picture[0] / 2, h.picture[1] / 2]), P));
   }
   const apply = a => {
     if (a.k === 'new_rack') return tk.newRack();

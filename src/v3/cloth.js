@@ -28,4 +28,18 @@ function pocketBags(cam, P) {
   return out;
 }
 
-if (typeof module !== 'undefined') { var { rgb2hsv, isCloth } = require('../vision.js'); module.exports = { bareCloth, pocketBags }; }
+// V3: which way the table runs in an outline, from its shape. With the lens known (focal length f in picture px, centre in
+// the middle of the picture), the four corners of a rectangle seen in perspective give its true length-to-width ratio
+// (the two sides of the homography from a unit square, taken back through the lens, are as long as the rectangle's
+// sides). A pool table is twice as long as it is wide, so the long rails are plain from the outline alone. Returns 0 when
+// corners 0-1 are a long rail, 1 when corners 1-2 are, null when the outline cannot tell (Oct 29: from the end of the
+// table the side-pocket look (pickRot) took the short rails for the long ones, the dark floor beyond them looking like
+// pockets, and every ball came out 1.5 diamonds off).
+function rotByShape(quad, W, H, f) {
+  const Hm = homography([[0, 0], [1, 0], [1, 1], [0, 1]], quad), cx = W / 2, cy = H / 2;
+  const back = (a, b, c) => Math.hypot((a - cx * c) / f, (b - cy * c) / f, c);
+  const r = back(Hm[0], Hm[3], Hm[6]) / back(Hm[1], Hm[4], Hm[7]);
+  return { rot: r > 1.4 ? 0 : r < 1 / 1.4 ? 1 : null, ratio: r };
+}
+
+if (typeof module !== 'undefined') { var { rgb2hsv, isCloth } = require('../vision.js'), { homography } = require('../core.js'); module.exports = { rotByShape, bareCloth, pocketBags }; }

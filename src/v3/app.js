@@ -2,11 +2,13 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.9';
+const VERSION = 'V3.0.10';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
-const LENS = 0.86;          // focal length / longer picture side of the main camera at 1x (the V2 value)
+// focal length / longer picture side of the main camera at 1x, in video: measured from the owner's tables (Oct 29: the
+// outlines of four sideways sessions come out exactly 2 to 1 at 0.71-0.72; the V2 value 0.86 made them 1.7 to 1)
+const LENS = 0.72;
 const SMALL = 800;          // the table is looked for on a copy of the picture this many pixels across
 const BALL_PX_MAX = 23;     // the finder learned balls up to about this radius: the table strip is not enlarged past it
 const A = { ft: 7, engine: 'cpu', live: false, stream: null, phase: 'home', W: 0, H: 0, quad: null, rot: 0, cam: null, P: null, tk: null, box: null, kmax: 1.5, shape: null,
@@ -43,7 +45,7 @@ setInterval(() => { if (A.live) dbgPersist(); }, 10000);
 function header() {
   return { app: 'chalkline', build: VERSION, det: DET.VERSION, started: new Date(DBG.t0).toISOString(), ua: navigator.userAgent, screen: [screen.width, screen.height], dpr: window.devicePixelRatio || 1,
     gpu: !!navigator.gpu, engine: DET.ep, engineSetting: A.engine, threads: DET.threads(), isolated: !!window.crossOriginIsolated, cores: navigator.hardwareConcurrency || null, shape: A.shape, kmax: r2(A.kmax), ft: A.ft, picture: A.tableWH || [A.W, A.H], pictureNow: [A.W, A.H], quad: A.quad && A.quad.map(p => [r1(p[0]), r1(p[1])]), rot: A.rot, box: A.box && A.box.map(Math.round),
-    camOk: A.cam ? A.cam.ok : null, cam: A.camInfo };
+    camOk: A.cam ? A.cam.ok : null, cam: A.camInfo, lens: LENS };
 }
 function shotRow(sh) { return { n: sh.n, t0: r2(sh.t0), t1: r2(sh.t1), cue: sh.cueNum, first: sh.firstNum, made: sh.made.map(m => ({ num: m.num, pocket: m.pocket, sure: m.sure })), scratch: sh.scratch, break: sh.break, hidden: sh.hidden, before: sh.before, after: sh.after, paths: sh.paths }; }
 
@@ -85,7 +87,7 @@ async function renderGate() {
       ['Every ball named right after a shot', pct(sum('namesRight'), shots) + '% · need ' + Math.round(100 * T.namesRight) + '%', shots ? sum('namesRight') / shots : 0, shots > 0 && sum('namesRight') / shots >= T.namesRight]];
     $('#gateRows').innerHTML = rows.map(([l, v, f, ok]) => '<div class="grow' + (ok ? ' ok' : '') + '"><div class="gl"><span>' + l + '</span><span>' + v + '</span></div><div class="gb"><i style="width:' + Math.round(100 * Math.max(0, Math.min(1, f))) + '%"></i></div></div>').join('');
     const met = rows.filter(r => r[3]).length, extra = sum('extraShots');
-    $('#gateNote').textContent = met + ' of ' + rows.length + ' met. ' + (extra ? 'Also counted as shots but not shots: ' + extra + '. ' : '') + 'From ' + S.length + ' reviewed session' + (S.length === 1 ? '' : 's') + ' (' + S.map(s => s.when + ', ' + s.app).join('; ') + '). Updated ' + g.updated + '.';
+    $('#gateNote').textContent = met + ' of ' + rows.length + ' met. ' + (extra ? 'Also counted as shots but not shots: ' + extra + '. ' : '') + 'From ' + S.length + ' reviewed session' + (S.length === 1 ? '' : 's') + ' (' + S.map(s => s.when + ', ' + s.app).join('; ') + '). Updated ' + g.updated + '.' + (g.notCounted && g.notCounted.length ? ' Not counted: ' + g.notCounted.map(n => n.when + ' (' + n.why + ')').join('; ') + '.' : '');
     $('#gateCard').hidden = false;
   } catch (e) { $('#gateCard').hidden = true; }
 }
@@ -199,14 +201,16 @@ async function findTable() {
   // kept landing on the outer edge of the rails, and there was no picture to see why)
   const fn = 'find-' + String(++A.findN).padStart(2, '0') + '.jpg'; if (A.findN <= 20) jpeg(960).then(b => A.pics.set(fn, b)).catch(() => { });
   dbg('table_find', best ? { conf: r2(best.conf), corners: best.corners, sides: best.sides, tips: best.tips, quad: best.quad.map(p => [r1(p[0] / best.k), r1(p[1] / best.k)]), pic: fn, wh: [A.W, A.H] } : { conf: 0, pic: fn, wh: [A.W, A.H] });
-  if (best && best.quad) { A.cand = { quad: best.quad.map(p => [p[0] / best.k, p[1] / best.k]), rot: best.rot, conf: best.conf, tips: best.tips }; }
+  if (best && best.quad) { const q = best.quad.map(p => [p[0] / best.k, p[1] / best.k]); A.cand = { quad: q, rot: tableRot(q, best.rot), conf: best.conf, tips: best.tips }; }
   else A.cand = null;
   showVerify();
 }
 function showVerify() {
   A.phase = 'verify'; const c = A.cand, good = c && c.conf >= 0.7;
   const sizes = '<div class="row"><span class="lbl">Table</span>' + [7, 8, 9].map(f => '<button class="btn" data-ft="' + f + '"' + (f === A.ft ? ' style="border-color:var(--accent)"' : '') + '>' + f + ' ft</button>').join('') + '</div>';
-  const tip = c ? (good ? 'The teal outline should sit on the cushions, with a dot in each corner pocket.' : (c.tips && c.tips[0]) || 'Not sure about this one.') : 'The table was not found. Make sure the whole table is in view and the lights are on.';
+  // an outline that is not twice as long as it is wide (seen through the lens) is off: often on the outer edge of the rails
+  const ratio = A.shapeRatio ? Math.max(A.shapeRatio, 1 / A.shapeRatio) : 2, odd = c && (ratio < 1.6 || ratio > 2.5);
+  const tip = c ? (odd ? 'This outline is not the shape of a table (' + ratio.toFixed(1) + ' to 1, a table is 2 to 1): it may be on the outer edge of the rails. Tap the corners to set it on the cloth.' : good ? 'The teal outline should sit on the cushions, with a dot in each corner pocket.' : (c.tips && c.tips[0]) || 'Not sure about this one.') : 'The table was not found. Make sure the whole table is in view and the lights are on.';
   showCard('<div><b>' + (good ? 'Table found' : c ? 'Not sure about this table' : 'Table not found') + '</b><p>' + tip + '</p></div>' + sizes +
     '<div class="row">' + (c ? '<button class="btn primary" data-act="accept">Looks right</button>' : '') + '<button class="btn" data-act="retry">Try again</button><button class="btn" data-act="manual">Tap the corners</button></div>');
   setStatus(good ? 'Check the outline' : 'Table');
@@ -229,7 +233,7 @@ function manualCard() {
 }
 function useManual() {
   if (!A.man || A.man.length < 4) return;
-  const quad = orderQuad(A.man), { img, k } = smallImg(), rot = pickRot(img, quad.map(p => [p[0] * k, p[1] * k]));
+  const quad = orderQuad(A.man), { img, k } = smallImg(), rot = tableRot(quad, pickRot(img, quad.map(p => [p[0] * k, p[1] * k])));
   A.cand = { quad, rot, conf: 1, manual: true }; dbg('table_manual', { quad: quad.map(p => p.map(r1)), rot, pic: A.manPic }); A.man = null; A.drag = null; ov.style.touchAction = ''; showVerify();
 }
 const picAt = e => { const F = fit(), rc = ov.getBoundingClientRect(); return { x: (e.clientX - rc.left - F.x) / F.k, y: (e.clientY - rc.top - F.y) / F.k, F }; };
@@ -280,6 +284,14 @@ function emptyAt(x, y) {
   const p = A.cam.proj(x, y, A.P.R), r = A.cam.ballRad(x, y, A.P.R, A.P.R), s = Math.ceil(r) + 2, x0 = Math.round(p[0]) - s, y0 = Math.round(p[1]) - s;
   if (x0 < 0 || y0 < 0 || x0 + 2 * s > A.W || y0 + 2 * s > A.H) return null;
   return bareCloth(A.fctx.getImageData(x0, y0, 2 * s, 2 * s), p[0] - x0, p[1] - y0, r, A.cloth);
+}
+// Which way the table runs: from the outline's shape through the lens (a table is twice as long as it is wide), else the
+// side-pocket look. Oct 29: from the end of the table the side-pocket look took the short rails for the long ones, and
+// every ball came out about 1.5 diamonds off.
+function tableRot(quad, guess) {
+  const r = rotByShape(quad, A.W, A.H, LENS * Math.max(A.W, A.H)); A.shapeRatio = r.ratio;
+  if (r.rot != null && r.rot !== guess) dbg('rot_by_shape', { was: guess, rot: r.rot, ratio: r2(r.ratio) });
+  return r.rot != null ? r.rot : guess;
 }
 function refind(msg) { A.frozen = false; ov.style.touchAction = ''; A.phase = 'find'; setStatus(msg || 'Looking for the table…'); findTable(); }
 
@@ -382,7 +394,9 @@ function ballColours() {
     BCOL.set(b.key, now);
   }
 }
-function trimPics() { const keys = [...A.pics.keys()].sort(); while (keys.length > 120) A.pics.delete(keys.shift()); }
+// the shot pictures are trimmed to the latest 120; the table-finding ones are kept (they sorted first, and were the ones
+// thrown away: Oct 29, the upright session's pictures were all gone)
+function trimPics() { const keys = [...A.pics.keys()].filter(k => k.startsWith('shot')).sort(); while (keys.length > 120) A.pics.delete(keys.shift()); }
 function jpeg(w) {
   const k = Math.min(1, w / Math.max(A.W, A.H)), c = document.createElement('canvas'); c.width = Math.round(A.W * k); c.height = Math.round(A.H * k);
   c.getContext('2d').drawImage(A.frame, 0, 0, c.width, c.height);
