@@ -121,6 +121,10 @@
     {
       "when": "Oct 30 17:46",
       "why": "rack 1's first 11 shots (no pictures kept), and racks 3 and 4: drills (balls on one line; the last one shot with the 8 instead of the cue ball)"
+    },
+    {
+      "when": "Oct 31 00:23",
+      "why": "9 racks on V3.0.15 lost their pictures when the phone's battery died (only the log backup was saved), so the calls cannot be checked; in the log every rack had each ball 1 to 9 called once and ended with Rack complete"
     }
   ],
   "measuring": "V3.0.15"
