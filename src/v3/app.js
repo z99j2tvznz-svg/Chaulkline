@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.15';
+const VERSION = 'V3.1.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -35,19 +35,57 @@ window.addEventListener('pagehide', endCrumb);
 
 // ---------- debug log: kept for the session, stored every few seconds so a crash does not lose it ----------
 const DBG = { t0: Date.now(), ev: [], looks: [], drop: 0 };
-function dbg(k, d) { DBG.ev.push(Object.assign({ t: Date.now() - DBG.t0, k }, d)); if (DBG.ev.length > 6000) { DBG.ev.splice(0, 600); DBG.drop += 600; } }
+function dbg(k, d) { DBG.ev.push(Object.assign({ t: Date.now() - DBG.t0, k }, d)); if (DBG.ev.length > 30000) { DBG.ev.splice(0, 3000); DBG.drop += 3000; } }
 function dbgPersist() { try { localStorage.setItem(KEY + '.dbg', JSON.stringify({ t0: DBG.t0, ev: DBG.ev.slice(-2500), looks: DBG.looks.slice(-1500), drop: DBG.drop, hdr: header(), tracker: A.tk ? A.tk.S.events.slice(-1500) : null, shots: A.tk ? A.tk.S.shots.map(shotRow) : null })); } catch (e) { } }
 let PREV = null; try { PREV = JSON.parse(localStorage.getItem(KEY + '.dbg') || 'null'); } catch (e) { }
 window.addEventListener('error', e => dbg('error', { m: String(e.message || e).slice(0, 200), at: (e.filename || '').split('/').pop() + ':' + e.lineno }));
 window.addEventListener('unhandledrejection', e => dbg('error', { m: 'promise: ' + String(e.reason && e.reason.message || e.reason).slice(0, 200) }));
-document.addEventListener('visibilitychange', () => { dbg('vis', { s: document.visibilityState }); if (A.live) crumb(document.hidden ? 'hidden' : 'visible'); if (document.hidden) dbgPersist(); else if (A.live) wakeLock(); });
+document.addEventListener('visibilitychange', () => { dbg('vis', { s: document.visibilityState }); if (A.live) crumb(document.hidden ? 'hidden' : 'visible'); if (document.hidden) { dbgPersist(); if (A.sess) logStore(); } else if (A.live) wakeLock(); });
 setInterval(() => { if (A.live) dbgPersist(); }, 10000);
+// the whole log into the phone's storage every 20 s (and when the page is hidden or the session ends)
+function logObject() {
+  return { header: header(), events: DBG.ev, dropped: DBG.drop, tracker: A.tk ? A.tk.S.events : null, shots: A.tk ? A.tk.S.shots.map(shotRow) : [], looksFormat: ['ms', 'findMs', 'readMs', 'n', 'phase', '[x, y, num, kind, score, pNum, [num2, p2]]'], looks: DBG.looks,
+    taps: A.taps.map(({ png, ...r }) => r), previous: PREV && PREV.t0 !== DBG.t0 ? PREV : null, crash: CRASH || (() => { try { return JSON.parse(localStorage.getItem(CRUMB) || 'null'); } catch (e) { return null; } })() };
+}
+function logStore() { try { return STORE.put(DBG.t0, 'log.json', new TextEncoder().encode(JSON.stringify(logObject()))); } catch (e) { return null; } }
+setInterval(() => { if (A.live) logStore(); }, 20000);
+// ---------- the session kept on the phone as it goes (V3.1.0; Oct 31: the battery died after 9 racks and only a small
+// backup of the log survived, no pictures). Every picture, clip and the log go into the browser's own storage (IndexedDB)
+// as soon as they are made, so Save debug gives the whole session even after Safari closed the page. Only the latest two
+// sessions are kept. If the storage is not there, the pictures still live in memory as before.
+const STORE = (() => {
+  let db = null, dead = typeof indexedDB === 'undefined';
+  const open = () => db ? Promise.resolve(db) : new Promise((res, rej) => {
+    const r = indexedDB.open('chalkline-v3', 1);
+    r.onupgradeneeded = () => { r.result.createObjectStore('files'); r.result.createObjectStore('sessions', { keyPath: 'sid' }); };
+    r.onsuccess = () => { db = r.result; res(db); }; r.onerror = () => rej(r.error);
+  });
+  // one transaction: fn gets the object stores and returns a request (its result is the answer) or { value }
+  const run = (names, mode, fn) => dead ? Promise.resolve(null) : open().then(d => new Promise((res, rej) => {
+    const t = d.transaction(names, mode), q = fn(...[].concat(names).map(n => t.objectStore(n)));
+    t.oncomplete = () => res(q instanceof IDBRequest ? q.result : q ? q.value : null); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+  })).catch(e => { if (!STORE.err) { STORE.err = String(e && (e.message || e.name) || e).slice(0, 120); dbg('error', { m: 'storage ' + STORE.err }); } return null; });
+  const range = sid => IDBKeyRange.bound(sid + '/', sid + '/\uffff');
+  return {
+    err: null,
+    // a new session; older ones beyond the latest two are deleted
+    begin(sid, meta) {
+      return run(['sessions', 'files'], 'readwrite', (ss, fs) => { ss.put(Object.assign({ sid }, meta)); const q = ss.getAllKeys(); q.onsuccess = () => { for (const k of q.result.sort((a, b) => b - a).slice(2)) { ss.delete(k); fs.delete(range(k)); } }; return null; });
+    },
+    put(sid, name, data) { return run('files', 'readwrite', fs => fs.put(data, sid + '/' + name)); },
+    putMany(sid, files) { return run('files', 'readwrite', fs => { for (const f of files) fs.put(f.data, sid + '/' + f.name); return null; }); },
+    sessions() { return run('sessions', 'readonly', ss => ss.getAll()).then(r => (r || []).sort((a, b) => b.sid - a.sid)); },
+    files(sid) {
+      return run('files', 'readonly', fs => { const out = [], q = fs.openCursor(range(sid)); q.onsuccess = () => { const c = q.result; if (c) { out.push({ name: c.key.slice(String(sid).length + 1), data: c.value }); c.continue(); } }; return { value: out }; }).then(r => r || []);
+    },
+  };
+})();
 function header() {
   return { app: 'chalkline', build: VERSION, det: DET.VERSION, started: new Date(DBG.t0).toISOString(), ua: navigator.userAgent, screen: [screen.width, screen.height], dpr: window.devicePixelRatio || 1,
     gpu: !!navigator.gpu, engine: DET.ep, engineSetting: A.engine, threads: DET.threads(), isolated: !!window.crossOriginIsolated, cores: navigator.hardwareConcurrency || null, shape: A.shape, kmax: r2(A.kmax), ft: A.ft, picture: A.tableWH || [A.W, A.H], pictureNow: [A.W, A.H], quad: A.quad && A.quad.map(p => [r1(p[0]), r1(p[1])]), rot: A.rot, box: A.box && A.box.map(Math.round),
     camOk: A.cam ? A.cam.ok : null, cam: A.camInfo, lens: LENS };
 }
-function shotRow(sh) { return { n: sh.n, t0: r2(sh.t0), t1: r2(sh.t1), cue: sh.cueNum, first: sh.firstNum, made: sh.made.map(m => ({ num: m.num, pocket: m.pocket, sure: m.sure })), scratch: sh.scratch, break: sh.break, hidden: sh.hidden, before: sh.before, after: sh.after, paths: sh.paths }; }
+function shotRow(sh) { return { n: sh.n, t0: r2(sh.t0), t1: r2(sh.t1), cue: sh.cueNum, first: sh.firstNum, made: sh.made.map(m => ({ num: m.num, pocket: m.pocket, sure: m.sure })), scratch: sh.scratch, break: sh.break, hidden: sh.hidden, before: sh.before, after: sh.after, paths: sh.paths, test: sh.test }; }
 
 // ---------- home ----------
 function renderHome() {
@@ -155,7 +193,8 @@ async function start() {
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P); A.sess = { t0: Date.now(), ft: A.ft, shots: [] };
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P); A.sess = { t0: Date.now(), ft: A.ft, shots: [] }; A.test = null; A.handsN = 0; A.handsT = 0;
+  STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
   // the weights (10 MB) download while the table is found
@@ -167,7 +206,7 @@ async function start() {
   crumb('table'); wakeLock(); requestAnimationFrame(drawLoop); findTable();
 }
 function goHome() {
-  A.live = false; A.phase = 'home'; dbgPersist(); endSession(); endCrumb();
+  A.live = false; A.phase = 'home'; dbgPersist(); if (A.sess) logStore(); endSession(); endCrumb();
   if (A.stream) A.stream.getTracks().forEach(t => { try { t.stop(); } catch (e) { } }); A.stream = null;
   try { if (wl) wl.release(); } catch (e) { } wl = null;
   $('#cam').hidden = true; $('#home').hidden = false; hideCard(); renderHome();
@@ -179,7 +218,7 @@ function endSession() { if (A.sess && A.sess.shots.length) { A.lastSess = A.sess
 function endRun() {
   if (A.tk) { A.tk.finish(); flushShots(); }
   dbg('end_session', { shots: A.tk ? A.tk.S.shots.length : 0 });
-  A.live = false; A.phase = 'done'; dbgPersist(); endSession(); endCrumb();
+  A.live = false; A.phase = 'done'; dbgPersist(); logStore(); endSession(); endCrumb();
   if (A.stream) A.stream.getTracks().forEach(t => { try { t.stop(); } catch (e) { } }); A.stream = null;
   try { if (wl) wl.release(); } catch (e) { } wl = null;
   hideCard(); $('#cam').hidden = true; $('#sum').hidden = false; renderSummary();
@@ -212,7 +251,7 @@ async function findTable() {
   if (!A.live || A.phase !== 'find') return;
   // the picture the table was looked for on, and the outline found, go into the debug file (Oct 28: upright, the outline
   // kept landing on the outer edge of the rails, and there was no picture to see why)
-  const fn = 'find-' + String(++A.findN).padStart(2, '0') + '.jpg'; if (A.findN <= 20) jpeg(960).then(b => A.pics.set(fn, b)).catch(() => { });
+  const fn = 'find-' + String(++A.findN).padStart(2, '0') + '.jpg'; if (A.findN <= 20) jpeg(960).then(b => setPic(fn, b)).catch(() => { });
   dbg('table_find', best ? { conf: r2(best.conf), corners: best.corners, sides: best.sides, tips: best.tips, quad: best.quad.map(p => [r1(p[0] / best.k), r1(p[1] / best.k)]), pic: fn, wh: [A.W, A.H] } : { conf: 0, pic: fn, wh: [A.W, A.H] });
   if (best && best.quad) { const q = best.quad.map(p => [p[0] / best.k, p[1] / best.k]); A.cand = { quad: q, rot: tableRot(q, best.rot), conf: best.conf, tips: best.tips }; }
   else A.cand = null;
@@ -234,7 +273,7 @@ function showVerify() {
 // outline with it. A corner goes on the corner of the cloth, where the two cushion noses would meet.
 function beginManual() {
   if (!A.frozen) { grab(); A.frozen = true; } A.phase = 'manual'; A.man = []; A.drag = null; ov.style.touchAction = 'none';
-  const n = 'manual-' + String(++A.findN).padStart(2, '0') + '.jpg'; jpeg(960).then(b => A.pics.set(n, b)).catch(() => { }); A.manPic = n;
+  const n = 'manual-' + String(++A.findN).padStart(2, '0') + '.jpg'; jpeg(960).then(b => setPic(n, b)).catch(() => { }); A.manPic = n;
   manualCard();
 }
 function manualCard() {
@@ -285,7 +324,7 @@ async function acceptTable() {
   }
   // (corners set on a still picture: the steady check's reference comes from that picture, so the outline follows the phone
   // if it moved since)
-  steadyRef(); A.frozen = false; clothRef(); A.tk.setBags(pocketBags(A.cam, A.P)); A.phase = 'run'; setStatus('Watching'); runLoop();
+  steadyRef(); A.frozen = false; clothRef(); A.tk.setBags(pocketBags(A.cam, A.P)); A.phase = 'run'; setStatus('Watching'); runLoop(); watchStart();
 }
 // the cloth's colour, once the table is accepted: a hidden ball's spot that shows only this colour is bare (see bareCloth)
 function clothRef() {
@@ -338,9 +377,11 @@ async function look() {
   pathLook();
   A.looks++;
   DBG.looks.push([Date.now() - DBG.t0, Math.round(t1 - t0), Math.round(t2 - t1), on.length, tk.S.phase === 'shot' ? 'S' : tk.S.phase[0], on.map(s => [r1(s.x), r1(s.y), s.num == null ? null : s.num, s.kind ? s.kind[0] : '-', r2(s.score), s.p ? r2(s.p[s.num]) : null, s.p ? second(s.p, s.num) : null])]);
-  if (DBG.looks.length > 4000) DBG.looks.splice(0, 400);
+  if (DBG.looks.length > 40000) DBG.looks.splice(0, 4000); // (it was 4000: Oct 31, a 17-minute session lost its first 98 s)
   A.timing.push(t1 - t0); if (A.timing.length > 30) A.timing.shift();
   if (before !== 'shot' && tk.S.phase === 'shot') onShotStart();
+  // hands on the table (not a shot): a clip of that too, at most one every 4 s
+  if (before !== 'hands' && tk.S.phase === 'hands' && Date.now() - A.handsT > 4000) { A.handsT = Date.now(); clipStart('hands-' + String(++A.handsN).padStart(3, '0'), 2000, 2000); }
   if (tk.S.shots.length > A.nShots) { for (const sh of tk.S.shots.slice(A.nShots)) onShotEnd(sh); A.nShots = tk.S.shots.length; }
   for (const s of tk.S.say.splice(0)) onSay(s);
   // a picture of the still table every 1.5 s, kept as the "before" of the next shot
@@ -354,9 +395,16 @@ function second(p, k) { let b = -1; for (let i = 0; i < 10; i++) if (i !== k && 
 // The tracker's word on racks and hand moves (V3.0.15, owner Oct 31: for testing, said on screen; later done quietly)
 function onSay(s) {
   if (s.k === 'rack_done') { flushShots(); PATH.clear(); dbg('new_rack', { auto: true }); toast('Rack complete'); }
+  else if (s.k === 'rack_new') { flushShots(); PATH.clear(); dbg('new_rack', { auto: true, set: true }); toast('New rack: balls set out'); }
   else if (s.k === 'not_shot') { PATH.clear(); dbg('not_shot', { num: s.num }); toast('Not counted: hand move'); }
 }
-function onShotStart() { PATH.clear(); pathLook(); const sh = A.tk.S.shot; if (sh && A.stillPic) A.pics.set('shot' + String(sh.n).padStart(3, '0') + '-before.jpg', A.stillPic); dbg('shot_start', Object.assign({ n: sh && sh.n }, sh ? aroundCue(sh) : {})); }
+function onShotStart() {
+  PATH.clear(); pathLook(); const sh = A.tk.S.shot; if (!sh) return; const nm = 'shot' + String(sh.n).padStart(3, '0');
+  if (A.stillPic) setPic(nm + '-before.jpg', A.stillPic);
+  if (A.test && A.test.st < 4) { sh.test = { station: A.test.st + 1, try: ++A.test.tries[A.test.st] }; testCard(); } else if (A.test) sh.test = { station: 5, move: A.test.move };
+  clipStart(nm, 2000, 2000, sh.test || null);
+  dbg('shot_start', Object.assign({ n: sh.n, test: sh.test }, aroundCue(sh)));
+}
 // What is round the cue ball as a shot starts, for a rule on hands to come (owner, Oct 31: the cue ball rolled or pushed
 // by hand counts as a shot; a cue lies behind the ball on a real shot too, so the rule waits for this from real sessions):
 // 12 spots 3.5 in from where it rested, the first straight ahead of its roll, then round; 1 = not cloth (a hand, the cue,
@@ -376,7 +424,7 @@ function flushShots() {
 function onShotEnd(sh) {
   sh.paths = pathsRow(sh); const row = shotRow(sh); A.sess.shots.push({ n: sh.n, cue: sh.cueNum, first: sh.firstNum, made: row.made, scratch: sh.scratch, break: sh.break, t: Date.now() });
   dbg('shot_end', { n: sh.n, made: row.made, scratch: sh.scratch, first: sh.firstNum });
-  jpeg(960).then(b => { A.pics.set('shot' + String(sh.n).padStart(3, '0') + '-after.jpg', b); trimPics(); }).catch(() => { });
+  jpeg(960).then(b => setPic('shot' + String(sh.n).padStart(3, '0') + '-after.jpg', b)).catch(() => { });
   toast('Shot ' + sh.n + ': ' + shotWords(A.sess.shots[A.sess.shots.length - 1]));
   if (A.sess.shots.length % 3 === 0) { A.lastSess = A.sess; save(); }
 }
@@ -432,10 +480,11 @@ function ballColours() {
     BCOL.set(b.key, now);
   }
 }
-// the shot pictures are trimmed to the latest 120; the table-finding ones are kept (they sorted first, and were the ones
-// thrown away: Oct 29, the upright session's pictures were all gone)
-// (Oct 30: 71 shots, and the first 11 shots' pictures were gone; 100 shots now, at a little lower quality)
-function trimPics() { const keys = [...A.pics.keys()].filter(k => k.startsWith('shot')).sort(); while (keys.length > 200) A.pics.delete(keys.shift()); }
+// Every picture goes into the phone's storage (all of them, from V3.1.0: Save debug splits the file when it is big); the
+// copy in memory keeps the latest 400 shot pictures, for a phone where that storage is not there (the table-finding ones
+// are always kept: Oct 29, the upright session's were thrown away first)
+function setPic(name, data) { A.pics.set(name, data); trimPics(); STORE.put(DBG.t0, name, data); }
+function trimPics() { const keys = [...A.pics.keys()].filter(k => k.startsWith('shot')).sort(); while (keys.length > 400) A.pics.delete(keys.shift()); }
 function jpeg(w) {
   const k = Math.min(1, w / Math.max(A.W, A.H)), c = document.createElement('canvas'); c.width = Math.round(A.W * k); c.height = Math.round(A.H * k);
   c.getContext('2d').drawImage(A.frame, 0, 0, c.width, c.height);
@@ -511,6 +560,128 @@ function statusRun() {
   setStatus(head, sub + (none && tk.S.phase !== 'shot' ? ' · tap a ball to name it' : ''));
 }
 
+// ---------- the watcher (V3.1.0): every camera frame, a small copy of the table and the space above it ----------
+// The ball finder looks about 4 times a second; a stroke, or a ball dropping in a pocket, happens between looks. The
+// watcher takes every frame the camera gives (about 30 a second) at 320 px across. For now it only measures, to see if
+// the phone keeps up while the finder runs: how much of the table is not cloth (a hand, the cue, a ball) and how much
+// changed since the frame before, logged once a second. It keeps the last 2 s of frames, so a short clip goes into the
+// debug file around each shot (2 s before the shot was seen to start, 2 s after) and each hand move: the owner's real
+// strokes, to build stroke detection from.
+const WATCH = { on: false, cv: document.createElement('canvas'), ec: document.createElement('canvas'), w: 320, h: 0, box: null, mask: null, ring: [], prev: null,
+  n: 0, ms: 0, nc: 0, ch: 0, t1: 0, clips: [], nClips: 0, enc: Promise.resolve() };
+function watchStart() {
+  if (WATCH.on || !A.quad || !A.cam) return;
+  const W = WATCH, xs = A.quad.map(p => p[0]), ys = A.quad.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), bw = x1 - x0, bh = y1 - y0;
+  // the table and what is beside and above it in the picture: the player and the cue
+  const bx0 = Math.max(0, x0 - 0.08 * bw), bx1 = Math.min(A.W, x1 + 0.08 * bw), by0 = Math.max(0, y0 - 0.6 * bh), by1 = Math.min(A.H, y1 + 0.2 * bh);
+  W.box = [Math.round(bx0), Math.round(by0), Math.max(16, Math.round(bx1 - bx0)), Math.max(16, Math.round(by1 - by0))];
+  W.h = Math.max(16, Math.round(W.w * W.box[3] / W.box[2])); W.cv.width = W.ec.width = W.w; W.cv.height = W.ec.height = W.h;
+  W.ctx = W.cv.getContext('2d', { willReadFrequently: true });
+  // which of the sampled pixels (every other one) lie on the table, to count what is not cloth there
+  const k = W.box[2] / W.w, q = A.quad, inQ = (x, y) => { let s0 = 0; for (let i = 0; i < 4; i++) { const a = q[i], b = q[(i + 1) % 4], c = (b[0] - a[0]) * (y - a[1]) - (b[1] - a[1]) * (x - a[0]); if (c !== 0) { if (s0 && Math.sign(c) !== s0) return false; s0 = Math.sign(c); } } return true; };
+  W.mask = new Uint8Array((W.w * W.h) >> 1); W.nMask = 0;
+  for (let i = 0, j = 0; i < W.w * W.h - 1; i += 2, j++) { const x = W.box[0] + ((i % W.w) + 0.5) * k, y = W.box[1] + (Math.floor(i / W.w) + 0.5) * k; if (inQ(x, y)) { W.mask[j] = 1; W.nMask++; } }
+  W.prev = null; W.ring = []; W.n = W.ms = W.nc = W.ch = 0; W.t1 = performance.now(); W.on = true;
+  dbg('watch_start', { box: W.box, size: [W.w, W.h], rvfc: !!vid.requestVideoFrameCallback });
+  const next = () => { if (!W.on) return; if (vid.requestVideoFrameCallback) vid.requestVideoFrameCallback(frame); else requestAnimationFrame(frame); };
+  const frame = () => { if (!A.live || A.phase !== 'run') { W.on = false; dbg('watch_stop', {}); return; } try { watchFrame(); } catch (e) { dbg('error', { m: 'watch ' + String(e && e.message || e).slice(0, 120) }); } next(); };
+  next();
+}
+const clothOf = (r, g, b) => { if (!A.cloth) return true; const [h, s] = rgb2hsv(r, g, b), d = Math.abs(((h - A.cloth.h) % 360 + 540) % 360 - 180); return s > 0.2 && d < 28; };
+function watchFrame() {
+  const W = WATCH, t0 = performance.now(); if (document.hidden || !vid.videoWidth) return;
+  W.ctx.drawImage(vid, W.box[0], W.box[1], W.box[2], W.box[3], 0, 0, W.w, W.h);
+  const img = W.ctx.getImageData(0, 0, W.w, W.h), d = img.data, n = W.w * W.h, cur = new Uint8Array(n >> 1), prev = W.prev;
+  let nc = 0, ch = 0;
+  for (let i = 0, j = 0; i < n - 1; i += 2, j++) {
+    const o = i * 4, r = d[o], g = d[o + 1], b = d[o + 2], y = (r * 77 + g * 150 + b * 29) >> 8; cur[j] = y;
+    if (prev && Math.abs(y - prev[j]) > 24) ch++;
+    if (W.mask[j] && !clothOf(r, g, b)) nc++;
+  }
+  W.prev = cur;
+  const t = Date.now() - DBG.t0, fr = { t, img, nc: W.nMask ? nc / W.nMask : 0, ch: ch / (n >> 1) };
+  W.ring.push(fr); while (W.ring.length && t - W.ring[0].t > 2100) W.ring.shift();
+  for (const c of W.clips) if (!c.done && t <= c.until) c.frames.push(fr);
+  for (const c of W.clips) if (!c.done && t > c.until) clipEnd(c);
+  W.clips = W.clips.filter(c => !c.done);
+  W.n++; W.ms += performance.now() - t0; W.nc += fr.nc; W.ch += fr.ch;
+  const now = performance.now();
+  if (now - W.t1 >= 1000) { const ms = A.timing.length ? A.timing.reduce((a, x) => a + x, 0) / A.timing.length : 0;
+    dbg('watch', { fps: r1(W.n * 1000 / (now - W.t1)), ms: r1(W.ms / Math.max(1, W.n)), nc: r2(W.nc / Math.max(1, W.n)), ch: r2(W.ch / Math.max(1, W.n)), find: Math.round(ms) });
+    W.n = W.ms = W.nc = W.ch = 0; W.t1 = now; }
+}
+// a clip: the frames from pre ms ago to post ms on, written as small pictures with an index once it is over
+function clipStart(name, pre, post, label) {
+  const W = WATCH; if (!W.on || W.nClips >= 400) return; W.nClips++;
+  const t = Date.now() - DBG.t0; W.clips.push({ name, label: label || null, t, until: t + post, frames: W.ring.filter(f => t - f.t <= pre) });
+}
+function clipEnd(c) {
+  c.done = true; const W = WATCH, sid = DBG.t0, frames = c.frames; c.frames = null;
+  W.enc = W.enc.then(async () => {
+    const files = [], idx = [], x = W.ec.getContext('2d');
+    for (let i = 0; i < frames.length; i++) {
+      const f = frames[i]; if (f.img.width !== W.ec.width || f.img.height !== W.ec.height) continue; x.putImageData(f.img, 0, 0);
+      // (toDataURL, not toBlob: Chromium makes toBlob wait for idle time, which a busy finder never leaves)
+      const u = W.ec.toDataURL('image/jpeg', 0.6), bin = atob(u.slice(u.indexOf(',') + 1)), data = new Uint8Array(bin.length); for (let j = 0; j < bin.length; j++) data[j] = bin.charCodeAt(j);
+      const nm = String(i).padStart(3, '0') + '.jpg'; files.push({ name: 'clips/' + c.name + '/' + nm, data }); idx.push([nm, f.t, r2(f.nc), r2(f.ch)]);
+      if (i % 8 === 7) await sleep(0); // a breath for the looks between batches
+    }
+    files.push({ name: 'clips/' + c.name + '/index.json', data: new TextEncoder().encode(JSON.stringify({ name: c.name, label: c.label, at: c.t, box: WATCH.box, size: [W.w, W.h], frames: ['file', 'ms', 'notCloth', 'changed'], list: idx })) });
+    await STORE.putMany(sid, files);
+    dbg('clip', { name: c.name, frames: idx.length, kb: Math.round(files.reduce((a, f) => a + f.data.length, 0) / 1024), label: c.label });
+  }).catch(e => dbg('error', { m: 'clip ' + String(e && e.message || e).slice(0, 100) }));
+}
+
+// ---------- stroke test (V3.1.0, set out with the owner Oct 31) ----------
+// Four stations, the cue ball and the 1 re-spotted each time, 6 shots each, so the clips show the stroke from across the
+// picture (both ways), toward the phone and away from it; then the moves that are not shots. Spots are in diamonds: along
+// the table from the left end as the phone sees it, and out from the long rail nearest the phone. Each is drawn as a ring
+// lying on the cloth (an oval from the phone, owner Oct 31: a ring drawn flat on the screen did not show where the ball
+// really had to be) that turns green when the app sees a ball sitting on that spot.
+const STATIONS = [
+  { name: 'Shooting right', cue: [4, 2], obj: [6, 3], pocket: 'far right corner', stand: 'at the corner nearest the phone, on the left' },
+  { name: 'Shooting left', cue: [4, 2], obj: [2, 3], pocket: 'far left corner', stand: 'at the corner nearest the phone, on the right' },
+  { name: 'Toward the phone', cue: [4, 3], obj: [4, 1.5], pocket: 'side pocket by the phone', stand: 'at the far rail, facing the phone' },
+  { name: 'Away from the phone', cue: [5, 1], obj: [4.5, 2.5], pocket: 'far side pocket', stand: 'at the near rail, just right of the phone' }];
+const MOVES = ['Get down, take practice strokes, then stand up without shooting', 'Get down, take practice strokes, then stand up without shooting', 'Get down, take practice strokes, then stand up without shooting',
+  'Roll the cue ball into place by hand', 'Roll the cue ball into place by hand', 'Push the cue ball a few inches with the cue shaft', 'Push the cue ball a few inches with the cue shaft'];
+const TEST_SHOTS = 6;
+function testXY([dx, dy]) { // diamonds as the phone sees the table -> table inches
+  const P = A.P, dia = P.L / 8, nearY = A.cam.proj(P.L / 2, 0, 0)[1] > A.cam.proj(P.L / 2, P.W, 0)[1] ? 0 : P.W, leftX = A.cam.proj(0, P.W / 2, 0)[0] < A.cam.proj(P.L, P.W / 2, 0)[0] ? 0 : P.L;
+  return [leftX === 0 ? dx * dia : P.L - dx * dia, nearY === 0 ? dy * dia : P.W - dy * dia];
+}
+function testStart() { A.test = { st: 0, tries: [0, 0, 0, 0], move: 0 }; A.tk.O.autoRack = false; dbg('test', { st: 1 }); testCard(); }
+function testStop() { dbg('test_end', { tries: A.test && A.test.tries, moves: A.test && A.test.move }); A.test = null; if (A.tk) A.tk.O.autoRack = true; hideCard(); }
+function testCard() {
+  const T = A.test; if (!T) return;
+  const nav = (T.st > 0 ? '<button class="btn" data-act="test_back">Back</button>' : '') + (T.st < 4 ? '<button class="btn" data-act="test_next">Next</button>' : '') + '<button class="btn" data-act="test_close">' + (T.st < 4 ? 'Close' : 'Finish') + '</button>';
+  if (T.st < 4) {
+    const S = STATIONS[T.st], k = T.tries[T.st];
+    showCard('<p><b>' + (T.st + 1) + '/5 ' + S.name + '</b> · ' + (k >= TEST_SHOTS ? 'done: tap Next' : 'shot ' + (k + 1) + ' of ' + TEST_SHOTS + (k < 2 ? ', soft' : k < 4 ? ', medium' : ', firm')) +
+      '<br>Stand ' + S.stand + '. Cue ball on white, the 1 on yellow, into the ' + S.pocket + '.</p><div class="row">' + nav + '</div>', true, 'tst');
+  } else {
+    const m = T.move;
+    showCard('<p><b>5/5 Not shots</b> · ' + (m < MOVES.length ? 'move ' + (m + 1) + ' of ' + MOVES.length + '<br>' + MOVES[m] + '. Tap Record, then do it (6 s).' : 'all done<br>Tap Finish, then End session and Save debug.') + '</p><div class="row">' +
+      (m < MOVES.length ? '<button class="btn primary" data-act="test_rec">Record</button>' : '') + nav + '</div>', true, 'tst');
+  }
+}
+function testRec() { const T = A.test; if (!T || T.st !== 4 || T.move >= MOVES.length) return; const label = { station: 5, move: T.move + 1, what: MOVES[T.move] }; clipStart('move-' + String(T.move + 1).padStart(2, '0'), 2000, 6000, label); dbg('test_move', label); T.move++; toast('Recording for 6 s'); testCard(); }
+// a spot is taken when a ball sits within about an inch of it (the cue ball's ring: the cue ball or a ball not yet named)
+function testTaken(x, y, cue) { return A.tk.balls().some(b => b.state !== 'hidden' && Math.hypot(b.x - x, b.y - y) < 1.1 && (cue ? b.num === 0 || b.num == null : b.num !== 0)); }
+function drawTest(c, S2) {
+  const T = A.test; if (!T) return;
+  const S = T.st < 4 ? STATIONS[T.st] : { cue: [4, 2] }, cue = testXY(S.cue), obj = S.obj ? testXY(S.obj) : null;
+  const flat = (x, y) => S2(A.cam.proj(x, y, 0));
+  if (obj) { const pk = [2 * obj[0] - cue[0], 2 * obj[1] - cue[1]], a = flat(cue[0], cue[1]), b = flat(pk[0], pk[1]); c.save(); c.setLineDash([6, 6]); c.strokeStyle = 'rgba(234,241,244,.45)'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); c.restore(); }
+  for (const [p, col, lab, isCue] of [[cue, '#f4f1e8', 'cue', true], [obj, '#e8c11d', '1', false]]) {
+    if (!p) continue; const ok = testTaken(p[0], p[1], isCue), colr = ok ? '#3ddc84' : col;
+    c.strokeStyle = colr; c.lineWidth = 2.5; c.beginPath();
+    for (let i = 0; i <= 48; i++) { const a = i / 48 * Math.PI * 2, s = flat(p[0] + 1.6 * Math.cos(a), p[1] + 1.6 * Math.sin(a)); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); }
+    c.stroke(); const m = flat(p[0], p[1]); c.fillStyle = colr; c.beginPath(); c.arc(m[0], m[1], 2.5, 0, Math.PI * 2); c.fill();
+    const top = flat(p[0], p[1] + (A.cam.proj(p[0], p[1] + 2, 0)[1] < A.cam.proj(p[0], p[1], 0)[1] ? 2.2 : -2.2)); c.font = '600 12px ' + getComputedStyle(document.body).fontFamily; c.textAlign = 'center'; c.fillText(lab, top[0], top[1] - 4);
+  }
+}
+
 // ---------- drawing ----------
 function fit() { const w = ov.clientWidth, h = ov.clientHeight, k = Math.min(w / (A.W || 1), h / (A.H || 1)); return { k, x: (w - A.W * k) / 2, y: (h - A.H * k) / 2, w, h }; }
 function drawLoop() {
@@ -529,7 +700,7 @@ function drawLoop() {
   }
   if (A.phase === 'manual' && A.man) drawManual(c, S2, F);
   if (A.phase !== 'run' || !A.tk || !A.cam) return;
-  drawBalls(c, S2, F);
+  drawTest(c, S2); drawBalls(c, S2, F);
 }
 
 function drawManual(c, S2, F) {
@@ -651,12 +822,12 @@ function saveTap(b, label, was) {
   try {
     const s = Math.ceil(3.2 * Math.max(3, sp.r)), x0 = Math.floor(sp.px - s / 2), y0 = Math.floor(sp.py - s / 2), c = document.createElement('canvas'); c.width = c.height = s;
     c.getContext('2d').drawImage(A.frame, x0, y0, s, s, 0, 0, s, s);
-    c.toBlob(bl => bl && bl.arrayBuffer().then(a => { A.taps.push({ n: A.taps.length + 1, t: Date.now() - DBG.t0, label, was, px: r1(sp.px), py: r1(sp.py), r: r1(sp.r), p: sp.p ? sp.p.map(v => r2(v)) : null, png: new Uint8Array(a) }); if (A.taps.length > 400) A.taps.shift(); }), 'image/png');
+    c.toBlob(bl => bl && bl.arrayBuffer().then(a => { const t = { n: A.taps.length + 1, t: Date.now() - DBG.t0, label, was, px: r1(sp.px), py: r1(sp.py), r: r1(sp.r), p: sp.p ? sp.p.map(v => r2(v)) : null, png: new Uint8Array(a) }; A.taps.push(t); STORE.put(DBG.t0, tapName(t), t.png); if (A.taps.length > 400) A.taps.shift(); }), 'image/png');
   } catch (e) { }
 }
 
 // ---------- cards, menu, toast ----------
-function showCard(html, mini) { const c = $('#card'); c.innerHTML = html; c.hidden = false; c.classList.toggle('mini', !!mini); $('#cam').classList.toggle('manual', !!mini); }
+function showCard(html, mini, cls) { const c = $('#card'); c.innerHTML = html; c.hidden = false; c.classList.toggle('mini', !!mini); c.classList.toggle('tst', cls === 'tst'); $('#cam').classList.toggle('manual', !!mini); }
 function hideCard() { $('#card').hidden = true; $('#cam').classList.remove('manual'); }
 $('#card').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
@@ -666,8 +837,11 @@ $('#card').addEventListener('click', e => {
   else if (a === 'undo') { if (A.man && A.man.length) A.man.pop(); if (A.man) manualCard(); }
   else if (a === 'home') goHome(); else if (a === 'close') hideCard(); else if (a === 'refind') { hideCard(); refind(); }
   else if (a === 'dbg') saveDebug(b); else if (a === 'useman') useManual();
+  else if (a === 'test') { if (A.test) testCard(); else testStart(); } else if (a === 'test_close') testStop(); else if (a === 'test_rec') testRec();
+  else if (a === 'test_next' && A.test) { A.test.st = Math.min(4, A.test.st + 1); dbg('test', { st: A.test.st + 1 }); testCard(); }
+  else if (a === 'test_back' && A.test) { A.test.st = Math.max(0, A.test.st - 1); dbg('test', { st: A.test.st + 1 }); testCard(); }
 });
-$('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row"><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="dbg">Save debug</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
+$('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row"><button class="btn" data-act="test">Stroke test</button><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="dbg">Save debug</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
 // (pressed again after the rack was done by itself, or twice: no shot since, so it is not another rack)
 $('#rackBtn').onclick = () => { if (!A.tk) return; const dup = A.tk.S.setup && A.tk.S.shots.length === A.tk.S.rackAt; A.tk.newRack(); flushShots(); PATH.clear(); dbg('new_rack', dup ? { dup: true } : {}); toast('New rack. Names come once the break spreads the balls.'); };
 let toastT = 0;
@@ -693,30 +867,54 @@ function makeZip(files) {
   e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, cdSize, true); e.setUint32(16, off, true);
   return new Blob(parts.concat(central, [e.buffer]), { type: 'application/zip' });
 }
-function packDebug() {
-  const d = new Date(DBG.t0), pad = n => String(n).padStart(2, '0'), name = 'chalkline-v3-debug-' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + '.zip', enc = new TextEncoder();
-  const log = { header: header(), events: DBG.ev, dropped: DBG.drop, tracker: A.tk ? A.tk.S.events : null, shots: A.tk ? A.tk.S.shots.map(shotRow) : [], looksFormat: ['ms', 'findMs', 'readMs', 'n', 'phase', '[x, y, num, kind, score, pNum, [num2, p2]]'], looks: DBG.looks,
-    taps: A.taps.map(({ png, ...r }) => r), previous: PREV && PREV.t0 !== DBG.t0 ? PREV : null, crash: CRASH || (() => { try { return JSON.parse(localStorage.getItem(CRUMB) || 'null'); } catch (e) { return null; } })() };
-  const files = [{ name: 'log.json', data: enc.encode(JSON.stringify(log)) }];
-  for (const [k, v] of [...A.pics.entries()].sort()) files.push({ name: k, data: v });
-  for (const t of A.taps) files.push({ name: 'taps/' + String(t.n).padStart(3, '0') + '-' + (t.label === 0 ? 'cue' : t.label) + '.png', data: t.png });
-  const blob = makeZip(files); dbg('export', { files: files.length, kb: Math.round(blob.size / 1024) });
-  let file = null; try { file = new File([blob], name, { type: 'application/zip' }); } catch (e) { }
-  return { blob, file, name, t: Date.now(), mb: blob.size / 1048576 };
+const tapName = t => 'taps/' + String(t.n).padStart(3, '0') + '-' + (t.label === 0 ? 'cue' : t.label) + '.png';
+// Save debug (V3.1.0, owner Oct 31): the whole session from the phone's storage, in zip files of at most 30 MB so each one
+// uploads (with the clips a session can be 60 MB or more): part 1 has the log and the first pictures, each part says
+// which part of how many it is (part.json), and the button shares them one tap at a time (Safari only shares straight
+// after a tap). With no session on this page (Home, after Safari closed it), it is the last session kept on the phone.
+const PART_MAX = 29 * 1048576;
+async function packDebug() {
+  const enc = new TextEncoder(), here = !!A.sess && DBG.ev.length > 0;
+  let sid = DBG.t0, files = [], logData = null;
+  if (here) { dbgPersist(); logData = enc.encode(JSON.stringify(logObject())); await STORE.put(sid, 'log.json', logData); files = await STORE.files(sid); }
+  else { const ss = await STORE.sessions(); if (ss.length) { sid = ss[0].sid; files = await STORE.files(sid); } }
+  const lf = files.find(f => f.name === 'log.json'); files = files.filter(f => f.name !== 'log.json');
+  if (!logData) logData = lf ? lf.data : enc.encode(JSON.stringify(logObject())); // nothing kept: this page's log (with the backup of the last one)
+  if (!files.length) files = [...A.pics.entries()].map(([k, v]) => ({ name: k, data: v })).concat(A.taps.map(t => ({ name: tapName(t), data: t.png })));
+  files.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+  const groups = []; let cur = [{ name: 'log.json', data: logData }], size = logData.length;
+  for (const f of files) { const n = f.data.length + f.name.length + 80; if (size + n > PART_MAX) { groups.push(cur); cur = []; size = 0; } cur.push(f); size += n; }
+  groups.push(cur);
+  const d = new Date(sid), pad = n => String(n).padStart(2, '0'), stem = 'chalkline-v3-debug-' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes());
+  const parts = groups.map((g, i) => {
+    if (groups.length > 1) g = g.concat([{ name: 'part.json', data: enc.encode(JSON.stringify({ session: d.toISOString(), part: i + 1, of: groups.length, files: g.length })) }]);
+    const blob = makeZip(g), name = stem + (groups.length > 1 ? '-part' + (i + 1) + 'of' + groups.length : '') + '.zip';
+    let file = null; try { file = new File([blob], name, { type: 'application/zip' }); } catch (e) { }
+    return { blob, file, name, mb: blob.size / 1048576 };
+  });
+  dbg('export', { parts: parts.length, files: files.length + 1, mb: parts.map(p => r1(p.mb)), stored: !STORE.err, here });
+  return parts;
 }
-let DBGZIP = null;
+let DBGZIP = null; // { parts, i, t }: parts packed, the next one to share
+const mbText = mb => (mb < 0.1 ? '<0.1' : mb.toFixed(1)) + ' MB';
+function shareLabel(z) { const p = z.parts[z.i]; return z.parts.length > 1 ? 'Share part ' + (z.i + 1) + ' of ' + z.parts.length + ' (' + mbText(p.mb) + ')' : 'Share debug file (' + mbText(p.mb) + ')'; }
 async function saveDebug(btn) {
   const z = DBGZIP;
-  if (z && Date.now() - z.t < 5 * 60000) { // second tap: share at once, nothing awaited before it
-    DBGZIP = null; btn.textContent = 'Save debug';
-    if (z.file && navigator.canShare && navigator.canShare({ files: [z.file] })) { try { await navigator.share({ files: [z.file] }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
-    download(z); return;
+  if (z && Date.now() - z.t < 10 * 60000 && z.i < z.parts.length) { // a tap: share the next part at once, nothing awaited before it
+    const p = z.parts[z.i++]; if (z.i >= z.parts.length) { DBGZIP = null; btn.textContent = 'Save debug'; } else btn.textContent = shareLabel(z);
+    if (p.file && navigator.canShare && navigator.canShare({ files: [p.file] })) {
+      try { await navigator.share({ files: [p.file] }); return; }
+      catch (e) { if (e && e.name === 'AbortError') { z.i--; DBGZIP = z; btn.textContent = shareLabel(z); return; } } // cancelled: the same part again
+    }
+    download(p); return;
   }
-  dbgPersist(); const p = packDebug();
-  if (!(p.file && navigator.canShare && navigator.canShare({ files: [p.file] }))) { download(p); return; }
-  DBGZIP = p; btn.textContent = 'Share debug file (' + (p.mb < 0.1 ? '<0.1' : p.mb.toFixed(1)) + ' MB)'; toast('Ready: tap "Share debug file", then Save to Files → Google Drive → Chalkline test uploads.');
+  DBGZIP = null; const label = btn.textContent; btn.textContent = 'Packing…';
+  let parts; try { parts = await packDebug(); } catch (e) { btn.textContent = label; toast('Could not pack the debug file: ' + String(e && e.message || e).slice(0, 60)); return; }
+  if (!(parts[0].file && navigator.canShare && navigator.canShare({ files: [parts[0].file] }))) { btn.textContent = 'Save debug'; for (const p of parts) download(p); return; }
+  DBGZIP = { parts, i: 0, t: Date.now() }; btn.textContent = shareLabel(DBGZIP);
+  toast(parts.length > 1 ? 'Ready in ' + parts.length + ' parts: tap to share each one, then Save to Files → Google Drive → Chalkline test uploads.' : 'Ready: tap "Share debug file", then Save to Files → Google Drive → Chalkline test uploads.');
 }
 function download(z) { try { const a = document.createElement('a'); a.href = URL.createObjectURL(z.blob); a.download = z.name; document.body.appendChild(a); a.click(); setTimeout(() => a.remove(), 500); toast('Debug file saved'); } catch (e) { toast('Could not save the debug file on this phone.'); } }
 
 renderHome();
-window.__v3 = { A, DBG, start, acceptTable, look, packDebug, goHome }; // for the browser tests
+window.__v3 = { A, DBG, start, acceptTable, look, packDebug, goHome, WATCH, STORE, testXY, STATIONS }; // for the browser tests

@@ -962,3 +962,32 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   and the 9 at the end was called a scratch. Racks 1 to 3 otherwise all right; names right after 46 of 58 shots (all
   12 misses in rack 4); 238 of 288 balls. Three hand moves counted (rack 2 set out, the cue ball pushed into place,
   rack 4 set out).
+
+## V3.1.0 (Oct 31) — the player and cue begin: the watcher, shot clips, the stroke test; the session kept on the phone
+- Decided with the owner: stop patching V3.0 (9 racks on V3.0.15 reviewed) and start on the player and cue, which is
+  what fixes unseen shots, hand moves and setup properly; the small upgrades below come in the same build.
+- The watcher: every camera frame (requestVideoFrameCallback) at 320 px across, the table plus the space beside and
+  above it (where the player and cue are). For now it only measures and records: the share of the table that is not
+  cloth (hue more than 28 degrees off the cloth's, or grey) and the share of the picture that changed since the last
+  frame, logged once a second with its frame rate and the finder's time ('watch' events), to learn whether the phone
+  keeps up while the finder runs. It keeps the last 2 s of frames in memory.
+- Clips: around each shot (2 s before it was seen to start, 2 s after) and each hand move (at most one every 4 s), the
+  frames as small pictures (about 6 KB each) with an index (clips/<name>/index.json: file, ms, not-cloth, changed),
+  written into the phone's storage as soon as the clip ends. (toDataURL, not toBlob: Chromium makes toBlob wait for idle
+  time, which the busy finder never left: one frame every 2.5 s in the browser test.)
+- Stroke test (Menu → Stroke test, designed with the owner): four stations, the cue ball and the 1 re-spotted each time,
+  6 shots each (2 soft, 2 medium, 2 firm): shooting right and left across the picture, toward the phone, away from it;
+  then 7 moves that are not shots (practice strokes then stand up, the cue ball rolled into place, pushed with the
+  shaft), each recorded with a Record button (2 s before, 6 s after). Spots in diamonds as the phone sees the table
+  (from the left end, out from the near long rail), each drawn as a ring lying on the cloth (an oval from the phone:
+  owner, a ring drawn flat on the screen did not show where the ball had to be) that turns green when a ball sits
+  within about an inch of the spot, with a dashed line to the pocket. Shots and clips carry the station and attempt;
+  Rack complete is off during the test.
+- The session kept on the phone (IndexedDB): every picture, tap, clip and the log (every 20 s, on hide and at the end),
+  the latest two sessions. Save debug packs from there, in zips of at most 29 MB each (part.json says which part of how
+  many), shared one tap per part; with no session on the page (after Safari closed it), the last session kept. Logs keep
+  40000 looks (was 4000: Oct 31 lost 98 s of a 17-minute session) and 30000 events; every shot picture is kept.
+- A new set of balls put out while a rack is still open starts a new rack (rackNew: 4 or more balls standing that came
+  since the last shot, and more on the table than then); "New rack: balls set out". Replays: Oct 31 15:10 from 48 to 54
+  of 59 right (rack 4 named again); no other session loses a shot.
+- The tracking card measures V3.1.0 as a scoreboard; stroke-test sessions are not counted.

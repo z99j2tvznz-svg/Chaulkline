@@ -74,6 +74,7 @@ a.old { color: var(--muted); font-size: 13px; }
 #card { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 60px); width: min(94vw, 560px); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
 #card.mini { left: auto; right: calc(env(safe-area-inset-right, 0px) + 8px); bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); transform: none; width: auto; padding: 6px; }
 #cam.manual #bar { display: none; }
+#card.tst { max-width: min(400px, 60vw); padding: 6px 8px; } #card.tst p { margin: 0 0 5px; font-size: 12px; line-height: 1.3; } #card.tst .btn { padding: 6px 11px; font-size: 13px; }
 #card b { font-weight: 600; } #card p { margin: 0; font-size: 14px; color: rgba(234,241,244,.88); }
 #sum { position: fixed; inset: 0; overflow-y: auto; z-index: 5; padding: calc(env(safe-area-inset-top, 0px) + 22px) calc(env(safe-area-inset-right, 0px) + 16px) calc(env(safe-area-inset-bottom, 0px) + 28px) calc(env(safe-area-inset-left, 0px) + 16px); }
 #sum .wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
@@ -105,6 +106,7 @@ a.old { color: var(--muted); font-size: 13px; }
       <li>When it is not sure, it shows a "?" instead of guessing.</li>
       <li>Upright or sideways, whichever suits the spot.</li>
       <li>Racked balls get their names once the break spreads them out.</li>
+      <li>New in V3.1: Menu → Stroke test, and a short clip of every shot in the debug file.</li>
     </ul></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div></div>
     <div class="card glass" id="crashCard" hidden><h2>Last time the app stopped unexpectedly</h2><p class="lbl" id="crashText" style="margin:0 0 10px"></p><div class="lbl">Tap Save debug below: the file includes that session.</div></div>
