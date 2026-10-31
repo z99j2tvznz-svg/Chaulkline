@@ -1,6 +1,6 @@
 {
   "about": "Tracking test: what has to be true before V3.1 starts. Counted by Claude from each session's debug file, with the truth taken from the shot pictures. Live results of the app as it was in that session (not replays). Sessions from V3.0.6 on (Oct 28).",
-  "updated": "2026-10-30",
+  "updated": "2026-10-31",
   "target": {
     "racks": 10,
     "sessions": 3,
@@ -65,12 +65,29 @@
       "falseScratch": 0,
       "namesRight": 10,
       "extraShots": 0
+    },
+    {
+      "when": "Oct 30 17:46",
+      "app": "V3.0.11",
+      "spot": "side",
+      "racks": 2,
+      "shots": 23,
+      "found": 23,
+      "madeRight": 22,
+      "falseIn": 0,
+      "falseScratch": 1,
+      "namesRight": 20,
+      "extraShots": 0
     }
   ],
   "notCounted": [
     {
       "when": "Oct 29 17:02, rack 1",
       "why": "phone upright at the end rail: the app had the table turned a quarter (fixed in V3.0.10), and the first table pictures were lost"
+    },
+    {
+      "when": "Oct 30 17:46",
+      "why": "rack 1's first 11 shots (no pictures kept), and racks 3 and 4: drills (balls on one line; the last one shot with the 8 instead of the cue ball)"
     }
   ]
 }

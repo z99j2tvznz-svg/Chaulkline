@@ -2307,7 +2307,7 @@ function makeTracker(P, opts) {
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.11';
+const VERSION = 'V3.0.12';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -2705,11 +2705,12 @@ function ballColours() {
 }
 // the shot pictures are trimmed to the latest 120; the table-finding ones are kept (they sorted first, and were the ones
 // thrown away: Oct 29, the upright session's pictures were all gone)
-function trimPics() { const keys = [...A.pics.keys()].filter(k => k.startsWith('shot')).sort(); while (keys.length > 120) A.pics.delete(keys.shift()); }
+// (Oct 30: 71 shots, and the first 11 shots' pictures were gone; 100 shots now, at a little lower quality)
+function trimPics() { const keys = [...A.pics.keys()].filter(k => k.startsWith('shot')).sort(); while (keys.length > 200) A.pics.delete(keys.shift()); }
 function jpeg(w) {
   const k = Math.min(1, w / Math.max(A.W, A.H)), c = document.createElement('canvas'); c.width = Math.round(A.W * k); c.height = Math.round(A.H * k);
   c.getContext('2d').drawImage(A.frame, 0, 0, c.width, c.height);
-  return new Promise((res, rej) => c.toBlob(b => b ? b.arrayBuffer().then(a => res(new Uint8Array(a))) : rej(new Error('jpeg')), 'image/jpeg', 0.8));
+  return new Promise((res, rej) => c.toBlob(b => b ? b.arrayBuffer().then(a => res(new Uint8Array(a))) : rej(new Error('jpeg')), 'image/jpeg', 0.7));
 }
 
 // ---------- steady: the outline follows the table when the phone sways ----------

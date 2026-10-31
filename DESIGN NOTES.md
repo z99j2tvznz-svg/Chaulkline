@@ -868,3 +868,16 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
 - Tracking test: the end rail is the second camera spot; one session can now hold racks from two spots (counted once).
   Now 9 racks, 3 sessions, 2 spots, 120 shots: found 100%, called right 93% (need 95), 1 false "in", 3 false scratches
   (1.25 per 50, need at most 1), names 92.5% (need 97).
+
+## V3.0.12 (Oct 31) — room for 100 shots' pictures
+- Owner's V3.0.11 session (Oct 30, 17:46; 4 racks sideways, 71 shots): racks 1-2 normal play, racks 3-4 drills (the
+  balls on one line across the table; then a drill shot with the 8 instead of the cue ball). The debug file kept only
+  the latest 120 shot pictures, so shots 1-11 had none. Now 200 (100 shots), at JPEG quality 0.7 (was 0.8).
+- Counted for the tracking test: shots 12-34, 23 shots, live 22 right (one false scratch: the cue ball had just
+  stopped and was not yet confirmed as a ball when the shot ended), names right after 20. Not counted: shots 1-11
+  (no pictures) and the drills. In the line drill the 8, 6, 1, 2 and 5 were called right, the 4 missed, and with the
+  last balls re-set by hand by the far rail the 9 next to the cue ball went in as "cue ball, scratch". With the 8 used
+  as the cue ball the app takes the 8 for the struck ball and calls its pots scratches: a drill mode will need to be
+  told which ball is the cue ball.
+- Tracking test now: 11 racks, 4 sessions, 2 spots, 143 shots; called right 93.7%; false "in" 1; false scratches 1.4 per
+  50 (3 of the 4 from V3.0.9, fixed in V3.0.10); names right 91.6%.
