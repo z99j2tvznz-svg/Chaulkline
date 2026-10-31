@@ -919,3 +919,12 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   shots; the cue ball and the lowest ball named right after 97% of shots; 98% of balls named right; a wrong number on
   at most 1 in 200 balls; at most 1 shot per rack counted that was not a shot. Earlier versions show as one line.
 - Replays apply End session from the log too (tools/v3/replay.js).
+- Owner's V3.0.14 session (Oct 30, 23:17; 3 racks of 9-ball sideways, balls set out by hand, no break), the first on
+  the tracking card: live all 35 real shots right, no false "in" or scratch; the 9 of rack 2 called at New rack (finish).
+  Names right after 34 of 35 shots (after rack 2's last 9 the cue ball showed ? with its own hidden copy on it); 181 of
+  182 balls named right, no wrong number. A 5 gone into the top-right corner left a hidden 5 on the top rail for three
+  shots (the cloth check on a spot against the cushion never reads bare). Four hand moves counted as shots: the cue ball
+  rolled into place (8.7 in/s), rack 2 set out (two), rack 3 spread with the cue shaft. In three of them the first ball
+  to move was not the cue ball, which sat named and still elsewhere: a rule on that (cueFirst, not built: with the cue
+  ball seen on that look and not touching the mover) takes 8 of the 23 such moves off across all sessions and loses 2
+  real shots, both nothing-made shots in the Oct 27 22:27 (V3.0.3) replay.

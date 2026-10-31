@@ -478,3 +478,11 @@ test('the owner\'s V3.0.12 session (Oct 30, 18:21, 2 racks, the reader\'s shares
   // counted at New rack)
   assert.ok(r.right >= 26, JSON.stringify(r.rows.filter(x => !x.right))); assert.ok(r.falsePots <= 1);
 });
+
+test('the owner\'s V3.0.14 session (Oct 30, 23:17, 3 racks sideways) replays as live: every real shot found, no false pot', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261030-2317.json'), 'utf8')));
+  // live V3.0.14: all 35 real shots right (four hand moves counted as shots). The replay has the cloth check only on the
+  // shot pictures, so the 5 left on the top rail (called in live 40 s later) is not called: 34
+  assert.strictEqual(r.shots, 35); assert.ok(r.right >= 34, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
+});

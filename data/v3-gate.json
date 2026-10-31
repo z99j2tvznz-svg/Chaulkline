@@ -94,6 +94,23 @@
       "falseScratch": 0,
       "namesRight": 21,
       "extraShots": 3
+    },
+    {
+      "when": "Oct 30 23:17",
+      "app": "V3.0.14",
+      "spot": "side",
+      "racks": 3,
+      "shots": 35,
+      "found": 35,
+      "madeRight": 35,
+      "falseIn": 0,
+      "falseScratch": 0,
+      "namesRight": 34,
+      "keyRight": 34,
+      "balls": 182,
+      "ballsRight": 181,
+      "wrongNum": 0,
+      "extraShots": 4
     }
   ],
   "notCounted": [
