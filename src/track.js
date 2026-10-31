@@ -23,6 +23,7 @@ function makeTracker(P, opts) {
     stopDist: 0.8,
     stillHold: 0.5,     // s every ball must rest before a shot can start
     endHold: 1.2,       // s every ball must rest for the shot to be over
+    cueWait: 2,         // s more, at most, while something new may be the cue ball called in (see cueComing)
     gateRest: 1.6,      // in: a resting ball is looked for this close to where it was
     gateMove: 4,        // in around the predicted spot of a rolling ball, plus gateMoveK of its travel this look
     gateMoveK: 0.6,
@@ -407,17 +408,51 @@ function makeTracker(P, opts) {
         (wo == null || whiteOf(o) == null || Math.abs(whiteOf(o) - wo) <= O.cueVeto));
       if (sh && newcomer && t - sh.t1 < O.newcomerWait) continue;
       if (!sh || tr.num == null) { tr.state = 'dropped'; ev('cleared', { key: tr.key, num: tr.num }); continue; }
-      // which pocket: the one it was knocked toward, if one lies that way; else not known
-      let pocket = null;
-      if (tr.knock) { let best = 0.9; P.pockets.forEach((pk, i) => { const dx = pk.x - tr.x, dy = pk.y - tr.y, d = Math.hypot(dx, dy) || 1, c = (dx * tr.knock.ux + dy * tr.knock.uy) / d; if (c > best) { best = c; pocket = i; } }); }
-      // or the one pocket a ball was newly seen lying in since the shot started
-      if (pocket == null) { const ks = Object.keys(S.bagNew).filter(k => S.bagNew[k] >= sh.t0 && !sh.made.some(m => m.pocket === +k)); if (ks.length === 1) pocket = +ks[0]; }
-      tr.state = 'gone'; tr.goneT = t; const d = { key: tr.key, num: tr.num, sure: tr.sure, pocket, late: true };
-      if (tr.num !== 0 && !S.gone.includes(tr.num)) S.gone.push(tr.num); // the cue ball comes back (see pocketed)
-      sh.made.push(d); if (tr.key === sh.cueKey || tr.num === 0) sh.scratch = true; sh.updated = t;
-      ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
+      lateIn(tr, sh, t);
     }
     S.tracks = S.tracks.filter(tr => tr.state !== 'dropped');
+  }
+  // a ball found to have gone in after its shot ended
+  function lateIn(tr, sh, t, pocket) {
+    // which pocket: the one it was knocked toward, if one lies that way; else not known
+    if (pocket == null && tr.knock) { let best = 0.9; P.pockets.forEach((pk, i) => { const dx = pk.x - tr.x, dy = pk.y - tr.y, d = Math.hypot(dx, dy) || 1, c = (dx * tr.knock.ux + dy * tr.knock.uy) / d; if (c > best) { best = c; pocket = i; } }); }
+    // or the one pocket a ball was newly seen lying in since the shot started
+    if (pocket == null) { const ks = Object.keys(S.bagNew).filter(k => S.bagNew[k] >= sh.t0 && !sh.made.some(m => m.pocket === +k)); if (ks.length === 1) pocket = +ks[0]; }
+    tr.state = 'gone'; tr.goneT = t; const d = { key: tr.key, num: tr.num, sure: tr.sure, pocket, late: true };
+    if (tr.num !== 0 && !S.gone.includes(tr.num)) S.gone.push(tr.num); // the cue ball comes back (see pocketed)
+    sh.made.push(d); if (tr.key === sh.cueKey || tr.num === 0) sh.scratch = true; sh.updated = t;
+    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
+  }
+
+  // New rack or End session: the last shot's calls are settled now, not left waiting (Oct 30: the 9, the last ball of the
+  // rack, went in unseen and New rack came before it was called). A shot still on ends; a ball lost at a pocket, or one
+  // in play that went out of sight during the last shot, is in; a pocket entry nobody was followed into is counted now;
+  // and a number on the table before the last shot that no ball holds now went in, when the count of balls says so (one
+  // fewer for each, and no unnamed ball on the table that could be it).
+  function finish() {
+    const t = S.t;
+    if (S.shot) endShot(t);
+    if (S.shots.length <= S.rackAt) return;
+    const sh = S.shots[S.shots.length - 1];
+    for (const tr of ballsNow()) {
+      if (tr.num == null || tr.lostT == null || tr.lostT > sh.t1 || tr.lostT < sh.t0 - 0.6) continue;
+      if (tr.state === 'pending') lateIn(tr, sh, t, tr.pocket);
+      else if (tr.state === 'hidden' && (tr.vLost || tr.knock)) lateIn(tr, sh, t);
+    }
+    if (S.recon) { S.recon.t = 0; reconcile(t); }
+    // balls taken off or moved by hand since (racking): the count says nothing about the shot
+    if (S.events.some(e => (e.k === 'cleared' || e.k === 'hands') && e.t > sh.t1)) return;
+    const bs = ballsNow(), held = new Set(bs.filter(b => b.num != null).map(b => b.num)), done = new Set(sh.made.map(m => m.num));
+    const missing = [...new Set(sh.before.filter(b => b.num != null && b.num !== 0).map(b => b.num))].filter(n => !held.has(n) && !done.has(n) && !S.gone.includes(n));
+    const objBefore = sh.before.filter(b => b.num !== 0).length, objNow = bs.filter(b => b.num !== 0).length, objIn = sh.made.filter(m => m.num !== 0).length;
+    // a ball not named before it vanished: the numbers nobody holds and not yet in, when there are just as many (Oct 29:
+    // the 9, unnamed, the last ball of the rack, with 1 to 8 in)
+    const k = objBefore - objIn - objNow, unnamed = sh.before.filter(b => b.num == null).length;
+    const nums = missing.length ? missing : k <= unnamed ? O.ids.filter(n => n !== 0 && !held.has(n) && !done.has(n) && !S.gone.includes(n)) : [];
+    ev('finish', { n: sh.n, nums, objBefore, objNow, objIn });
+    if (!nums.length || bs.some(b => b.num == null) || nums.length !== k) return;
+    for (const num of nums) { const d = { key: null, num, sure: false, pocket: null, inferred: true }; sh.made.push(d); S.gone.push(num); ev('made_inferred', { n: sh.n, num, pocket: null }); S.notes.push({ n: sh.n, num, pocket: null }); }
+    sh.updated = t;
   }
 
   // Two balls can't be closer than 2.25 in, so a hidden ball under 1.5 in from a ball that sits there is not there: the
@@ -545,9 +580,19 @@ function makeTracker(P, opts) {
         const cue = S.tracks.find(tr => tr.key === sh.cueKey), went = moving.filter(tr => tr.key !== sh.cueKey && tr.movedT === t);
         if (cue && went.length) { const f = went.sort((a, b) => dist(a, cue) - dist(b, cue))[0]; sh.first = f.key; sh.firstNumAt = f.num; ev('first_hit', { key: f.key, num: f.num }); }
       }
-      if (!moving.length && !pend.length) { if (S.stillSince == null) S.stillSince = t; if (t - S.stillSince >= O.endHold) endShot(t); }
+      if (!moving.length && !pend.length) { if (S.stillSince == null) S.stillSince = t; if (t - S.stillSince >= O.endHold && !(t - S.stillSince < O.endHold + O.cueWait && cueComing(sh, t))) endShot(t); }
       else S.stillSince = null;
     }
+  }
+  // The cue ball called in, and something just seen that is not yet a named ball, white or not known, since it was lost:
+  // it may be the cue ball, found again away from the pocket; the shot waits for it to be named (Oct 30, 17:46: the cue
+  // ball lost by the side pocket turned up 10 in away and was confirmed a ball a third of a second after the shot ended,
+  // a scratch called). Named the cue ball, it takes back the call (see name).
+  function cueComing(sh, t) {
+    const cue = S.tracks.find(x => x.key === sh.cueKey); if (!cue || cue.state !== 'gone' || cue.lostT == null) return false;
+    const wc = whiteOf(cue);
+    return S.tracks.some(o => live(o) && o.state !== 'hidden' && (!o.ok || o.num == null) && t - o.seenT < 0.4 && o.firstT >= cue.lostT - 0.3 &&
+      (wc == null || whiteOf(o) == null || Math.abs(whiteOf(o) - wc) <= O.cueVeto));
   }
   function startShot(tr, t) {
     S.phase = 'shot'; S.stillSince = null;
@@ -601,10 +646,10 @@ function makeTracker(P, opts) {
   }
   function notBall(key) { const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.state = 'dropped'; tr.ok = false; ev('not_ball', { key, num: tr.num }); S.tracks = S.tracks.filter(x => x !== tr); name(); return true; }
   function inPocket(key) { const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.pocket = null; ev('tap_pocketed', { key, num: tr.num }); pocketed(tr); name(); return true; }
-  function newRack() { for (const tr of S.tracks) tr.state = 'dropped'; S.tracks = []; S.gone = []; S.rackAt = S.shots.length; S.phase = 'hands'; S.stillSince = null; S.shot = null; ev('new_rack', {}); }
+  function newRack() { finish(); for (const tr of S.tracks) tr.state = 'dropped'; S.tracks = []; S.gone = []; S.rackAt = S.shots.length; S.recon = null; S.phase = 'hands'; S.stillSince = null; S.shot = null; ev('new_rack', {}); }
 
   function setBags(b) { O.bags = b || []; }
   function touched() { S.touchT = S.t; }
-  return { S, O, update, pin, notBall, inPocket, newRack, setBags, touched, balls: ballsNow, snapshot };
+  return { S, O, update, pin, notBall, inPocket, newRack, finish, setBags, touched, balls: ballsNow, snapshot };
 }
 if (typeof module !== 'undefined') module.exports = { makeTracker };

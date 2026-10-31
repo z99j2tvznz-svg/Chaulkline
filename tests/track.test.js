@@ -143,6 +143,16 @@ test('a scratch: the cue ball rolls into a pocket and is called a scratch', () =
   assert.deepStrictEqual(sh.made.map(m => [m.num, m.pocket]), [[0, 2]]);
 });
 
+test('the cue ball lost at a pocket and found again away from it as the shot ends: no scratch (Oct 30, 17:46)', () => {
+  const tk = makeTracker(P), others = [{ num: 2, x: 30, y: 10 }, { num: 7, x: 45, y: 30 }];
+  let t = settle(tk, 0, [{ num: 0, x: 50, y: 20 }, ...others]);
+  for (let i = 1; i <= 8; i++) { const f = i / 8 * 0.92; look(tk, t, [{ num: 0, x: 50 + 28 * f, y: 20 - 20 * f, moving: true }, ...others], false); t += 0.1; }
+  t = settle(tk, t, others, 2); // lost by the corner; the shot would end now
+  settle(tk, t, [{ num: 0, x: 66, y: 12 }, ...others], 4); // it rolled back out and is seen 12 in from the pocket
+  const sh = tk.S.shots[0]; assert.ok(sh, 'shot'); assert.strictEqual(tk.S.shots.length, 1);
+  assert.strictEqual(sh.scratch, false, JSON.stringify(tk.S.events.filter(e => e.k !== 'named').slice(-8))); assert.deepStrictEqual(sh.made, []);
+});
+
 test('a rolling ball lost in the middle of the table is hidden, never pocketed', () => {
   const tk = makeTracker(P), others = [{ num: 4, x: 60, y: 30 }];
   let t = settle(tk, 0, [{ num: 0, x: 10, y: 20 }, ...others]);
@@ -306,6 +316,27 @@ test('before the break a hidden ball next to another is left alone: in a rack tw
   assert.strictEqual(tk.S.shots.length, 0);
 });
 
+test('New rack settles the last shot: the 9 knocked out of sight in it, never seen again, is in (Oct 30: the last 9 not called)', () => {
+  const tk = makeTracker(P);
+  let t = settle(tk, 0, [{ num: 0, x: 30, y: 20 }, { num: 9, x: 50, y: 20 }]);
+  // the cue ball rolls into the 9; the 9 is gone the look the cue ball reaches it, nowhere near a pocket (behind the player)
+  for (const x of [34, 39, 44, 47.8]) { look(tk, t, [{ num: 0, x, y: 20, moving: true }, ...(x < 47 ? [{ num: 9, x: 50, y: 20 }] : [])], false); t += 0.1; }
+  t = settle(tk, t, [{ num: 0, x: 48, y: 20 }], 3);
+  assert.strictEqual(tk.S.shots.length, 1); assert.deepStrictEqual(tk.S.shots[0].made, []);
+  tk.newRack();
+  assert.deepStrictEqual(tk.S.shots[0].made.map(m => m.num), [9]); assert.deepStrictEqual(tk.S.notes.map(n => n.num), [9]);
+});
+
+test('New rack after balls were picked up by hand: they are not called in', () => {
+  const tk = makeTracker(P), cue = { num: 0, x: 20, y: 20 }, still = [{ num: 3, x: 60, y: 10 }, { num: 6, x: 65, y: 30 }];
+  let t = settle(tk, 0, [{ ...cue, x: 30 }, ...still]);
+  for (const x of [34, 39, 44, 48]) { look(tk, t, [{ ...cue, x, moving: true }, ...still], false); t += 0.1; }
+  t = settle(tk, t, [{ ...cue, x: 48 }, ...still], 3);
+  t = settleE(tk, t, [{ ...cue, x: 48 }], 4, 0.25, () => true); // the 3 and the 6 picked up to rack: bare cloth there
+  tk.newRack();
+  assert.strictEqual(tk.S.shots.length, 1); assert.deepStrictEqual(tk.S.shots[0].made, []);
+});
+
 test('the cue ball that jumps 20 in between two looks and stops starts a shot (Oct 27: the 5 at 5:58)', () => {
   const tk = makeTracker(P), others = [{ num: 9, x: 34, y: 6 }, { num: 7, x: 67, y: 21 }];
   let t = settleE(tk, 0, [{ num: 0, x: 30, y: 9 }, { num: 5, x: 53, y: 24 }, ...others], 3, 0.25, () => true);
@@ -436,12 +467,14 @@ test('the owner\'s V3.0.10 session (Oct 29, 17:50, 3 racks upright at the end ra
   const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261029-1750.json'), 'utf8')));
   // live V3.0.10: 42 of 44 right. The replay scores lower (37): this log keeps only "sure" or "unsure" for each read, not
   // how sure, and a replay makes every sure read 90%; from V3.0.11 the log keeps the reader's shares
-  assert.strictEqual(r.shots, 44); assert.ok(r.right >= 37, JSON.stringify(r.rows.filter(x => !x.right))); assert.ok(r.falsePots <= 2);
+  // (38 from V3.0.14: the last 9 of rack 1, unnamed when it went in, is counted at New rack)
+  assert.strictEqual(r.shots, 44); assert.ok(r.right >= 38, JSON.stringify(r.rows.filter(x => !x.right))); assert.ok(r.falsePots <= 2);
 });
 
 test('the owner\'s V3.0.12 session (Oct 30, 18:21, 2 racks, the reader\'s shares logged) replays close to live', () => {
   const { score } = require('../tools/v3/score.js');
   const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261030-1821.json'), 'utf8')));
-  // live V3.0.12: 26 of 28 right, nothing called in that was not
-  assert.ok(r.right >= 25, JSON.stringify(r.rows.filter(x => !x.right))); assert.ok(r.falsePots <= 1);
+  // live V3.0.12: 26 of 28 right, nothing called in that was not (the replay: 26 from V3.0.14, the last 9 of rack 1 is
+  // counted at New rack)
+  assert.ok(r.right >= 26, JSON.stringify(r.rows.filter(x => !x.right))); assert.ok(r.falsePots <= 1);
 });

@@ -896,3 +896,26 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   the table). The only other place it acts is Oct 29 17:50, shot 10: the 4 went in and the cue ball stopped 1.2 in from
   its spot; it is now called in 13 s sooner (was right already). No other result changes. The 18:21 case itself
   does not happen in the replay (the replay pockets the 5 in shot 7), so it has a made-up test of its own.
+
+## V3.0.14 (Oct 31) — the rest of the list agreed after the 18:21 review
+- New rack and End session settle the last shot's calls first (finish in src/track.js). A shot still on ends; a ball
+  lost at a pocket, or one in play (rolling or knocked) that went out of sight during the last shot, is in; a pocket
+  entry waiting to be counted is counted now; and a number on the table before the last shot that no ball holds now
+  went in, when the count of balls agrees (one fewer for each, no unnamed ball on the table). If the vanished ball had
+  no name, the numbers not yet in are used when there are exactly as many as vanished. Replays: the last 9 of rack 1
+  on Oct 29 17:50 (unnamed) and Oct 30 18:21 are now called; nothing else changes, no false "in" (every New rack in
+  the recordings checked). Balls picked up after the shot to rack are not counted (lost after it ended), and nothing
+  is counted once a ball has been taken off or moved by hand since the shot (cleared, hands).
+- A cue ball called in waits for something just seen that is not yet a named ball, white or not known, appearing since
+  the cue ball was lost: up to 2 s more (cueWait) before the shot ends, so it can be named the cue ball and take the
+  call back (Oct 30, 17:46, shot 28: found 10 in from the side pocket a third of a second after the shot ended,
+  a false scratch). Replay of 17:46: that scratch gone, the others unchanged; no other session changes.
+- Ball in hand and hand moves: not a rule yet. On a real shot the cue lies behind the ball too, and no recording has
+  the picture around the ball as a shot starts, so a rule could not be checked. The debug file now logs it with each
+  shot start (around: 12 spots 3.5 in from where the cue ball rested, the first straight ahead of its roll, 1 = not
+  cloth; v0: its speed), to set the rule from the next sessions.
+- The tracking card has the goals revised with the owner: only the version being measured counts (data/v3-gate.json
+  "measuring", now V3.0.14), its latest 10 racks; called right 95%; false "in" and false scratches at most 1 per 50
+  shots; the cue ball and the lowest ball named right after 97% of shots; 98% of balls named right; a wrong number on
+  at most 1 in 200 balls; at most 1 shot per rack counted that was not a shot. Earlier versions show as one line.
+- Replays apply End session from the log too (tools/v3/replay.js).

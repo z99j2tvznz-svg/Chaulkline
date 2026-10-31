@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.13';
+const VERSION = 'V3.0.14';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -69,26 +69,36 @@ function shotWords(s) {
   if (s.scratch) w.push('scratch'); if (s.break) w.unshift('Break:'); else if (s.first != null) w.push('first hit the ' + (s.first === 0 ? 'cue' : s.first));
   return w.join(' · ');
 }
-// The tracking test (owner, Oct 28): how far the reviewed sessions are toward the targets for moving on to V3.1. The
-// numbers come from data/v3-gate.json, which Claude updates after reviewing each session's debug file.
+// The tracking test (owner, Oct 28; goals revised with the owner Oct 31): how far the reviewed sessions are toward the
+// targets for moving on to V3.1. The numbers come from data/v3-gate.json, which Claude updates after reviewing each
+// session's debug file. Measured on one version only (the file's "measuring"), its latest 10 racks; sessions on earlier
+// versions are shown as a line, not counted.
 async function renderGate() {
   try {
-    const g = await (await fetch('data/v3-gate.json?' + Date.now(), { cache: 'no-store' })).json(), T = g.target, S = g.sessions || [];
-    const sum = k => S.reduce((a, s) => a + (s[k] || 0), 0), shots = sum('shots'), pct = (a, b) => b ? Math.round(100 * a / b) : 0;
-    const nSess = new Set(S.map(s => s.session || s.when)).size; // one session can have racks from two camera spots
-    const spots = new Set(S.map(s => s.spot)).size, per50 = n => shots ? (50 * n / shots).toFixed(1) : '0';
+    const g = await (await fetch('data/v3-gate.json?' + Date.now(), { cache: 'no-store' })).json(), T = g.target, ver = g.measuring || VERSION;
+    const all = (g.sessions || []).filter(s => s.app === ver), S = []; let rk = 0;
+    for (let i = all.length - 1; i >= 0 && rk < T.racks; i--) { S.unshift(all[i]); rk += all[i].racks || 0; }
+    const sum = k => S.reduce((a, s) => a + (s[k] || 0), 0), shots = sum('shots'), balls = sum('balls'), racks = sum('racks'), pct = (a, b) => b ? (Math.round(1000 * a / b) / 10) + '%' : '–';
+    const nSess = new Set(S.map(s => s.session || s.when)).size, spots = [...new Set(S.map(s => s.spot))];
+    const share = (k, n, need) => [pct(sum(k), n) + ' · need ' + Math.round(100 * need) + '%', n ? sum(k) / n / need : 0, n > 0 && sum(k) / n >= need];
+    // a count with a limit (at most v per k): the bar is full at none, half at the limit
+    const atMost = (n, per, lim, unit) => { const r = per ? n / per : 0; return [n + (per && n ? ' (' + (Math.round(10 * r * lim.k) / 10) + ')' : '') + ' · at most ' + lim.v + ' ' + unit, per ? 1 - Math.min(1, r * lim.k / lim.v / 2) : 0, per > 0 && r * lim.k <= lim.v]; };
     const rows = [
-      ['Racks', sum('racks') + ' of ' + T.racks, sum('racks') / T.racks, sum('racks') >= T.racks],
+      ['Racks', racks + ' of ' + T.racks, racks / T.racks, racks >= T.racks],
       ['Sessions', nSess + ' of ' + T.sessions, nSess / T.sessions, nSess >= T.sessions],
-      ['Camera spots', spots + ' of ' + T.spots + (spots ? ' (' + [...new Set(S.map(s => s.spot))].join(', ') + ')' : ''), spots / T.spots, spots >= T.spots],
-      ['Shots found', pct(sum('found'), shots) + '% of ' + shots + ' · need ' + Math.round(100 * T.found) + '%', shots ? sum('found') / shots : 0, shots > 0 && sum('found') / shots >= T.found],
-      ['What went in, called right', pct(sum('madeRight'), shots) + '% · need ' + Math.round(100 * T.madeRight) + '%', shots ? sum('madeRight') / shots : 0, shots > 0 && sum('madeRight') / shots >= T.madeRight],
-      ['False "in"', sum('falseIn') + ' (' + per50(sum('falseIn')) + ' per 50 shots) · at most ' + T.falseInPer50, shots ? 1 - Math.min(1, sum('falseIn') / Math.max(1, shots / 50 * T.falseInPer50)) : 0, shots > 0 && 50 * sum('falseIn') / shots <= T.falseInPer50],
-      ['False scratches', sum('falseScratch') + ' (' + per50(sum('falseScratch')) + ' per 50 shots) · at most ' + T.falseScratchPer50, shots ? 1 - Math.min(1, sum('falseScratch') / Math.max(1, shots / 50 * T.falseScratchPer50)) : 0, shots > 0 && 50 * sum('falseScratch') / shots <= T.falseScratchPer50],
-      ['Every ball named right after a shot', pct(sum('namesRight'), shots) + '% · need ' + Math.round(100 * T.namesRight) + '%', shots ? sum('namesRight') / shots : 0, shots > 0 && sum('namesRight') / shots >= T.namesRight]];
+      ['Camera spots', spots.length + ' of ' + T.spots + (spots.length ? ' (' + spots.join(', ') + ')' : ''), spots.length / T.spots, spots.length >= T.spots],
+      ['Shots found', ...share('found', shots, T.found)],
+      ['What went in, called right', ...share('madeRight', shots, T.madeRight)],
+      ['False "in"', ...atMost(sum('falseIn'), shots, { k: 50, v: T.falseInPer50 }, 'per 50 shots')],
+      ['False scratches', ...atMost(sum('falseScratch'), shots, { k: 50, v: T.falseScratchPer50 }, 'per 50 shots')],
+      ['Cue ball and lowest ball named right after a shot', ...share('keyRight', shots, T.keyRight)],
+      ['Balls named right', ...share('ballsRight', balls, T.ballsRight)],
+      ['A wrong number shown', ...atMost(sum('wrongNum'), balls, { k: 200, v: T.wrongPer200 }, 'in 200 balls')],
+      ['Counted as shots but not shots', ...atMost(sum('extraShots'), racks, { k: 1, v: T.extraPerRack }, 'per rack')]];
     $('#gateRows').innerHTML = rows.map(([l, v, f, ok]) => '<div class="grow' + (ok ? ' ok' : '') + '"><div class="gl"><span>' + l + '</span><span>' + v + '</span></div><div class="gb"><i style="width:' + Math.round(100 * Math.max(0, Math.min(1, f))) + '%"></i></div></div>').join('');
-    const met = rows.filter(r => r[3]).length, extra = sum('extraShots');
-    $('#gateNote').textContent = met + ' of ' + rows.length + ' met. ' + (extra ? 'Also counted as shots but not shots: ' + extra + '. ' : '') + 'From ' + nSess + ' reviewed session' + (nSess === 1 ? '' : 's') + ' (' + S.map(s => s.when + ', ' + s.app).join('; ') + '). Updated ' + g.updated + '.' + (g.notCounted && g.notCounted.length ? ' Not counted: ' + g.notCounted.map(n => n.when + ' (' + n.why + ')').join('; ') + '.' : '');
+    const met = rows.filter(r => r[3]).length, old = (g.sessions || []).filter(s => s.app !== ver), oShots = old.reduce((a, s) => a + s.shots, 0);
+    $('#gateNote').textContent = (S.length ? met + ' of ' + rows.length + ' met. Counting ' + ver + ' only, its latest ' + T.racks + ' racks: ' + S.map(s => s.when).join('; ') + '.' : 'No sessions on ' + ver + ' yet: it counts ' + ver + ' only, its latest ' + T.racks + ' racks.') +
+      (old.length ? ' Earlier versions (not counted): ' + old.reduce((a, s) => a + s.racks, 0) + ' racks, ' + oShots + ' shots, ' + pct(old.reduce((a, s) => a + s.madeRight, 0), oShots) + ' called right.' : '') + ' Updated ' + g.updated + '.';
     $('#gateCard').hidden = false;
   } catch (e) { $('#gateCard').hidden = true; }
 }
@@ -167,6 +177,7 @@ function endSession() { if (A.sess && A.sess.shots.length) { A.lastSess = A.sess
 // saved with the phone put down and the camera no longer watching (turning the phone upright to save used to count as a
 // shot and send the app looking for the table again)
 function endRun() {
+  if (A.tk) { A.tk.finish(); flushShots(); }
   dbg('end_session', { shots: A.tk ? A.tk.S.shots.length : 0 });
   A.live = false; A.phase = 'done'; dbgPersist(); endSession(); endCrumb();
   if (A.stream) A.stream.getTracks().forEach(t => { try { t.stop(); } catch (e) { } }); A.stream = null;
@@ -338,7 +349,23 @@ async function look() {
 // the reader's second choice and its share (from V3.0.11, so a replay can rebuild how sure the reader was: Oct 30, a replay
 // with every read made 90% sure scored 37 of 44 on a session that live got 42)
 function second(p, k) { let b = -1; for (let i = 0; i < 10; i++) if (i !== k && (b < 0 || p[i] > p[b])) b = i; return b < 0 ? null : [b, r2(p[b])]; }
-function onShotStart() { PATH.clear(); pathLook(); const sh = A.tk.S.shot; if (sh && A.stillPic) A.pics.set('shot' + String(sh.n).padStart(3, '0') + '-before.jpg', A.stillPic); dbg('shot_start', { n: sh && sh.n }); }
+function onShotStart() { PATH.clear(); pathLook(); const sh = A.tk.S.shot; if (sh && A.stillPic) A.pics.set('shot' + String(sh.n).padStart(3, '0') + '-before.jpg', A.stillPic); dbg('shot_start', Object.assign({ n: sh && sh.n }, sh ? aroundCue(sh) : {})); }
+// What is round the cue ball as a shot starts, for a rule on hands to come (owner, Oct 31: the cue ball rolled or pushed
+// by hand counts as a shot; a cue lies behind the ball on a real shot too, so the rule waits for this from real sessions):
+// 12 spots 3.5 in from where it rested, the first straight ahead of its roll, then round; 1 = not cloth (a hand, the cue,
+// a ball), 0 = cloth, - = not known. And how fast it set off. Logged only.
+function aroundCue(sh) {
+  const cue = A.tk.S.tracks.find(x => x.key === sh.cueKey), st = (sh.before || []).find(q => q.key === sh.cueKey); if (!cue || !st || st.rx == null) return {};
+  const a0 = Math.atan2(cue.vy, cue.vx); let s = '';
+  for (let i = 0; i < 12; i++) { const a = a0 + i * Math.PI / 6, x = st.rx + 3.5 * Math.cos(a), y = st.ry + 3.5 * Math.sin(a), e = x < 0 || y < 0 || x > A.P.L || y > A.P.W ? null : emptyAt(x, y); s += e === true ? '0' : e === false ? '1' : '-'; }
+  return { around: s, v0: r1(Math.hypot(cue.vx, cue.vy)) };
+}
+// New rack and End session settle the last shot's calls first (see finish in src/track.js): its line, and what went in late
+function flushShots() {
+  const tk = A.tk; if (!tk || !A.sess) return;
+  if (tk.S.shots.length > A.nShots) { for (const sh of tk.S.shots.slice(A.nShots)) onShotEnd(sh); A.nShots = tk.S.shots.length; }
+  for (const n of tk.S.notes.splice(0)) onLateMade(n);
+}
 function onShotEnd(sh) {
   sh.paths = pathsRow(sh); const row = shotRow(sh); A.sess.shots.push({ n: sh.n, cue: sh.cueNum, first: sh.firstNum, made: row.made, scratch: sh.scratch, break: sh.break, t: Date.now() });
   dbg('shot_end', { n: sh.n, made: row.made, scratch: sh.scratch, first: sh.firstNum });
@@ -634,7 +661,7 @@ $('#card').addEventListener('click', e => {
   else if (a === 'dbg') saveDebug(b); else if (a === 'useman') useManual();
 });
 $('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row"><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="dbg">Save debug</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
-$('#rackBtn').onclick = () => { if (!A.tk) return; A.tk.newRack(); PATH.clear(); dbg('new_rack', {}); toast('New rack. Names come once the break spreads the balls.'); };
+$('#rackBtn').onclick = () => { if (!A.tk) return; A.tk.newRack(); flushShots(); PATH.clear(); dbg('new_rack', {}); toast('New rack. Names come once the break spreads the balls.'); };
 let toastT = 0;
 function toast(t) { dbg('toast', { s: t }); const e = $('#toast'); e.textContent = t; e.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { e.hidden = true; }, 3500); }
 

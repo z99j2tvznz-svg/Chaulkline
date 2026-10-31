@@ -1732,6 +1732,7 @@ function makeTracker(P, opts) {
     stopDist: 0.8,
     stillHold: 0.5,     // s every ball must rest before a shot can start
     endHold: 1.2,       // s every ball must rest for the shot to be over
+    cueWait: 2,         // s more, at most, while something new may be the cue ball called in (see cueComing)
     gateRest: 1.6,      // in: a resting ball is looked for this close to where it was
     gateMove: 4,        // in around the predicted spot of a rolling ball, plus gateMoveK of its travel this look
     gateMoveK: 0.6,
@@ -2116,17 +2117,51 @@ function makeTracker(P, opts) {
         (wo == null || whiteOf(o) == null || Math.abs(whiteOf(o) - wo) <= O.cueVeto));
       if (sh && newcomer && t - sh.t1 < O.newcomerWait) continue;
       if (!sh || tr.num == null) { tr.state = 'dropped'; ev('cleared', { key: tr.key, num: tr.num }); continue; }
-      // which pocket: the one it was knocked toward, if one lies that way; else not known
-      let pocket = null;
-      if (tr.knock) { let best = 0.9; P.pockets.forEach((pk, i) => { const dx = pk.x - tr.x, dy = pk.y - tr.y, d = Math.hypot(dx, dy) || 1, c = (dx * tr.knock.ux + dy * tr.knock.uy) / d; if (c > best) { best = c; pocket = i; } }); }
-      // or the one pocket a ball was newly seen lying in since the shot started
-      if (pocket == null) { const ks = Object.keys(S.bagNew).filter(k => S.bagNew[k] >= sh.t0 && !sh.made.some(m => m.pocket === +k)); if (ks.length === 1) pocket = +ks[0]; }
-      tr.state = 'gone'; tr.goneT = t; const d = { key: tr.key, num: tr.num, sure: tr.sure, pocket, late: true };
-      if (tr.num !== 0 && !S.gone.includes(tr.num)) S.gone.push(tr.num); // the cue ball comes back (see pocketed)
-      sh.made.push(d); if (tr.key === sh.cueKey || tr.num === 0) sh.scratch = true; sh.updated = t;
-      ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
+      lateIn(tr, sh, t);
     }
     S.tracks = S.tracks.filter(tr => tr.state !== 'dropped');
+  }
+  // a ball found to have gone in after its shot ended
+  function lateIn(tr, sh, t, pocket) {
+    // which pocket: the one it was knocked toward, if one lies that way; else not known
+    if (pocket == null && tr.knock) { let best = 0.9; P.pockets.forEach((pk, i) => { const dx = pk.x - tr.x, dy = pk.y - tr.y, d = Math.hypot(dx, dy) || 1, c = (dx * tr.knock.ux + dy * tr.knock.uy) / d; if (c > best) { best = c; pocket = i; } }); }
+    // or the one pocket a ball was newly seen lying in since the shot started
+    if (pocket == null) { const ks = Object.keys(S.bagNew).filter(k => S.bagNew[k] >= sh.t0 && !sh.made.some(m => m.pocket === +k)); if (ks.length === 1) pocket = +ks[0]; }
+    tr.state = 'gone'; tr.goneT = t; const d = { key: tr.key, num: tr.num, sure: tr.sure, pocket, late: true };
+    if (tr.num !== 0 && !S.gone.includes(tr.num)) S.gone.push(tr.num); // the cue ball comes back (see pocketed)
+    sh.made.push(d); if (tr.key === sh.cueKey || tr.num === 0) sh.scratch = true; sh.updated = t;
+    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
+  }
+
+  // New rack or End session: the last shot's calls are settled now, not left waiting (Oct 30: the 9, the last ball of the
+  // rack, went in unseen and New rack came before it was called). A shot still on ends; a ball lost at a pocket, or one
+  // in play that went out of sight during the last shot, is in; a pocket entry nobody was followed into is counted now;
+  // and a number on the table before the last shot that no ball holds now went in, when the count of balls says so (one
+  // fewer for each, and no unnamed ball on the table that could be it).
+  function finish() {
+    const t = S.t;
+    if (S.shot) endShot(t);
+    if (S.shots.length <= S.rackAt) return;
+    const sh = S.shots[S.shots.length - 1];
+    for (const tr of ballsNow()) {
+      if (tr.num == null || tr.lostT == null || tr.lostT > sh.t1 || tr.lostT < sh.t0 - 0.6) continue;
+      if (tr.state === 'pending') lateIn(tr, sh, t, tr.pocket);
+      else if (tr.state === 'hidden' && (tr.vLost || tr.knock)) lateIn(tr, sh, t);
+    }
+    if (S.recon) { S.recon.t = 0; reconcile(t); }
+    // balls taken off or moved by hand since (racking): the count says nothing about the shot
+    if (S.events.some(e => (e.k === 'cleared' || e.k === 'hands') && e.t > sh.t1)) return;
+    const bs = ballsNow(), held = new Set(bs.filter(b => b.num != null).map(b => b.num)), done = new Set(sh.made.map(m => m.num));
+    const missing = [...new Set(sh.before.filter(b => b.num != null && b.num !== 0).map(b => b.num))].filter(n => !held.has(n) && !done.has(n) && !S.gone.includes(n));
+    const objBefore = sh.before.filter(b => b.num !== 0).length, objNow = bs.filter(b => b.num !== 0).length, objIn = sh.made.filter(m => m.num !== 0).length;
+    // a ball not named before it vanished: the numbers nobody holds and not yet in, when there are just as many (Oct 29:
+    // the 9, unnamed, the last ball of the rack, with 1 to 8 in)
+    const k = objBefore - objIn - objNow, unnamed = sh.before.filter(b => b.num == null).length;
+    const nums = missing.length ? missing : k <= unnamed ? O.ids.filter(n => n !== 0 && !held.has(n) && !done.has(n) && !S.gone.includes(n)) : [];
+    ev('finish', { n: sh.n, nums, objBefore, objNow, objIn });
+    if (!nums.length || bs.some(b => b.num == null) || nums.length !== k) return;
+    for (const num of nums) { const d = { key: null, num, sure: false, pocket: null, inferred: true }; sh.made.push(d); S.gone.push(num); ev('made_inferred', { n: sh.n, num, pocket: null }); S.notes.push({ n: sh.n, num, pocket: null }); }
+    sh.updated = t;
   }
 
   // Two balls can't be closer than 2.25 in, so a hidden ball under 1.5 in from a ball that sits there is not there: the
@@ -2254,9 +2289,19 @@ function makeTracker(P, opts) {
         const cue = S.tracks.find(tr => tr.key === sh.cueKey), went = moving.filter(tr => tr.key !== sh.cueKey && tr.movedT === t);
         if (cue && went.length) { const f = went.sort((a, b) => dist(a, cue) - dist(b, cue))[0]; sh.first = f.key; sh.firstNumAt = f.num; ev('first_hit', { key: f.key, num: f.num }); }
       }
-      if (!moving.length && !pend.length) { if (S.stillSince == null) S.stillSince = t; if (t - S.stillSince >= O.endHold) endShot(t); }
+      if (!moving.length && !pend.length) { if (S.stillSince == null) S.stillSince = t; if (t - S.stillSince >= O.endHold && !(t - S.stillSince < O.endHold + O.cueWait && cueComing(sh, t))) endShot(t); }
       else S.stillSince = null;
     }
+  }
+  // The cue ball called in, and something just seen that is not yet a named ball, white or not known, since it was lost:
+  // it may be the cue ball, found again away from the pocket; the shot waits for it to be named (Oct 30, 17:46: the cue
+  // ball lost by the side pocket turned up 10 in away and was confirmed a ball a third of a second after the shot ended,
+  // a scratch called). Named the cue ball, it takes back the call (see name).
+  function cueComing(sh, t) {
+    const cue = S.tracks.find(x => x.key === sh.cueKey); if (!cue || cue.state !== 'gone' || cue.lostT == null) return false;
+    const wc = whiteOf(cue);
+    return S.tracks.some(o => live(o) && o.state !== 'hidden' && (!o.ok || o.num == null) && t - o.seenT < 0.4 && o.firstT >= cue.lostT - 0.3 &&
+      (wc == null || whiteOf(o) == null || Math.abs(whiteOf(o) - wc) <= O.cueVeto));
   }
   function startShot(tr, t) {
     S.phase = 'shot'; S.stillSince = null;
@@ -2310,11 +2355,11 @@ function makeTracker(P, opts) {
   }
   function notBall(key) { const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.state = 'dropped'; tr.ok = false; ev('not_ball', { key, num: tr.num }); S.tracks = S.tracks.filter(x => x !== tr); name(); return true; }
   function inPocket(key) { const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.pocket = null; ev('tap_pocketed', { key, num: tr.num }); pocketed(tr); name(); return true; }
-  function newRack() { for (const tr of S.tracks) tr.state = 'dropped'; S.tracks = []; S.gone = []; S.rackAt = S.shots.length; S.phase = 'hands'; S.stillSince = null; S.shot = null; ev('new_rack', {}); }
+  function newRack() { finish(); for (const tr of S.tracks) tr.state = 'dropped'; S.tracks = []; S.gone = []; S.rackAt = S.shots.length; S.recon = null; S.phase = 'hands'; S.stillSince = null; S.shot = null; ev('new_rack', {}); }
 
   function setBags(b) { O.bags = b || []; }
   function touched() { S.touchT = S.t; }
-  return { S, O, update, pin, notBall, inPocket, newRack, setBags, touched, balls: ballsNow, snapshot };
+  return { S, O, update, pin, notBall, inPocket, newRack, finish, setBags, touched, balls: ballsNow, snapshot };
 }
 
 </script>
@@ -2323,7 +2368,7 @@ function makeTracker(P, opts) {
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.13';
+const VERSION = 'V3.0.14';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -2390,26 +2435,36 @@ function shotWords(s) {
   if (s.scratch) w.push('scratch'); if (s.break) w.unshift('Break:'); else if (s.first != null) w.push('first hit the ' + (s.first === 0 ? 'cue' : s.first));
   return w.join(' · ');
 }
-// The tracking test (owner, Oct 28): how far the reviewed sessions are toward the targets for moving on to V3.1. The
-// numbers come from data/v3-gate.json, which Claude updates after reviewing each session's debug file.
+// The tracking test (owner, Oct 28; goals revised with the owner Oct 31): how far the reviewed sessions are toward the
+// targets for moving on to V3.1. The numbers come from data/v3-gate.json, which Claude updates after reviewing each
+// session's debug file. Measured on one version only (the file's "measuring"), its latest 10 racks; sessions on earlier
+// versions are shown as a line, not counted.
 async function renderGate() {
   try {
-    const g = await (await fetch('data/v3-gate.json?' + Date.now(), { cache: 'no-store' })).json(), T = g.target, S = g.sessions || [];
-    const sum = k => S.reduce((a, s) => a + (s[k] || 0), 0), shots = sum('shots'), pct = (a, b) => b ? Math.round(100 * a / b) : 0;
-    const nSess = new Set(S.map(s => s.session || s.when)).size; // one session can have racks from two camera spots
-    const spots = new Set(S.map(s => s.spot)).size, per50 = n => shots ? (50 * n / shots).toFixed(1) : '0';
+    const g = await (await fetch('data/v3-gate.json?' + Date.now(), { cache: 'no-store' })).json(), T = g.target, ver = g.measuring || VERSION;
+    const all = (g.sessions || []).filter(s => s.app === ver), S = []; let rk = 0;
+    for (let i = all.length - 1; i >= 0 && rk < T.racks; i--) { S.unshift(all[i]); rk += all[i].racks || 0; }
+    const sum = k => S.reduce((a, s) => a + (s[k] || 0), 0), shots = sum('shots'), balls = sum('balls'), racks = sum('racks'), pct = (a, b) => b ? (Math.round(1000 * a / b) / 10) + '%' : '–';
+    const nSess = new Set(S.map(s => s.session || s.when)).size, spots = [...new Set(S.map(s => s.spot))];
+    const share = (k, n, need) => [pct(sum(k), n) + ' · need ' + Math.round(100 * need) + '%', n ? sum(k) / n / need : 0, n > 0 && sum(k) / n >= need];
+    // a count with a limit (at most v per k): the bar is full at none, half at the limit
+    const atMost = (n, per, lim, unit) => { const r = per ? n / per : 0; return [n + (per && n ? ' (' + (Math.round(10 * r * lim.k) / 10) + ')' : '') + ' · at most ' + lim.v + ' ' + unit, per ? 1 - Math.min(1, r * lim.k / lim.v / 2) : 0, per > 0 && r * lim.k <= lim.v]; };
     const rows = [
-      ['Racks', sum('racks') + ' of ' + T.racks, sum('racks') / T.racks, sum('racks') >= T.racks],
+      ['Racks', racks + ' of ' + T.racks, racks / T.racks, racks >= T.racks],
       ['Sessions', nSess + ' of ' + T.sessions, nSess / T.sessions, nSess >= T.sessions],
-      ['Camera spots', spots + ' of ' + T.spots + (spots ? ' (' + [...new Set(S.map(s => s.spot))].join(', ') + ')' : ''), spots / T.spots, spots >= T.spots],
-      ['Shots found', pct(sum('found'), shots) + '% of ' + shots + ' · need ' + Math.round(100 * T.found) + '%', shots ? sum('found') / shots : 0, shots > 0 && sum('found') / shots >= T.found],
-      ['What went in, called right', pct(sum('madeRight'), shots) + '% · need ' + Math.round(100 * T.madeRight) + '%', shots ? sum('madeRight') / shots : 0, shots > 0 && sum('madeRight') / shots >= T.madeRight],
-      ['False "in"', sum('falseIn') + ' (' + per50(sum('falseIn')) + ' per 50 shots) · at most ' + T.falseInPer50, shots ? 1 - Math.min(1, sum('falseIn') / Math.max(1, shots / 50 * T.falseInPer50)) : 0, shots > 0 && 50 * sum('falseIn') / shots <= T.falseInPer50],
-      ['False scratches', sum('falseScratch') + ' (' + per50(sum('falseScratch')) + ' per 50 shots) · at most ' + T.falseScratchPer50, shots ? 1 - Math.min(1, sum('falseScratch') / Math.max(1, shots / 50 * T.falseScratchPer50)) : 0, shots > 0 && 50 * sum('falseScratch') / shots <= T.falseScratchPer50],
-      ['Every ball named right after a shot', pct(sum('namesRight'), shots) + '% · need ' + Math.round(100 * T.namesRight) + '%', shots ? sum('namesRight') / shots : 0, shots > 0 && sum('namesRight') / shots >= T.namesRight]];
+      ['Camera spots', spots.length + ' of ' + T.spots + (spots.length ? ' (' + spots.join(', ') + ')' : ''), spots.length / T.spots, spots.length >= T.spots],
+      ['Shots found', ...share('found', shots, T.found)],
+      ['What went in, called right', ...share('madeRight', shots, T.madeRight)],
+      ['False "in"', ...atMost(sum('falseIn'), shots, { k: 50, v: T.falseInPer50 }, 'per 50 shots')],
+      ['False scratches', ...atMost(sum('falseScratch'), shots, { k: 50, v: T.falseScratchPer50 }, 'per 50 shots')],
+      ['Cue ball and lowest ball named right after a shot', ...share('keyRight', shots, T.keyRight)],
+      ['Balls named right', ...share('ballsRight', balls, T.ballsRight)],
+      ['A wrong number shown', ...atMost(sum('wrongNum'), balls, { k: 200, v: T.wrongPer200 }, 'in 200 balls')],
+      ['Counted as shots but not shots', ...atMost(sum('extraShots'), racks, { k: 1, v: T.extraPerRack }, 'per rack')]];
     $('#gateRows').innerHTML = rows.map(([l, v, f, ok]) => '<div class="grow' + (ok ? ' ok' : '') + '"><div class="gl"><span>' + l + '</span><span>' + v + '</span></div><div class="gb"><i style="width:' + Math.round(100 * Math.max(0, Math.min(1, f))) + '%"></i></div></div>').join('');
-    const met = rows.filter(r => r[3]).length, extra = sum('extraShots');
-    $('#gateNote').textContent = met + ' of ' + rows.length + ' met. ' + (extra ? 'Also counted as shots but not shots: ' + extra + '. ' : '') + 'From ' + nSess + ' reviewed session' + (nSess === 1 ? '' : 's') + ' (' + S.map(s => s.when + ', ' + s.app).join('; ') + '). Updated ' + g.updated + '.' + (g.notCounted && g.notCounted.length ? ' Not counted: ' + g.notCounted.map(n => n.when + ' (' + n.why + ')').join('; ') + '.' : '');
+    const met = rows.filter(r => r[3]).length, old = (g.sessions || []).filter(s => s.app !== ver), oShots = old.reduce((a, s) => a + s.shots, 0);
+    $('#gateNote').textContent = (S.length ? met + ' of ' + rows.length + ' met. Counting ' + ver + ' only, its latest ' + T.racks + ' racks: ' + S.map(s => s.when).join('; ') + '.' : 'No sessions on ' + ver + ' yet: it counts ' + ver + ' only, its latest ' + T.racks + ' racks.') +
+      (old.length ? ' Earlier versions (not counted): ' + old.reduce((a, s) => a + s.racks, 0) + ' racks, ' + oShots + ' shots, ' + pct(old.reduce((a, s) => a + s.madeRight, 0), oShots) + ' called right.' : '') + ' Updated ' + g.updated + '.';
     $('#gateCard').hidden = false;
   } catch (e) { $('#gateCard').hidden = true; }
 }
@@ -2488,6 +2543,7 @@ function endSession() { if (A.sess && A.sess.shots.length) { A.lastSess = A.sess
 // saved with the phone put down and the camera no longer watching (turning the phone upright to save used to count as a
 // shot and send the app looking for the table again)
 function endRun() {
+  if (A.tk) { A.tk.finish(); flushShots(); }
   dbg('end_session', { shots: A.tk ? A.tk.S.shots.length : 0 });
   A.live = false; A.phase = 'done'; dbgPersist(); endSession(); endCrumb();
   if (A.stream) A.stream.getTracks().forEach(t => { try { t.stop(); } catch (e) { } }); A.stream = null;
@@ -2659,7 +2715,23 @@ async function look() {
 // the reader's second choice and its share (from V3.0.11, so a replay can rebuild how sure the reader was: Oct 30, a replay
 // with every read made 90% sure scored 37 of 44 on a session that live got 42)
 function second(p, k) { let b = -1; for (let i = 0; i < 10; i++) if (i !== k && (b < 0 || p[i] > p[b])) b = i; return b < 0 ? null : [b, r2(p[b])]; }
-function onShotStart() { PATH.clear(); pathLook(); const sh = A.tk.S.shot; if (sh && A.stillPic) A.pics.set('shot' + String(sh.n).padStart(3, '0') + '-before.jpg', A.stillPic); dbg('shot_start', { n: sh && sh.n }); }
+function onShotStart() { PATH.clear(); pathLook(); const sh = A.tk.S.shot; if (sh && A.stillPic) A.pics.set('shot' + String(sh.n).padStart(3, '0') + '-before.jpg', A.stillPic); dbg('shot_start', Object.assign({ n: sh && sh.n }, sh ? aroundCue(sh) : {})); }
+// What is round the cue ball as a shot starts, for a rule on hands to come (owner, Oct 31: the cue ball rolled or pushed
+// by hand counts as a shot; a cue lies behind the ball on a real shot too, so the rule waits for this from real sessions):
+// 12 spots 3.5 in from where it rested, the first straight ahead of its roll, then round; 1 = not cloth (a hand, the cue,
+// a ball), 0 = cloth, - = not known. And how fast it set off. Logged only.
+function aroundCue(sh) {
+  const cue = A.tk.S.tracks.find(x => x.key === sh.cueKey), st = (sh.before || []).find(q => q.key === sh.cueKey); if (!cue || !st || st.rx == null) return {};
+  const a0 = Math.atan2(cue.vy, cue.vx); let s = '';
+  for (let i = 0; i < 12; i++) { const a = a0 + i * Math.PI / 6, x = st.rx + 3.5 * Math.cos(a), y = st.ry + 3.5 * Math.sin(a), e = x < 0 || y < 0 || x > A.P.L || y > A.P.W ? null : emptyAt(x, y); s += e === true ? '0' : e === false ? '1' : '-'; }
+  return { around: s, v0: r1(Math.hypot(cue.vx, cue.vy)) };
+}
+// New rack and End session settle the last shot's calls first (see finish in src/track.js): its line, and what went in late
+function flushShots() {
+  const tk = A.tk; if (!tk || !A.sess) return;
+  if (tk.S.shots.length > A.nShots) { for (const sh of tk.S.shots.slice(A.nShots)) onShotEnd(sh); A.nShots = tk.S.shots.length; }
+  for (const n of tk.S.notes.splice(0)) onLateMade(n);
+}
 function onShotEnd(sh) {
   sh.paths = pathsRow(sh); const row = shotRow(sh); A.sess.shots.push({ n: sh.n, cue: sh.cueNum, first: sh.firstNum, made: row.made, scratch: sh.scratch, break: sh.break, t: Date.now() });
   dbg('shot_end', { n: sh.n, made: row.made, scratch: sh.scratch, first: sh.firstNum });
@@ -2955,7 +3027,7 @@ $('#card').addEventListener('click', e => {
   else if (a === 'dbg') saveDebug(b); else if (a === 'useman') useManual();
 });
 $('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row"><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="dbg">Save debug</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
-$('#rackBtn').onclick = () => { if (!A.tk) return; A.tk.newRack(); PATH.clear(); dbg('new_rack', {}); toast('New rack. Names come once the break spreads the balls.'); };
+$('#rackBtn').onclick = () => { if (!A.tk) return; A.tk.newRack(); flushShots(); PATH.clear(); dbg('new_rack', {}); toast('New rack. Names come once the break spreads the balls.'); };
 let toastT = 0;
 function toast(t) { dbg('toast', { s: t }); const e = $('#toast'); e.textContent = t; e.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { e.hidden = true; }, 3500); }
 

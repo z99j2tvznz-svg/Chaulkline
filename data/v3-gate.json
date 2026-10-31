@@ -1,5 +1,5 @@
 {
-  "about": "Tracking test: what has to be true before V3.1 starts. Counted by Claude from each session's debug file, with the truth taken from the shot pictures. Live results of the app as it was in that session (not replays). Sessions from V3.0.6 on (Oct 28).",
+  "about": "Tracking test: what has to be true before V3.1 starts. Counted by Claude from each session's debug file, with the truth taken from the shot pictures and the names checked on the after pictures. Live results of the app as it was in that session (not replays). Goals revised with the owner on Oct 31: only sessions on the version being measured count, its latest 10 racks. keyRight: shots after which the cue ball and the lowest ball on the table were named right; balls / ballsRight: balls on the after pictures and how many were named right; wrongNum: balls shown with a wrong number (not a ?).",
   "updated": "2026-10-31",
   "target": {
     "racks": 10,
@@ -9,7 +9,10 @@
     "madeRight": 0.95,
     "falseInPer50": 1,
     "falseScratchPer50": 1,
-    "namesRight": 0.97
+    "keyRight": 0.97,
+    "ballsRight": 0.98,
+    "wrongPer200": 1,
+    "extraPerRack": 1
   },
   "sessions": [
     {
@@ -102,5 +105,6 @@
       "when": "Oct 30 17:46",
       "why": "rack 1's first 11 shots (no pictures kept), and racks 3 and 4: drills (balls on one line; the last one shot with the 8 instead of the cue ball)"
     }
-  ]
+  ],
+  "measuring": "V3.0.14"
 }

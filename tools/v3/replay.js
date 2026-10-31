@@ -4,10 +4,10 @@
 // usage: node tools/v3/replay.js <log.json> [--events]
 const fs = require('fs'), path = require('path');
 const { makeP } = require(path.join(__dirname, '../../src/core.js')), { makeTracker } = require(path.join(__dirname, '../../src/track.js'));
-// The player's actions during the session (New rack, taps) are applied at their times: a tap renames the ball nearest to
+// The player's actions during the session (New rack, End session, taps) are applied at their times: a tap renames the ball nearest to
 // where it was tapped, "Not a ball" and "It went in" go to the ball with the number the live app had on it.
 function actions(d) {
-  const ev = (d.events || []).filter(e => ['new_rack', 'tap', 'tap_not', 'tap_pocketed'].includes(e.k)), tev = (d.tracker || []).filter(e => e.k === 'not_ball' || e.k === 'tap_pocketed');
+  const ev = (d.events || []).filter(e => ['new_rack', 'end_session', 'tap', 'tap_not', 'tap_pocketed'].includes(e.k)), tev = (d.tracker || []).filter(e => e.k === 'not_ball' || e.k === 'tap_pocketed');
   let i = 0; return ev.map(e => (e.k === 'tap_not' || e.k === 'tap_pocketed') ? { ...e, num: (tev[i++] || {}).num } : e);
 }
 function replay(d, ft, opts, o2) {
@@ -19,6 +19,7 @@ function replay(d, ft, opts, o2) {
   }
   const apply = a => {
     if (a.k === 'new_rack') return tk.newRack();
+    if (a.k === 'end_session') return tk.finish(); // from V3.0.14 End session settles the last shot's calls
     tk.touched(); // a tap on the screen (the app tells the tracker on every touch)
     const bs = tk.S.tracks.filter(tr => tr.ok && tr.state !== 'gone' && tr.state !== 'dropped');
     if (a.k === 'tap') { let b = null, bd = 3; for (const tr of bs) { const q = Math.hypot(tr.x - a.at[0], tr.y - a.at[1]); if (q < bd) { bd = q; b = tr; } } if (b) tk.pin(b.key, a.num); return; }
