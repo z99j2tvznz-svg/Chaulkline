@@ -548,3 +548,11 @@ test('the owner\'s V3.0.15 session (Oct 31, 14:52, 5 racks, a new spot) replays 
   assert.strictEqual(rows.filter(x => x.found).length, 58); assert.ok(rows.filter(x => x.right).length >= 49, JSON.stringify(rows.filter(x => !x.right)));
 });
 
+test('the owner\'s V3.0.15 session (Oct 31, 15:10, 4 racks) replays close to live', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261031-1510.json'), 'utf8')));
+  // live: 49 of 59 real shots right. A shot the owner stood in front of was never seen; the 3 missed at 33 kept rack 3
+  // from finishing, and rack 4's balls stayed unnamed (the app had their numbers as already in)
+  assert.strictEqual(r.shots, 58); assert.ok(r.right >= 48, JSON.stringify(r.rows.filter(x => !x.right)));
+});
+

@@ -954,3 +954,11 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   "newcomer" holding the ghost rule), and the ghost was called in. Also a missed scratch (38) and an unknown ball
   called in with the 9 (35). Names right after 75 of 78 shots; 435 of 439 balls; no wrong number; one hand move
   counted. The log keeps the latest 4000 looks, which here cut rack 1's first 98 s.
+- Owner's V3.0.15 session (Oct 31, 15:10; 4 racks, same spot): live 49 of 59 real shots right. Rack 1: the owner stood
+  between camera and table for a shot; the cue ball and the 3 were never seen moving, only gone, so with no shot
+  since they were cleared as taken off by hand and the 3 was never called. Rack 3: the 3 went in with a scratch while
+  the owner blocked the view (33); its ghost kept the rack from finishing, so New rack never came and in rack 4 the
+  app had 1, 2 and 4 to 9 as already in: the new balls stayed "??", their pots were called as unknown balls or missed,
+  and the 9 at the end was called a scratch. Racks 1 to 3 otherwise all right; names right after 46 of 58 shots (all
+  12 misses in rack 4); 238 of 288 balls. Three hand moves counted (rack 2 set out, the cue ball pushed into place,
+  rack 4 set out).
