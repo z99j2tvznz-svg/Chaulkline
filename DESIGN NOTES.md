@@ -945,3 +945,12 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   on; 5 in the Oct 27 recordings (V3.0.3, V3.0.4), all with nothing in, where the old detections lost the struck balls
   so the cue ball looked alone or not first. Replays skip the app's own New rack (the tracker does it again).
 - The tracking card measures V3.0.15 from now (Oct 30 23:17 moves to the earlier line).
+- Owner's V3.0.15 session (Oct 31, 14:52; 5 racks of 9-ball, a new spot closer to the table, daylight): live 71 of 78
+  real shots right; Rack complete came by itself after all 5 racks. The errors are mostly one pattern: a ball lost
+  for a moment at a pocket mouth is "pocketed" after 1 s (pocketWait) and, when it is seen again right there (the 9
+  stopped in the jaws, shot 48; the 9 stopped against the cue ball, shot 78), it comes back as a new unnamed ball,
+  so it is called in a shot early and missed when it really goes. The false scratch (59) is the same thing for the
+  cue ball: its old track went hidden, the ball was seen again 1.5 in away as a new track not yet confirmed (so not a
+  "newcomer" holding the ghost rule), and the ghost was called in. Also a missed scratch (38) and an unknown ball
+  called in with the 9 (35). Names right after 75 of 78 shots; 435 of 439 balls; no wrong number; one hand move
+  counted. The log keeps the latest 4000 looks, which here cut rack 1's first 98 s.

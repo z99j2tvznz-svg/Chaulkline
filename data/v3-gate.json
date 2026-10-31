@@ -111,6 +111,22 @@
       "ballsRight": 181,
       "wrongNum": 0,
       "extraShots": 4
+    },
+    {
+      "when": "Oct 31 14:52",
+      "app": "V3.0.15",
+      "spot": "side",
+      "racks": 5,
+      "shots": 78,
+      "found": 78,
+      "madeRight": 71,
+      "falseIn": 3,
+      "falseScratch": 1,
+      "keyRight": 75,
+      "balls": 439,
+      "ballsRight": 435,
+      "wrongNum": 0,
+      "extraShots": 1
     }
   ],
   "notCounted": [

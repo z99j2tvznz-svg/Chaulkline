@@ -538,3 +538,13 @@ test('after New rack the cue ball rolled into place alone is not a shot; the fir
   settle(tk, t, [{ num: 0, x: 57, y: 10.5 }, { num: 3, x: 72, y: 7 }, balls[1]], 3);
   assert.strictEqual(tk.S.shots.length, 1); assert.strictEqual(tk.S.setup, false);
 });
+
+test('the owner\'s V3.0.15 session (Oct 31, 14:52, 5 racks, a new spot) replays close to live on racks 2 to 5', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261031-1452.json'), 'utf8')));
+  // the log keeps the latest 4000 looks: rack 1's first 98 s are not in it, so the replay starts mid-rack; from rack 2
+  // (273 s) live had 51 of 58 right (the 9 in the jaws called a shot early twice, a false scratch, a missed scratch)
+  const rows = r.rows.filter(x => x.when > 273);
+  assert.strictEqual(rows.filter(x => x.found).length, 58); assert.ok(rows.filter(x => x.right).length >= 49, JSON.stringify(rows.filter(x => !x.right)));
+});
+
