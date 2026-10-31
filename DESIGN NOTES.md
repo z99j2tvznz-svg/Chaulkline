@@ -928,3 +928,20 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   to move was not the cue ball, which sat named and still elsewhere: a rule on that (cueFirst, not built: with the cue
   ball seen on that look and not touching the mover) takes 8 of the 23 such moves off across all sessions and loses 2
   real shots, both nothing-made shots in the Oct 27 22:27 (V3.0.3) replay.
+
+## V3.0.15 (Oct 31) — the rack done by itself; a shot starts with the cue ball (owner's ideas)
+- Rack complete: once a rack has had a shot and only the cue ball is left (named, not hidden), still for 2 s (rackHold),
+  the tracker does New rack itself (rack_done) and the app says "Rack complete" (for testing; later quietly). In the
+  replays it comes 4 to 8 s before every New rack the owner pressed, or at the end of a session, never mid-rack; a
+  hidden or unnamed ball still on the table holds it back (twice), and the button stays (a 9 made early). A press of
+  New rack with no shot since is logged dup and not counted as a rack; the summary counts racks with a shot.
+- A shot starts with the cue ball (cueFirst): a first mover that is not the cue ball, with the cue ball named and still
+  elsewhere, seen that very look and not touching the mover's spot (a frozen cue ball moves the object ball first:
+  Oct 30 23:17 shot 12), is a hand. The app says "Not counted: hand move".
+- Till a rack's first real shot (after New rack, and at the start), the cue ball rolling on its own with nothing else
+  changed (no other ball moved, went out of sight, was dropped or replaced, or newly turned up) and nothing in is the
+  cue ball put in place by hand (setupDrop, not_shot).
+- All sessions replayed: shots counted that were not 23 -> 10; Oct 30 23:17 4 -> 0. Real shots lost: none from Oct 28
+  on; 5 in the Oct 27 recordings (V3.0.3, V3.0.4), all with nothing in, where the old detections lost the struck balls
+  so the cue ball looked alone or not first. Replays skip the app's own New rack (the tracker does it again).
+- The tracking card measures V3.0.15 from now (Oct 30 23:17 moves to the earlier line).

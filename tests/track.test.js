@@ -155,6 +155,7 @@ test('the cue ball lost at a pocket and found again away from it as the shot end
 
 test('a rolling ball lost in the middle of the table is hidden, never pocketed', () => {
   const tk = makeTracker(P), others = [{ num: 4, x: 60, y: 30 }];
+  tk.S.setup = false; // a rack under way (its first shot made): the cue ball rolling on its own is a shot
   let t = settle(tk, 0, [{ num: 0, x: 10, y: 20 }, ...others]);
   for (let i = 1; i <= 5; i++) { look(tk, t, [{ num: 0, x: 10 + i * 5, y: 20, moving: true }, ...others], false); t += 0.1; }
   t = settle(tk, t, others, 2.5); // the cue ball vanished at (35, 20), behind the player
@@ -216,6 +217,7 @@ test('at the phone\'s look rate (0.23 s) a shot ends soon after the balls stop',
 
 test('a ball lost for a moment at a pocket and seen again is rolling, not "going in": the shot ends, no false pocket', () => {
   const tk = makeTracker(P), others = [{ num: 4, x: 40, y: 30 }];
+  tk.S.setup = false; // a rack under way (its first shot made): the cue ball rolling on its own is a shot
   let t = settle(tk, 0, [{ num: 0, x: 60, y: 8 }, ...others], 3, 0.23);
   // the cue ball rolls toward the bottom-right corner, vanishes twice near it, and stops 5 in short of the pocket
   const path = [[64, 6], [68, 4.5], null, [71, 3.5], null, [72, 3.2], [72.3, 3.1], [72.3, 3.1], [72.3, 3.1], [72.3, 3.1]];
@@ -329,6 +331,7 @@ test('New rack settles the last shot: the 9 knocked out of sight in it, never se
 
 test('New rack after balls were picked up by hand: they are not called in', () => {
   const tk = makeTracker(P), cue = { num: 0, x: 20, y: 20 }, still = [{ num: 3, x: 60, y: 10 }, { num: 6, x: 65, y: 30 }];
+  tk.S.setup = false; // a rack under way (its first shot made): the cue ball rolling on its own is a shot
   let t = settle(tk, 0, [{ ...cue, x: 30 }, ...still]);
   for (const x of [34, 39, 44, 48]) { look(tk, t, [{ ...cue, x, moving: true }, ...still], false); t += 0.1; }
   t = settle(tk, t, [{ ...cue, x: 48 }, ...still], 3);
@@ -359,11 +362,13 @@ test('a ball seen lying in a far pocket is not a ball on the table: the ball tha
   assert.ok(!tk.S.events.some(e => e.k === 'back'), 'no "back"'); assert.ok(!tk.balls().some(b => b.num === 7));
 });
 
-test('the owner\'s V3.0.3 session (Oct 27, 22:27) replayed with the cloth check on its pictures: 39 of 41 shots right, nothing called in that was not', () => {
+test('the owner\'s V3.0.3 session (Oct 27, 22:27) replayed with the cloth check on its pictures: 36 of 41 shots right, nothing called in that was not', () => {
   const { score } = require('../tools/v3/score.js');
   const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261027-2227.json'), 'utf8')));
-  // live V3.0.3: 28 of these 41 right, 13 balls in missed, 1 false scratch
-  assert.strictEqual(r.shots, 41); assert.ok(r.right >= 39, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
+  // live V3.0.3: 28 of these 41 right, 13 balls in missed, 1 false scratch. From V3.0.15 (a shot starts with the cue ball;
+  // till a rack's first real shot the cue ball rolling alone is a hand) 4 real shots with nothing in are not counted here:
+  // the old detections lost the struck balls, so the cue ball looked alone. No later session loses one.
+  assert.ok(r.shots >= 37); assert.ok(r.right >= 36, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
 });
 
 test('a ball knocked across the table and found again unnamed is not called in by the ghost rule (Oct 27: the 3 in a scratch shot)', () => {
@@ -376,10 +381,11 @@ test('a ball knocked across the table and found again unnamed is not called in b
   assert.ok(!tk.S.shots[0].made.some(m => m.num === 3), 'the 3 was called in: ' + JSON.stringify(tk.S.events.filter(e => e.k !== 'named').slice(-8)));
 });
 
-test('the owner\'s V3.0.4 session (Oct 27, 23:38) replayed: all 31 real shots right, and the cue ball is named again by itself after every scratch', () => {
+test('the owner\'s V3.0.4 session (Oct 27, 23:38) replayed: 30 of 31 real shots right, and the cue ball is named again by itself after every scratch', () => {
   const { score } = require('../tools/v3/score.js'), { replay } = require('../tools/v3/replay.js');
   const d = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261027-2338.json'), 'utf8'));
-  const r = score(d); assert.ok(r.right >= 31, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
+  // (30 from V3.0.15: the first shot, nothing in, looks like the cue ball rolling alone in these old detections)
+  const r = score(d); assert.ok(r.right >= 30, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
   // without the owner's taps: after each real scratch the cue ball put back gets its name from the reader (live V3.0.4
   // left it "?" for the rest of the rack)
   const tk = replay(d, null, null, { noActions: true }), E = tk.S.events;
@@ -407,6 +413,7 @@ test('a hard hit: the cue ball, unseen behind the cue, reaches the 8 before the 
 
 test('a ball hit hard off a cushion is still the same ball: the prediction comes back off the cushion', () => {
   const tk = makeTracker(P);
+  tk.S.setup = false; // a rack under way (its first shot made): the cue ball rolling on its own is a shot
   let t = settleE(tk, 0, [{ num: 0, x: 30, y: 20 }, { num: 4, x: 60, y: 30 }], 3, 0.25, () => true);
   // the cue ball at 55 in/s straight at the near cushion and back up (reads off: blurred), the 4 still
   const path = [[30, 20], [30, 6.3], [30, 9.8], [30, 23.5], [30, 33], [30, 35.5], [30, 36], [30, 36], [30, 36], [30, 36]];
@@ -485,4 +492,49 @@ test('the owner\'s V3.0.14 session (Oct 30, 23:17, 3 racks sideways) replays as 
   // live V3.0.14: all 35 real shots right (four hand moves counted as shots). The replay has the cloth check only on the
   // shot pictures, so the 5 left on the top rail (called in live 40 s later) is not called: 34
   assert.strictEqual(r.shots, 35); assert.ok(r.right >= 34, JSON.stringify(r.rows.filter(x => !x.right))); assert.strictEqual(r.falsePots, 0);
+});
+
+// ---- V3.0.15 (owner, Oct 31): the rack is done when only the cue ball is left; a shot starts with the cue ball ----
+test('only the cue ball left after a shot: the rack is done by itself, and the last ball is in', () => {
+  const tk = makeTracker(P);
+  let t = settle(tk, 0, [{ num: 0, x: 30, y: 20 }, { num: 9, x: 72, y: 36.5 }]);
+  tk.S.setup = false; // the rack under way
+  // the cue ball up to the 9 by the top-right corner (78, 39) and stopped; the 9 drops
+  for (const x of [36, 44, 52, 58, 62]) { look(tk, t, [{ num: 0, x, y: 20 + (x - 30) * 0.4, moving: true }, { num: 9, x: 72, y: 36.5 }], false); t += 0.1; }
+  for (const f of [0.4, 0.8]) { look(tk, t, [{ num: 0, x: 62, y: 32.8 }, { num: 9, x: 72 + 5 * f, y: 36.5 + 2 * f, moving: true }], false); t += 0.1; }
+  t = settle(tk, t, [{ num: 0, x: 62, y: 32.8 }], 6);
+  assert.strictEqual(tk.S.shots.length, 1); assert.deepStrictEqual(tk.S.shots[0].made.map(m => m.num), [9]);
+  assert.ok(tk.S.events.some(e => e.k === 'rack_done'), 'rack done'); assert.strictEqual(tk.S.rackAt, 1); assert.strictEqual(tk.S.setup, true);
+  assert.ok(tk.S.say.some(s => s.k === 'rack_done'));
+});
+
+test('an object ball moved by hand while the cue ball sits still elsewhere is not a shot (Oct 30, 23:17: rack 2 set out)', () => {
+  const tk = makeTracker(P), cue = { num: 0, x: 60, y: 28 };
+  let t = settle(tk, 0, [cue, { num: 7, x: 10, y: 7 }, { num: 2, x: 40, y: 10 }]);
+  tk.S.setup = false;
+  for (let i = 1; i <= 6; i++) { look(tk, t, [cue, { num: 7, x: 10 + 2.5 * i, y: 7, moving: true }, { num: 2, x: 40, y: 10 }], false); t += 0.1; }
+  settle(tk, t, [cue, { num: 7, x: 25, y: 7 }, { num: 2, x: 40, y: 10 }], 3);
+  assert.strictEqual(tk.S.shots.length, 0); assert.ok(tk.S.events.some(e => e.k === 'hands' && e.notCue != null));
+});
+
+test('a frozen cue ball: the object ball moves first, still a shot (Oct 30, 23:17, shot 12)', () => {
+  const tk = makeTracker(P);
+  let t = settle(tk, 0, [{ num: 0, x: 53.9, y: 31.5 }, { num: 7, x: 51.5, y: 30.8 }, { num: 2, x: 20, y: 10 }]);
+  tk.S.setup = false;
+  for (let i = 1; i <= 6; i++) { look(tk, t, [{ num: 0, x: 53.9 - 0.3 * i, y: 31.5 }, { num: 7, x: 51.5 - 4 * i, y: 30.8 - i, moving: true }, { num: 2, x: 20, y: 10 }], false); t += 0.1; }
+  settle(tk, t, [{ num: 0, x: 52.1, y: 31.5 }, { num: 7, x: 27.5, y: 24.8 }, { num: 2, x: 20, y: 10 }], 3);
+  assert.strictEqual(tk.S.shots.length, 1);
+});
+
+test('after New rack the cue ball rolled into place alone is not a shot; the first real shot is', () => {
+  const tk = makeTracker(P), balls = [{ num: 3, x: 60, y: 10 }, { num: 6, x: 65, y: 30 }];
+  let t = settle(tk, 0, [{ num: 0, x: 20, y: 20 }, ...balls]);
+  for (const x of [23, 27, 31, 34, 36]) { look(tk, t, [{ num: 0, x, y: 20, moving: true }, ...balls], false); t += 0.1; }
+  t = settle(tk, t, [{ num: 0, x: 36, y: 20 }, ...balls], 3);
+  assert.strictEqual(tk.S.shots.length, 0); assert.ok(tk.S.events.some(e => e.k === 'not_shot'));
+  // now the cue ball into the 3
+  for (const x of [40, 46, 52, 57]) { look(tk, t, [{ num: 0, x, y: 20 - (x - 36) * 0.45, moving: true }, ...balls], false); t += 0.1; }
+  for (const k of [1, 2, 3]) { look(tk, t, [{ num: 0, x: 57, y: 10.5 }, { num: 3, x: 60 + 4 * k, y: 10 - k, moving: true }, balls[1]], false); t += 0.1; }
+  settle(tk, t, [{ num: 0, x: 57, y: 10.5 }, { num: 3, x: 72, y: 7 }, balls[1]], 3);
+  assert.strictEqual(tk.S.shots.length, 1); assert.strictEqual(tk.S.setup, false);
 });

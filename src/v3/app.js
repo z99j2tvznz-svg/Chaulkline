@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.0.14';
+const VERSION = 'V3.0.15';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -187,7 +187,8 @@ function endRun() {
 function renderSummary() {
   const sh = (A.sess && A.sess.shots) || [], mins = Math.max(1, Math.round((Date.now() - DBG.t0) / 60000));
   const made = sh.reduce((a, s) => a + s.made.filter(m => m.num !== 0 && m.num !== s.cue).length, 0), scr = sh.filter(s => s.scratch).length;
-  const racks = 1 + DBG.ev.filter(e => e.k === 'new_rack').length;
+  // racks with at least one shot: a rack done by itself at the end, or New rack pressed twice, is not another
+  const racks = 1 + DBG.ev.filter(e => e.k === 'new_rack' && !e.dup && DBG.ev.some(q => q.k === 'shot_end' && q.t > e.t)).length;
   $('#sumSub').textContent = mins + ' min · ' + A.ft + ' ft table · ' + racks + ' rack' + (racks > 1 ? 's' : '') + ' · ' + VERSION;
   $('#sumStats').innerHTML = [[sh.length, 'shots'], [made, 'balls in'], [sh.filter(s => !s.scratch && !s.made.some(m => m.num !== 0)).length, 'nothing in'], [scr, 'scratches']].map(([n, l]) => '<div><b>' + n + '</b><span>' + l + '</span></div>').join('');
   $('#sumList').innerHTML = sh.length ? sh.map(s => '<div class="srow"><b>' + s.n + '</b><span>' + shotWords(s) + '</span></div>').join('') : '<div class="lbl">No shots.</div>';
@@ -341,6 +342,7 @@ async function look() {
   A.timing.push(t1 - t0); if (A.timing.length > 30) A.timing.shift();
   if (before !== 'shot' && tk.S.phase === 'shot') onShotStart();
   if (tk.S.shots.length > A.nShots) { for (const sh of tk.S.shots.slice(A.nShots)) onShotEnd(sh); A.nShots = tk.S.shots.length; }
+  for (const s of tk.S.say.splice(0)) onSay(s);
   // a picture of the still table every 1.5 s, kept as the "before" of the next shot
   if (tk.S.phase !== 'shot' && performance.now() - (A.colT || 0) > 1000) { A.colT = performance.now(); ballColours(); }
   if (tk.S.phase === 'still' && performance.now() - A.stillPicT > 1500) { A.stillPicT = performance.now(); jpeg(960).then(b => { A.stillPic = b; }).catch(() => { }); }
@@ -349,6 +351,11 @@ async function look() {
 // the reader's second choice and its share (from V3.0.11, so a replay can rebuild how sure the reader was: Oct 30, a replay
 // with every read made 90% sure scored 37 of 44 on a session that live got 42)
 function second(p, k) { let b = -1; for (let i = 0; i < 10; i++) if (i !== k && (b < 0 || p[i] > p[b])) b = i; return b < 0 ? null : [b, r2(p[b])]; }
+// The tracker's word on racks and hand moves (V3.0.15, owner Oct 31: for testing, said on screen; later done quietly)
+function onSay(s) {
+  if (s.k === 'rack_done') { flushShots(); PATH.clear(); dbg('new_rack', { auto: true }); toast('Rack complete'); }
+  else if (s.k === 'not_shot') { PATH.clear(); dbg('not_shot', { num: s.num }); toast('Not counted: hand move'); }
+}
 function onShotStart() { PATH.clear(); pathLook(); const sh = A.tk.S.shot; if (sh && A.stillPic) A.pics.set('shot' + String(sh.n).padStart(3, '0') + '-before.jpg', A.stillPic); dbg('shot_start', Object.assign({ n: sh && sh.n }, sh ? aroundCue(sh) : {})); }
 // What is round the cue ball as a shot starts, for a rule on hands to come (owner, Oct 31: the cue ball rolled or pushed
 // by hand counts as a shot; a cue lies behind the ball on a real shot too, so the rule waits for this from real sessions):
@@ -661,7 +668,8 @@ $('#card').addEventListener('click', e => {
   else if (a === 'dbg') saveDebug(b); else if (a === 'useman') useManual();
 });
 $('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row"><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="dbg">Save debug</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
-$('#rackBtn').onclick = () => { if (!A.tk) return; A.tk.newRack(); flushShots(); PATH.clear(); dbg('new_rack', {}); toast('New rack. Names come once the break spreads the balls.'); };
+// (pressed again after the rack was done by itself, or twice: no shot since, so it is not another rack)
+$('#rackBtn').onclick = () => { if (!A.tk) return; const dup = A.tk.S.setup && A.tk.S.shots.length === A.tk.S.rackAt; A.tk.newRack(); flushShots(); PATH.clear(); dbg('new_rack', dup ? { dup: true } : {}); toast('New rack. Names come once the break spreads the balls.'); };
 let toastT = 0;
 function toast(t) { dbg('toast', { s: t }); const e = $('#toast'); e.textContent = t; e.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { e.hidden = true; }, 3500); }
 

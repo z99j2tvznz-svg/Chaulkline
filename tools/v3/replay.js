@@ -7,7 +7,8 @@ const { makeP } = require(path.join(__dirname, '../../src/core.js')), { makeTrac
 // The player's actions during the session (New rack, End session, taps) are applied at their times: a tap renames the ball nearest to
 // where it was tapped, "Not a ball" and "It went in" go to the ball with the number the live app had on it.
 function actions(d) {
-  const ev = (d.events || []).filter(e => ['new_rack', 'end_session', 'tap', 'tap_not', 'tap_pocketed'].includes(e.k)), tev = (d.tracker || []).filter(e => e.k === 'not_ball' || e.k === 'tap_pocketed');
+  // (a New rack the app did by itself, V3.0.15 on, is done by the tracker in the replay too)
+  const ev = (d.events || []).filter(e => ['new_rack', 'end_session', 'tap', 'tap_not', 'tap_pocketed'].includes(e.k) && !(e.k === 'new_rack' && e.auto)), tev = (d.tracker || []).filter(e => e.k === 'not_ball' || e.k === 'tap_pocketed');
   let i = 0; return ev.map(e => (e.k === 'tap_not' || e.k === 'tap_pocketed') ? { ...e, num: (tev[i++] || {}).num } : e);
 }
 function replay(d, ft, opts, o2) {

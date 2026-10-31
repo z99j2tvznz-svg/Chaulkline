@@ -23,6 +23,10 @@ function makeTracker(P, opts) {
     stopDist: 0.8,
     stillHold: 0.5,     // s every ball must rest before a shot can start
     endHold: 1.2,       // s every ball must rest for the shot to be over
+    cueFirst: true,     // a shot starts with the cue ball: a first mover that is not, with the cue ball still elsewhere, is a hand
+    setupDrop: true,    // till a rack's first real shot, the cue ball rolling on its own (nothing else moved, nothing in) is a hand
+    autoRack: true,     // only the cue ball left, still for rackHold s after a shot: the rack is done (see phase)
+    rackHold: 2,
     cueWait: 2,         // s more, at most, while something new may be the cue ball called in (see cueComing)
     gateRest: 1.6,      // in: a resting ball is looked for this close to where it was
     gateMove: 4,        // in around the predicted spot of a rolling ball, plus gateMoveK of its travel this look
@@ -62,7 +66,7 @@ function makeTracker(P, opts) {
   }, opts || {});
   const R = P.R, L = P.L, W = P.W, EPS = 1e-4;
   let keyN = 0;
-  const S = { t: 0, tracks: [], phase: 'still', stillSince: null, shot: null, shots: [], gone: [], events: [], lastNames: '', bagT: {}, bagNew: {}, notes: [], touchT: -9, rackAt: 0 }; // notes: made balls found after their shot ended, for the app to tell
+  const S = { t: 0, tracks: [], phase: 'still', stillSince: null, shot: null, shots: [], gone: [], events: [], lastNames: '', bagT: {}, bagNew: {}, notes: [], say: [], touchT: -9, rackAt: 0, setup: true }; // notes: made balls found after their shot ended, for the app to tell; say: rack done / not a shot, for the app
   const ev = (k, d) => { const e = Object.assign({ t: +S.t.toFixed(2), k }, d); S.events.push(e); if (S.events.length > 3000) S.events.splice(0, 300); return e; };
   const live = tr => tr.state !== 'gone' && tr.state !== 'dropped';
   const ballsNow = () => S.tracks.filter(tr => tr.ok && live(tr));
@@ -556,6 +560,11 @@ function makeTracker(P, opts) {
   // ---- shots ----
   function phase(t) {
     reconcile(t);
+    // the rack is done when only the cue ball is left (owner, Oct 31): New rack by itself, a few seconds before the owner
+    // would press it (every rack end in the recordings). A hidden or unnamed ball still on the table holds it back, and
+    // the button stays for the rest (a 9 made early in 9-ball)
+    if (O.autoRack && S.phase === 'still' && !S.setup && !S.recon && S.shots.length > S.rackAt && S.stillSince != null && t - S.stillSince >= O.rackHold &&
+      ballsNow().every(b => b.num === 0 && b.sure && b.state !== 'hidden')) { ev('rack_done', { n: S.shots.length }); S.say.push({ k: 'rack_done' }); newRack(); return; }
     const balls = ballsNow(), moving = balls.filter(tr => tr.state === 'moving'), pend = balls.filter(tr => tr.state === 'pending');
     if (S.phase === 'still' || S.phase === 'hands') {
       if (!moving.length && !pend.length) { if (S.stillSince == null) S.stillSince = t; if (S.phase === 'hands' && t - S.stillSince >= O.stillHold) { S.phase = 'still'; ev('still', {}); } }
@@ -569,7 +578,11 @@ function makeTracker(P, opts) {
         if (armed && fresh.length >= 1 && fresh.length < O.rackCount && fresh.length === moving.length && Math.max(...fresh.map(speed)) >= O.shotSpeed) {
           const cueOf = tr => tr.pin === 0 ? 9 : tr.nVotes ? tr.votes[O.ids.indexOf(0)] / tr.nVotes : -9;
           const cue = fresh.length === 1 ? fresh[0] : fresh.slice().sort((a, b) => (cueOf(b) - cueOf(a)) || (Math.hypot(b.x - b.restX, b.y - b.restY) - Math.hypot(a.x - a.restX, a.y - a.restY)))[0];
-          startShot(cue, t); if (fresh.length === 2) { S.shot.first = fresh.find(tr => tr !== cue).key; }
+          // the cue ball named and sitting still elsewhere: a ball moved by hand, not a shot (Oct 30, 23:17: balls set out and
+          // spread with the cue shaft for the next rack were counted as shots; a shot always starts with the cue ball)
+          const q0 = O.cueFirst && cue.pin !== 0 && !(cue.num === 0 && cue.sure) && balls.find(b => b !== cue && b.num === 0 && b.sure && b.state === 'rest' && b.seenT === t && dist(b, cue) > 2 * R + 1.5 && Math.hypot(b.restX - cue.restX, b.restY - cue.restY) > 2 * R + 1.5);
+          if (q0) { S.phase = 'hands'; ev('hands', { n: moving.length, armed, notCue: cue.key }); S.say.push({ k: 'not_shot', num: cue.num }); }
+          else { startShot(cue, t); if (fresh.length === 2) { S.shot.first = fresh.find(tr => tr !== cue).key; } }
         } else { S.phase = 'hands'; ev('hands', { n: moving.length, armed }); }
         S.stillSince = null;
       } else S.stillSince = null;
@@ -611,6 +624,14 @@ function makeTracker(P, opts) {
       if (near.d <= O.jawZone || (b.knock && near.d <= O.pocketZone)) { b.state = 'pending'; b.pocket = near.i; ev('lost_at_pocket', { key: b.key, num: b.num, pocket: near.i }); }
     }
   }
+  // anything but the cue ball changed in a shot: a ball on the table before it moved, went out of sight, or is gone
+  // (its track dropped or replaced); something not yet confirmed a ball moved; or a new one turned up (Oct 27 replays:
+  // struck balls found again as new tracks, rack balls not yet confirmed when the first shot came)
+  function othersChanged(sh) {
+    const was = sh.before.filter(b => b.key !== sh.cueKey);
+    if (was.some(b => { const tr = S.tracks.find(x => x.key === b.key); return !tr || !live(tr) || tr.state !== 'rest' || tr.movedT >= sh.t0 || tr.lostT >= sh.t0 || Math.hypot(tr.x - b.rx, tr.y - b.ry) > O.moveDist; })) return true;
+    return S.tracks.some(o => o.key !== sh.cueKey && (o.movedT >= sh.t0 || o.lostT >= sh.t0 || (live(o) && o.firstT >= sh.t0 && o.seen >= 2)));
+  }
   function endShot(t) {
     const sh = S.shot; sh.t1 = t; sh.after = snapshot();
     const keyNum = k => { const tr = S.tracks.find(x => x.key === k); return tr ? tr.num : null; };
@@ -628,6 +649,12 @@ function makeTracker(P, opts) {
       for (let i = 0; i < tr.votes.length; i++) tr.votes[i] *= O.reread; tr.nVotes *= O.reread;
       if (tr.pin != null) { const id = tr.pin; tr.pin = null; voteFor(tr, id, 4); }
     }
+    // till the rack's first real shot (after New rack, and at the start): the cue ball rolled on its own, nothing else moved
+    // or went out of sight and nothing went in, is the cue ball put in place by hand (Oct 30, 23:17: before rack 1)
+    if (O.setupDrop && S.setup && !sh.made.length && !sh.anon.length && !othersChanged(sh)) {
+      S.shot = null; S.phase = 'still'; S.stillSince = t; ev('not_shot', { t0: sh.t0 }); S.say.push({ k: 'not_shot', num: 0 }); return null;
+    }
+    S.setup = false;
     S.shots.push(sh); S.shot = null; S.phase = 'still'; S.stillSince = t;
     if (sh.anon.length) S.recon = { sh, t: t + O.reconWait };
     ev('shot_end', { n: sh.n, made: sh.made.map(m => m.num), scratch: sh.scratch, first: sh.firstNum, hidden: sh.hidden });
@@ -646,7 +673,7 @@ function makeTracker(P, opts) {
   }
   function notBall(key) { const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.state = 'dropped'; tr.ok = false; ev('not_ball', { key, num: tr.num }); S.tracks = S.tracks.filter(x => x !== tr); name(); return true; }
   function inPocket(key) { const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.pocket = null; ev('tap_pocketed', { key, num: tr.num }); pocketed(tr); name(); return true; }
-  function newRack() { finish(); for (const tr of S.tracks) tr.state = 'dropped'; S.tracks = []; S.gone = []; S.rackAt = S.shots.length; S.recon = null; S.phase = 'hands'; S.stillSince = null; S.shot = null; ev('new_rack', {}); }
+  function newRack() { finish(); for (const tr of S.tracks) tr.state = 'dropped'; S.tracks = []; S.gone = []; S.rackAt = S.shots.length; S.recon = null; S.setup = true; S.phase = 'hands'; S.stillSince = null; S.shot = null; ev('new_rack', {}); }
 
   function setBags(b) { O.bags = b || []; }
   function touched() { S.touchT = S.t; }
