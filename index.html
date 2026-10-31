@@ -1736,6 +1736,7 @@ function makeTracker(P, opts) {
     setupDrop: true,    // till a rack's first real shot, the cue ball rolling on its own (nothing else moved, nothing in) is a hand
     autoRack: true,     // only the cue ball left, still for rackHold s after a shot: the rack is done (see phase)
     rackHold: 2,
+    rackNew: 4,         // this many new balls put out since the last shot, and more on the table than then: a new rack
     cueWait: 2,         // s more, at most, while something new may be the cue ball called in (see cueComing)
     gateRest: 1.6,      // in: a resting ball is looked for this close to where it was
     gateMove: 4,        // in around the predicted spot of a rolling ball, plus gateMoveK of its travel this look
@@ -1776,7 +1777,7 @@ function makeTracker(P, opts) {
   const R = P.R, L = P.L, W = P.W, EPS = 1e-4;
   let keyN = 0;
   const S = { t: 0, tracks: [], phase: 'still', stillSince: null, shot: null, shots: [], gone: [], events: [], lastNames: '', bagT: {}, bagNew: {}, notes: [], say: [], touchT: -9, rackAt: 0, setup: true }; // notes: made balls found after their shot ended, for the app to tell; say: rack done / not a shot, for the app
-  const ev = (k, d) => { const e = Object.assign({ t: +S.t.toFixed(2), k }, d); S.events.push(e); if (S.events.length > 3000) S.events.splice(0, 300); return e; };
+  const ev = (k, d) => { const e = Object.assign({ t: +S.t.toFixed(2), k }, d); S.events.push(e); if (S.events.length > 30000) S.events.splice(0, 3000); return e; };
   const live = tr => tr.state !== 'gone' && tr.state !== 'dropped';
   const ballsNow = () => S.tracks.filter(tr => tr.ok && live(tr));
   const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -2274,6 +2275,14 @@ function makeTracker(P, opts) {
     // the button stays for the rest (a 9 made early in 9-ball)
     if (O.autoRack && S.phase === 'still' && !S.setup && !S.recon && S.shots.length > S.rackAt && S.stillSince != null && t - S.stillSince >= O.rackHold &&
       ballsNow().every(b => b.num === 0 && b.sure && b.state !== 'hidden')) { ev('rack_done', { n: S.shots.length }); S.say.push({ k: 'rack_done' }); newRack(); return; }
+    // a new set of balls put out while the rack is still open is a new rack (Oct 31, 15:10: a missed 3 kept rack 3 open,
+    // and rack 4's balls stayed unnamed, their numbers already counted in): rackNew more balls standing on the table than
+    // after the last shot, all come since it ended
+    if (O.rackNew && S.phase !== 'shot' && S.shots.length > S.rackAt) {
+      const last = S.shots[S.shots.length - 1], obj = b => b.num !== 0, was = last.after.filter(obj).length;
+      const added = ballsNow().filter(b => obj(b) && b.state === 'rest' && b.firstT > last.t1).length;
+      if (added >= O.rackNew && ballsNow().filter(b => obj(b) && b.state !== 'hidden').length >= was + O.rackNew) { ev('rack_new', { n: S.shots.length, added }); S.say.push({ k: 'rack_new' }); newRack(); return; }
+    }
     const balls = ballsNow(), moving = balls.filter(tr => tr.state === 'moving'), pend = balls.filter(tr => tr.state === 'pending');
     if (S.phase === 'still' || S.phase === 'hands') {
       if (!moving.length && !pend.length) { if (S.stillSince == null) S.stillSince = t; if (S.phase === 'hands' && t - S.stillSince >= O.stillHold) { S.phase = 'still'; ev('still', {}); } }
