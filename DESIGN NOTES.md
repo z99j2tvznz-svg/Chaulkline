@@ -991,3 +991,16 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   since the last shot, and more on the table than then); "New rack: balls set out". Replays: Oct 31 15:10 from 48 to 54
   of 59 right (rack 4 named again); no other session loses a shot.
 - The tracking card measures V3.1.0 as a scoreboard; stroke-test sessions are not counted.
+
+## V3.1.1 (Oct 31) — the finder in the background; the stroke test goes on by itself
+- First stroke test (Oct 31 16:34, V3.1.0): the watcher got about 4 frames a second. Its own work is about 10 ms a
+  frame, but the finder (ONNX Runtime on the processor) held the page about 210 ms each look and frames only came
+  between looks. Now ONNX Runtime's proxy mode runs the finder and reader in a background worker (ort.env.wasm.proxy, on
+  the processor only, set before the first session): in the browser test the watcher went from 2-3 to about 28 frames
+  a second and a recorded move has about 27 frames a second (246 in 9 s, 1.4 MB). The clips at 4 a second already
+  showed the stroke plainly (down on the shot, the black cue on the cue ball, the strike, the follow-through).
+- The stroke test, after the owner's run: a shot at a station counts as an attempt when it ends and the cue ball reached
+  another ball or something went in (the cue ball put back by hand is not one); after the sixth the next station comes
+  up by itself with a beep. Retry throws out the last attempt (its shot marked test.discarded) and goes back to it.
+  Record gives a 10 s countdown on screen with a beep, then records 8 s (and the second before), then a long beep. The
+  beeps come from the speaker (Web Audio, started from the tap); nothing is recorded from the microphone.

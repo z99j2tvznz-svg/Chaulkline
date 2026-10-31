@@ -32,6 +32,9 @@ const DET = (() => {
     // several cores only on a cross-origin isolated page (sw.js makes the V3 page one); set before the first session
     const ort = window.ort; ort.env.wasm.wasmPaths = opts.base + 'vendor/ort/';
     if (!st.read) ort.env.wasm.numThreads = window.crossOriginIsolated ? Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 4) - 1)) : 1;
+    // on the processor, the finder runs in a background worker (V3.1.1, Oct 31: it held the page about 210 ms a look, so the
+    // watcher got a camera frame only between looks, 4 a second instead of 30). Set once, before the first session.
+    if (!st.read && opts.ep === 'wasm' && opts.proxy !== false) { ort.env.wasm.proxy = true; st.proxy = true; }
     const wantGpu = opts.ep !== 'wasm' && !!navigator.gpu, eps = wantGpu ? ['webgpu', 'wasm'] : ['wasm'];
     const say = opts.onProgress || (() => { }), mb = n => (n / 1048576).toFixed(1);
     const prog = (g, t) => say('Downloading the ball finder ' + mb(g) + (t ? ' of ' + mb(t) : '') + ' MB');

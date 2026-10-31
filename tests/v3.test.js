@@ -60,7 +60,7 @@ async function run(rot, viewport, sway, strokeTest) {
       for (let i = 0; i < 4; i++) await page.click('[data-act=test_next]');
       assert.match(await page.textContent('#card'), /5\/5 Not shots/);
       await page.click('[data-act=test_rec]');
-      await page.waitForFunction(() => window.__v3.DBG.ev.some(e => e.k === 'clip' && e.name === 'move-01'), null, { timeout: 30000 });
+      await page.waitForFunction(() => window.__v3.DBG.ev.some(e => e.k === 'clip' && e.name === 'move-01'), null, { timeout: 60000 }); // 10 s countdown, 8 s recorded
       await page.click('[data-act=test_close]');
     }
     // End session: the camera goes off and the session screen shows; Save debug there (no share sheet in headless
