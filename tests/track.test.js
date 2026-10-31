@@ -413,3 +413,10 @@ test('the owner\'s V3.0.10 session (Oct 29, 17:50, 3 racks upright at the end ra
   // how sure, and a replay makes every sure read 90%; from V3.0.11 the log keeps the reader's shares
   assert.strictEqual(r.shots, 44); assert.ok(r.right >= 37, JSON.stringify(r.rows.filter(x => !x.right))); assert.ok(r.falsePots <= 2);
 });
+
+test('the owner\'s V3.0.12 session (Oct 30, 18:21, 2 racks, the reader\'s shares logged) replays close to live', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261030-1821.json'), 'utf8')));
+  // live V3.0.12: 26 of 28 right, nothing called in that was not
+  assert.ok(r.right >= 25, JSON.stringify(r.rows.filter(x => !x.right))); assert.ok(r.falsePots <= 1);
+});
