@@ -281,6 +281,31 @@ test('a ball taken off by hand with no shot since is cleared, not called in', ()
   assert.ok(!tk.balls().some(b => b.num === 4)); assert.strictEqual(tk.S.shots.length, 0); assert.ok(tk.S.events.some(e => e.k === 'cleared' && e.num === 4));
 });
 
+// the cloth check can't see bare cloth under a ball: true everywhere but within 2 in of (cx, cy)
+const clothBut = (cx, cy) => (x, y) => Math.hypot(x - cx, y - cy) >= 2;
+test('a ball gone unseen whose spot another ball then sits on is in, not a hidden ball on top of it (Oct 30: the 5 under the 9)', () => {
+  const tk = makeTracker(P), others = [{ num: 9, x: 60, y: 30 }];
+  let t = settleE(tk, 0, [{ num: 0, x: 20, y: 20 }, { num: 5, x: 40, y: 20 }, ...others], 3, 0.25, () => true);
+  // the cue ball rolls into the 5, the 5 is never seen again, the cue ball stops 1 in from where the 5 sat
+  for (const x of [24, 29, 34, 37, 38.5, 39, 39, 39]) t = settleE(tk, t, [{ num: 0, x, y: 20 }, ...(x < 34 ? [{ num: 5, x: 40, y: 20 }] : []), ...others], 0.25, 0.25, clothBut(39, 20));
+  t = settleE(tk, t, [{ num: 0, x: 39, y: 20 }, ...others], 6, 0.25, clothBut(39, 20));
+  assert.strictEqual(tk.S.shots.length, 1);
+  assert.deepStrictEqual(tk.S.shots[0].made.map(m => m.num), [5], JSON.stringify(tk.S.events.filter(e => e.k !== 'named').slice(-6)));
+  assert.ok(!tk.balls().some(b => b.num === 5), 'no hidden 5 on the cue ball');
+});
+
+test('before the break a hidden ball next to another is left alone: in a rack two touching balls can be found as one', () => {
+  const tk = makeTracker(P);
+  // racking: a hand covers the 5 and slides balls about; the 3 ends against it (found 1.2 in off, as one spot can be)
+  const cue = { num: 0, x: 20, y: 20 };
+  let t = settleE(tk, 0, [cue, { num: 5, x: 40, y: 20 }, { num: 3, x: 46, y: 20 }, { num: 4, x: 50, y: 30 }, { num: 6, x: 55, y: 10 }], 3, 0.25, () => true);
+  t = settleE(tk, t, [cue, { num: 3, x: 46, y: 20 }, { num: 4, x: 50, y: 30 }, { num: 6, x: 55, y: 10 }], 1, 0.25, () => false);
+  for (let k = 1; k <= 4; k++) t = settleE(tk, t, [cue, { num: 3, x: 46 - 1.2 * k, y: 20 }, { num: 4, x: 50 + 3 * k, y: 30 }, { num: 6, x: 55 + 3 * k, y: 10 }], 0.25, 0.25, () => false);
+  t = settleE(tk, t, [cue, { num: 3, x: 41.2, y: 20 }, { num: 4, x: 62, y: 30 }, { num: 6, x: 67, y: 10 }], 5, 0.25, clothBut(41.2, 20));
+  const b5 = tk.balls().find(b => b.num === 5); assert.ok(b5 && b5.state === 'hidden', JSON.stringify(b5 && b5.state));
+  assert.strictEqual(tk.S.shots.length, 0);
+});
+
 test('the cue ball that jumps 20 in between two looks and stops starts a shot (Oct 27: the 5 at 5:58)', () => {
   const tk = makeTracker(P), others = [{ num: 9, x: 34, y: 6 }, { num: 7, x: 67, y: 21 }];
   let t = settleE(tk, 0, [{ num: 0, x: 30, y: 9 }, { num: 5, x: 53, y: 24 }, ...others], 3, 0.25, () => true);

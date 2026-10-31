@@ -881,3 +881,18 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   told which ball is the cue ball.
 - Tracking test now: 11 racks, 4 sessions, 2 spots, 143 shots; called right 93.7%; false "in" 1; false scratches 1.4 per
   50 (3 of the 4 from V3.0.9, fixed in V3.0.10); names right 91.6%.
+
+## V3.0.13 (Oct 31) — no hidden ball on top of a ball that is there
+- Oct 30, 18:21: the 5 went in unseen and stayed a hidden 5 on the 9 (0.6-0.7 in apart) for five shots, the 9 shown
+  as the 5 until the owner tapped Not a ball. The cloth check could not clear it: the spot showed the 9, never bare
+  cloth. Two balls are never closer than 2.25 in, so a hidden ball under 1.5 in (sitOn) from a ball sitting there now
+  counts as bare cloth and goes through the usual ghost rule (in, if it went out of sight in a shot).
+- Only when it is plain (sitsOn in src/track.js): the rack has been broken since New rack (in a rack two touching balls
+  can be found as one spot between them, about 1.1 in from each); the ball there has rested and been seen for 2 s
+  (sitHold), so never during a shot or on a blurred look; it reads sure as another number; no other ball within 3 in of
+  it; and the hidden ball was not already on a resting ball when it went out of sight (onBall).
+- That last check comes from replaying all recorded sessions: on Oct 26 (23:50) the 8 rolled behind the 3, two spots
+  on the 3 pulled the 8's track onto it, and without the check the rule would have called the 8 in (it was still on
+  the table). The only other place it acts is Oct 29 17:50, shot 10: the 4 went in and the cue ball stopped 1.2 in from
+  its spot; it is now called in 13 s sooner (was right already). No other result changes. The 18:21 case itself
+  does not happen in the replay (the replay pockets the 5 in shot 7), so it has a made-up test of its own.

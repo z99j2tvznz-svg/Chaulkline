@@ -49,9 +49,11 @@ function makeTracker(P, opts) {
     jawZone: 1.2,       // in past a pocket's circle: a ball resting this deep in the mouth that vanishes in a shot went in
     jumpGap: 0.45,      // s: a ball seen again this soon after it vanished, far off and reading the same, jumped there in one look
     jumpSpeed: 20,      // in/s it must have covered that distance at, at least
-    readReach: 150,
-    readCost: 2.5,      // in-equivalent cost of a sure read of another number on a ball's spot (any pair, the 9 and the cue ball too)     // in/s: a rolling ball read as its own number this look can be this far from its last spot
+    readReach: 150,     // in/s: a rolling ball read as its own number this look can be this far from its last spot
+    readCost: 2.5,      // in-equivalent cost of a sure read of another number on a ball's spot (any pair, the 9 and the cue ball too)
     touchHold: 0.7,     // s after a finger on the screen before a shot can start
+    sitOn: 1.5,         // in: a hidden ball this close to a ball that has sat still for sitHold s is not there (see sitsOn)
+    sitHold: 2,
     bagScore: 0.6,      // a spot on a pocket's bag line (see setBags) scoring under this is a ball lying in that pocket
     bagDist: 1.5,       // in from the line
     bags: [],
@@ -59,7 +61,7 @@ function makeTracker(P, opts) {
   }, opts || {});
   const R = P.R, L = P.L, W = P.W, EPS = 1e-4;
   let keyN = 0;
-  const S = { t: 0, tracks: [], phase: 'still', stillSince: null, shot: null, shots: [], gone: [], events: [], lastNames: '', bagT: {}, bagNew: {}, notes: [], touchT: -9 }; // notes: made balls found after their shot ended, for the app to tell
+  const S = { t: 0, tracks: [], phase: 'still', stillSince: null, shot: null, shots: [], gone: [], events: [], lastNames: '', bagT: {}, bagNew: {}, notes: [], touchT: -9, rackAt: 0 }; // notes: made balls found after their shot ended, for the app to tell
   const ev = (k, d) => { const e = Object.assign({ t: +S.t.toFixed(2), k }, d); S.events.push(e); if (S.events.length > 3000) S.events.splice(0, 300); return e; };
   const live = tr => tr.state !== 'gone' && tr.state !== 'dropped';
   const ballsNow = () => S.tracks.filter(tr => tr.ok && live(tr));
@@ -306,7 +308,7 @@ function makeTracker(P, opts) {
       }
       tr.lostT = t; tr.vLost = tr.state === 'moving' ? speed(tr) : 0; tr.knock = hit;
       if (pk != null) { tr.state = 'pending'; tr.pocket = pk; ev('lost_at_pocket', { key: tr.key, num: tr.num, pocket: pk }); }
-      else { tr.state = 'hidden'; tr.vx = tr.vy = 0; }
+      else { tr.state = 'hidden'; tr.vx = tr.vy = 0; tr.onBall = ballsNow().some(o => o !== tr && o.state === 'rest' && dist(o, tr) < O.sitOn); }
     }
     for (const tr of act) if (matched.has(tr)) tr.looks++;
     relink(t);
@@ -388,12 +390,13 @@ function makeTracker(P, opts) {
   // not the ball, not an arm) on several looks in a row, it is not there. Gone during a shot, or hidden when one started,
   // it went in that shot (Oct 27: a struck ball gone before the next look stayed a dashed ghost for the rest of the rack,
   // 9 of the 13 balls in that were missed). Gone with no shot since, it was taken off by hand. Without the picture check
-  // (info.empty) nothing is cleared.
+  // (info.empty) nothing is cleared, except a hidden ball sitting on another one (see sitsOn).
   function clearGone(t, empty) {
-    if (!empty || S.phase === 'shot') return;
-    for (const tr of ballsNow()) {
+    if (S.phase === 'shot') return;
+    const bs = ballsNow();
+    for (const tr of bs) {
       if (tr.state !== 'hidden' || tr.lostT == null) continue;
-      const e = empty(tr.x, tr.y); if (e === true) tr.emptyN = (tr.emptyN || 0) + 1; else if (e === false) tr.emptyN = 0;
+      const e = sitsOn(tr, bs, t) || (empty ? empty(tr.x, tr.y) : null); if (e === true) tr.emptyN = (tr.emptyN || 0) + 1; else if (e === false) tr.emptyN = 0;
       if (tr.emptyN < O.emptyLooks || t - tr.lostT < O.emptyHold) continue;
       const sh = S.shots.find(s => s.t1 >= tr.lostT && (tr.lostT >= s.t0 - 0.6 || s.before.some(b => b.key === tr.key && b.state === 'hidden')));
       if (sh && t - sh.t1 < O.afterHold) continue;
@@ -415,6 +418,19 @@ function makeTracker(P, opts) {
       ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
     }
     S.tracks = S.tracks.filter(tr => tr.state !== 'dropped');
+  }
+
+  // Two balls can't be closer than 2.25 in, so a hidden ball under 1.5 in from a ball that sits there is not there: the
+  // cloth check never sees bare cloth under the other ball, so it counts as bare (Oct 30: the 5 went in unseen and stayed
+  // a hidden 5 on the 9, which showed as the 5 for five shots). Only when it is plain: the rack has been broken (in a rack
+  // two touching balls can be found as one spot between them), the ball there has rested and been seen for sitHold s,
+  // reads sure as another number and has no other ball within 3 in, and the hidden ball was not already on a resting ball
+  // when it went out of sight (then its last spot was that ball seen twice and where it really is is not known: Oct 26,
+  // the 8 rolled behind the 3 and two spots on the 3 pulled it there; the rule would have called it in).
+  function sitsOn(g, bs, t) {
+    if (g.num == null || g.onBall || S.shots.length <= S.rackAt) return false;
+    return bs.some(v => v !== g && v.state === 'rest' && v.sure && v.num != null && v.num !== g.num && dist(v, g) < O.sitOn &&
+      t - v.restSince >= O.sitHold && t - v.seenT < 0.3 && !bs.some(o => o !== v && o !== g && o.state !== 'hidden' && dist(o, v) < 3));
   }
 
   function pocketed(tr) {
@@ -585,7 +601,7 @@ function makeTracker(P, opts) {
   }
   function notBall(key) { const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.state = 'dropped'; tr.ok = false; ev('not_ball', { key, num: tr.num }); S.tracks = S.tracks.filter(x => x !== tr); name(); return true; }
   function inPocket(key) { const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.pocket = null; ev('tap_pocketed', { key, num: tr.num }); pocketed(tr); name(); return true; }
-  function newRack() { for (const tr of S.tracks) tr.state = 'dropped'; S.tracks = []; S.gone = []; S.phase = 'hands'; S.stillSince = null; S.shot = null; ev('new_rack', {}); }
+  function newRack() { for (const tr of S.tracks) tr.state = 'dropped'; S.tracks = []; S.gone = []; S.rackAt = S.shots.length; S.phase = 'hands'; S.stillSince = null; S.shot = null; ev('new_rack', {}); }
 
   function setBags(b) { O.bags = b || []; }
   function touched() { S.touchT = S.t; }
