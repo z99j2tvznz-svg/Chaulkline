@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.1.2';
+const VERSION = 'V3.1.3';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -312,6 +312,10 @@ ov.addEventListener('pointerdown', e => {
 ov.addEventListener('pointermove', e => { if (!A.drag || e.pointerId !== A.drag.id) return; const q = picAt(e); A.man[A.drag.i] = [q.x, q.y]; A.drag.fx = e.clientX; A.drag.fy = e.clientY; });
 const dragEnd = e => { if (!A.drag || e.pointerId !== A.drag.id) return; A.drag = null; if (A.phase === 'manual') manualCard(); };
 ov.addEventListener('pointerup', dragEnd); ov.addEventListener('pointercancel', dragEnd);
+// (V3.1.3, owner Nov 1: a second, smaller magnifier came up over the app's: Safari's own press-and-hold one. A touch held
+// on the picture does nothing of Safari's while the corners are set)
+ov.addEventListener('touchstart', e => { if (A.phase === 'manual') e.preventDefault(); }, { passive: false });
+ov.addEventListener('contextmenu', e => e.preventDefault());
 async function acceptTable() {
   const c = A.cand; A.quad = c.quad; A.rot = c.rot;
   const { L, Wd } = tableDims(A.ft), f = LENS * Math.max(A.W, A.H);
@@ -419,7 +423,7 @@ function onShotStart() {
   PATH.clear(); pathLook(); const sh = A.tk.S.shot; if (!sh) return; const nm = 'shot' + String(sh.n).padStart(3, '0');
   if (A.stillPic) setPic(nm + '-before.jpg', A.stillPic);
   if (A.test && A.test.st < 4) sh.test = { station: A.test.st + 1, try: A.test.tries[A.test.st] + 1 }; else if (A.test) sh.test = { station: 5, move: A.test.move };
-  clipStart(nm, 2000, 2000, sh.test || null);
+  clipStart(nm, A.test ? 4000 : 2000, 2000, sh.test || null);
   dbg('shot_start', Object.assign({ n: sh.n, test: sh.test }, aroundCue(sh)));
 }
 // What is round the cue ball as a shot starts, for a rule on hands to come (owner, Oct 31: the cue ball rolled or pushed
@@ -618,8 +622,15 @@ function watchFrame() {
   }
   W.prev = cur;
   const t = Date.now() - DBG.t0, fr = { t, img, nc: W.nMask ? nc / W.nMask : 0, ch: ch / (n >> 1) };
-  W.ring.push(fr); while (W.ring.length && t - W.ring[0].t > 2100) W.ring.shift();
-  for (const c of W.clips) if (!c.done && t <= c.until) c.frames.push(fr);
+  // in the stroke test every frame, 4 s back, and a close-up of the cue ball at the camera's full size (the end-on cue
+  // toward the phone was a pixel or two wide in the table view); in play every other frame (15 a second), 2 s back, so a
+  // session's debug file stays a size that uploads (about 0.5 MB a shot)
+  W.fc = (W.fc || 0) + 1;
+  if (A.test || W.fc % 2 === 0) {
+    if (A.test) fr.cu = closeUp();
+    W.ring.push(fr); const keep = A.test ? 4100 : 2100; while (W.ring.length && t - W.ring[0].t > keep) W.ring.shift();
+  }
+  for (const c of W.clips) if (!c.done && t <= c.until && (A.test || W.fc % 2 === 0)) c.frames.push(fr);
   for (const c of W.clips) if (!c.done && t > c.until) clipEnd(c);
   W.clips = W.clips.filter(c => !c.done);
   W.n++; W.ms += performance.now() - t0; W.nc += fr.nc; W.ch += fr.ch;
@@ -627,6 +638,14 @@ function watchFrame() {
   if (now - W.t1 >= 1000) { const ms = A.timing.length ? A.timing.reduce((a, x) => a + x, 0) / A.timing.length : 0;
     dbg('watch', { fps: r1(W.n * 1000 / (now - W.t1)), ms: r1(W.ms / Math.max(1, W.n)), nc: r2(W.nc / Math.max(1, W.n)), ch: r2(W.ch / Math.max(1, W.n)), find: Math.round(ms) });
     W.n = W.ms = W.nc = W.ch = 0; W.t1 = now; }
+}
+// the cue ball's surroundings at full size: 200 x 200 picture pixels on its spot (it rests there before the stroke)
+const CU = 200;
+function closeUp() {
+  const W = WATCH, cb = A.tk && A.tk.balls().find(b => b.num === 0 && b.state !== 'hidden'); if (!cb || !A.cam) return null;
+  const p = A.cam.proj(cb.x, cb.y, A.P.R), x0 = Math.max(0, Math.min(A.W - CU, Math.round(p[0] - CU / 2))), y0 = Math.max(0, Math.min(A.H - CU, Math.round(p[1] - CU / 2)));
+  const c = W.cu || (W.cu = document.createElement('canvas')); if (c.width !== CU) { c.width = c.height = CU; W.cux = c.getContext('2d', { willReadFrequently: true }); }
+  W.cux.drawImage(vid, x0, y0, CU, CU, 0, 0, CU, CU); return { img: W.cux.getImageData(0, 0, CU, CU), x0, y0 };
 }
 // a clip: the frames from pre ms ago to post ms on, written as small pictures with an index once it is over
 function clipStart(name, pre, post, label) {
@@ -636,15 +655,18 @@ function clipStart(name, pre, post, label) {
 function clipEnd(c) {
   c.done = true; const W = WATCH, sid = DBG.t0, frames = c.frames; c.frames = null;
   W.enc = W.enc.then(async () => {
-    const files = [], idx = [], x = W.ec.getContext('2d');
+    const files = [], idx = [], cus = [], x = W.ec.getContext('2d');
     for (let i = 0; i < frames.length; i++) {
       const f = frames[i]; if (f.img.width !== W.ec.width || f.img.height !== W.ec.height) continue; x.putImageData(f.img, 0, 0);
       // (toDataURL, not toBlob: Chromium makes toBlob wait for idle time, which a busy finder never leaves)
       const u = W.ec.toDataURL('image/jpeg', 0.6), bin = atob(u.slice(u.indexOf(',') + 1)), data = new Uint8Array(bin.length); for (let j = 0; j < bin.length; j++) data[j] = bin.charCodeAt(j);
       const nm = String(i).padStart(3, '0') + '.jpg'; files.push({ name: 'clips/' + c.name + '/' + nm, data }); idx.push([nm, f.t, r2(f.nc), r2(f.ch)]);
+      if (f.cu) { const e2 = W.ecu || (W.ecu = document.createElement('canvas')); e2.width = e2.height = CU; e2.getContext('2d').putImageData(f.cu.img, 0, 0);
+        const u2 = e2.toDataURL('image/jpeg', 0.7), b2 = atob(u2.slice(u2.indexOf(',') + 1)), d2 = new Uint8Array(b2.length); for (let j = 0; j < b2.length; j++) d2[j] = b2.charCodeAt(j);
+        files.push({ name: 'clips/' + c.name + '/c' + nm, data: d2 }); cus.push(['c' + nm, f.t, f.cu.x0, f.cu.y0]); }
       if (i % 8 === 7) await sleep(0); // a breath for the looks between batches
     }
-    files.push({ name: 'clips/' + c.name + '/index.json', data: new TextEncoder().encode(JSON.stringify({ name: c.name, label: c.label, at: c.t, box: WATCH.box, size: [W.w, W.h], frames: ['file', 'ms', 'notCloth', 'changed'], list: idx })) });
+    files.push({ name: 'clips/' + c.name + '/index.json', data: new TextEncoder().encode(JSON.stringify({ name: c.name, label: c.label, at: c.t, box: WATCH.box, size: [W.w, W.h], frames: ['file', 'ms', 'notCloth', 'changed'], list: idx, closeUp: cus.length ? { size: [CU, CU], frames: ['file', 'ms', 'x0', 'y0'], list: cus } : null })) });
     await STORE.putMany(sid, files);
     dbg('clip', { name: c.name, frames: idx.length, kb: Math.round(files.reduce((a, f) => a + f.data.length, 0) / 1024), label: c.label });
   }).catch(e => dbg('error', { m: 'clip ' + String(e && e.message || e).slice(0, 100) }));
@@ -940,11 +962,13 @@ function makeZip(files) {
   return new Blob(parts.concat(central, [e.buffer]), { type: 'application/zip' });
 }
 const tapName = t => 'taps/' + String(t.n).padStart(3, '0') + '-' + (t.label === 0 ? 'cue' : t.label) + '.png';
-// Save debug (V3.1.0, owner Oct 31): the whole session from the phone's storage, in zip files of at most 30 MB so each one
-// uploads (with the clips a session can be 60 MB or more): part 1 has the log and the first pictures, each part says
-// which part of how many it is (part.json), and the button shares them one tap at a time (Safari only shares straight
-// after a tap). With no session on this page (Home, after Safari closed it), it is the last session kept on the phone.
-const PART_MAX = 29 * 1048576;
+// Save debug (V3.1.0, owner Oct 31): the whole session from the phone's storage, in zip files small enough to upload (with
+// the clips a session can be 60 MB or more): part 1 has the log and the first pictures, each part says which part of how
+// many it is (part.json). All the parts go in one share (V3.1.3, owner Nov 1: one part at a time, the button did not
+// offer the next), so Save to Files takes them together. With no session on this page (Home, after Safari closed it), it
+// is the last session kept on the phone.
+// (28 MB as Files counts, a million bytes: V3.1.2 counted 29 x 1,048,576, which Files showed as 30.4 MB, over the limit)
+const PART_MAX = 28e6;
 async function packDebug() {
   const enc = new TextEncoder(), here = !!A.sess && DBG.ev.length > 0;
   let sid = DBG.t0, files = [], logData = null;
@@ -962,29 +986,37 @@ async function packDebug() {
     if (groups.length > 1) g = g.concat([{ name: 'part.json', data: enc.encode(JSON.stringify({ session: d.toISOString(), part: i + 1, of: groups.length, files: g.length })) }]);
     const blob = makeZip(g), name = stem + (groups.length > 1 ? '-part' + (i + 1) + 'of' + groups.length : '') + '.zip';
     let file = null; try { file = new File([blob], name, { type: 'application/zip' }); } catch (e) { }
-    return { blob, file, name, mb: blob.size / 1048576 };
+    return { blob, file, name, mb: blob.size / 1e6 };
   });
   dbg('export', { parts: parts.length, files: files.length + 1, mb: parts.map(p => r1(p.mb)), stored: !STORE.err, here });
   return parts;
 }
-let DBGZIP = null; // { parts, i, t }: parts packed, the next one to share
+let DBGZIP = null; // { parts, all, i, t }: parts packed; all: they can go in one share; else the next one to share
 const mbText = mb => (mb < 0.1 ? '<0.1' : mb.toFixed(1)) + ' MB';
-function shareLabel(z) { const p = z.parts[z.i]; return z.parts.length > 1 ? 'Share part ' + (z.i + 1) + ' of ' + z.parts.length + ' (' + mbText(p.mb) + ')' : 'Share debug file (' + mbText(p.mb) + ')'; }
+function shareLabel(z) {
+  if (z.all) return 'Share debug file' + (z.parts.length > 1 ? 's (' + z.parts.length + ' parts, ' : ' (') + mbText(z.parts.reduce((a, p) => a + p.mb, 0)) + ')';
+  const p = z.parts[z.i]; return z.parts.length > 1 ? 'Share part ' + (z.i + 1) + ' of ' + z.parts.length + ' (' + mbText(p.mb) + ')' : 'Share debug file (' + mbText(p.mb) + ')';
+}
+const canShare = files => !!(navigator.canShare && files.every(f => f) && navigator.canShare({ files }));
 async function saveDebug(btn) {
   const z = DBGZIP;
-  if (z && Date.now() - z.t < 10 * 60000 && z.i < z.parts.length) { // a tap: share the next part at once, nothing awaited before it
-    const p = z.parts[z.i++]; if (z.i >= z.parts.length) { DBGZIP = null; btn.textContent = 'Save debug'; } else btn.textContent = shareLabel(z);
-    if (p.file && navigator.canShare && navigator.canShare({ files: [p.file] })) {
-      try { await navigator.share({ files: [p.file] }); return; }
-      catch (e) { if (e && e.name === 'AbortError') { z.i--; DBGZIP = z; btn.textContent = shareLabel(z); return; } } // cancelled: the same part again
+  if (z && Date.now() - z.t < 10 * 60000) { // a tap: share at once, nothing awaited before it (Safari shares only straight after a tap)
+    if (z.all) {
+      DBGZIP = null; btn.textContent = 'Save debug';
+      try { await navigator.share({ files: z.parts.map(p => p.file) }); return; }
+      catch (e) { if (e && e.name === 'AbortError') { DBGZIP = z; btn.textContent = shareLabel(z); return; } z.all = false; z.i = 0; DBGZIP = z; btn.textContent = shareLabel(z); toast('They would not go together: tap to share them one at a time.'); return; }
     }
-    download(p); return;
+    if (z.i < z.parts.length) {
+      const p = z.parts[z.i++]; if (z.i >= z.parts.length) { DBGZIP = null; btn.textContent = 'Save debug'; } else btn.textContent = shareLabel(z);
+      if (canShare([p.file])) { try { await navigator.share({ files: [p.file] }); return; } catch (e) { if (e && e.name === 'AbortError') { z.i--; DBGZIP = z; btn.textContent = shareLabel(z); return; } } }
+      download(p); return;
+    }
   }
   DBGZIP = null; const label = btn.textContent; btn.textContent = 'Packing…';
   let parts; try { parts = await packDebug(); } catch (e) { btn.textContent = label; toast('Could not pack the debug file: ' + String(e && e.message || e).slice(0, 60)); return; }
-  if (!(parts[0].file && navigator.canShare && navigator.canShare({ files: [parts[0].file] }))) { btn.textContent = 'Save debug'; for (const p of parts) download(p); return; }
-  DBGZIP = { parts, i: 0, t: Date.now() }; btn.textContent = shareLabel(DBGZIP);
-  toast(parts.length > 1 ? 'Ready in ' + parts.length + ' parts: tap to share each one, then Save to Files → Google Drive → Chalkline test uploads.' : 'Ready: tap "Share debug file", then Save to Files → Google Drive → Chalkline test uploads.');
+  if (!canShare([parts[0].file])) { btn.textContent = 'Save debug'; for (const p of parts) download(p); return; }
+  DBGZIP = { parts, all: canShare(parts.map(p => p.file)), i: 0, t: Date.now() }; btn.textContent = shareLabel(DBGZIP); dbg('export_share', { all: DBGZIP.all, parts: parts.length });
+  toast('Ready: tap "Share", then Save to Files → Google Drive → Chalkline test uploads' + (parts.length > 1 && DBGZIP.all ? ' (all ' + parts.length + ' parts go together).' : '.'));
 }
 function download(z) { try { const a = document.createElement('a'); a.href = URL.createObjectURL(z.blob); a.download = z.name; document.body.appendChild(a); a.click(); setTimeout(() => a.remove(), 500); toast('Debug file saved'); } catch (e) { toast('Could not save the debug file on this phone.'); } }
 

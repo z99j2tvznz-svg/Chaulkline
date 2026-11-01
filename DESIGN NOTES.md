@@ -1017,3 +1017,18 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   pace (Soft, Medium, Firm), large, with the station and shot (owner: the rings and the line say where everything goes).
 - The home screen checks the site's version (index.html, not from cache) at most once a minute and offers a newer one
   with a button that reloads the page (Nov 1: a test ran on the old version because the page stayed open in Safari).
+
+## V3.1.3 (Nov 1) — clips for the stroke work; Save debug in one share
+- The full stroke test (Nov 1 12:58, V3.1.2): all four stations and the moves, 29 frames a second. The app sees a shot
+  start about 0.3-0.5 s after the strike, so 2 s before held only the last practice strokes; toward the phone the
+  end-on cue was a pixel or two wide in the 320 px table view.
+- Clips in the stroke test: every frame, 4 s before the shot was seen to start and 2 s after, and with each frame a
+  close-up of the cue ball at the camera's full size (200 x 200 picture pixels on its spot; c000.jpg ..., listed in
+  index.json closeUp with where each was cut). About 2.3 MB for a 9 s move, 1.6 MB a shot. In play (not the test) the
+  clips keep every other frame (15 a second) and 2 s before, about 0.5 MB a shot, so a session's file stays a size the
+  owner can upload (at 29 a second an 80-shot session would have been about 90 MB).
+- Save debug: parts of at most 28 MB as Files counts (a million bytes; V3.1.2's "29 MB" was 29 x 1,048,576 = 30.4 MB in
+  Files, over the upload limit), sizes shown the same way, and all parts in one share when Safari takes them together,
+  so Save to Files saves them at once (one at a time is still there if it does not).
+- Setting corners: Safari's own press-and-hold magnifier is stopped (it came up over the app's, smaller).
+- Claude leads the project; the owner tests and suggests (noted in CLAUDE.md).

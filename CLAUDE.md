@@ -11,5 +11,7 @@
   main under tests/fixtures/v3/.
 - After reviewing a session, add its live results to data/v3-gate.json (the app's "Tracking test" card on the home
   screen): sessions from V3.0.6 on, truth from the shot pictures, names checked on the after pictures.
-- Nothing big is built until the owner says "build it". Plain English, positions in diamonds. The owner does not use git:
+- Claude leads the project; the owner tests and suggests (owner, Nov 1). Push back on a suggestion when the logic says
+  to, not otherwise. Small fixes and test-tool changes Claude decides and builds; nothing big is built until the owner
+  says "build it". Plain English, positions in diamonds. The owner does not use git:
   commit and push to main (Pages publishes it) and send the link https://z99j2tvznz-svg.github.io/Chaulkline/.
