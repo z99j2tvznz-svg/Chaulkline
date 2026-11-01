@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.1.1';
+const VERSION = 'V3.1.2';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -88,7 +88,21 @@ function header() {
 function shotRow(sh) { return { n: sh.n, t0: r2(sh.t0), t1: r2(sh.t1), cue: sh.cueNum, first: sh.firstNum, made: sh.made.map(m => ({ num: m.num, pocket: m.pocket, sure: m.sure })), scratch: sh.scratch, break: sh.break, hidden: sh.hidden, before: sh.before, after: sh.after, paths: sh.paths, test: sh.test }; }
 
 // ---------- home ----------
+// A newer version on the site (V3.1.2; Nov 1: the page stayed open in Safari from an earlier test, and Start again and
+// Home do not reload it, so a whole test ran on the old version): the home screen asks the site which version it has and
+// offers it, at most once a minute.
+let UPD_T = 0;
+const verNum = v => String(v || '').replace(/^V/, '').split('.').map(Number);
+const newer = (a, b) => { const x = verNum(a), y = verNum(b); for (let i = 0; i < Math.max(x.length, y.length); i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); } return false; };
+async function checkUpdate() {
+  if (Date.now() - UPD_T < 60000) return; UPD_T = Date.now();
+  try { const t = await (await fetch('index.html?u=' + Date.now(), { cache: 'no-store' })).text(), m = t.match(/const VERSION = '([^']+)'/);
+    if (m && newer(m[1], VERSION)) { const b = $('#updBtn'); b.textContent = m[1] + ' is out: tap to load it'; b.hidden = false; dbg('update_seen', { v: m[1] }); }
+  } catch (e) { }
+}
+$('#updBtn').onclick = () => location.reload();
 function renderHome() {
+  checkUpdate();
   $('#verTag').textContent = VERSION;
   const sf = $('#segFt'); sf.innerHTML = '';
   for (const f of [7, 8, 9]) { const b = document.createElement('button'); b.textContent = f + ' ft'; b.className = f === A.ft ? 'on' : ''; b.onclick = () => { A.ft = f; save(); renderHome(); }; sf.appendChild(b); }
@@ -384,6 +398,9 @@ async function look() {
   if (before !== 'hands' && tk.S.phase === 'hands' && Date.now() - A.handsT > 4000) { A.handsT = Date.now(); clipStart('hands-' + String(++A.handsN).padStart(3, '0'), 2000, 2000); }
   if (tk.S.shots.length > A.nShots) { for (const sh of tk.S.shots.slice(A.nShots)) onShotEnd(sh); A.nShots = tk.S.shots.length; }
   for (const s of tk.S.say.splice(0)) onSay(s);
+  // in the stroke test the 1 is put back after every pot: no number stays counted in, so it is found and named again
+  // (Nov 1: it showed ? every time it came back)
+  if (A.test) tk.S.gone.length = 0;
   // a picture of the still table every 1.5 s, kept as the "before" of the next shot
   if (tk.S.phase !== 'shot' && performance.now() - (A.colT || 0) > 1000) { A.colT = performance.now(); ballColours(); }
   if (tk.S.phase === 'still' && performance.now() - A.stillPicT > 1500) { A.stillPicT = performance.now(); jpeg(960).then(b => { A.stillPic = b; }).catch(() => { }); }
@@ -647,17 +664,21 @@ const STATIONS = [
 const MOVES = ['Get down, take practice strokes, then stand up without shooting', 'Get down, take practice strokes, then stand up without shooting', 'Get down, take practice strokes, then stand up without shooting',
   'Roll the cue ball into place by hand', 'Roll the cue ball into place by hand', 'Push the cue ball a few inches with the cue shaft', 'Push the cue ball a few inches with the cue shaft'];
 const TEST_SHOTS = 6;
+const SHORT = ['Practice strokes, stand up', 'Practice strokes, stand up', 'Practice strokes, stand up', 'Roll the cue ball into place', 'Roll the cue ball into place', 'Push the cue ball with the shaft', 'Push the cue ball with the shaft'];
 function testXY([dx, dy]) { // diamonds as the phone sees the table -> table inches
   const P = A.P, dia = P.L / 8, nearY = A.cam.proj(P.L / 2, 0, 0)[1] > A.cam.proj(P.L / 2, P.W, 0)[1] ? 0 : P.W, leftX = A.cam.proj(0, P.W / 2, 0)[0] < A.cam.proj(P.L, P.W / 2, 0)[0] ? 0 : P.L;
   return [leftX === 0 ? dx * dia : P.L - dx * dia, nearY === 0 ? dy * dia : P.W - dy * dia];
 }
-function testStart() { A.test = { st: 0, tries: [0, 0, 0, 0], move: 0, last: null, cd: null }; A.tk.O.autoRack = false; dbg('test', { st: 1 }); testCard(); }
+function testStart() { audioOn(); A.test = { st: 0, tries: [0, 0, 0, 0], move: 0, last: null, cd: null, chimed: false }; A.tk.O.autoRack = false; dbg('test', { st: 1 }); testCard(); }
 // (V3.1.1, owner after the first run: the test goes on by itself.) A shot at a station is an attempt when the cue ball
 // reached another ball or something went in: the cue ball put back on its spot by hand is not one. After the sixth the
 // next station comes up, with a beep.
 function testShotEnd(sh) {
   const T = A.test; if (!T || !sh.test || sh.test.station > 4 || sh.test.station !== T.st + 1) return;
-  const ok = sh.first != null || sh.made.some(m => m.num !== 0); dbg('test_attempt', { n: sh.n, station: sh.test.station, try: sh.test.try, ok });
+  // (V3.1.2: or anything besides the cue ball changed: the 1 moved, went out of sight or in, its call maybe still to come;
+  // Nov 1, only 6 of 18 shots counted when the first ball hit had to be known)
+  T.chimed = false;
+  const ok = sh.first != null || sh.made.length > 0 || A.tk.changed(sh); dbg('test_attempt', { n: sh.n, station: sh.test.station, try: sh.test.try, ok });
   if (!ok) { sh.test.notAttempt = true; return; }
   T.tries[T.st]++; T.last = sh;
   if (T.tries[T.st] >= TEST_SHOTS) { T.st++; dbg('test', { st: T.st + 1, auto: true }); beep(2); toast(T.st < 4 ? 'Station ' + (T.st + 1) + ': ' + STATIONS[T.st].name : 'Station 5: moves that are not shots'); }
@@ -668,8 +689,11 @@ function testRetry() {
   const T = A.test, sh = T && T.last; if (!sh) return; const st = sh.test.station - 1;
   sh.test.discarded = true; T.tries[st] = Math.max(0, T.tries[st] - 1); T.st = st; T.last = null; dbg('test_retry', { n: sh.n, station: st + 1, try: sh.test.try }); toast('Thrown out: shot it again'); testCard();
 }
-// a short beep from the speaker (not the microphone): n beeps, or one long one
+// a short beep from the speaker (not the microphone): n beeps, or one long one. Safari plays sound only once a tap has
+// started it, so the Stroke test tap starts it (audioOn)
 let AUD = null;
+function audioOn() { try { AUD = AUD || new (window.AudioContext || window.webkitAudioContext)(); if (AUD.state === 'suspended') AUD.resume(); } catch (e) { } }
+function chime() { try { audioOn(); [784, 1175].forEach((f, i) => { const o = AUD.createOscillator(), g = AUD.createGain(), t = AUD.currentTime + i * 0.14; o.frequency.value = f; g.gain.setValueAtTime(0.2, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.3); o.connect(g).connect(AUD.destination); o.start(t); o.stop(t + 0.32); }); } catch (e) { } }
 function beep(n, long) {
   try { AUD = AUD || new (window.AudioContext || window.webkitAudioContext)(); if (AUD.state === 'suspended') AUD.resume();
     for (let i = 0; i < (n || 1); i++) { const o = AUD.createOscillator(), g = AUD.createGain(), t = AUD.currentTime + i * 0.18; o.frequency.value = long ? 660 : 880; g.gain.setValueAtTime(0.25, t); g.gain.exponentialRampToValueAtTime(0.001, t + (long ? 0.6 : 0.12)); o.connect(g).connect(AUD.destination); o.start(t); o.stop(t + (long ? 0.65 : 0.14)); }
@@ -679,14 +703,14 @@ function testStop() { dbg('test_end', { tries: A.test && A.test.tries, moves: A.
 function testCard() {
   const T = A.test; if (!T) return;
   const nav = (T.last ? '<button class="btn" data-act="test_retry">Retry</button>' : '') + (T.st > 0 ? '<button class="btn" data-act="test_back">Back</button>' : '') + (T.st < 4 ? '<button class="btn" data-act="test_next">Next</button>' : '') + '<button class="btn" data-act="test_close">' + (T.st < 4 ? 'Close' : 'Finish') + '</button>';
+  // (V3.1.2, owner: the rings and the line say where everything goes; the card only needs the pace)
   if (T.st < 4) {
-    const S = STATIONS[T.st], k = T.tries[T.st];
-    showCard('<p><b>' + (T.st + 1) + '/5 ' + S.name + '</b> · ' + (k >= TEST_SHOTS ? 'done' : 'shot ' + (k + 1) + ' of ' + TEST_SHOTS + (k < 2 ? ', soft' : k < 4 ? ', medium' : ', firm')) +
-      '<br>Stand ' + S.stand + '. Cue ball on white, the 1 on yellow, into the ' + S.pocket + '.</p><div class="row">' + nav + '</div>', true, 'tst');
+    const k = T.tries[T.st];
+    showCard('<div class="pace">' + (k >= TEST_SHOTS ? 'Done' : k < 2 ? 'Soft' : k < 4 ? 'Medium' : 'Firm') + '</div><div class="lbl">Station ' + (T.st + 1) + ' of 5 · shot ' + Math.min(k + 1, TEST_SHOTS) + ' of ' + TEST_SHOTS + '</div><div class="row">' + nav + '</div>', true, 'tst');
   } else {
     const m = T.move;
     const busy = T.cd && T.cd.phase !== 'done';
-    showCard('<p><b>5/5 Not shots</b> · ' + (busy ? (T.cd.phase === 'wait' ? 'get ready…' : 'recording…') + '<br>' + MOVES[T.cd.move] + '.' : m < MOVES.length ? 'move ' + (m + 1) + ' of ' + MOVES.length + '<br>' + MOVES[m] + '. Tap Record: 10 s to get set, a beep, then 8 s recording, a beep.' : 'all done<br>Tap Finish, then End session and Save debug.') + '</p><div class="row">' +
+    showCard('<div class="pace">' + (m < MOVES.length || busy ? SHORT[busy ? T.cd.move : m] : 'Done') + '</div><div class="lbl">Station 5 of 5 · ' + (busy ? (T.cd.phase === 'wait' ? 'get set' : 'recording') : m < MOVES.length ? 'move ' + (m + 1) + ' of ' + MOVES.length + ': tap Record' : 'tap Finish, then End session and Save debug') + '</div><div class="row">' +
       (!busy && m < MOVES.length ? '<button class="btn primary" data-act="test_rec">Record</button>' : '') + (busy ? '' : nav) + '</div>', true, 'tst');
   }
 }
@@ -708,20 +732,25 @@ function drawCountdown(c, F) {
   c.fillStyle = cd.phase === 'wait' ? 'rgba(255,184,77,.92)' : 'rgba(255,77,77,.92)'; c.fillText(cd.phase === 'wait' ? String(left) : '● ' + left, F.w / 2, F.h * 0.45);
   c.font = '600 ' + Math.round(Math.min(F.w, F.h) * 0.06) + 'px ' + getComputedStyle(document.body).fontFamily; c.fillText(cd.phase === 'wait' ? 'get set' : 'recording', F.w / 2, F.h * 0.45 + Math.min(F.w, F.h) * 0.2); c.restore();
 }
-// a spot is taken when a ball sits within about an inch of it (the cue ball's ring: the cue ball or a ball not yet named)
-function testTaken(x, y, cue) { return A.tk.balls().some(b => b.state !== 'hidden' && Math.hypot(b.x - x, b.y - y) < 1.1 && (cue ? b.num === 0 || b.num == null : b.num !== 0)); }
+// a spot is taken when a ball sits within its ring (V3.1.2, owner: 1.6 in was far too fussy to set up to while looking back
+// at the screen; now 4 in each way): the cue ball's ring takes the cue ball or a ball not yet named
+const RING = 4;
+function testTaken(x, y, cue) { return A.tk.balls().some(b => b.state !== 'hidden' && Math.hypot(b.x - x, b.y - y) < RING && (cue ? b.num === 0 || b.num == null : b.num !== 0)); }
 function drawTest(c, S2) {
   const T = A.test; if (!T) return;
   const S = T.st < 4 ? STATIONS[T.st] : { cue: [4, 2] }, cue = testXY(S.cue), obj = S.obj ? testXY(S.obj) : null;
   const flat = (x, y) => S2(A.cam.proj(x, y, 0));
   if (obj) { const pk = [2 * obj[0] - cue[0], 2 * obj[1] - cue[1]], a = flat(cue[0], cue[1]), b = flat(pk[0], pk[1]); c.save(); c.setLineDash([6, 6]); c.strokeStyle = 'rgba(234,241,244,.45)'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); c.restore(); }
+  let all = !!obj;
   for (const [p, col, lab, isCue] of [[cue, '#f4f1e8', 'cue', true], [obj, '#e8c11d', '1', false]]) {
-    if (!p) continue; const ok = testTaken(p[0], p[1], isCue), colr = ok ? '#3ddc84' : col;
+    if (!p) continue; const ok = testTaken(p[0], p[1], isCue), colr = ok ? '#3ddc84' : col; if (!ok) all = false;
     c.strokeStyle = colr; c.lineWidth = 2.5; c.beginPath();
-    for (let i = 0; i <= 48; i++) { const a = i / 48 * Math.PI * 2, s = flat(p[0] + 1.6 * Math.cos(a), p[1] + 1.6 * Math.sin(a)); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); }
+    for (let i = 0; i <= 48; i++) { const a = i / 48 * Math.PI * 2, s = flat(p[0] + RING * Math.cos(a), p[1] + RING * Math.sin(a)); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); }
     c.stroke(); const m = flat(p[0], p[1]); c.fillStyle = colr; c.beginPath(); c.arc(m[0], m[1], 2.5, 0, Math.PI * 2); c.fill();
-    const top = flat(p[0], p[1] + (A.cam.proj(p[0], p[1] + 2, 0)[1] < A.cam.proj(p[0], p[1], 0)[1] ? 2.2 : -2.2)); c.font = '600 12px ' + getComputedStyle(document.body).fontFamily; c.textAlign = 'center'; c.fillText(lab, top[0], top[1] - 4);
+    const top = flat(p[0], p[1] + (A.cam.proj(p[0], p[1] + 2, 0)[1] < A.cam.proj(p[0], p[1], 0)[1] ? RING + 0.6 : -RING - 0.6)); c.font = '600 12px ' + getComputedStyle(document.body).fontFamily; c.textAlign = 'center'; c.fillText(lab, top[0], top[1] - 4);
   }
+  // both balls on their spots: a chime, once for each shot, so the owner can set up looking at the table
+  if (all && !T.chimed && T.st < 4 && A.tk.S.phase !== 'shot') { T.chimed = true; chime(); }
 }
 
 // ---------- drawing ----------

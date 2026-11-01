@@ -56,9 +56,9 @@ async function run(rot, viewport, sway, strokeTest) {
       await page.click('#menuBtn'); await page.click('[data-act=test]');
       const sp = await page.evaluate(() => { const v = window.__v3; return v.STATIONS.map(S => [v.testXY(S.cue), v.testXY(S.obj)]).concat([[v.A.P.L, v.A.P.W]]); });
       const [L, W] = sp.pop(); for (const pr of sp) for (const [x, y] of pr) assert.ok(x > 0 && x < L && y > 0 && y < W, 'spot on the table: ' + JSON.stringify(sp));
-      assert.match(await page.textContent('#card'), /1\/5 Shooting right/);
+      assert.match(await page.textContent('#card'), /Soft.*Station 1 of 5/);
       for (let i = 0; i < 4; i++) await page.click('[data-act=test_next]');
-      assert.match(await page.textContent('#card'), /5\/5 Not shots/);
+      assert.match(await page.textContent('#card'), /Practice strokes.*Station 5 of 5/);
       await page.click('[data-act=test_rec]');
       await page.waitForFunction(() => window.__v3.DBG.ev.some(e => e.k === 'clip' && e.name === 'move-01'), null, { timeout: 60000 }); // 10 s countdown, 8 s recorded
       await page.click('[data-act=test_close]');

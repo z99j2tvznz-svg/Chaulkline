@@ -1004,3 +1004,16 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   up by itself with a beep. Retry throws out the last attempt (its shot marked test.discarded) and goes back to it.
   Record gives a 10 s countdown on screen with a beep, then records 8 s (and the second before), then a long beep. The
   beeps come from the speaker (Web Audio, started from the tap); nothing is recorded from the microphone.
+
+## V3.1.2 (Nov 1) — the stroke test made easy to run
+- Third stroke test (Nov 1 11:47, V3.1.1): the watcher ran at 29 frames a second on the phone (the finder in the
+  background, about 260 ms a look), clips about 116 frames (1 MB) a shot. The owner: the rings far too small to set up
+  to while looking back at the screen; the 1 put back from the pocket a ? every time. Cause: the test kept one rack open,
+  so the 1 counted as already in and could not be named again; the first ball hit was then often not known and only 6 of
+  18 shots counted as attempts.
+- Rings 4 in each way (was 1.6), a chime from the speaker once both balls sit in them (once a shot). During the test no
+  number stays counted in, so the 1 put back is found and named like a rack ball. A shot counts as an attempt when
+  anything besides the cue ball changed (the tracker's othersChanged, now exported as changed). The card shows only the
+  pace (Soft, Medium, Firm), large, with the station and shot (owner: the rings and the line say where everything goes).
+- The home screen checks the site's version (index.html, not from cache) at most once a minute and offers a newer one
+  with a button that reloads the page (Nov 1: a test ran on the old version because the page stayed open in Safari).

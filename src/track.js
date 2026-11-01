@@ -686,6 +686,6 @@ function makeTracker(P, opts) {
 
   function setBags(b) { O.bags = b || []; }
   function touched() { S.touchT = S.t; }
-  return { S, O, update, pin, notBall, inPocket, newRack, finish, setBags, touched, balls: ballsNow, snapshot };
+  return { S, O, update, pin, notBall, inPocket, newRack, finish, setBags, touched, balls: ballsNow, snapshot, changed: othersChanged };
 }
 if (typeof module !== 'undefined') module.exports = { makeTracker };
