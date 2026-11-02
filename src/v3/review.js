@@ -65,7 +65,7 @@ const REVIEW = (() => {
   function remember(sess, mins) {
     if (!sess || !sess.shots || !sess.shots.length) return;
     const h = history().filter(x => x.t0 !== sess.t0), st = stats(sess.shots);
-    h.push({ t0: sess.t0, ft: sess.ft, mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun });
+    h.push({ t0: sess.t0, ft: sess.ft, mode: sess.mode || 'play', mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun });
     try { localStorage.setItem(HIST, JSON.stringify(h.slice(-300))); } catch (e) { }
   }
   // shots set up again: a shot whose cue ball starts within R in of the one before's, with every other ball within R in of
@@ -99,17 +99,19 @@ const RV = { sess: null, i: 0, urls: [], play: null, live: false };
 function dateWords(t) { const d = new Date(t); return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }); }
 function renderReview(sess, live) {
   RV.sess = sess; RV.live = live; const sh = sess.shots || [], st = REVIEW.stats(sh), rk = REVIEW.racks(sh);
-  $('#sumTitle').textContent = live ? 'Session over' : 'Last session';
-  $('#sumSub').textContent = (live ? '' : dateWords(sess.t0) + ' · ') + (sess.mins ? sess.mins + ' min · ' : '') + (sess.ft || 7) + ' ft table · ' + rk.length + ' rack' + (rk.length !== 1 ? 's' : '') + (sess.version ? ' · ' + sess.version : '');
-  $('#sumStats').innerHTML = [[st.shots, 'shots'], [st.ballsIn, 'balls in'], [REVIEW.pct(st.potRate), 'shots that made a ball'], [st.bestRun, 'best run'], [st.misses, 'misses'], [st.scratches, 'scratches']]
+  const prac = sess.mode === 'practice'; RV.reps = REVIEW.repeats(sh);
+  $('#sumTitle').textContent = prac ? (live ? 'Practice over' : 'Last practice') : live ? 'Session over' : 'Last session';
+  $('#sumSub').textContent = (live ? '' : dateWords(sess.t0) + ' · ') + (sess.mins ? sess.mins + ' min · ' : '') + (sess.ft || 7) + ' ft table' + (prac ? ' · practice' : ' · ' + rk.length + ' rack' + (rk.length !== 1 ? 's' : '')) + (sess.version ? ' · ' + sess.version : '');
+  // (in practice a run means little: the tries of a shot set up again instead)
+  $('#sumStats').innerHTML = [[st.shots, 'shots'], [st.ballsIn, 'balls in'], [REVIEW.pct(st.potRate), 'shots that made a ball'], prac ? [RV.reps.reduce((a, g) => a + g.length, 0), 'tries of a shot set up again'] : [st.bestRun, 'best run'], [st.misses, 'misses'], [st.scratches, 'scratches']]
     .map(([n, l]) => '<div><b>' + n + '</b><span>' + l + '</span></div>').join('');
   $('#sumRacks').innerHTML = rk.map(r => '<div class="rrow"><b>Rack ' + r.rack + '</b><span>' + r.shots + ' shot' + (r.shots !== 1 ? 's' : '') + ' · ' + r.ballsIn + ' in · ' + r.misses + ' missed' + (r.scratches ? ' · ' + r.scratches + ' scratch' + (r.scratches > 1 ? 'es' : '') : '') + (r.bestRun > 1 ? ' · run of ' + r.bestRun : '') + '</span></div>').join('');
-  $('#sumRackCard').hidden = rk.length < 2;
+  $('#sumRackCard').hidden = prac || rk.length < 2;
   const sa = REVIEW.strokeAvg(sh), f1 = v => v == null ? '–' : (Math.round(v * 10) / 10).toString();
   $('#sumStrokeCard').hidden = !sa.n;
   if (sa.n) $('#sumStroke').innerHTML = '<div class="stats">' + [[f1(sa.strokes), 'practice strokes'], [sa.back == null ? '–' : Math.round(sa.back) + '″', 'backswing'], [sa.pause == null ? '–' : sa.pause.toFixed(1) + ' s', 'pause'], [sa.follow == null ? '–' : Math.round(sa.follow) + '″', 'follow-through']].map(([n, l]) => '<div><b>' + n + '</b><span>' + l + '</span></div>').join('') + '</div><div class="lbl" style="margin-top:6px">Average of ' + sa.n + ' shot' + (sa.n !== 1 ? 's' : '') + ' where the cue was seen from the side.</div>';
   // the same shot set up again: one line per set of tries, opening them on one drawing
-  RV.reps = REVIEW.repeats(sh); $('#sumRepeatCard').hidden = !RV.reps.length;
+  $('#sumRepeatCard').hidden = !RV.reps.length;
   $('#sumRepeats').innerHTML = RV.reps.map((g, i) => { const mk = g.filter(REVIEW.scored).length; return '<button class="srow sbtn" data-g="' + i + '"><b>' + g[0].n + '–' + g[g.length - 1].n + '</b><span>' + g.length + ' tries · ' + (mk ? 'made ' + mk + ' (' + g.map((x, k) => REVIEW.scored(x) ? k + 1 : null).filter(x => x).map(k => k + (k === 1 ? 'st' : k === 2 ? 'nd' : k === 3 ? 'rd' : 'th')).join(', ') + ')' : 'not made') + '</span><i>›</i></button>'; }).join('');
   for (const b of $('#sumRepeats').querySelectorAll('.sbtn')) b.onclick = () => openGroup(+b.dataset.g);
   $('#sumList').innerHTML = sh.length ? sh.map((s, i) => '<button class="srow sbtn" data-i="' + i + '"><b>' + s.n + '</b><span>' + shotWords(s) + '</span><i>›</i></button>').join('') : '<div class="lbl">No shots.</div>';
@@ -169,6 +171,6 @@ function renderHistory() {
   const h = REVIEW.history().slice().reverse(), card = $('#histCard'); card.hidden = !h.length; if (!h.length) return;
   const last = h.slice(0, 12).reverse(), bw = 100 / Math.max(6, last.length);
   $('#histChart').innerHTML = '<svg viewBox="0 0 100 34" preserveAspectRatio="none" class="hbars" aria-hidden="true">' + last.map((x, i) => { const r = x.tries ? x.potted / x.tries : 0, hh = Math.max(1, 30 * r); return '<rect x="' + (i * bw + bw * .15).toFixed(2) + '" y="' + (32 - hh).toFixed(2) + '" width="' + (bw * .7).toFixed(2) + '" height="' + hh.toFixed(2) + '" rx="1" fill="var(--accent)" opacity="' + (i === last.length - 1 ? 1 : .55) + '"/>'; }).join('') + '</svg>';
-  $('#histList').innerHTML = h.slice(0, 8).map(x => '<div class="rrow"><b>' + dateWords(x.t0) + '</b><span>' + x.shots + ' shots · ' + x.ballsIn + ' in · ' + REVIEW.pct(x.tries ? x.potted / x.tries : null) + ' made a ball · best run ' + x.bestRun + '</span></div>').join('');
+  $('#histList').innerHTML = h.slice(0, 8).map(x => '<div class="rrow"><b>' + dateWords(x.t0) + (x.mode === 'practice' ? ' · practice' : '') + '</b><span>' + x.shots + ' shots · ' + x.ballsIn + ' in · ' + REVIEW.pct(x.tries ? x.potted / x.tries : null) + ' made a ball · best run ' + x.bestRun + '</span></div>').join('');
 }
 renderHistory();

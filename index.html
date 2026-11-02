@@ -114,12 +114,14 @@ a.old { color: var(--muted); font-size: 13px; }
     <div><h1 class="brand">Chalk<span>line</span><span class="ver" id="verTag"></span></h1>
       <p class="lead">Set the phone where it sees the whole table, upright or sideways, and tap Watch.</p></div>
     <button class="btn primary" id="updBtn" hidden></button>
-    <button class="go glass" id="goBtn"><b>Watch</b><small>Chalkline finds the table, names the balls and follows every shot: made balls, scratches, the first ball hit.</small><i>›</i></button>
+    <button class="go glass" id="goBtn"><b>Play a rack</b><small>A rack at a time: made balls, scratches, the first ball hit, runs; the rack is done by itself when only the cue ball is left.</small><i>›</i></button>
+    <button class="go glass" id="pracBtn"><b>Practice</b><small>Set balls where you like and shoot. Moving or picking up balls is fine; tries of the same shot are put together.</small><i>›</i></button>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histList"></div></div>
-    <div class="card glass"><h2>New in V3.3</h2><ul>
+    <div class="card glass"><h2>New in V3.4</h2><ul>
+      <li>Practice: set balls where you like, move them, pick them up. No racks; balls put back keep their numbers. Play a rack is for a proper rack.</li>
       <li>Set the same shot up again and the review puts the tries together: all of them on one drawing, made or missed, with each try's stroke.</li>
       <li>Picking up the cue ball to set a shot again is no longer called a scratch.</li>
       <li>Balls put back on the table get their numbers again, even when no new rack was seen.</li>
@@ -1767,6 +1769,8 @@ function makeTracker(P, opts) {
     rackHold: 2,
     rackNew: 4,         // this many new balls put out since the last shot, and more on the table than then: a new rack
     flicker: 2.2,       // in (a ball's width): motion this close to a ball's resting spot waits a look before it counts (see phase)
+    practice: false,    // practice (owner, Nov 2): balls set out, moved and picked up at will, no racks: every number is free
+                        // again at each shot (balls put back keep their names), and nothing is inferred at the end
     cueBack: true,      // the cue ball gone with a white ball resting on the table since: put back by hand, not a scratch
     reviveGone: true,   // a number counted in comes back when a ball put out since reads as it (see name) ...
     reviveNew: 15,      // ... a ball that turned up at most this many s ago
@@ -2185,6 +2189,7 @@ function makeTracker(P, opts) {
   function finish() {
     const t = S.t;
     if (S.shot) endShot(t);
+    if (O.practice) return; // (in practice a ball gone from the table was as likely picked up)
     if (S.shots.length <= S.rackAt) return;
     const sh = S.shots[S.shots.length - 1];
     for (const tr of ballsNow()) {
@@ -2384,7 +2389,7 @@ function makeTracker(P, opts) {
       (wc == null || whiteOf(o) == null || Math.abs(whiteOf(o) - wc) <= O.cueVeto));
   }
   function startShot(tr, t) {
-    S.phase = 'shot'; S.stillSince = null;
+    S.phase = 'shot'; S.stillSince = null; if (O.practice) S.gone.length = 0;
     const cueFit = tr.nVotes >= 3 ? Math.exp(tr.votes[O.ids.indexOf(0)] / tr.nVotes) : 1;
     const cueVoted = tr.pin == null && cueFit >= 0.05; if (cueVoted) voteFor(tr, 0, O.cueVote);
     // a break: five or more balls packed together (each touching another) when the shot starts
@@ -2566,7 +2571,7 @@ const STROKE = (() => {
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.3.0';
+const VERSION = 'V3.4.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -2649,7 +2654,7 @@ const STORE = (() => {
   };
 })();
 function header() {
-  return { app: 'chalkline', build: VERSION, det: DET.VERSION, started: new Date(DBG.t0).toISOString(), ua: navigator.userAgent, screen: [screen.width, screen.height], dpr: window.devicePixelRatio || 1,
+  return { app: 'chalkline', build: VERSION, mode: A.mode || 'play', det: DET.VERSION, started: new Date(DBG.t0).toISOString(), ua: navigator.userAgent, screen: [screen.width, screen.height], dpr: window.devicePixelRatio || 1,
     gpu: !!navigator.gpu, engine: DET.ep, engineSetting: A.engine, threads: DET.threads(), isolated: !!window.crossOriginIsolated, cores: navigator.hardwareConcurrency || null, shape: A.shape, kmax: r2(A.kmax), ft: A.ft, picture: A.tableWH || [A.W, A.H], pictureNow: [A.W, A.H], quad: A.quad && A.quad.map(p => [r1(p[0]), r1(p[1])]), rot: A.rot, box: A.box && A.box.map(Math.round),
     camOk: A.cam ? A.cam.ok : null, cam: A.camInfo, lens: LENS };
 }
@@ -2724,7 +2729,8 @@ async function renderGate() {
   } catch (e) { $('#gateCard').hidden = true; }
 }
 renderGate();
-$('#goBtn').onclick = () => start();
+$('#goBtn').onclick = () => start('play');
+$('#pracBtn').onclick = () => start('practice');
 $('#dbgHome').onclick = () => saveDebug($('#dbgHome'));
 function homeMsg(t, bad) { const m = $('#homeMsg'); m.textContent = t || ''; m.classList.toggle('bad', !!bad); }
 
@@ -2771,15 +2777,17 @@ function smallImg() {
 }
 
 // ---------- start ----------
-async function start() {
-  homeMsg('');
+// mode: 'play' (a rack at a time: racks done by themselves, runs) or 'practice' (balls set out and moved at will; owner Nov 2)
+const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false } : {};
+async function start(mode) {
+  homeMsg(''); A.mode = mode === 'practice' ? 'practice' : 'play';
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, shots: [], rack: 1, rackOpen: false }; A.strokeCheck = false; A.handsN = 0; A.handsT = 0;
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P, TK_OPTS(A.mode)); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.handsN = 0; A.handsT = 0;
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
-  dbg('start', { ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
+  dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
   // the weights (10 MB) download while the table is found
   DET.prefetch(BASE, 'models/v3/finder-v1.weights', (g, t) => { A.dl = t ? g / t : 0; }).catch(e => dbg('error', { m: 'weights ' + String(e).slice(0, 100) }));
   try { await openCamera(); } catch (e) {
@@ -2810,7 +2818,7 @@ function endRun() {
 }
 function renderSummary() { renderReview(A.sess, true); $('#sumDbg').textContent = 'Save debug'; }
 $('#endBtn').onclick = () => endRun();
-$('#sumAgain').onclick = () => { $('#sum').hidden = true; start(); };
+$('#sumAgain').onclick = () => { $('#sum').hidden = true; start(A.mode); };
 $('#sumHome').onclick = () => { closeShot(); $('#sum').hidden = true; $('#home').hidden = false; A.phase = 'home'; renderHome(); renderGate(); };
 $('#lastOpen').onclick = () => { if (!A.lastSess) return; $('#home').hidden = true; $('#sum').hidden = false; renderReview(A.lastSess, false); };
 $('#sumDbg').onclick = () => saveDebug($('#sumDbg'));
@@ -3425,7 +3433,7 @@ function showCard(html, mini, cls) { const c = $('#card'); c.innerHTML = html; c
 function hideCard() { $('#card').hidden = true; $('#cam').classList.remove('manual'); }
 $('#card').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.ft) { A.ft = +b.dataset.ft; save(); A.P = makeP(A.ft); A.tk = makeTracker(A.P); A.nShots = 0; dbg('ft', { ft: A.ft }); refind('Table size ' + A.ft + ' ft: looking again…'); return; }
+  if (b.dataset.ft) { A.ft = +b.dataset.ft; save(); A.P = makeP(A.ft); A.tk = makeTracker(A.P, TK_OPTS(A.mode)); A.nShots = 0; dbg('ft', { ft: A.ft }); refind('Table size ' + A.ft + ' ft: looking again…'); return; }
   const a = b.dataset.act;
   if (a === 'accept') acceptTable(); else if (a === 'retry') refind(); else if (a === 'manual') beginManual();
   else if (a === 'undo') { if (A.man && A.man.length) A.man.pop(); if (A.man) manualCard(); }
@@ -3591,7 +3599,7 @@ const REVIEW = (() => {
   function remember(sess, mins) {
     if (!sess || !sess.shots || !sess.shots.length) return;
     const h = history().filter(x => x.t0 !== sess.t0), st = stats(sess.shots);
-    h.push({ t0: sess.t0, ft: sess.ft, mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun });
+    h.push({ t0: sess.t0, ft: sess.ft, mode: sess.mode || 'play', mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun });
     try { localStorage.setItem(HIST, JSON.stringify(h.slice(-300))); } catch (e) { }
   }
   // shots set up again: a shot whose cue ball starts within R in of the one before's, with every other ball within R in of
@@ -3625,17 +3633,19 @@ const RV = { sess: null, i: 0, urls: [], play: null, live: false };
 function dateWords(t) { const d = new Date(t); return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }); }
 function renderReview(sess, live) {
   RV.sess = sess; RV.live = live; const sh = sess.shots || [], st = REVIEW.stats(sh), rk = REVIEW.racks(sh);
-  $('#sumTitle').textContent = live ? 'Session over' : 'Last session';
-  $('#sumSub').textContent = (live ? '' : dateWords(sess.t0) + ' · ') + (sess.mins ? sess.mins + ' min · ' : '') + (sess.ft || 7) + ' ft table · ' + rk.length + ' rack' + (rk.length !== 1 ? 's' : '') + (sess.version ? ' · ' + sess.version : '');
-  $('#sumStats').innerHTML = [[st.shots, 'shots'], [st.ballsIn, 'balls in'], [REVIEW.pct(st.potRate), 'shots that made a ball'], [st.bestRun, 'best run'], [st.misses, 'misses'], [st.scratches, 'scratches']]
+  const prac = sess.mode === 'practice'; RV.reps = REVIEW.repeats(sh);
+  $('#sumTitle').textContent = prac ? (live ? 'Practice over' : 'Last practice') : live ? 'Session over' : 'Last session';
+  $('#sumSub').textContent = (live ? '' : dateWords(sess.t0) + ' · ') + (sess.mins ? sess.mins + ' min · ' : '') + (sess.ft || 7) + ' ft table' + (prac ? ' · practice' : ' · ' + rk.length + ' rack' + (rk.length !== 1 ? 's' : '')) + (sess.version ? ' · ' + sess.version : '');
+  // (in practice a run means little: the tries of a shot set up again instead)
+  $('#sumStats').innerHTML = [[st.shots, 'shots'], [st.ballsIn, 'balls in'], [REVIEW.pct(st.potRate), 'shots that made a ball'], prac ? [RV.reps.reduce((a, g) => a + g.length, 0), 'tries of a shot set up again'] : [st.bestRun, 'best run'], [st.misses, 'misses'], [st.scratches, 'scratches']]
     .map(([n, l]) => '<div><b>' + n + '</b><span>' + l + '</span></div>').join('');
   $('#sumRacks').innerHTML = rk.map(r => '<div class="rrow"><b>Rack ' + r.rack + '</b><span>' + r.shots + ' shot' + (r.shots !== 1 ? 's' : '') + ' · ' + r.ballsIn + ' in · ' + r.misses + ' missed' + (r.scratches ? ' · ' + r.scratches + ' scratch' + (r.scratches > 1 ? 'es' : '') : '') + (r.bestRun > 1 ? ' · run of ' + r.bestRun : '') + '</span></div>').join('');
-  $('#sumRackCard').hidden = rk.length < 2;
+  $('#sumRackCard').hidden = prac || rk.length < 2;
   const sa = REVIEW.strokeAvg(sh), f1 = v => v == null ? '–' : (Math.round(v * 10) / 10).toString();
   $('#sumStrokeCard').hidden = !sa.n;
   if (sa.n) $('#sumStroke').innerHTML = '<div class="stats">' + [[f1(sa.strokes), 'practice strokes'], [sa.back == null ? '–' : Math.round(sa.back) + '″', 'backswing'], [sa.pause == null ? '–' : sa.pause.toFixed(1) + ' s', 'pause'], [sa.follow == null ? '–' : Math.round(sa.follow) + '″', 'follow-through']].map(([n, l]) => '<div><b>' + n + '</b><span>' + l + '</span></div>').join('') + '</div><div class="lbl" style="margin-top:6px">Average of ' + sa.n + ' shot' + (sa.n !== 1 ? 's' : '') + ' where the cue was seen from the side.</div>';
   // the same shot set up again: one line per set of tries, opening them on one drawing
-  RV.reps = REVIEW.repeats(sh); $('#sumRepeatCard').hidden = !RV.reps.length;
+  $('#sumRepeatCard').hidden = !RV.reps.length;
   $('#sumRepeats').innerHTML = RV.reps.map((g, i) => { const mk = g.filter(REVIEW.scored).length; return '<button class="srow sbtn" data-g="' + i + '"><b>' + g[0].n + '–' + g[g.length - 1].n + '</b><span>' + g.length + ' tries · ' + (mk ? 'made ' + mk + ' (' + g.map((x, k) => REVIEW.scored(x) ? k + 1 : null).filter(x => x).map(k => k + (k === 1 ? 'st' : k === 2 ? 'nd' : k === 3 ? 'rd' : 'th')).join(', ') + ')' : 'not made') + '</span><i>›</i></button>'; }).join('');
   for (const b of $('#sumRepeats').querySelectorAll('.sbtn')) b.onclick = () => openGroup(+b.dataset.g);
   $('#sumList').innerHTML = sh.length ? sh.map((s, i) => '<button class="srow sbtn" data-i="' + i + '"><b>' + s.n + '</b><span>' + shotWords(s) + '</span><i>›</i></button>').join('') : '<div class="lbl">No shots.</div>';
@@ -3695,7 +3705,7 @@ function renderHistory() {
   const h = REVIEW.history().slice().reverse(), card = $('#histCard'); card.hidden = !h.length; if (!h.length) return;
   const last = h.slice(0, 12).reverse(), bw = 100 / Math.max(6, last.length);
   $('#histChart').innerHTML = '<svg viewBox="0 0 100 34" preserveAspectRatio="none" class="hbars" aria-hidden="true">' + last.map((x, i) => { const r = x.tries ? x.potted / x.tries : 0, hh = Math.max(1, 30 * r); return '<rect x="' + (i * bw + bw * .15).toFixed(2) + '" y="' + (32 - hh).toFixed(2) + '" width="' + (bw * .7).toFixed(2) + '" height="' + hh.toFixed(2) + '" rx="1" fill="var(--accent)" opacity="' + (i === last.length - 1 ? 1 : .55) + '"/>'; }).join('') + '</svg>';
-  $('#histList').innerHTML = h.slice(0, 8).map(x => '<div class="rrow"><b>' + dateWords(x.t0) + '</b><span>' + x.shots + ' shots · ' + x.ballsIn + ' in · ' + REVIEW.pct(x.tries ? x.potted / x.tries : null) + ' made a ball · best run ' + x.bestRun + '</span></div>').join('');
+  $('#histList').innerHTML = h.slice(0, 8).map(x => '<div class="rrow"><b>' + dateWords(x.t0) + (x.mode === 'practice' ? ' · practice' : '') + '</b><span>' + x.shots + ' shots · ' + x.ballsIn + ' in · ' + REVIEW.pct(x.tries ? x.potted / x.tries : null) + ' made a ball · best run ' + x.bestRun + '</span></div>').join('');
 }
 renderHistory();
 

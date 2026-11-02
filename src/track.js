@@ -29,6 +29,8 @@ function makeTracker(P, opts) {
     rackHold: 2,
     rackNew: 4,         // this many new balls put out since the last shot, and more on the table than then: a new rack
     flicker: 2.2,       // in (a ball's width): motion this close to a ball's resting spot waits a look before it counts (see phase)
+    practice: false,    // practice (owner, Nov 2): balls set out, moved and picked up at will, no racks: every number is free
+                        // again at each shot (balls put back keep their names), and nothing is inferred at the end
     cueBack: true,      // the cue ball gone with a white ball resting on the table since: put back by hand, not a scratch
     reviveGone: true,   // a number counted in comes back when a ball put out since reads as it (see name) ...
     reviveNew: 15,      // ... a ball that turned up at most this many s ago
@@ -447,6 +449,7 @@ function makeTracker(P, opts) {
   function finish() {
     const t = S.t;
     if (S.shot) endShot(t);
+    if (O.practice) return; // (in practice a ball gone from the table was as likely picked up)
     if (S.shots.length <= S.rackAt) return;
     const sh = S.shots[S.shots.length - 1];
     for (const tr of ballsNow()) {
@@ -646,7 +649,7 @@ function makeTracker(P, opts) {
       (wc == null || whiteOf(o) == null || Math.abs(whiteOf(o) - wc) <= O.cueVeto));
   }
   function startShot(tr, t) {
-    S.phase = 'shot'; S.stillSince = null;
+    S.phase = 'shot'; S.stillSince = null; if (O.practice) S.gone.length = 0;
     const cueFit = tr.nVotes >= 3 ? Math.exp(tr.votes[O.ids.indexOf(0)] / tr.nVotes) : 1;
     const cueVoted = tr.pin == null && cueFit >= 0.05; if (cueVoted) voteFor(tr, 0, O.cueVote);
     // a break: five or more balls packed together (each touching another) when the shot starts

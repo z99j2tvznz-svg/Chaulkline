@@ -65,6 +65,10 @@ test('the review screens in the page: the last session from home, a shot from ab
     await page.click('#svNext'); await page.waitForFunction(() => document.querySelector('#svTitle').textContent.includes('Shot 3'));
     await page.waitForFunction(() => /No pictures kept/.test(document.querySelector('#svMedia').textContent), null, { timeout: 5000 });
     await page.click('#svClose'); assert.ok(await page.isHidden('#shotView'));
+    // V3.4: the same session as practice: no racks, the tries of a shot set up again in place of the best run
+    const pr = await page.evaluate(() => { const v = window.__v3; v.A.lastSess.mode = 'practice'; renderReview(v.A.lastSess, false);
+      return { title: document.querySelector('#sumTitle').textContent, racks: document.querySelector('#sumRackCard').hidden, stats: document.querySelector('#sumStats').textContent, prac: !!document.querySelector('#pracBtn') }; });
+    assert.deepStrictEqual([pr.title, pr.racks, pr.prac], ['Last practice', true, true]); assert.match(pr.stats, /3\s*tries of a shot set up again/);
     assert.deepStrictEqual(errors, []);
   } finally { await browser.close(); srv.close(); }
 });

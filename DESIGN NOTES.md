@@ -1122,3 +1122,18 @@ play, so it is on the scoreboard (now measuring V3.2.0 on).
 - Not fixed: a ball lying in a far pocket can sit where a ball on the table 1.5 in off the cushion would be (the 9 in the
   top-left pocket at 20:06, found with a full ball's score), so it stays a ball on the table.
 - made_late events carry where the ball was last seen (at).
+
+## V3.4.0 (Nov 2) — Practice and Play a rack
+- Owner, Nov 2: in practice a ball is set where it is wanted and hit, the cue ball moved, balls picked up and put back,
+  nothing in order; asked for a practice mode beside playing a rack properly. Agreed: almost every wrong call at 20:06
+  came from rack rules that do not hold in practice (a ball picked up taken as in, numbers counted in after the balls
+  were put back, "rack complete" when the balls simply ran out). Saying which removes the guess.
+- Home: Play a rack (as before: racks done by themselves, a new set of balls is a new rack, runs) and Practice. Practice
+  runs the tracker with practice: every number is free again as each shot starts (S.gone emptied), no rack complete and
+  no new rack, and End session infers no ball in. The New rack button is hidden. The review in practice: "Practice
+  over", no racks, the tries of a shot set up again in place of the best run; the history marks practice sessions. The
+  debug header carries the mode and the replay uses it. Replayed as practice, Nov 1 20:06: 36 of 46 (35 as play).
+- The stroke's numbers checked against the close-ups (full camera size around the cue ball, the ball 2.25 in across, about
+  15 px an inch), 20:06 shot 2: the tip 1.9 in from the ball's centre at address (the app: 1.9); out of the 13 in window
+  at the top of the backswing (the app: 12.5 in back); 0.15 s after the strike already more than 7 in past the ball's
+  spot (V3.2 live said 5, V3.3's strike from the cue 7). Long, full strokes, not a measuring error.

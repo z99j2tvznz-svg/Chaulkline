@@ -12,7 +12,8 @@ function actions(d) {
   let i = 0; return ev.map(e => (e.k === 'tap_not' || e.k === 'tap_pocketed') ? { ...e, num: (tev[i++] || {}).num } : e);
 }
 function replay(d, ft, opts, o2) {
-  const P = makeP(ft || (d.header && d.header.ft) || 7), tk = makeTracker(P, opts), acts = (o2 && o2.noActions) ? [] : actions(d);
+  // a practice session (V3.4 on) replays with the practice settings, as the app ran it
+  const mode = d.header && d.header.mode, P = makeP(ft || (d.header && d.header.ft) || 7), tk = makeTracker(P, Object.assign(mode === 'practice' ? { practice: true, autoRack: false, rackNew: false } : {}, opts)), acts = (o2 && o2.noActions) ? [] : actions(d);
   // where a ball lying in a pocket shows up, from the camera in the log's header (as the app does once the table is set)
   const h = d.header; if (h && h.quad && h.picture) {
     global.D2R = global.D2R || Math.PI / 180; const { makeCam } = require(path.join(__dirname, '../../src/core.js')), V = require(path.join(__dirname, '../../src/vision.js')), { L, Wd } = V.tableDims(h.ft || 7);

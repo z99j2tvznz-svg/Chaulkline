@@ -585,3 +585,23 @@ test('the owner\'s V3.2.0 session (Nov 1, 20:06, practice with a few balls at a 
   // lying in a far pocket (35), a ball called but not numbered
   assert.ok(r.shots >= 45 && r.right >= 35 && r.falsePots <= 5, JSON.stringify(r.rows.filter(x => !x.right)));
 });
+
+test('practice: a ball pocketed and put back gets its number again at the next shot; End session infers nothing', () => {
+  const run = practice => {
+    seed = 7; // (the noise as for the first shot test: at this speed some noise swaps the cue ball and the 3 at contact)
+    const tk = makeTracker(P, practice ? { practice: true, autoRack: false, rackNew: false } : {}), cue = { x: 15, y: 15 }, three = { x: 50, y: 26 };
+    const others = () => [{ num: 5, x: 30, y: 33 }, { num: 9, x: 62, y: 8 }];
+    let t = settle(tk, 0, [{ num: 0, ...cue }, { num: 3, ...three }, ...others()]); tk.S.setup = false;
+    t = playShot(tk, t, cue, three, others);
+    // the cue ball picked up, the 3 taken out of the pocket and set down where it was, the cue ball set down; the same shot again
+    const cue2 = { x: 52.75 + 6 - 30, y: 26 };
+    t = settle(tk, t, [{ num: 3, ...three }, ...others()], 3, 0.3);
+    t = settle(tk, t, [{ num: 0, ...cue2 }, { num: 3, ...three }, ...others()], 4, 0.3);
+    t = playShot(tk, t, cue2, three, others);
+    return tk;
+  };
+  const pr = run(true);
+  const info = JSON.stringify(pr.S.events.filter(e => ['shot', 'shot_end', 'pocketed', 'made_late', 'cleared', 'back_on', 'cue_back', 'hands', 'not_shot'].includes(e.k)));
+  assert.strictEqual(pr.S.shots.length, 2, info); assert.deepStrictEqual(pr.S.shots.map(s => s.made.map(m => m.num)), [[3], [3]], info);
+  const before = pr.S.shots[1].made.length; pr.finish(); assert.strictEqual(pr.S.shots[1].made.length, before);
+});

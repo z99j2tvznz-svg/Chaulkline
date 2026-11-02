@@ -107,12 +107,14 @@ a.old { color: var(--muted); font-size: 13px; }
     <div><h1 class="brand">Chalk<span>line</span><span class="ver" id="verTag"></span></h1>
       <p class="lead">Set the phone where it sees the whole table, upright or sideways, and tap Watch.</p></div>
     <button class="btn primary" id="updBtn" hidden></button>
-    <button class="go glass" id="goBtn"><b>Watch</b><small>Chalkline finds the table, names the balls and follows every shot: made balls, scratches, the first ball hit.</small><i>›</i></button>
+    <button class="go glass" id="goBtn"><b>Play a rack</b><small>A rack at a time: made balls, scratches, the first ball hit, runs; the rack is done by itself when only the cue ball is left.</small><i>›</i></button>
+    <button class="go glass" id="pracBtn"><b>Practice</b><small>Set balls where you like and shoot. Moving or picking up balls is fine; tries of the same shot are put together.</small><i>›</i></button>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histList"></div></div>
-    <div class="card glass"><h2>New in V3.3</h2><ul>
+    <div class="card glass"><h2>New in V3.4</h2><ul>
+      <li>Practice: set balls where you like, move them, pick them up. No racks; balls put back keep their numbers. Play a rack is for a proper rack.</li>
       <li>Set the same shot up again and the review puts the tries together: all of them on one drawing, made or missed, with each try's stroke.</li>
       <li>Picking up the cue ball to set a shot again is no longer called a scratch.</li>
       <li>Balls put back on the table get their numbers again, even when no new rack was seen.</li>
