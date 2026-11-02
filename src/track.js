@@ -659,7 +659,7 @@ function makeTracker(P, opts) {
     const packed = ballsNow().filter(a => a !== tr && ballsNow().some(b => b !== a && b !== tr && dist(a, b) < 2 * R + 0.5)).length;
     // (back: at most 1 s, since a ball found again by its read may have been lost long before)
     const t0 = tr.jumpFrom != null && tr.movedT === t ? tr.jumpFrom : t, back = tr.movedT === t && tr.relinkLost != null ? Math.max(t - 1, Math.min(t0, tr.relinkLost)) : t0; tr.jumpFrom = tr.relinkLost = null;
-    S.shot = { n: S.shots.length + 1, t0, cueKey: tr.key, cueNum: tr.num, first: null, made: [], anon: [], before: snapshot(), break: packed >= 5, cueVoted };
+    S.shot = { n: S.shots.length + 1, t0, cueKey: tr.key, cueNum: tr.num, first: null, made: [], anon: [], before: snapshot(), break: !O.practice && packed >= 5, cueVoted }; // (in practice no break: a row of balls kept along a rail is not a rack)
     ev('shot', { n: S.shot.n, key: tr.key, num: tr.num, break: S.shot.break });
     // a shot seen late (the cue ball found again only after it jumped): a ball that vanished since it started, by a pocket
     // and struck or in the jaws, went in (Oct 27: the 1 in the jaws, gone the same look the cue ball reached it)

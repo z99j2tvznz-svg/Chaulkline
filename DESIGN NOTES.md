@@ -1151,3 +1151,21 @@ follow-through typical; the strike 0.58 s before the shot was seen to start. Nam
 scoreboard without name counts (the card now takes each share over the sessions that have that count), measuring V3.4.0.
 - For the next build: in practice no late scratch (the cue ball gone without being seen going in was picked up); the
   replay as practice 32 of 39 (31 without). Not yet published (fixes ride along with the next build).
+
+## V3.5.0 (Nov 2) — your shots: by pocket, by cut, by length
+- Owner, Nov 2: in practice the object ball is not set in the same spot each time; four balls go to one pocket, five to
+  another (the pockets are tight); what matters is practising cut shots and the like. So the review reads each shot:
+  the ball played (the ball hit first, else the one that went in, else one that moved), its pocket (the one it went
+  into; missed, the pocket within 20 degrees of the way it was sent: its own path once 3 in long, else the line of
+  centres where the cue ball, going the way it set off, meets it), the cut (between the aim at the contact point, two
+  radii back from the ball on the line to the pocket, and that line) and the lengths. A cut over 75 degrees, or no pocket
+  that way, is left unread: a bank, a kick, or a shot not followed well enough. The way the cue ball set off is taken
+  from its first point 3 in out; a cue ball hit hard has turned off the object ball by the first look (0.3 s), so a pass
+  up to 3 in wide of the contact is let through.
+- On the 21:18 practice log: read on 24 of the 45 shots (13 while the row along the rail made them "breaks"); the opening
+  drill came out as 25-33 degree cuts into the top-right corner, as it was set up.
+- Shown: "Your shots" after a session (made and tries by pocket, by cut: straight in under 10, small 10-25, medium
+  25-40, thin 40 and more; by length to the pocket: under 2 ft, 2-4 ft, over 4 ft), each shot's words ("a 28° cut to
+  the top-right, 2.5 ft from the pocket") and its drawing with the aim dotted to the contact (a dashed ring) and the line
+  to the pocket. Every session keeps its cut and pocket rows; the home screen adds the cuts up over all sessions.
+- Practice: no break (a row of balls kept along a rail packs like a rack); no late scratch (see the 21:18 review).

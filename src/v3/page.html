@@ -87,6 +87,9 @@ a.old { color: var(--muted); font-size: 13px; }
 #shotView { position: fixed; inset: 0; overflow-y: auto; z-index: 7; background: var(--bg); padding: calc(env(safe-area-inset-top, 0px) + 16px) calc(env(safe-area-inset-right, 0px) + 16px) calc(env(safe-area-inset-bottom, 0px) + 24px) calc(env(safe-area-inset-left, 0px) + 16px); }
 #shotView .wrap { gap: 12px; } .svhead { justify-content: space-between; } .svhead h2 { margin: 0; font-size: 18px; }
 #svSeg:empty { display: none; }
+#histCuts h3, #sumShots h3 { font: 600 13px var(--f); color: var(--muted); margin: 10px 0 4px; } #histCuts h3:first-child, #sumShots h3:first-child { margin-top: 0; }
+.brow { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 5px 0; font-size: 14px; } .brow b { font-weight: 600; }
+.brow i { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--glass2); overflow: hidden; } .brow u { display: block; height: 100%; background: var(--accent); }
 #svTable svg.tbl { width: 100%; height: auto; display: block; border-radius: 10px; }
 #svMedia img { width: 100%; height: auto; display: block; border-radius: 10px; background: #000; }
 .hbars { width: 100%; height: 64px; display: block; margin: 8px 0 4px; }
@@ -112,8 +115,10 @@ a.old { color: var(--muted); font-size: 13px; }
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
-    <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histList"></div></div>
-    <div class="card glass"><h2>New in V3.4</h2><ul>
+    <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
+    <div class="card glass"><h2>New in V3.5</h2><ul>
+      <li>Your shots: after a session, how many you make into each pocket, by cut (straight in to thin) and by length; each shot drawn with its aim and the line to the pocket. Your cuts over all sessions on this screen.</li>
+      <li>In practice a cue ball picked up is not a scratch, and a row of balls along a rail is not a break.</li>
       <li>Practice: set balls where you like, move them, pick them up. No racks; balls put back keep their numbers. Play a rack is for a proper rack.</li>
       <li>Set the same shot up again and the review puts the tries together: all of them on one drawing, made or missed, with each try's stroke.</li>
       <li>Picking up the cue ball to set a shot again is no longer called a scratch.</li>
@@ -141,6 +146,7 @@ a.old { color: var(--muted); font-size: 13px; }
     <div><h1 class="brand" style="font-size:22px" id="sumTitle">Session over</h1><div class="lbl" id="sumSub"></div></div>
     <div class="stats six" id="sumStats"></div>
     <div class="card glass" id="sumStrokeCard" hidden><h2>Your stroke</h2><div id="sumStroke"></div></div>
+    <div class="card glass" id="sumShotsCard" hidden><h2>Your shots</h2><div id="sumShots"></div></div>
     <div class="card glass" id="sumRepeatCard" hidden><h2>Shots you set up again</h2><div class="lbl" style="margin:-4px 0 6px">The same shot tried more than once: all the tries on one drawing.</div><div id="sumRepeats"></div></div>
     <div class="card glass" id="sumRackCard"><h2>Racks</h2><div id="sumRacks"></div></div>
     <div class="card glass"><h2>Shots</h2><div class="lbl" style="margin:-4px 0 6px">Tap a shot to see it from above, with its pictures and clip.</div><div id="sumList"></div></div>
