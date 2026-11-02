@@ -62,7 +62,19 @@ const REVIEW = (() => {
     h.push({ t0: sess.t0, ft: sess.ft, mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun });
     try { localStorage.setItem(HIST, JSON.stringify(h.slice(-300))); } catch (e) { }
   }
-  return { objIn, stats, racks, runs, diagram, shotDetail, thin, history, remember, pct };
+  // the stroke in words (from the side only; else what is known)
+  function strokeWords(st) {
+    if (!st || st.none) return null; if (!st.side) return 'Stroke: the cue was not seen from the side on this shot.';
+    const w = []; if (st.strokes != null) w.push(st.strokes + ' practice stroke' + (st.strokes !== 1 ? 's' : ''));
+    if (st.back != null) w.push('backswing ' + Math.round(st.back) + ' in'); if (st.pause != null) w.push('pause ' + st.pause.toFixed(1) + ' s'); if (st.follow != null) w.push('follow-through ' + Math.round(st.follow) + ' in');
+    return w.length ? 'Stroke: ' + w.join(' · ') : null;
+  }
+  // the session's strokes from the side, on average
+  function strokeAvg(shots) {
+    const ss = shots.map(s => s.stroke).filter(st => st && st.side), avg = k => { const v = ss.map(x => x[k]).filter(x => x != null); return v.length ? v.reduce((a, x) => a + x, 0) / v.length : null; };
+    return { n: ss.length, strokes: avg('strokes'), back: avg('back'), pause: avg('pause'), follow: avg('follow') };
+  }
+  return { objIn, stats, racks, runs, diagram, shotDetail, thin, history, remember, pct, strokeWords, strokeAvg };
 })();
 
 // ---------- the review screens ----------
@@ -76,6 +88,9 @@ function renderReview(sess, live) {
     .map(([n, l]) => '<div><b>' + n + '</b><span>' + l + '</span></div>').join('');
   $('#sumRacks').innerHTML = rk.map(r => '<div class="rrow"><b>Rack ' + r.rack + '</b><span>' + r.shots + ' shot' + (r.shots !== 1 ? 's' : '') + ' · ' + r.ballsIn + ' in · ' + r.misses + ' missed' + (r.scratches ? ' · ' + r.scratches + ' scratch' + (r.scratches > 1 ? 'es' : '') : '') + (r.bestRun > 1 ? ' · run of ' + r.bestRun : '') + '</span></div>').join('');
   $('#sumRackCard').hidden = rk.length < 2;
+  const sa = REVIEW.strokeAvg(sh), f1 = v => v == null ? '–' : (Math.round(v * 10) / 10).toString();
+  $('#sumStrokeCard').hidden = !sa.n;
+  if (sa.n) $('#sumStroke').innerHTML = '<div class="stats">' + [[f1(sa.strokes), 'practice strokes'], [sa.back == null ? '–' : Math.round(sa.back) + '″', 'backswing'], [sa.pause == null ? '–' : sa.pause.toFixed(1) + ' s', 'pause'], [sa.follow == null ? '–' : Math.round(sa.follow) + '″', 'follow-through']].map(([n, l]) => '<div><b>' + n + '</b><span>' + l + '</span></div>').join('') + '</div><div class="lbl" style="margin-top:6px">Average of ' + sa.n + ' shot' + (sa.n !== 1 ? 's' : '') + ' where the cue was seen from the side.</div>';
   $('#sumList').innerHTML = sh.length ? sh.map((s, i) => '<button class="srow sbtn" data-i="' + i + '"><b>' + s.n + '</b><span>' + shotWords(s) + '</span><i>›</i></button>').join('') : '<div class="lbl">No shots.</div>';
   for (const b of $('#sumList').querySelectorAll('.sbtn')) b.onclick = () => openShot(+b.dataset.i);
   $('#sumDbg').hidden = !live; $('#sumAgain').hidden = !live;
@@ -86,7 +101,7 @@ async function openShot(i) {
   const sh = RV.sess.shots; if (i < 0 || i >= sh.length) return; RV.i = i; dropUrls(); const s = sh[i];
   $('#shotView').hidden = false;
   $('#svTitle').textContent = 'Shot ' + s.n + (s.rack ? ' · rack ' + s.rack : '');
-  $('#svWords').textContent = shotWords(s);
+  $('#svWords').textContent = shotWords(s); const sw = REVIEW.strokeWords(s.stroke); $('#svStroke').textContent = sw || ''; $('#svStroke').hidden = !sw;
   $('#svTable').innerHTML = s.paths || s.before ? REVIEW.diagram(s, RV.sess.ft) : '<div class="lbl">No drawing for this shot (sessions before V3.2 kept none).</div>';
   $('#svPrev').disabled = i === 0; $('#svNext').disabled = i === sh.length - 1;
   const nm = 'shot' + String(s.n).padStart(3, '0'), seg = $('#svSeg'); seg.innerHTML = ''; const media = $('#svMedia'); media.innerHTML = '';

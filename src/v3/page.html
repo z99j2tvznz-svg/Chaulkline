@@ -74,7 +74,6 @@ a.old { color: var(--muted); font-size: 13px; }
 #card { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 60px); width: min(94vw, 560px); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
 #card.mini { left: auto; right: calc(env(safe-area-inset-right, 0px) + 8px); bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); transform: none; width: auto; padding: 6px; }
 #cam.manual #bar { display: none; }
-#card.tst { max-width: min(400px, 60vw); padding: 6px 8px; } #card.tst .pace { font: 700 26px/1.1 var(--f); margin: 0 0 2px; } #card.tst .lbl { margin: 0 0 6px; } #card.tst p { margin: 0 0 5px; font-size: 12px; line-height: 1.3; } #card.tst .btn { padding: 6px 11px; font-size: 13px; }
 #card b { font-weight: 600; } #card p { margin: 0; font-size: 14px; color: rgba(234,241,244,.88); }
 #sum { position: fixed; inset: 0; overflow-y: auto; z-index: 5; padding: calc(env(safe-area-inset-top, 0px) + 22px) calc(env(safe-area-inset-right, 0px) + 16px) calc(env(safe-area-inset-bottom, 0px) + 28px) calc(env(safe-area-inset-left, 0px) + 16px); }
 #sum .wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
@@ -112,13 +111,11 @@ a.old { color: var(--muted); font-size: 13px; }
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histList"></div></div>
-    <div class="card glass"><h2>New in V3</h2><ul>
-      <li>A new ball finder and number reader, trained on your own balls.</li>
-      <li>Each ball keeps its name while it rolls. If a name is wrong, tap the ball and pick the right one: it sticks.</li>
-      <li>When it is not sure, it shows a "?" instead of guessing.</li>
-      <li>Upright or sideways, whichever suits the spot.</li>
-      <li>Racked balls get their names once the break spreads them out.</li>
-      <li>New in V3.1: Menu → Stroke test, and a short clip of every shot in the debug file.</li>
+    <div class="card glass"><h2>New in V3.2</h2><ul>
+      <li>After a session, tap any shot to see it from above: every ball's path, its pictures and its clip.</li>
+      <li>Each rack in numbers, your best run, and every session kept on this phone with a chart.</li>
+      <li>Your stroke, seen from the side: practice strokes, backswing, pause and follow-through on each shot, with your averages. Menu → Check my stroke shows each shot's stroke as you play.</li>
+      <li>A spot that flickers in a tight line of balls is no longer taken for a hand (V3.1.4).</li>
     </ul></div>
     <div class="card glass" id="gateCard" hidden><h2>Tracking scoreboard</h2><div id="gateRows"></div><div class="lbl" id="gateNote" style="margin-top:8px"></div></div>
     <div class="card glass" id="crashCard" hidden><h2>Last time the app stopped unexpectedly</h2><p class="lbl" id="crashText" style="margin:0 0 10px"></p><div class="lbl">Tap Save debug below: the file includes that session.</div></div>
@@ -139,6 +136,7 @@ a.old { color: var(--muted); font-size: 13px; }
   <div class="wrap">
     <div><h1 class="brand" style="font-size:22px" id="sumTitle">Session over</h1><div class="lbl" id="sumSub"></div></div>
     <div class="stats six" id="sumStats"></div>
+    <div class="card glass" id="sumStrokeCard" hidden><h2>Your stroke</h2><div id="sumStroke"></div></div>
     <div class="card glass" id="sumRackCard"><h2>Racks</h2><div id="sumRacks"></div></div>
     <div class="card glass"><h2>Shots</h2><div class="lbl" style="margin:-4px 0 6px">Tap a shot to see it from above, with its pictures and clip.</div><div id="sumList"></div></div>
     <div class="row"><button class="btn primary" id="sumAgain">Start again</button><button class="btn" id="sumDbg">Save debug</button><button class="btn" id="sumHome">Home</button></div>
@@ -148,6 +146,7 @@ a.old { color: var(--muted); font-size: 13px; }
 <div id="shotView" hidden><div class="wrap">
   <div class="row svhead"><h2 id="svTitle"></h2><button class="btn" id="svClose">Close</button></div>
   <div class="lbl" id="svWords"></div>
+  <div class="lbl" id="svStroke" hidden></div>
   <div id="svTable"></div>
   <div class="seg" id="svSeg"></div>
   <div id="svMedia"></div>
@@ -176,6 +175,9 @@ a.old { color: var(--muted); font-size: 13px; }
 </script>
 <script>
 /*TRACK*/
+</script>
+<script>
+/*STROKE*/
 </script>
 <script>
 /*APP*/

@@ -1053,3 +1053,36 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   one wrong number (the 9 shown as the 5 after shot 19); right once the line thinned out. Also: the 7 called in at New
   rack (21), the 1 and 9 on balls picked up (9), the 9 on 15 and the 7 on 22 missed, the 1 on 13 an unknown ball.
 - A drill, so not on the tracking card (as Oct 30's line racks); the card now measures V3.1.4.
+
+## V3.2.0 (Nov 2) — the session review and the stroke from the side
+Owner, Nov 2: progress had slowed to small patches and test sessions; work in big chunks, each version something to see
+in play, no more dedicated tests (normal play is the test). Looking back: Oct 26-29 took the tracker from nothing to
+about 95% of shots right; after that came nine small tracking patches (V3.0.7-V3.0.15) and four versions of stroke-test
+tooling (V3.1.0-V3.1.3), none of it visible in play, and the stroke itself was never measured. Meanwhile every session
+already kept what a review needs (each ball's path, before and after pictures, a clip per shot) and showed only a list.
+- Session review (src/v3/review.js): Session over (and Last session from home) shows shots, balls in, the share of shots
+  that made a ball (breaks left out), best run (shots in a row in one rack with a ball in and no scratch), misses,
+  scratches; each rack in a line; the shots as a list. Tapping a shot opens it from above: the table drawn to scale
+  (balls a fifth larger, to read), the balls that did not move where they rested, each moving ball from a faint start
+  along its tracked path to where it stopped or into its pocket (lit), then its clip as a flip book at the pace it was
+  taken, and its before and after pictures (from memory, or the phone's store for the latest two sessions). Each shot
+  keeps its rack, where the balls rested and its paths thinned to half an inch (a few KB). Every session's numbers are
+  kept in the phone's storage (the latest 300) and drawn on the home screen as a bar per session.
+- The stroke (src/stroke.js): in the watcher's 320 px picture, every frame while the named cue ball rests: the cue ball
+  followed by its white pixels; the cue as the direction with the longest unbroken run of not-cloth over the cloth (1 px
+  either side, a pixel's gap allowed, at least 14 px; the rails do not count); its tip where the run starts. Not-cloth for
+  this is the cloth's hue AND within 0.12 of its saturation and 40 of its brightness: the shaft, a pixel wide, only pales
+  or darkens the cloth. From the frames: the strike (the ball leaves its spot and stays away), the tip's distance in table
+  inches, smoothed, its turns with an inch of give (practice strokes = backswings before the last), the backswing from
+  the address, the pause (how long the tip stayed within half an inch at the back) and the follow-through (the tip past
+  the ball's old spot in the half second after). Reported from the side only: the cue within 25 degrees of level in the
+  picture, seen in 60% of the frames. On the stroke test of Nov 1 12:58: the strike found on every shot, 0.25-0.9 s
+  before the app saw the shot start; stations 1 and 2 (cue across the picture) backswing 5-10 in, pause 0.2-0.3 s,
+  follow-through 6-8 in, which match the clips by eye; toward or away from the phone (stations 4, 5) the cue is too short
+  to measure. The direction the cue ball left against the cue's line came out up to 17 degrees off on straight shots
+  (the cue is raised at the butt, the picture small): not shown. Shown per shot in the review, averaged in Your stroke,
+  logged per shot ('stroke' with its curve) for the next reviews. tools/v3/stroke.js runs it over a debug file's clips.
+- Check my stroke (menu) replaces the stroke test's stations, countdowns and chimes: just play; after each shot its
+  stroke shows for a few seconds, and the clips keep every frame and 4 s before (with the cue ball close-ups).
+- Next with the stroke: use the strike to tell a shot from a hand (a cue at the ball before it moved), which is what the
+  cue-first guess does today; the end-on view from the close-ups.

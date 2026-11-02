@@ -1,7 +1,6 @@
 // V3 app end to end in headless Chromium: the camera is a video made from the owner's photo of Oct 27 (home 7 ft table,
 // low side view, balls bunched at one end). Sideways and upright: the table is found, the finder starts (CPU engine here),
-// the balls get rings and names, a tap renames a ball and the name sticks, the watcher keeps up, the stroke test walks its
-// stations and records a clip, End session turns the camera off, and Save debug there gives a zip with the log and the clip.
+// the balls get rings and names, a tap renames a ball and the name sticks, the watcher keeps up, Check my stroke turns on, End session turns the camera off, and Save debug there gives a zip with the log and the clip.
 const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('node:fs'), os = require('node:os'), path = require('node:path'), { execFileSync } = require('node:child_process');
@@ -50,18 +49,15 @@ async function run(rot, viewport, sway, strokeTest) {
     // a fake camera and a slow processor; how fast it keeps up on the phone is what the logs are for)
     const w = await page.evaluate(() => window.__v3.DBG.ev.filter(e => e.k === 'watch').map(e => e.fps));
     assert.ok(w.length >= 2 && Math.max(...w) >= 1, 'watcher frames a second: ' + JSON.stringify(w));
+    // V3.2: the stroke watcher runs on those frames without errors (it measures once the cue ball rests, named)
+    const sk = await page.evaluate(() => ({ errs: window.__v3.DBG.ev.filter(e => e.k === 'error').map(e => e.m), obs: window.__v3.STK.obs.length, cue: !!window.__v3.A.tk.balls().find(b => b.num === 0 && b.sure) }));
+    assert.deepStrictEqual(sk.errs.filter(m => /stroke/.test(m)), []); if (sk.cue) assert.ok(sk.obs > 0, JSON.stringify(sk));
     if (strokeTest) {
-      // Menu -> Stroke test: station 1's spots lie on the table, the card walks through the stations, and a move recorded
-      // at station 5 becomes a clip in the debug file
-      await page.click('#menuBtn'); await page.click('[data-act=test]');
-      const sp = await page.evaluate(() => { const v = window.__v3; return v.STATIONS.map(S => [v.testXY(S.cue), v.testXY(S.obj)]).concat([[v.A.P.L, v.A.P.W]]); });
-      const [L, W] = sp.pop(); for (const pr of sp) for (const [x, y] of pr) assert.ok(x > 0 && x < L && y > 0 && y < W, 'spot on the table: ' + JSON.stringify(sp));
-      assert.match(await page.textContent('#card'), /Soft.*Station 1 of 5/);
-      for (let i = 0; i < 4; i++) await page.click('[data-act=test_next]');
-      assert.match(await page.textContent('#card'), /Practice strokes.*Station 5 of 5/);
-      await page.click('[data-act=test_rec]');
-      await page.waitForFunction(() => window.__v3.DBG.ev.some(e => e.k === 'clip' && e.name === 'move-01'), null, { timeout: 60000 }); // 10 s countdown, 8 s recorded
-      await page.click('[data-act=test_close]');
+      // Menu -> Check my stroke (V3.2, in place of the stroke test's stations): on, the watcher keeps every frame and
+      // the menu offers to stop it
+      await page.click('#menuBtn'); await page.click('[data-act=stroke]');
+      assert.strictEqual(await page.evaluate(() => window.__v3.A.strokeCheck), true);
+      await page.click('#menuBtn'); assert.match(await page.textContent('#card'), /Stop checking my stroke/); await page.click('[data-act=close]');
     }
     // End session: the camera goes off and the session screen shows; Save debug there (no share sheet in headless
     // Chromium: it downloads)
@@ -69,12 +65,11 @@ async function run(rot, viewport, sway, strokeTest) {
     assert.deepStrictEqual(await page.evaluate(() => [window.__v3.A.live, !!window.__v3.A.stream, document.querySelector('#cam').hidden]), [false, false, true]);
     const dl = page.waitForEvent('download'); await page.click('#sumDbg'); const d = await dl, zp = path.join(dir, 'dbg.zip'); await d.saveAs(zp);
     const zip = fs.readFileSync(zp); assert.ok(zip.includes(Buffer.from('log.json')) && zip.includes(Buffer.from('taps/001-4.png')) && zip.includes(Buffer.from('find-01.jpg')), 'zip holds the log, the tapped ball and the table-finding picture');
-    if (strokeTest) assert.ok(zip.includes(Buffer.from('clips/move-01/index.json')) && zip.includes(Buffer.from('clips/move-01/000.jpg')), 'zip holds the recorded clip');
     assert.deepStrictEqual(errors, []);
     return st;
   } finally { await browser.close(); srv.close(); fs.rmSync(dir, { recursive: true, force: true }); }
 }
 
-test('V3 sideways: table, balls, names, a tap that sticks, the watcher, the stroke test, Save debug', { timeout: 400000 }, async () => { console.log('sideways:', JSON.stringify(await run(0, { width: 956, height: 440 }, 0, true))); });
+test('V3 sideways: table, balls, names, a tap that sticks, the watcher, Check my stroke, Save debug', { timeout: 400000 }, async () => { console.log('sideways:', JSON.stringify(await run(0, { width: 956, height: 440 }, 0, true))); });
 test('V3 upright: the same with the phone standing up', { timeout: 400000 }, async () => { console.log('upright:', JSON.stringify(await run(90, { width: 440, height: 956 }))); });
 test('V3 on a swaying phone: the outline follows, the balls stay at rest, no hands or shots', { timeout: 500000 }, async () => { const st = await run(0, { width: 956, height: 440 }, 10); console.log('sway:', JSON.stringify({ steady: st.steady.slice(-6), threads: st.threads })); });

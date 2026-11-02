@@ -64,3 +64,11 @@ test('the review screens in the page: the last session from home, a shot from ab
     assert.deepStrictEqual(errors, []);
   } finally { await browser.close(); srv.close(); }
 });
+
+test('the stroke from the side on a real shot (Nov 1, 12:58, station 2): the strike, the backswing, the follow-through', () => {
+  // seen by eye in the clip: the tip settles about 2 in from the ball, goes back about 10 in, pauses, strikes; the app saw
+  // the shot start 0.33 s after the strike
+  const { run } = require('../tools/v3/stroke.js'), r = run(path.join(__dirname, 'fixtures/v3/stroke-1258'))[0];
+  assert.ok(r.early >= 0.2 && r.early <= 0.5, JSON.stringify(r)); assert.ok(r.backLen >= 8 && r.backLen <= 12, JSON.stringify(r));
+  assert.ok(r.follow >= 4 && r.follow <= 10, JSON.stringify(r)); assert.strictEqual(r.strokes, 0);
+});
