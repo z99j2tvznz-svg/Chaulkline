@@ -166,12 +166,12 @@
       "mode": "practice",
       "spot": "side",
       "racks": 0,
-      "shots": 39,
-      "found": 39,
-      "madeRight": 30,
+      "shots": 40,
+      "found": 40,
+      "madeRight": 31,
       "falseIn": 3,
       "falseScratch": 2,
-      "extraShots": 6
+      "extraShots": 5
     }
   ],
   "notCounted": [

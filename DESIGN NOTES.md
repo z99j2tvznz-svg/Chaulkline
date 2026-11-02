@@ -1195,3 +1195,17 @@ scoreboard without name counts (the card now takes each share over the sessions 
   the drills up over all sessions (tries, makes, best level).
 - Not yet: the exact Billiard University setups (drdavepoolinfo.com and billiards.colostate.edu are not allowed in
   this session's network); a drill picked from the home screen.
+
+## Correction to the 21:18 review; what "a shot" still needs (Nov 2)
+- 21:18 shot 9 is a shot: in its clip the cue ball goes across, misses the 1 and rolls back to where it started, so the
+  pictures before and after look alike. Live 31 of 40 right; the replay 33. (Found while checking the stroke against the
+  truth: the stroke detector had a full stroke on it, 10.6 in back, 0.4 s pause, 6.1 in through.)
+- The owner, Nov 2: the cue work was for telling a shot from what is not one (setting balls out, moving them with the
+  cue, picking them up). Checked on 20:06 and 21:18 (85 real shots, 7 moves counted as shots): the strike as V3.2
+  measures it (the cue ball leaves its spot with a cue line at it) is seen on 74 of the 85 shots, but also on all 7
+  moves, and a move with the cue (21:18, 16: the cue ball pushed toward the player from the far side) even shows a
+  "stroke" (the cue going back and forth while reaching). So it cannot yet decide what is a shot. What should: a shot
+  has the tip resting at the ball (the address) and coming through fast as the ball leaves along the cue; a push with the
+  cue has the tip slow and staying on the ball as it moves; a hand has no cue at the ball. Next: those measures on the
+  clips of these two sessions (and the hands clips of the moves thrown out), tried against the truth before they decide
+  anything live.
