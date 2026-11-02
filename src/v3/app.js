@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.5.0';
+const VERSION = 'V3.6.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -217,7 +217,7 @@ async function start(mode) {
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P, TK_OPTS(A.mode)); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.handsN = 0; A.handsT = 0;
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P, TK_OPTS(A.mode)); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0;
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
@@ -230,7 +230,7 @@ async function start(mode) {
   crumb('table'); wakeLock(); requestAnimationFrame(drawLoop); findTable();
 }
 function goHome() {
-  A.live = false; A.phase = 'home'; dbgPersist(); if (A.sess) logStore(); endSession(); endCrumb();
+  $('#drillTag').hidden = true; A.live = false; A.phase = 'home'; dbgPersist(); if (A.sess) logStore(); endSession(); endCrumb();
   if (A.stream) A.stream.getTracks().forEach(t => { try { t.stop(); } catch (e) { } }); A.stream = null;
   try { if (wl) wl.release(); } catch (e) { } wl = null;
   $('#cam').hidden = true; $('#home').hidden = false; hideCard(); renderHome();
@@ -242,6 +242,7 @@ function rackOpen() { if (A.sess) A.sess.rackOpen = true; }
 // saved with the phone put down and the camera no longer watching (turning the phone upright to save used to count as a
 // shot and send the app looking for the table again)
 function endRun() {
+  $('#drillTag').hidden = true;
   if (A.tk) { A.tk.finish(); flushShots(); }
   dbg('end_session', { shots: A.tk ? A.tk.S.shots.length : 0 });
   A.live = false; A.phase = 'done'; dbgPersist(); logStore(); endSession(); endCrumb();
@@ -324,6 +325,7 @@ async function acceptTable() {
   const c = A.cand; A.quad = c.quad; A.rot = c.rot;
   const { L, Wd } = tableDims(A.ft), f = LENS * Math.max(A.W, A.H);
   A.cam = makeCam(tableCornersFor(A.rot, L, Wd), A.quad, A.W, A.H, f, [A.W / 2, A.H / 2]);
+  if (A.drill) drillSetup(); // (the rings follow the table found again)
   A.tableWH = [A.W, A.H];
   // the part of the picture the finder looks at: the table, its rails and the ball tops, with a little room
   const pts = [], m = 4, R = A.P.R;
@@ -449,6 +451,7 @@ function onShotEnd(sh) {
   sh.paths = pathsRow(sh); const row = shotRow(sh); if (A.sess.rackOpen) { A.sess.rackOpen = false; if (A.sess.shots.length) A.sess.rack++; }
   A.sess.shots.push(Object.assign({ n: sh.n, rack: A.sess.rack, cue: sh.cueNum, first: sh.firstNum, made: row.made, scratch: sh.scratch, break: sh.break, t: Date.now() }, REVIEW.shotDetail(sh), STK.of.has(sh.n) ? { stroke: STK.of.get(sh.n) } : {}));
   dbg('shot_end', { n: sh.n, made: row.made, scratch: sh.scratch, first: sh.firstNum });
+  if (A.drill && A.drill.st) { const st = A.drill.st; setTimeout(() => drillScore(sh, st), 2500); }
   jpeg(960).then(b => setPic('shot' + String(sh.n).padStart(3, '0') + '-after.jpg', b)).catch(() => { });
   toast('Shot ' + sh.n + ': ' + shotWords(A.sess.shots[A.sess.shots.length - 1]));
   if (A.sess.shots.length % 3 === 0) { A.lastSess = A.sess; save(); }
@@ -643,6 +646,56 @@ function watchFrame() {
     dbg('watch', { fps: r1(W.n * 1000 / (now - W.t1)), ms: r1(W.ms / Math.max(1, W.n)), nc: r2(W.nc / Math.max(1, W.n)), ch: r2(W.ch / Math.max(1, W.n)), find: Math.round(ms) });
     W.n = W.ms = W.nc = W.ch = 0; W.t1 = now; }
 }
+// ---------- drills (V3.6, see src/v3/drills.js) ----------
+// diamonds as the phone sees the table (from the left end, from the near rail) to table inches
+function viewXY(dx, dy) {
+  const P = A.P, dia = P.L / 8, nearY = A.cam.proj(P.L / 2, 0, 0)[1] > A.cam.proj(P.L / 2, P.W, 0)[1] ? 0 : P.W, leftX = A.cam.proj(0, P.W / 2, 0)[0] < A.cam.proj(P.L, P.W / 2, 0)[0] ? 0 : P.L;
+  return [leftX === 0 ? dx * dia : P.L - dx * dia, nearY === 0 ? dy * dia : P.W - dy * dia];
+}
+function drillMenu() {
+  showCard('<div><b>Drills</b><p>Set the balls on the rings (roughly is fine) and shoot. Made, the next one is harder; missed, it steps back. Practice rules apply: move and pick up balls as you like.</p></div><div class="dlist">' +
+    DRILL.LIST.map(d => '<button class="btn" data-drill="' + d.id + '"><b>' + d.name + '</b><small>' + d.about + '</small></button>').join('') + '</div><div class="row">' + (A.drill ? '<button class="btn" data-act="drill_stop">Stop the drill</button>' : '') + '<button class="btn" data-act="close">Close</button></div>');
+}
+function drillStart(id) {
+  if (!A.tk || !A.cam) return; hideCard();
+  Object.assign(A.tk.O, { practice: true, autoRack: false, rackNew: false }); A.mode = 'practice'; if (A.sess) A.sess.mode = 'practice'; $('#rackBtn').hidden = true;
+  A.drill = { id, level: 0 }; drillSetup(); dbg('drill_start', { id });
+  toast(DRILL.byId(id).name + ': set the balls on the rings and shoot.', 5000);
+}
+function drillStop() { if (A.drill) dbg('drill_stop', { id: A.drill.id }); A.drill = null; $('#drillTag').hidden = true; hideCard(); }
+function drillSetup() {
+  const D = A.drill; D.st = DRILL.setup(D.id, D.level, A.P, viewXY); const ts = (A.sess.drillTries || []).filter(t => t.id === D.id);
+  $('#drillTag').hidden = false; $('#drillTag').textContent = DRILL.byId(D.id).name + ' · ' + D.st.word + ' · level ' + (D.level + 1) + ' of ' + DRILL.byId(D.id).levels.length + (ts.length ? ' · made ' + ts.filter(t => t.made).length + ' of ' + ts.length : '');
+}
+function drillScore(sh, st) {
+  const D = A.drill; if (!D || D.st !== st) return; // (the drill was changed meanwhile)
+  const r = DRILL.score(st, sh, A.P);
+  if (!r.scored) { toast('Not a drill shot: the object ball was not on its ring.'); return; }
+  const t = { id: D.id, level: D.level, value: st.value, made: r.made, pocketed: r.pocketed, stopped: r.stopped, cut: r.cut, n: sh.n }; A.sess.drillTries.push(t);
+  const row = A.sess.shots.find(x => x.n === sh.n); if (row) row.drill = t;
+  dbg('drill', t); D.level = DRILL.next(D.id, D.level, r.made); drillSetup();
+  toast((r.made ? 'Made' : r.pocketed && r.stopped === false ? 'In, but the cue ball did not stop' : 'Missed') + ' · next: ' + D.st.word, 4000);
+}
+// the setup on the live view: rings where the balls go (green when a ball is on it), the cue ball's aim to where it
+// meets the ball, the ball's line to the pocket (off the near cushion for the bank), the pocket ringed
+function drillTaken(p, cue) { return A.tk.balls().some(b => b.state !== 'hidden' && Math.hypot(b.x - p[0], b.y - p[1]) < 4 && (cue ? b.num === 0 || b.num == null : b.num !== 0)); }
+function drillLine(c, S2, a, b) { const flat = (x, y) => S2(A.cam.proj(x, y, 0)), p = flat(a[0], a[1]), q = flat(b[0], b[1]); c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(q[0], q[1]); c.stroke(); }
+function drawDrill(c, S2) {
+  const D = A.drill; if (!D || !D.st || !A.cam) return; const st = D.st, P = A.P, flat = (x, y) => S2(A.cam.proj(x, y, 0));
+  c.save(); c.setLineDash([6, 6]); c.lineWidth = 1.5; c.strokeStyle = 'rgba(234,241,244,.55)'; if (st.C) drillLine(c, S2, st.C, st.G);
+  c.strokeStyle = 'rgba(255,184,77,.8)';
+  if (st.aimAt === st.Pk) drillLine(c, S2, st.O, st.Pk);
+  else { const yc = st.aimAt[1] < 0 ? P.R : P.W - P.R, t = (yc - st.O[1]) / (st.aimAt[1] - st.O[1]), hit = [st.O[0] + t * (st.aimAt[0] - st.O[0]), yc]; drillLine(c, S2, st.O, hit); drillLine(c, S2, hit, st.Pk); }
+  c.restore();
+  const ring = (p, r, col, w, dash) => { c.save(); if (dash) c.setLineDash(dash); c.strokeStyle = col; c.lineWidth = w; c.beginPath(); for (let i = 0; i <= 48; i++) { const a = i / 48 * Math.PI * 2, s = flat(p[0] + r * Math.cos(a), p[1] + r * Math.sin(a)); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); } c.stroke(); c.restore(); };
+  ring(st.Pk, P.pockets[st.pocket].r + 1, '#ffb84d', 3);
+  ring(st.G, P.R, 'rgba(244,241,232,.6)', 1.5, [4, 4]);
+  for (const [p, col, lab, isCue] of [[st.O, '#e8c11d', 'ball', false], [st.C, '#f4f1e8', 'cue', true]]) {
+    if (!p) continue; const ok = drillTaken(p, isCue), colr = ok ? '#3ddc84' : col; ring(p, 4, colr, 2.5);
+    const m = flat(p[0], p[1]); c.fillStyle = colr; c.font = '600 12px ' + getComputedStyle(document.body).fontFamily; c.textAlign = 'center'; c.fillText(lab, m[0], m[1] - 14);
+  }
+}
+
 // ---------- the stroke (V3.2) ----------
 // Every watcher frame while the cue ball rests: where the cue points and how far its tip is (src/stroke.js). The frames
 // before a shot give its practice strokes, backswing, pause and strike; the second after it the follow-through. Measured
@@ -735,7 +788,7 @@ function drawLoop() {
   }
   if (A.phase === 'manual' && A.man) drawManual(c, S2, F);
   if (A.phase !== 'run' || !A.tk || !A.cam) return;
-  drawBalls(c, S2, F);
+  drawDrill(c, S2); drawBalls(c, S2, F);
 }
 
 function drawManual(c, S2, F) {
@@ -866,16 +919,18 @@ function showCard(html, mini, cls) { const c = $('#card'); c.innerHTML = html; c
 function hideCard() { $('#card').hidden = true; $('#cam').classList.remove('manual'); }
 $('#card').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.drill) { drillStart(b.dataset.drill); return; }
   if (b.dataset.ft) { A.ft = +b.dataset.ft; save(); A.P = makeP(A.ft); A.tk = makeTracker(A.P, TK_OPTS(A.mode)); A.nShots = 0; dbg('ft', { ft: A.ft }); refind('Table size ' + A.ft + ' ft: looking again…'); return; }
   const a = b.dataset.act;
   if (a === 'accept') acceptTable(); else if (a === 'retry') refind(); else if (a === 'manual') beginManual();
   else if (a === 'undo') { if (A.man && A.man.length) A.man.pop(); if (A.man) manualCard(); }
   else if (a === 'home') goHome(); else if (a === 'close') hideCard(); else if (a === 'refind') { hideCard(); refind(); }
   else if (a === 'dbg') saveDebug(b); else if (a === 'useman') useManual();
+  else if (a === 'drills') drillMenu(); else if (a === 'drill_stop') drillStop();
   else if (a === 'stroke') { A.strokeCheck = !A.strokeCheck; dbg('stroke_check', { on: A.strokeCheck }); hideCard();
     toast(A.strokeCheck ? 'Check my stroke: play from the side of the phone. After each shot its stroke shows here.' : 'Stroke check off.', 5000); }
 });
-$('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row"><button class="btn" data-act="stroke">' + (A.strokeCheck ? 'Stop checking my stroke' : 'Check my stroke') + '</button><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="dbg">Save debug</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
+$('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row"><button class="btn" data-act="drills">' + (A.drill ? 'Drill: ' + DRILL.byId(A.drill.id).name : 'Drills') + '</button><button class="btn" data-act="stroke">' + (A.strokeCheck ? 'Stop checking my stroke' : 'Check my stroke') + '</button><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="dbg">Save debug</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
 // (pressed again after the rack was done by itself, or twice: no shot since, so it is not another rack)
 $('#rackBtn').onclick = () => { if (!A.tk) return; const dup = A.tk.S.setup && A.tk.S.shots.length === A.tk.S.rackAt; A.tk.newRack(); flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', dup ? { dup: true } : {}); toast('New rack. Names come once the break spreads the balls.'); };
 let toastT = 0;

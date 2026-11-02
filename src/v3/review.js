@@ -68,7 +68,7 @@ const REVIEW = (() => {
   function remember(sess, mins) {
     if (!sess || !sess.shots || !sess.shots.length) return;
     const h = history().filter(x => x.t0 !== sess.t0), st = stats(sess.shots), bs = byShot(sess.shots, sess.ft);
-    h.push({ t0: sess.t0, ft: sess.ft, mode: sess.mode || 'play', mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun, cuts: bs.cuts, pockets: bs.pockets });
+    h.push({ t0: sess.t0, ft: sess.ft, mode: sess.mode || 'play', mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun, cuts: bs.cuts, drills: typeof DRILL !== 'undefined' ? DRILL.summary(sess.drillTries || []).map(d => ({ id: d.id, name: d.name, tries: d.tries, made: d.made, best: d.best })) : [] });
     try { localStorage.setItem(HIST, JSON.stringify(h.slice(-300))); } catch (e) { }
   }
   // shots set up again: a shot whose cue ball starts within R in of the one before's, with every other ball within R in of
@@ -103,22 +103,22 @@ const REVIEW = (() => {
       const fx = C[0] - O[0], fy = C[1] - O[1], bq = fx * ux + fy * uy, disc = bq * bq - (fx * fx + fy * fy - 4 * R * R), tc = -bq, miss = Math.sqrt(Math.max(0, fx * fx + fy * fy - bq * bq));
       let Cc = null; if (tc > 0 && disc >= 0) { const t = -bq - Math.sqrt(disc); Cc = [C[0] + t * ux, C[1] + t * uy]; } else if (tc > 0 && miss <= 2 * R + 3) Cc = [C[0] + tc * ux, C[1] + tc * uy];
       const far = path && path.p.find(q => hyp(q, O) >= 3), dir = far ? Math.atan2(far[1] - O[1], far[0] - O[0]) : Cc ? Math.atan2(O[1] - Cc[1], O[0] - Cc[0]) : null;
-      let pk = m && m.pocket != null ? m.pocket : null;
-      if (pk == null && dir != null) { let bb = null; P.pockets.forEach((q, i) => { const d = angD(Math.atan2(q.y - O[1], q.x - O[0]), dir); if (!bb || d < bb.d) bb = { i, d }; }); if (bb.d <= 20) pk = bb.i; }
+      // only a ball that went in, and where it went (owner, Nov 2: a miss may have been a thin cut, a bank, anything;
+      // the open pocket is not what was being practised: a drill says it)
+      const pk = m && m.pocket != null ? m.pocket : null;
       if (pk == null) continue;
       const Pk = [P.pockets[pk].x, P.pockets[pk].y], L = hyp(Pk, O), u = [(Pk[0] - O[0]) / L, (Pk[1] - O[1]) / L], G = [O[0] - 2 * R * u[0], O[1] - 2 * R * u[1]];
-      const cut = angD(Math.atan2(u[1], u[0]), Math.atan2(G[1] - C[1], G[0] - C[0])); if (cut > 75) continue;
+      const cut = angD(Math.atan2(u[1], u[0]), Math.atan2(G[1] - C[1], G[0] - C[0])); if (cut >= 90) continue;
       return { obj: num, pocket: pk, made: !!m && !s.scratch, cut: Math.round(cut), toObj: Math.round(hyp(C, O)), toPocket: Math.round(L), C, O, G, Pk };
     }
     return null;
   }
-  const CUTS = [[0, 10, 'Straight in (under 10°)'], [10, 25, 'Small cut (10 to 25°)'], [25, 40, 'Medium cut (25 to 40°)'], [40, 76, 'Thin cut (40° and more)']];
+  const CUTS = [[0, 10, 'Straight in (under 10°)'], [10, 25, 'Small cut (10 to 25°)'], [25, 40, 'Medium cut (25 to 40°)'], [40, 60, 'Thin cut (40 to 60°)'], [60, 90, 'Very thin (60° and more)']];
   const LENS = [[0, 24, 'Short (under 2 ft to the pocket)'], [24, 48, 'Middle (2 to 4 ft)'], [48, 999, 'Long (over 4 ft)']];
   // the session's shots read, by pocket, by cut and by length: [label, made, tries] rows
   function byShot(shots, ft) {
     const P = makeP(ft || 7), rd = shots.filter(s => !s.break).map(s => aim(s, ft)).filter(a => a), row = (l, xs) => [l, xs.filter(a => a.made).length, xs.length];
     return { read: rd.length, of: shots.filter(s => !s.break).length,
-      pockets: P.pockets.map((q, i) => row(P.pocketNames[i], rd.filter(a => a.pocket === i))).filter(r => r[2]),
       cuts: CUTS.map(([a, b, l]) => row(l, rd.filter(x => x.cut >= a && x.cut < b))).filter(r => r[2]),
       lens: LENS.map(([a, b, l]) => row(l, rd.filter(x => x.toPocket >= a && x.toPocket < b))).filter(r => r[2]) };
   }
@@ -153,10 +153,16 @@ function renderReview(sess, live) {
   const sa = REVIEW.strokeAvg(sh), f1 = v => v == null ? '–' : (Math.round(v * 10) / 10).toString();
   $('#sumStrokeCard').hidden = !sa.n;
   if (sa.n) $('#sumStroke').innerHTML = '<div class="stats">' + [[f1(sa.strokes), 'practice strokes'], [sa.back == null ? '–' : Math.round(sa.back) + '″', 'backswing'], [sa.pause == null ? '–' : sa.pause.toFixed(1) + ' s', 'pause'], [sa.follow == null ? '–' : Math.round(sa.follow) + '″', 'follow-through']].map(([n, l]) => '<div><b>' + n + '</b><span>' + l + '</span></div>').join('') + '</div><div class="lbl" style="margin-top:6px">Average of ' + sa.n + ' shot' + (sa.n !== 1 ? 's' : '') + ' where the cue was seen from the side.</div>';
-  // the shots by pocket, cut and length (once there are a few to go on)
-  const bs = REVIEW.byShot(sh, sess.ft), rows = rr => rr.map(([l, mk, n]) => '<div class="brow"><span>' + l + '</span><b>' + mk + ' of ' + n + '</b><i><u style="width:' + Math.round(100 * mk / n) + '%"></u></i></div>').join('');
+  // the balls made, by cut and length (what went in, and where: a miss says nothing of what was meant)
+  const bs = REVIEW.byShot(sh, sess.ft), mx = Math.max(1, ...bs.cuts.concat(bs.lens).map(r => r[1]));
+  const rows = rr => rr.map(([l, mk]) => '<div class="brow"><span>' + l + '</span><b>' + mk + '</b><i><u style="width:' + Math.round(100 * mk / mx) + '%"></u></i></div>').join('');
   $('#sumShotsCard').hidden = bs.read < 3;
-  if (bs.read >= 3) $('#sumShots').innerHTML = '<h3>By pocket</h3>' + rows(bs.pockets) + '<h3>By cut</h3>' + rows(bs.cuts) + '<h3>By length</h3>' + rows(bs.lens) + '<div class="lbl" style="margin-top:6px">Read on ' + bs.read + ' of ' + bs.of + ' shots: the ball played, the pocket it went into or was sent toward, the cut. The others (a bank, a kick, or a shot not followed well enough) are left out.</div>';
+  if (bs.read >= 3) $('#sumShots').innerHTML = '<h3>By cut</h3>' + rows(bs.cuts) + '<h3>By length to the pocket</h3>' + rows(bs.lens) + '<div class="lbl" style="margin-top:6px">' + bs.read + ' balls made, read from where the balls were. For your make rate on a kind of shot, use a drill (Menu → Drills): it knows what each shot is for.</div>';
+  // the drills: tries and makes at each level, and the level reached
+  const ds = typeof DRILL !== 'undefined' ? DRILL.summary(sess.drillTries || []) : [];
+  $('#sumDrillCard').hidden = !ds.length;
+  if (ds.length) $('#sumDrills').innerHTML = ds.map(d => '<h3>' + d.name + ' · made ' + d.made + ' of ' + d.tries + (d.best >= 0 ? ' · reached ' + DRILL.byId(d.id).word(DRILL.byId(d.id).levels[d.best]) : '') + '</h3>' +
+    d.levels.map(([l, mk, n]) => '<div class="brow"><span>' + l + '</span><b>' + mk + ' of ' + n + '</b><i><u style="width:' + Math.round(100 * mk / n) + '%"></u></i></div>').join('')).join('');
   // the same shot set up again: one line per set of tries, opening them on one drawing
   $('#sumRepeatCard').hidden = !RV.reps.length;
   $('#sumRepeats').innerHTML = RV.reps.map((g, i) => { const mk = g.filter(REVIEW.scored).length; return '<button class="srow sbtn" data-g="' + i + '"><b>' + g[0].n + '–' + g[g.length - 1].n + '</b><span>' + g.length + ' tries · ' + (mk ? 'made ' + mk + ' (' + g.map((x, k) => REVIEW.scored(x) ? k + 1 : null).filter(x => x).map(k => k + (k === 1 ? 'st' : k === 2 ? 'nd' : k === 3 ? 'rd' : 'th')).join(', ') + ')' : 'not made') + '</span><i>›</i></button>'; }).join('');
@@ -172,7 +178,8 @@ async function openShot(i) {
   $('#shotView').hidden = false;
   $('#svTitle').textContent = 'Shot ' + s.n + (s.rack ? ' · rack ' + s.rack : '');
   const am = REVIEW.aim(s, RV.sess.ft), ftIn = v => v < 12 ? v + ' in' : (Math.round(v / 6) / 2) + ' ft';
-  $('#svWords').textContent = shotWords(s) + (am ? ' · ' + (am.cut < 3 ? 'straight in' : 'a ' + am.cut + '° cut') + ' to the ' + makeP(RV.sess.ft || 7).pocketNames[am.pocket] + ', ' + ftIn(am.toPocket) + ' from the pocket' : ''); const sw = REVIEW.strokeWords(s.stroke); $('#svStroke').textContent = sw || ''; $('#svStroke').hidden = !sw;
+  const dw = s.drill && typeof DRILL !== 'undefined' ? ' · drill: ' + DRILL.byId(s.drill.id).name + ', ' + DRILL.byId(s.drill.id).word(s.drill.value) + (s.drill.made ? ', made' : ', missed') : '';
+  $('#svWords').textContent = shotWords(s) + dw + (!s.drill && am ? ' · ' + (am.cut < 3 ? 'straight in' : 'a ' + am.cut + '° cut') + ' to the ' + makeP(RV.sess.ft || 7).pocketNames[am.pocket] + ', ' + ftIn(am.toPocket) + ' from the pocket' : ''); const sw = REVIEW.strokeWords(s.stroke); $('#svStroke').textContent = sw || ''; $('#svStroke').hidden = !sw;
   $('#svTable').innerHTML = s.paths || s.before ? REVIEW.diagram(s, RV.sess.ft) : '<div class="lbl">No drawing for this shot (sessions before V3.2 kept none).</div>';
   $('#svPrev').disabled = i === 0; $('#svNext').disabled = i === sh.length - 1; $('#svPrev').onclick = () => openShot(RV.i - 1); $('#svNext').onclick = () => openShot(RV.i + 1);
   const nm = 'shot' + String(s.n).padStart(3, '0'), seg = $('#svSeg'); seg.innerHTML = ''; const media = $('#svMedia'); media.innerHTML = '';
@@ -220,9 +227,10 @@ function renderHistory() {
   const last = h.slice(0, 12).reverse(), bw = 100 / Math.max(6, last.length);
   $('#histChart').innerHTML = '<svg viewBox="0 0 100 34" preserveAspectRatio="none" class="hbars" aria-hidden="true">' + last.map((x, i) => { const r = x.tries ? x.potted / x.tries : 0, hh = Math.max(1, 30 * r); return '<rect x="' + (i * bw + bw * .15).toFixed(2) + '" y="' + (32 - hh).toFixed(2) + '" width="' + (bw * .7).toFixed(2) + '" height="' + hh.toFixed(2) + '" rx="1" fill="var(--accent)" opacity="' + (i === last.length - 1 ? 1 : .55) + '"/>'; }).join('') + '</svg>';
   // every session's cuts added up: which cuts go in, over time
-  const tot = {}; for (const x of h) for (const [l, mk, n] of x.cuts || []) { tot[l] = tot[l] || [0, 0]; tot[l][0] += mk; tot[l][1] += n; }
+  // every session's drills added up: tries, makes, the best level reached
+  const tot = {}; for (const x of h) for (const d of x.drills || []) { const o = tot[d.id] = tot[d.id] || { name: d.name, tries: 0, made: 0, best: -1 }; o.tries += d.tries; o.made += d.made; o.best = Math.max(o.best, d.best); }
   const tl = Object.keys(tot); $('#histCuts').hidden = !tl.length;
-  if (tl.length) $('#histCuts').innerHTML = '<h3>Your cuts, all sessions</h3>' + tl.map(l => '<div class="brow"><span>' + l + '</span><b>' + tot[l][0] + ' of ' + tot[l][1] + '</b><i><u style="width:' + Math.round(100 * tot[l][0] / tot[l][1]) + '%"></u></i></div>').join('');
+  if (tl.length) $('#histCuts').innerHTML = '<h3>Your drills, all sessions</h3>' + tl.map(k => { const o = tot[k], D = typeof DRILL !== 'undefined' && DRILL.byId(k); return '<div class="brow"><span>' + o.name + (D && o.best >= 0 ? ' · best ' + D.word(D.levels[o.best]) : '') + '</span><b>' + o.made + ' of ' + o.tries + '</b><i><u style="width:' + Math.round(100 * o.made / o.tries) + '%"></u></i></div>'; }).join('');
   $('#histList').innerHTML = h.slice(0, 8).map(x => '<div class="rrow"><b>' + dateWords(x.t0) + (x.mode === 'practice' ? ' · practice' : '') + '</b><span>' + x.shots + ' shots · ' + x.ballsIn + ' in · ' + REVIEW.pct(x.tries ? x.potted / x.tries : null) + ' made a ball · best run ' + x.bestRun + '</span></div>').join('');
 }
 renderHistory();

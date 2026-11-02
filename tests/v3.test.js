@@ -58,6 +58,11 @@ async function run(rot, viewport, sway, strokeTest) {
       await page.click('#menuBtn'); await page.click('[data-act=stroke]');
       assert.strictEqual(await page.evaluate(() => window.__v3.A.strokeCheck), true);
       await page.click('#menuBtn'); assert.match(await page.textContent('#card'), /Stop checking my stroke/); await page.click('[data-act=close]');
+      // V3.6: Menu -> Drills -> Cut ladder: its setup on the table, its line at the bottom
+      await page.click('#menuBtn'); await page.click('[data-act=drills]'); await page.click('[data-drill=cut]');
+      assert.match(await page.textContent('#drillTag'), /Cut ladder · straight in · level 1 of 6/);
+      const dr = await page.evaluate(() => { const A = window.__v3.A; return [A.drill.st.O, A.drill.st.C].every(p => p[0] > 0 && p[1] > 0 && p[0] < A.P.L && p[1] < A.P.W); }); assert.ok(dr);
+      await page.click('#menuBtn'); await page.click('[data-act=drills]'); await page.click('[data-act=drill_stop]'); assert.ok(await page.isHidden('#drillTag'));
     }
     // End session: the camera goes off and the session screen shows; Save debug there (no share sheet in headless
     // Chromium: it downloads)

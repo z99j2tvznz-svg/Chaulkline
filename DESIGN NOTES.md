@@ -1169,3 +1169,29 @@ scoreboard without name counts (the card now takes each share over the sessions 
   the top-right, 2.5 ft from the pocket") and its drawing with the aim dotted to the contact (a dashed ring) and the line
   to the pocket. Every session keeps its cut and pocket rows; the home screen adds the cuts up over all sessions.
 - Practice: no break (a row of balls kept along a rail packs like a rack); no late scratch (see the 21:18 review).
+
+## V3.6.0 (Nov 2) — drills
+- Owner, Nov 2: a rate by pocket means little, and a miss's pocket cannot be guessed: a thin cut over 75 degrees, or a
+  thin cut banked to the other side, is practice too; the open pocket is not what was being practised. Hence practice
+  tests. Agreed: free practice now reads only the balls made (their pocket is where they went), with no limit on the
+  cut, and shows them by cut and by length as counts; rates come from drills, which say what each shot is for.
+- Drills (src/v3/drills.js), each progressive (Bob Jewett's progressive practice: made, the next level is harder;
+  missed, it steps back; the level reached is the score). Positions in diamonds as the phone sees the table (from the
+  left end, from the near rail):
+  - Cut ladder: the object ball a diamond off the far rail, two from the right end, into the far right corner; the cue
+    ball 2.8 diamonds back from the contact point (closer when the table runs out), cut 0, 10, 20, 30, 40, 50 degrees.
+  - Thin cuts: the same ball and pocket, 45, 55, 62, 68, 73, 77 degrees, the cue ball 1.9 diamonds back.
+  - Cross-side bank: the object ball a diamond off the near rail at the middle, banked off the near cushion into the
+    far side pocket (aimed at the pocket's mirror in the cushion line); each level moves it a quarter diamond right.
+  - Stop shot: straight into the far right corner from 1.4 diamonds out; the cue ball 1.2 to 4.4 diamonds back; made
+    only if the cue ball stops within a ball and a half of where it hit.
+- Live: Menu → Drills (practice rules switch on), rings where the balls go (green with a ball on them; placing
+  roughly is enough), the cue ball's aim to the contact (dashed ring), the ball's line to the pocket (off the cushion
+  for the bank), the pocket ringed, and the drill's line at the bottom (level, made of tries). 2.5 s after each shot
+  (time for late calls) it is scored on where the balls really were: the object ball is the ball nearest its ring
+  (within 8 in; else the shot is not a drill shot), made if it went into that pocket (a call with no pocket counts) and
+  no scratch; the cut is the one really played. Then the next setup.
+- Review: a Drills card (made of tries at each level, the level reached); each shot says its drill; the home screen adds
+  the drills up over all sessions (tries, makes, best level).
+- Not yet: the exact Billiard University setups (drdavepoolinfo.com and billiards.colostate.edu are not allowed in
+  this session's network); a drill picked from the home screen.

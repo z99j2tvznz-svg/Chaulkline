@@ -89,16 +89,11 @@ test('the same shot set up again: tries grouped when the cue ball and every othe
   const svg = REVIEW.diagram(g[0][0], 7, g[0]); assert.ok(/Shots 2, 3, 4 from above/.test(svg));
 });
 
-test('a shot read: the ball played, the pocket, the cut, the length; misses by the way the ball was sent; banks left out', () => {
+test('a ball made, read: which ball, its pocket, the cut, the length; a miss is not read (it may have been a bank, anything)', () => {
   // the 6 by the far rail cut into the top-right corner (78, 39) from a cue ball across the table: about a 30 degree cut
   const made = { n: 1, first: 6, made: [{ num: 6, pocket: 5 }], scratch: false, before: [[0, 20, 20], [6, 48, 37]], paths: [{ num: 0, p: [[20, 20], [42, 31], [38, 26]] }, { num: 6, p: [[48, 37], [66, 37.5], [76, 38.5]] }] };
   const a = REVIEW.aim(made, 7); assert.ok(a && a.pocket === 5 && a.made && a.cut >= 20 && a.cut <= 40 && a.toPocket === 30, JSON.stringify(a));
-  // missed: the same ball sent toward the top-right but not in
   const miss = { n: 2, first: 6, made: [], scratch: false, before: [[0, 20, 20], [6, 48, 37]], paths: [{ num: 0, p: [[20, 20], [42, 31]] }, { num: 6, p: [[48, 37], [62, 37.6], [70, 37.9]] }] };
-  const b = REVIEW.aim(miss, 7); assert.ok(b && b.pocket === 5 && !b.made, JSON.stringify(b));
-  // a ball sent off to no pocket (a bank or a safety): not read
-  const bank = { n: 3, first: 6, made: [], scratch: false, before: [[0, 20, 20], [6, 48, 37]], paths: [{ num: 0, p: [[20, 20], [42, 31]] }, { num: 6, p: [[48, 37], [50, 30], [52, 20]] }] };
-  assert.strictEqual(REVIEW.aim(bank, 7), null);
-  const t = REVIEW.byShot([made, miss, bank], 7);
-  assert.deepStrictEqual([t.read, t.of, t.pockets], [2, 3, [['top-right', 1, 2]]]);
+  assert.strictEqual(REVIEW.aim(miss, 7), null);
+  const t = REVIEW.byShot([made, miss], 7); assert.deepStrictEqual([t.read, t.of], [1, 2]); assert.deepStrictEqual(t.cuts.map(r => r.slice(1)), [[1, 1]]);
 });
