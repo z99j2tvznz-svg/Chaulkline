@@ -137,19 +137,21 @@ async function renderGate() {
     for (let i = all.length - 1; i >= 0 && rk < T.racks; i--) { S.unshift(all[i]); rk += all[i].racks || 0; }
     const sum = k => S.reduce((a, s) => a + (s[k] || 0), 0), shots = sum('shots'), balls = sum('balls'), racks = sum('racks'), pct = (a, b) => b ? (Math.round(1000 * a / b) / 10) + '%' : '–';
     const nSess = new Set(S.map(s => s.session || s.when)).size, spots = [...new Set(S.map(s => s.spot))];
-    const share = (k, n, need) => [pct(sum(k), n) + ' · need ' + Math.round(100 * need) + '%', n ? sum(k) / n / need : 0, n > 0 && sum(k) / n >= need];
+    // (a share over the sessions that have the count: names are not checked on every session)
+    const has = (k, n) => S.filter(s => s[k] != null).reduce((a, s) => a + (s[n] || 0), 0);
+    const share = (k, n, need) => { n = has(k, n); return [pct(sum(k), n) + ' · need ' + Math.round(100 * need) + '%', n ? sum(k) / n / need : 0, n > 0 && sum(k) / n >= need]; };
     // a count with a limit (at most v per k): the bar is full at none, half at the limit
     const atMost = (n, per, lim, unit) => { const r = per ? n / per : 0; return [n + (per && n ? ' (' + (Math.round(10 * r * lim.k) / 10) + ')' : '') + ' · at most ' + lim.v + ' ' + unit, per ? 1 - Math.min(1, r * lim.k / lim.v / 2) : 0, per > 0 && r * lim.k <= lim.v]; };
     const rows = [
       ['Racks', racks + ' of ' + T.racks, racks / T.racks, racks >= T.racks],
       ['Sessions', nSess + ' of ' + T.sessions, nSess / T.sessions, nSess >= T.sessions],
       ['Camera spots', spots.length + ' of ' + T.spots + (spots.length ? ' (' + spots.join(', ') + ')' : ''), spots.length / T.spots, spots.length >= T.spots],
-      ['Shots found', ...share('found', shots, T.found)],
-      ['What went in, called right', ...share('madeRight', shots, T.madeRight)],
+      ['Shots found', ...share('found', 'shots', T.found)],
+      ['What went in, called right', ...share('madeRight', 'shots', T.madeRight)],
       ['False "in"', ...atMost(sum('falseIn'), shots, { k: 50, v: T.falseInPer50 }, 'per 50 shots')],
       ['False scratches', ...atMost(sum('falseScratch'), shots, { k: 50, v: T.falseScratchPer50 }, 'per 50 shots')],
-      ['Cue ball and lowest ball named right after a shot', ...share('keyRight', shots, T.keyRight)],
-      ['Balls named right', ...share('ballsRight', balls, T.ballsRight)],
+      ['Cue ball and lowest ball named right after a shot', ...share('keyRight', 'shots', T.keyRight)],
+      ['Balls named right', ...share('ballsRight', 'balls', T.ballsRight)],
       ['A wrong number shown', ...atMost(sum('wrongNum'), balls, { k: 200, v: T.wrongPer200 }, 'in 200 balls')],
       ['Counted as shots but not shots', ...atMost(sum('extraShots'), racks, { k: 1, v: T.extraPerRack }, 'per rack')]];
     $('#gateRows').innerHTML = rows.map(([l, v, f, ok]) => '<div class="grow' + (ok ? ' ok' : '') + '"><div class="gl"><span>' + l + '</span><span>' + v + '</span></div><div class="gb"><i style="width:' + Math.round(100 * Math.max(0, Math.min(1, f))) + '%"></i></div></div>').join('');

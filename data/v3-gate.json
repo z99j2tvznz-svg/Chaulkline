@@ -1,5 +1,5 @@
 {
-  "about": "Tracking test: what has to be true before V3.1 starts. Counted by Claude from each session's debug file, with the truth taken from the shot pictures and the names checked on the after pictures. Live results of the app as it was in that session (not replays). Goals revised with the owner on Oct 31: only sessions on the version being measured count, its latest 10 racks. From V3.1.0 (Oct 31) a scoreboard while the player and cue work goes on, not a gate; stroke-test sessions are not normal play and are not counted. keyRight: shots after which the cue ball and the lowest ball on the table were named right; balls / ballsRight: balls on the after pictures and how many were named right; wrongNum: balls shown with a wrong number (not a ?).",
+  "about": "Tracking test: what has to be true before V3.1 starts. Counted by Claude from each session's debug file, with the truth taken from the shot pictures and the names checked on the after pictures. Live results of the app as it was in that session (not replays). Goals revised with the owner on Oct 31: only sessions on the version being measured count, its latest 10 racks. From V3.1.0 (Oct 31) a scoreboard while the player and cue work goes on, not a gate; stroke-test sessions are not normal play and are not counted. keyRight: shots after which the cue ball and the lowest ball on the table were named right; balls / ballsRight: balls on the after pictures and how many were named right; wrongNum: balls shown with a wrong number (not a ?). From V3.4 practice sessions are counted too (mode: practice; no racks); a session without names checked (no keyRight, balls) leaves the name rows to the sessions that have them.",
   "updated": "2026-11-02",
   "target": {
     "racks": 10,
@@ -159,6 +159,19 @@
       "ballsRight": 150,
       "wrongNum": 0,
       "extraShots": 2
+    },
+    {
+      "when": "Nov 1 21:18",
+      "app": "V3.4.0",
+      "mode": "practice",
+      "spot": "side",
+      "racks": 0,
+      "shots": 39,
+      "found": 39,
+      "madeRight": 30,
+      "falseIn": 3,
+      "falseScratch": 2,
+      "extraShots": 6
     }
   ],
   "notCounted": [
@@ -179,5 +192,5 @@
       "why": "a line drill (the 9 balls frozen in a line across the table), not normal play: live 29 of 38 real shots right, 5 real shots thrown out as hand moves (fixed in V3.1.4)"
     }
   ],
-  "measuring": "V3.2.0"
+  "measuring": "V3.4.0"
 }

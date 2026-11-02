@@ -605,3 +605,11 @@ test('practice: a ball pocketed and put back gets its number again at the next s
   assert.strictEqual(pr.S.shots.length, 2, info); assert.deepStrictEqual(pr.S.shots.map(s => s.made.map(m => m.num)), [[3], [3]], info);
   const before = pr.S.shots[1].made.length; pr.finish(); assert.strictEqual(pr.S.shots[1].made.length, before);
 });
+
+test('the owner\'s V3.4.0 practice session (Nov 1, 21:18) replays as practice without losing ground', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261101-2118.json'), 'utf8')));
+  // live: 30 of 39 right. The replay (as practice, from the header) 31; 32 with no late scratch in practice (the cue ball
+  // picked up, put down a while later, on 3). Left: the cue ball's track jumping to a pocket at 20, a scratch missed at 7
+  assert.ok(r.shots >= 39 && r.right >= 32, JSON.stringify(r.rows.filter(x => !x.right)));
+});

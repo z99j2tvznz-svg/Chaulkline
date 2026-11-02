@@ -2162,6 +2162,9 @@ function makeTracker(P, opts) {
       // the cue ball gone, but a ball the reader takes for the cue ball rests on the table since: it was picked up and put
       // back, not in (Nov 1, 20:06: set up again for the same shot three times, three false scratches; of 8 late scratches in
       // all the recordings, 7 were this). Its name is freed for the ball that is there.
+      // in practice the cue ball gone without being seen going in was picked up: no late scratch (Nov 1, 21:18: picked up,
+      // then put down a while later, twice; of 8 late scratches in all the recordings before, 1 was real, in play)
+      if (O.practice && tr.num === 0) { tr.state = 'dropped'; ev('cleared', { key: tr.key, num: 0, n: sh.n }); continue; }
       if (O.cueBack && tr.num === 0) { const ci = O.ids.indexOf(0), since = o => Math.max(o.firstT || 0, o.restSince || 0) >= tr.lostT - 0.5;
         const back = ballsNow().find(o => o !== tr && o.state === 'rest' && since(o) && (o.num === 0 || ((o.num == null || !o.sure) && o.nVotes >= 1 && o.votes.indexOf(Math.max(...o.votes)) === ci)));
         if (back) { tr.state = 'dropped'; ev('cue_back', { key: tr.key, to: back.key, n: sh.n }); continue; } }
@@ -2178,7 +2181,7 @@ function makeTracker(P, opts) {
     tr.state = 'gone'; tr.goneT = t; const d = { key: tr.key, num: tr.num, sure: tr.sure, pocket, late: true };
     if (tr.num !== 0 && !S.gone.includes(tr.num)) S.gone.push(tr.num); // the cue ball comes back (see pocketed)
     sh.made.push(d); if (tr.key === sh.cueKey || tr.num === 0) sh.scratch = true; sh.updated = t;
-    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)] }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
+    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)], v: +(tr.vLost || 0).toFixed(1) }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
   }
 
   // New rack or End session: the last shot's calls are settled now, not left waiting (Oct 30: the 9, the last ball of the
@@ -2706,19 +2709,21 @@ async function renderGate() {
     for (let i = all.length - 1; i >= 0 && rk < T.racks; i--) { S.unshift(all[i]); rk += all[i].racks || 0; }
     const sum = k => S.reduce((a, s) => a + (s[k] || 0), 0), shots = sum('shots'), balls = sum('balls'), racks = sum('racks'), pct = (a, b) => b ? (Math.round(1000 * a / b) / 10) + '%' : '–';
     const nSess = new Set(S.map(s => s.session || s.when)).size, spots = [...new Set(S.map(s => s.spot))];
-    const share = (k, n, need) => [pct(sum(k), n) + ' · need ' + Math.round(100 * need) + '%', n ? sum(k) / n / need : 0, n > 0 && sum(k) / n >= need];
+    // (a share over the sessions that have the count: names are not checked on every session)
+    const has = (k, n) => S.filter(s => s[k] != null).reduce((a, s) => a + (s[n] || 0), 0);
+    const share = (k, n, need) => { n = has(k, n); return [pct(sum(k), n) + ' · need ' + Math.round(100 * need) + '%', n ? sum(k) / n / need : 0, n > 0 && sum(k) / n >= need]; };
     // a count with a limit (at most v per k): the bar is full at none, half at the limit
     const atMost = (n, per, lim, unit) => { const r = per ? n / per : 0; return [n + (per && n ? ' (' + (Math.round(10 * r * lim.k) / 10) + ')' : '') + ' · at most ' + lim.v + ' ' + unit, per ? 1 - Math.min(1, r * lim.k / lim.v / 2) : 0, per > 0 && r * lim.k <= lim.v]; };
     const rows = [
       ['Racks', racks + ' of ' + T.racks, racks / T.racks, racks >= T.racks],
       ['Sessions', nSess + ' of ' + T.sessions, nSess / T.sessions, nSess >= T.sessions],
       ['Camera spots', spots.length + ' of ' + T.spots + (spots.length ? ' (' + spots.join(', ') + ')' : ''), spots.length / T.spots, spots.length >= T.spots],
-      ['Shots found', ...share('found', shots, T.found)],
-      ['What went in, called right', ...share('madeRight', shots, T.madeRight)],
+      ['Shots found', ...share('found', 'shots', T.found)],
+      ['What went in, called right', ...share('madeRight', 'shots', T.madeRight)],
       ['False "in"', ...atMost(sum('falseIn'), shots, { k: 50, v: T.falseInPer50 }, 'per 50 shots')],
       ['False scratches', ...atMost(sum('falseScratch'), shots, { k: 50, v: T.falseScratchPer50 }, 'per 50 shots')],
-      ['Cue ball and lowest ball named right after a shot', ...share('keyRight', shots, T.keyRight)],
-      ['Balls named right', ...share('ballsRight', balls, T.ballsRight)],
+      ['Cue ball and lowest ball named right after a shot', ...share('keyRight', 'shots', T.keyRight)],
+      ['Balls named right', ...share('ballsRight', 'balls', T.ballsRight)],
       ['A wrong number shown', ...atMost(sum('wrongNum'), balls, { k: 200, v: T.wrongPer200 }, 'in 200 balls')],
       ['Counted as shots but not shots', ...atMost(sum('extraShots'), racks, { k: 1, v: T.extraPerRack }, 'per rack')]];
     $('#gateRows').innerHTML = rows.map(([l, v, f, ok]) => '<div class="grow' + (ok ? ' ok' : '') + '"><div class="gl"><span>' + l + '</span><span>' + v + '</span></div><div class="gb"><i style="width:' + Math.round(100 * Math.max(0, Math.min(1, f))) + '%"></i></div></div>').join('');

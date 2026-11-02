@@ -1137,3 +1137,17 @@ play, so it is on the scoreboard (now measuring V3.2.0 on).
   15 px an inch), 20:06 shot 2: the tip 1.9 in from the ball's centre at address (the app: 1.9); out of the 13 in window
   at the top of the backswing (the app: 12.5 in back); 0.15 s after the strike already more than 7 in past the ball's
   spot (V3.2 live said 5, V3.3's strike from the cue 7). Long, full strokes, not a measuring error.
+
+## Review: Nov 1 21:18 (V3.4.0, Practice)
+The first practice session. Phone at the side; first a row of balls along the near rail, each set by the far side pocket
+and cut into the top-right corner (1-14), then all the balls spread out and shot one at a time (15 on); 12 minutes, 45
+shots, 4 parts. Truth from the shot pictures (the far rail zoomed). Live 30 of 39 real shots right, all found; 6 not
+shots counted (8, 16, 29, 39: balls moved with the cue or by hand; 9, 10: nothing moved). Wrong: false scratches on 3
+(the cue ball picked up, put down a while later) and 20 (the cue ball's track jumped 43 in to a corner as the shot
+started and was taken as going in); a scratch missed on 7 (the 4 and the cue ball into the top-right corner); the 4
+called in when picked up (4, 34); the 9 called in a shot early (27); the 2 (2), the 7 (6) and the 7 into the near-right
+corner (44) missed. The stroke from the side on 35 of 45 shots: 1 practice stroke, 10 in back, 0.27 s pause, 6 in
+follow-through typical; the strike 0.58 s before the shot was seen to start. Names not checked this time; on the
+scoreboard without name counts (the card now takes each share over the sessions that have that count), measuring V3.4.0.
+- For the next build: in practice no late scratch (the cue ball gone without being seen going in was picked up); the
+  replay as practice 32 of 39 (31 without). Not yet published (fixes ride along with the next build).

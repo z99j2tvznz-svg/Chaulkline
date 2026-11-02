@@ -422,6 +422,9 @@ function makeTracker(P, opts) {
       // the cue ball gone, but a ball the reader takes for the cue ball rests on the table since: it was picked up and put
       // back, not in (Nov 1, 20:06: set up again for the same shot three times, three false scratches; of 8 late scratches in
       // all the recordings, 7 were this). Its name is freed for the ball that is there.
+      // in practice the cue ball gone without being seen going in was picked up: no late scratch (Nov 1, 21:18: picked up,
+      // then put down a while later, twice; of 8 late scratches in all the recordings before, 1 was real, in play)
+      if (O.practice && tr.num === 0) { tr.state = 'dropped'; ev('cleared', { key: tr.key, num: 0, n: sh.n }); continue; }
       if (O.cueBack && tr.num === 0) { const ci = O.ids.indexOf(0), since = o => Math.max(o.firstT || 0, o.restSince || 0) >= tr.lostT - 0.5;
         const back = ballsNow().find(o => o !== tr && o.state === 'rest' && since(o) && (o.num === 0 || ((o.num == null || !o.sure) && o.nVotes >= 1 && o.votes.indexOf(Math.max(...o.votes)) === ci)));
         if (back) { tr.state = 'dropped'; ev('cue_back', { key: tr.key, to: back.key, n: sh.n }); continue; } }
@@ -438,7 +441,7 @@ function makeTracker(P, opts) {
     tr.state = 'gone'; tr.goneT = t; const d = { key: tr.key, num: tr.num, sure: tr.sure, pocket, late: true };
     if (tr.num !== 0 && !S.gone.includes(tr.num)) S.gone.push(tr.num); // the cue ball comes back (see pocketed)
     sh.made.push(d); if (tr.key === sh.cueKey || tr.num === 0) sh.scratch = true; sh.updated = t;
-    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)] }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
+    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)], v: +(tr.vLost || 0).toFixed(1) }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
   }
 
   // New rack or End session: the last shot's calls are settled now, not left waiting (Oct 30: the 9, the last ball of the
