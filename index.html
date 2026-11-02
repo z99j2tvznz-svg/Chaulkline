@@ -1743,6 +1743,7 @@ function makeTracker(P, opts) {
     autoRack: true,     // only the cue ball left, still for rackHold s after a shot: the rack is done (see phase)
     rackHold: 2,
     rackNew: 4,         // this many new balls put out since the last shot, and more on the table than then: a new rack
+    flicker: 2.2,       // in (a ball's width): motion this close to a ball's resting spot waits a look before it counts (see phase)
     cueWait: 2,         // s more, at most, while something new may be the cue ball called in (see cueComing)
     gateRest: 1.6,      // in: a resting ball is looked for this close to where it was
     gateMove: 4,        // in around the predicted spot of a rolling ball, plus gateMoveK of its travel this look
@@ -1859,7 +1860,7 @@ function makeTracker(P, opts) {
 
   // ---- one look ----
   function update(t, spotsIn, info) {
-    const dt = S.t ? Math.max(0.02, t - S.t) : 0.1; S.t = t; info = info || {};
+    const dt = S.t ? Math.max(0.02, t - S.t) : 0.1; S.prevT = S.t; S.t = t; info = info || {};
     // spots on the cloth only (balls in a pocket bag, on the rail or on the floor fall outside), and one spot per ball (the
     // finder can put two boxes on one ball in a bunch). A ball's centre is at least a radius in from the cushion, but the
     // outline can be an inch off (Oct 27: the 9 frozen to the near rail came out 0.3 in from it, was dropped as "off the
@@ -2291,23 +2292,31 @@ function makeTracker(P, opts) {
     }
     const balls = ballsNow(), moving = balls.filter(tr => tr.state === 'moving'), pend = balls.filter(tr => tr.state === 'pending');
     if (S.phase === 'still' || S.phase === 'hands') {
-      if (!moving.length && !pend.length) { if (S.stillSince == null) S.stillSince = t; if (S.phase === 'hands' && t - S.stillSince >= O.stillHold) { S.phase = 'still'; ev('still', {}); } }
+      // the first look of motion decides nothing while every mover is still within a ball's width (flicker) of where it
+      // rested: the next look tells a ball on its way from a spot that flickers (Nov 1, 18:44: balls frozen in a line, the
+      // far one found twice 1.4 in apart; its flicker was called a hand, and the real shot that followed was lost). One such
+      // small mover is left out while another ball really rolls.
+      const near = moving.filter(tr => Math.hypot(tr.x - tr.restX, tr.y - tr.restY) < O.flicker), far = moving.filter(tr => !near.includes(tr));
+      for (const tr of near) { tr.flickV = Math.max(tr.flickT === S.prevT ? tr.flickV : 0, speed(tr)); tr.flickT = t; }
+      const waited = tr => tr.flickT != null && tr.flickT === S.prevT;
+      const stir = !far.length ? [] : near.length <= 1 ? far : moving;
+      if (!stir.length && !pend.length) { if (S.stillSince == null) S.stillSince = t; if (S.phase === 'hands' && t - S.stillSince >= O.stillHold) { S.phase = 'still'; ev('still', {}); } }
       else if (S.phase === 'still') {
         // a finger on the screen shakes the phone: every ball seems to move a little for a look (Oct 28: a tap to rename the 9
         // moved the balls about an inch, and a shot was counted)
         const armed = S.stillSince != null && t - S.stillSince >= O.stillHold && !(t - S.touchT < O.touchHold);
         // the first look with motion: one ball rolling on its own (or two, when the cue ball reached the first ball within
         // one look; then the cue ball is the one the votes say, else the one that went further)
-        const fresh = moving.filter(tr => tr.movedT === t);
-        if (armed && fresh.length >= 1 && fresh.length < O.rackCount && fresh.length === moving.length && Math.max(...fresh.map(speed)) >= O.shotSpeed) {
+        const fresh = stir.filter(tr => tr.movedT === t || waited(tr));
+        if (armed && fresh.length >= 1 && fresh.length < O.rackCount && fresh.length === stir.length && Math.max(...fresh.map(tr => Math.max(speed(tr), waited(tr) ? tr.flickV : 0))) >= O.shotSpeed) {
           const cueOf = tr => tr.pin === 0 ? 9 : tr.nVotes ? tr.votes[O.ids.indexOf(0)] / tr.nVotes : -9;
           const cue = fresh.length === 1 ? fresh[0] : fresh.slice().sort((a, b) => (cueOf(b) - cueOf(a)) || (Math.hypot(b.x - b.restX, b.y - b.restY) - Math.hypot(a.x - a.restX, a.y - a.restY)))[0];
           // the cue ball named and sitting still elsewhere: a ball moved by hand, not a shot (Oct 30, 23:17: balls set out and
           // spread with the cue shaft for the next rack were counted as shots; a shot always starts with the cue ball)
           const q0 = O.cueFirst && cue.pin !== 0 && !(cue.num === 0 && cue.sure) && balls.find(b => b !== cue && b.num === 0 && b.sure && b.state === 'rest' && b.seenT === t && dist(b, cue) > 2 * R + 1.5 && Math.hypot(b.restX - cue.restX, b.restY - cue.restY) > 2 * R + 1.5);
-          if (q0) { S.phase = 'hands'; ev('hands', { n: moving.length, armed, notCue: cue.key }); S.say.push({ k: 'not_shot', num: cue.num }); }
+          if (q0) { S.phase = 'hands'; ev('hands', { n: stir.length, armed, notCue: cue.key }); S.say.push({ k: 'not_shot', num: cue.num }); }
           else { startShot(cue, t); if (fresh.length === 2) { S.shot.first = fresh.find(tr => tr !== cue).key; } }
-        } else { S.phase = 'hands'; ev('hands', { n: moving.length, armed }); }
+        } else { S.phase = 'hands'; ev('hands', { n: stir.length, armed }); }
         S.stillSince = null;
       } else S.stillSince = null;
     } else if (S.phase === 'shot') {
@@ -2410,7 +2419,7 @@ function makeTracker(P, opts) {
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.1.3';
+const VERSION = 'V3.1.4';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];

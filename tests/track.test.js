@@ -556,3 +556,23 @@ test('the owner\'s V3.0.15 session (Oct 31, 15:10, 4 racks) replays close to liv
   assert.strictEqual(r.shots, 58); assert.ok(r.right >= 48, JSON.stringify(r.rows.filter(x => !x.right)));
 });
 
+
+test('a spot flickering by an inch in a frozen line is not a hand: the shot that follows counts (Nov 1, 18:44)', () => {
+  // the 9 at the far end of a line of balls found twice, 1.4 in apart, the look before the cue ball is struck
+  const tk = makeTracker(P), col = [1, 2, 3, 4, 5, 6, 7, 8].map((num, i) => ({ num, x: 29, y: 4 + 4.1 * i })), cue = { num: 0, x: 34, y: 5.6 }, nine = y => ({ num: 9, x: 28.6, y });
+  let t = 0; for (; t < 4; t += 0.3) look(tk, t, [cue, ...col, nine(36.7)]);
+  tk.S.setup = false;
+  for (const y of [35.3, 35.3, 36.7, 35.3]) { look(tk, t, [cue, ...col, nine(y)]); t += 0.3; }
+  for (const k of [1, 2, 3]) { look(tk, t, [{ num: 0, x: 34 - 1.5 * k, y: 5.6 - 0.4 * k, moving: true }, ...col, nine(36.7)], false); t += 0.3; }
+  for (const k of [1, 2, 3]) { look(tk, t, [{ num: 0, x: 30.5, y: 4.4 }, { num: 1, x: 29 - 8 * k, y: 4 - k, moving: true }, ...col.slice(1), nine(36.7)], false); t += 0.3; }
+  for (let i = 0; i < 12; i++) { look(tk, t, [{ num: 0, x: 30.5, y: 4.4 }, { num: 1, x: 5, y: 1 }, ...col.slice(1), nine(36.7)]); t += 0.3; }
+  assert.strictEqual(tk.S.shots.length, 1); assert.ok(!tk.S.events.some(e => e.k === 'hands'), JSON.stringify(tk.S.events.filter(e => e.k === 'hands')));
+});
+
+test('the owner\'s V3.1.3 line drill (Nov 1, 18:44, 5 racks of 9 balls frozen in a line) replays with every real shot but one found', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261101-1844.json'), 'utf8')));
+  // live: 33 of 38 found, 29 right; 5 real shots thrown out as hand moves when a spot in the line flickered (see the test
+  // above). The replay has no camera frames for the bare-cloth check and keeps the cue ball's name, so it does better
+  assert.ok(r.shots >= 37 && r.right >= 36 && r.falsePots === 0, JSON.stringify(r.rows.filter(x => !x.right)));
+});

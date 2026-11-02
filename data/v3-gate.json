@@ -1,6 +1,6 @@
 {
   "about": "Tracking test: what has to be true before V3.1 starts. Counted by Claude from each session's debug file, with the truth taken from the shot pictures and the names checked on the after pictures. Live results of the app as it was in that session (not replays). Goals revised with the owner on Oct 31: only sessions on the version being measured count, its latest 10 racks. From V3.1.0 (Oct 31) a scoreboard while the player and cue work goes on, not a gate; stroke-test sessions are not normal play and are not counted. keyRight: shots after which the cue ball and the lowest ball on the table were named right; balls / ballsRight: balls on the after pictures and how many were named right; wrongNum: balls shown with a wrong number (not a ?).",
-  "updated": "2026-10-31",
+  "updated": "2026-11-02",
   "target": {
     "racks": 10,
     "sessions": 3,
@@ -157,7 +157,11 @@
     {
       "when": "Oct 31 00:23",
       "why": "9 racks on V3.0.15 lost their pictures when the phone's battery died (only the log backup was saved), so the calls cannot be checked; in the log every rack had each ball 1 to 9 called once and ended with Rack complete"
+    },
+    {
+      "when": "Nov 1 18:44",
+      "why": "a line drill (the 9 balls frozen in a line across the table), not normal play: live 29 of 38 real shots right, 5 real shots thrown out as hand moves (fixed in V3.1.4)"
     }
   ],
-  "measuring": "V3.1.0"
+  "measuring": "V3.1.4"
 }

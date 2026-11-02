@@ -1032,3 +1032,24 @@ V2.3.3 stays at `/v2/`, byte for byte as it was.
   so Save to Files saves them at once (one at a time is still there if it does not).
 - Setting corners: Safari's own press-and-hold magnifier is stopped (it came up over the app's, smaller).
 - Claude leads the project; the owner tests and suggests (noted in CLAUDE.md).
+
+## V3.1.4 (Nov 2) — a flicker in a frozen line is not a hand
+- The line drill (Nov 1 18:44, V3.1.3): the 9 balls frozen in a line across the table toward the phone, shot out, set out
+  again; 5 racks. Live 29 of 38 real shots right, 33 found. Five real shots (3 in rack 3, 2 in rack 5) were thrown out
+  as hand moves. In each the cue ball sat still, named and seen; the "mover" was a ball in the tight part of the line
+  found twice about 1.4 in apart (the 9 against the far rail read "9" at y 35.3 and 36.7), its spot flickering between
+  the two. Cue ball first called that a ball moved by hand, and the phase stayed "hands" until everything was still, so
+  the real shot that came a moment later was never started. The hands clips (one per throw-out) show the strikes.
+- The fix: the first look of motion decides nothing while every mover is still within a ball's width (flicker, 2.2 in)
+  of where it rested; the next look tells a ball on its way (it goes on, and counts as fresh, with the speed it had when
+  it started) from a flicker (it is back, or resting). One such small mover is left out while another ball really rolls;
+  two or more count as they did (balls racked by hand stay hands). A shot now starts a look (0.3 s) later only when its
+  first look moved the cue ball under 2.2 in.
+- Replays: no recording got worse; the line drill 36 of 38 right (was 35), its false 7 gone; Oct 26 23:50 and Oct 28
+  17:10 one hand move fewer counted as a shot. The replay of the line drill never had the problem (it keeps the names
+  differently: no camera frames for the bare-cloth check), so a made-up test holds the case: the 9's spot flickering
+  1.4 in the looks before the cue ball is struck, a shot and no hand.
+- Names in the line (after pictures): mostly right; in the tight part a few ? and extra spots (one ball found twice);
+  one wrong number (the 9 shown as the 5 after shot 19); right once the line thinned out. Also: the 7 called in at New
+  rack (21), the 1 and 9 on balls picked up (9), the 9 on 15 and the 7 on 22 missed, the 1 on 13 an unknown ball.
+- A drill, so not on the tracking card (as Oct 30's line racks); the card now measures V3.1.4.
