@@ -64,6 +64,13 @@ test('the review screens in the page: the last session from home, a shot from ab
     const a = await page.getAttribute('#svMedia img', 'src'); await page.waitForFunction(s => document.querySelector('#svMedia img').src !== s, a, { timeout: 5000 });
     await page.click('#svNext'); await page.waitForFunction(() => document.querySelector('#svTitle').textContent.includes('Shot 3'));
     await page.waitForFunction(() => /No pictures kept/.test(document.querySelector('#svMedia').textContent), null, { timeout: 5000 });
+    // V3.7: "Not a shot" on shot 3: struck through in the list, out of the numbers, and back with "Count it as a shot"
+    assert.strictEqual(await page.textContent('#svNot'), 'Not a shot'); await page.click('#svNot');
+    await page.waitForFunction(() => document.querySelector('#svNot').textContent === 'Count it as a shot');
+    assert.match(await page.textContent('#svWords'), /not counted/); assert.match(await page.textContent('#sumStats'), /2\s*shots/);
+    assert.strictEqual(await page.locator('#sumList .sbtn.nots').count(), 1);
+    await page.click('#svNot'); await page.waitForFunction(() => document.querySelector('#svNot').textContent === 'Not a shot');
+    assert.match(await page.textContent('#sumStats'), /3\s*shots/);
     await page.click('#svClose'); assert.ok(await page.isHidden('#shotView'));
     // V3.4: the same session as practice: no racks, the tries of a shot set up again in place of the best run
     const pr = await page.evaluate(() => { const v = window.__v3; v.A.lastSess.mode = 'practice'; renderReview(v.A.lastSess, false);
@@ -96,4 +103,29 @@ test('a ball made, read: which ball, its pocket, the cut, the length; a miss is 
   const miss = { n: 2, first: 6, made: [], scratch: false, before: [[0, 20, 20], [6, 48, 37]], paths: [{ num: 0, p: [[20, 20], [42, 31]] }, { num: 6, p: [[48, 37], [62, 37.6], [70, 37.9]] }] };
   assert.strictEqual(REVIEW.aim(miss, 7), null);
   const t = REVIEW.byShot([made, miss], 7); assert.deepStrictEqual([t.read, t.of], [1, 2]); assert.deepStrictEqual(t.cuts.map(r => r.slice(1)), [[1, 1]]);
+});
+
+test('a shot or a move (V3.7): the cue ball pushed sideways with the cue is not a shot; real shots, one 38 degrees off the cue, are', () => {
+  // Nov 1 21:18, trimmed: shot 10 the cue ball pushed with the cue (seen in the clip), 22 and 30 real shots
+  const { run } = require('../tools/v3/stroke.js'), r = run(path.join(__dirname, 'fixtures/v3/move-2118')), by = n => r.find(x => x.shot === n).move;
+  assert.strictEqual(by(10).move, true, JSON.stringify(by(10))); assert.ok(Math.abs(by(10).off) >= 45 && Math.abs(by(10).off) <= 110);
+  assert.strictEqual(by(22).move, false, JSON.stringify(by(22))); assert.strictEqual(by(30).move, false, JSON.stringify(by(30)));
+  assert.ok(Math.abs(by(30).off) <= 10, 'a real shot leaves along the cue: ' + JSON.stringify(by(30)));
+});
+
+test('a shot or a move: made-up frames (the ball off along the cue, sideways, back toward the butt = the ferrule)', () => {
+  global.D2R = Math.PI / 180; const STROKE = require('../src/stroke.js'), toTable = (x, y) => [x * 0.4, y * 0.4];
+  // the cue lies level to the left of the ball (pointing 180 from it); the ball rests 1 s, then moves 1 px a frame
+  const frames = (dx, dy) => { const o = []; for (let i = 0; i < 60; i++) { const k = Math.max(0, i - 30); o.push({ t: i * 33, fb: [100 + dx * k, 50 + dy * k], ang: 180 }); } return o; };
+  assert.strictEqual(STROKE.moveCheck(frames(1, 0), 1000, toTable).move, false, 'along the cue: a shot');
+  assert.strictEqual(STROKE.moveCheck(frames(0, 1), 1000, toTable).move, true, 'sideways: pushed');
+  assert.notStrictEqual(STROKE.moveCheck(frames(-1, 0), 1000, toTable).why, 'side', 'back toward the butt: the ferrule, looked past');
+  const steep = frames(0, 1).map(q => Object.assign(q, { ang: 200 })); assert.strictEqual(STROKE.moveCheck(steep, 1000, toTable).move, false, 'a cue 20 degrees off level is not read');
+});
+
+test('not a shot (V3.7): left out of every number, kept in the list', () => {
+  const sh = [S(1, 1, [1]), S(2, 1, [], { notShot: 'move' }), S(3, 1, [2]), S(4, 1, [], { notShot: 'you' })];
+  const st = REVIEW.stats(sh); assert.strictEqual(st.shots, 2); assert.strictEqual(st.misses, 0); assert.strictEqual(st.bestRun, 2, 'a move does not break a run');
+  assert.deepStrictEqual(REVIEW.racks(sh).map(r => r.shots), [2]);
+  assert.deepStrictEqual(REVIEW.drillTries({ shots: sh, drillTries: [{ n: 1 }, { n: 2 }, { n: 3 }] }).map(t => t.n), [1, 3]);
 });

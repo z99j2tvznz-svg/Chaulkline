@@ -1,6 +1,6 @@
 // The stroke detector (src/stroke.js) run over the shot clips of a debug session folder (log.json + clips/shotNNN/).
 // usage: node tools/v3/stroke.js <session folder> [--curve shotNNN]
-//   prints per shot: practice strokes, the last backswing (in), the pause (s), the strike against when the app saw the shot
+//   prints per shot: whether the cue ball was moved with the cue rather than struck (STROKE.moveCheck), practice strokes, the last backswing (in), the pause (s), the strike against when the app saw the shot
 //   start, the follow-through (in) and how far off the cue's line the cue ball left (degrees). Needs Python with Pillow.
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 global.D2R = global.D2R || Math.PI / 180;
@@ -35,9 +35,9 @@ function run(dir, only) {
     const Q = h.quad.map(q => [(q[0] - bx) * k, (q[1] - by) * k]), cx0 = Q.reduce((a, q) => a + q[0], 0) / 4, cy0 = Q.reduce((a, q) => a + q[1], 0) / 4, Qi = Q.map(q => { const dx = cx0 - q[0], dy = cy0 - q[1], n = Math.hypot(dx, dy); return [q[0] + 2 * dx / n, q[1] + 2 * dy / n]; });
     const inside = (x, y) => { let c = false; for (let i = 0, j = 3; i < 4; j = i++) { const [xi, yi] = Qi[i], [xj, yj] = Qi[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
     let prev = { ball: [(p[0] - bx) * k, (p[1] - by) * k], ang: null }; const obs = [];
-    for (const [f, t] of ix.list) { const im = get(f), o = STROKE.observe(im, im.w, im.h, prev, isCloth, { rBall: Math.ceil(rBall), reach: Math.max(4, rBall * 1.6), inside }); obs.push(Object.assign({ t }, o)); prev = { ball: o.ball || prev.ball, ang: o.ang != null ? o.ang : prev.ang, rest: prev.rest || (o.ball && !o.lost ? o.ball : null) }; }
-    const s = STROKE.summarize(obs, toTable) || {};
-    rows.push({ shot: sh.n, test: sh.test || null, seen: ix.at, strike: s.strike, early: s.strike != null ? +((ix.at - s.strike) / 1000).toFixed(2) : null, strokes: s.strokes, backLen: s.backLen, pause: s.pause, follow: s.follow, offLine: s.offLine, cueFound: obs.filter(q => q.tip != null).length + '/' + obs.length, curve: only ? s.curve : undefined, obs: only ? obs.map(q => [q.t, q.ball && q.ball.map(v => +v.toFixed(1)), q.ang, q.tip, q.tip0]) : undefined });
+    for (const [f, t] of ix.list) { const im = get(f), o = STROKE.observe(im, im.w, im.h, prev, isCloth, { rBall: Math.ceil(rBall), reach: Math.max(4, rBall * 1.6), inside }); obs.push(Object.assign({ t }, o)); prev = { ball: o.ball || prev.ball, ang: o.ang != null ? o.ang : prev.ang, rest: prev.rest || (o.ball && !o.lost ? o.ball : null), fb: o.fb, fv: o.fv }; }
+    const s = STROKE.summarize(obs, toTable) || {}, mv = STROKE.moveCheck(obs, ix.at, toTable);
+    rows.push({ shot: sh.n, move: mv, test: sh.test || null, seen: ix.at, strike: s.strike, early: s.strike != null ? +((ix.at - s.strike) / 1000).toFixed(2) : null, strokes: s.strokes, backLen: s.backLen, pause: s.pause, follow: s.follow, offLine: s.offLine, cueFound: obs.filter(q => q.tip != null).length + '/' + obs.length, curve: only ? s.curve : undefined, obs: only ? obs.map(q => [q.t, q.ball && q.ball.map(v => +v.toFixed(1)), q.ang, q.tip, q.tip0, q.fb && q.fb.map(v => +v.toFixed(1))]) : undefined });
   }
   return rows;
 }

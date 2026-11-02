@@ -7,16 +7,18 @@ const REVIEW = (() => {
   // balls in on a shot: object balls (an unknown ball counts; the cue ball is a scratch, not a ball in)
   const objIn = s => s.made.filter(m => m.num !== 0 && !(m.num != null && m.num === s.cue)).length;
   const scored = s => objIn(s) > 0 && !s.scratch;
+  // a shot that was not one (V3.7: a ball moved with the cue, or the player said so) stays in the list but counts nowhere
+  const real = shots => shots.filter(s => !s.notShot);
   // runs: shots in a row in one rack that put a ball in without a scratch (the break counts when it does)
   function runs(shots) { let best = 0, cur = 0, rack = null; for (const s of shots) { if (s.rack !== rack) { cur = 0; rack = s.rack; } cur = scored(s) ? cur + 1 : 0; best = Math.max(best, cur); } return best; }
   function stats(shots) {
-    const play = shots.filter(s => !s.break);
+    shots = real(shots); const play = shots.filter(s => !s.break);
     return { shots: shots.length, ballsIn: shots.reduce((a, s) => a + objIn(s), 0), potted: play.filter(s => objIn(s) > 0).length, tries: play.length,
       potRate: play.length ? play.filter(s => objIn(s) > 0).length / play.length : null, scratches: shots.filter(s => s.scratch).length, bestRun: runs(shots),
       misses: play.filter(s => objIn(s) === 0 && !s.scratch).length };
   }
   function racks(shots) {
-    const by = new Map(); for (const s of shots) { const r = s.rack || 1; if (!by.has(r)) by.set(r, []); by.get(r).push(s); }
+    const by = new Map(); for (const s of real(shots)) { const r = s.rack || 1; if (!by.has(r)) by.set(r, []); by.get(r).push(s); }
     return [...by.entries()].map(([rack, ss]) => Object.assign({ rack }, stats(ss)));
   }
   const pct = x => x == null ? '–' : Math.round(100 * x) + '%';
@@ -64,11 +66,13 @@ const REVIEW = (() => {
   // drop points closer than half an inch to the last kept one (a path stays its shape, a resting ball adds nothing)
   function thin(pts) { const o = []; for (const q of pts) { const e = o[o.length - 1]; if (!e || Math.hypot(q[0] - e[0], q[1] - e[1]) >= 0.5) o.push(q); } const z = pts[pts.length - 1]; if (z && o[o.length - 1] !== z) o.push(z); return o; }
   // ---- every session's numbers, kept on the phone
+  // the drill tries whose shot still counts
+  const drillTries = sess => { const no = new Set((sess.shots || []).filter(s => s.notShot).map(s => s.n)); return (sess.drillTries || []).filter(t => !no.has(t.n)); };
   function history() { try { return JSON.parse(localStorage.getItem(HIST) || '[]'); } catch (e) { return []; } }
   function remember(sess, mins) {
     if (!sess || !sess.shots || !sess.shots.length) return;
     const h = history().filter(x => x.t0 !== sess.t0), st = stats(sess.shots), bs = byShot(sess.shots, sess.ft);
-    h.push({ t0: sess.t0, ft: sess.ft, mode: sess.mode || 'play', mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun, cuts: bs.cuts, drills: typeof DRILL !== 'undefined' ? DRILL.summary(sess.drillTries || []).map(d => ({ id: d.id, name: d.name, tries: d.tries, made: d.made, best: d.best })) : [] });
+    h.push({ t0: sess.t0, ft: sess.ft, mode: sess.mode || 'play', mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun, cuts: bs.cuts, drills: typeof DRILL !== 'undefined' ? DRILL.summary(drillTries(sess)).map(d => ({ id: d.id, name: d.name, tries: d.tries, made: d.made, best: d.best })) : [] });
     try { localStorage.setItem(HIST, JSON.stringify(h.slice(-300))); } catch (e) { }
   }
   // shots set up again: a shot whose cue ball starts within R in of the one before's, with every other ball within R in of
@@ -79,7 +83,7 @@ const REVIEW = (() => {
     const same = (a, b) => { const ca = cueOf(a), cb = cueOf(b); if (!ca || !cb || d(ca, cb) > R) return false; const oa = objs(a), ob = objs(b);
       return oa.length > 0 && oa.length === ob.length && oa.every(p => ob.some(q => d(p, q) <= R)) && ob.every(p => oa.some(q => d(p, q) <= R)); };
     const out = []; let cur = null;
-    for (const s of shots) { if (cur && same(cur[0], s)) cur.push(s); else { if (cur && cur.length > 1) out.push(cur); cur = [s]; } }
+    for (const s of real(shots)) { if (cur && same(cur[0], s)) cur.push(s); else { if (cur && cur.length > 1) out.push(cur); cur = [s]; } }
     if (cur && cur.length > 1) out.push(cur); return out;
   }
   // ---- the shot itself (V3.5, owner Nov 2: in practice balls go to one pocket, then another; how the cuts and the pockets
@@ -117,7 +121,7 @@ const REVIEW = (() => {
   const LENS = [[0, 24, 'Short (under 2 ft to the pocket)'], [24, 48, 'Middle (2 to 4 ft)'], [48, 999, 'Long (over 4 ft)']];
   // the session's shots read, by pocket, by cut and by length: [label, made, tries] rows
   function byShot(shots, ft) {
-    const P = makeP(ft || 7), rd = shots.filter(s => !s.break).map(s => aim(s, ft)).filter(a => a), row = (l, xs) => [l, xs.filter(a => a.made).length, xs.length];
+    shots = real(shots); const P = makeP(ft || 7), rd = shots.filter(s => !s.break).map(s => aim(s, ft)).filter(a => a), row = (l, xs) => [l, xs.filter(a => a.made).length, xs.length];
     return { read: rd.length, of: shots.filter(s => !s.break).length,
       cuts: CUTS.map(([a, b, l]) => row(l, rd.filter(x => x.cut >= a && x.cut < b))).filter(r => r[2]),
       lens: LENS.map(([a, b, l]) => row(l, rd.filter(x => x.toPocket >= a && x.toPocket < b))).filter(r => r[2]) };
@@ -131,10 +135,10 @@ const REVIEW = (() => {
   }
   // the session's strokes from the side, on average
   function strokeAvg(shots) {
-    const ss = shots.map(s => s.stroke).filter(st => st && st.side), avg = k => { const v = ss.map(x => x[k]).filter(x => x != null); return v.length ? v.reduce((a, x) => a + x, 0) / v.length : null; };
+    const ss = real(shots).map(s => s.stroke).filter(st => st && st.side), avg = k => { const v = ss.map(x => x[k]).filter(x => x != null); return v.length ? v.reduce((a, x) => a + x, 0) / v.length : null; };
     return { n: ss.length, strokes: avg('strokes'), back: avg('back'), pause: avg('pause'), follow: avg('follow') };
   }
-  return { objIn, stats, racks, runs, diagram, shotDetail, thin, history, remember, pct, strokeWords, strokeAvg, repeats, scored, aim, byShot };
+  return { objIn, stats, racks, runs, diagram, shotDetail, thin, history, remember, pct, strokeWords, strokeAvg, repeats, scored, aim, byShot, real, drillTries };
 })();
 
 // ---------- the review screens ----------
@@ -159,7 +163,7 @@ function renderReview(sess, live) {
   $('#sumShotsCard').hidden = bs.read < 3;
   if (bs.read >= 3) $('#sumShots').innerHTML = '<h3>By cut</h3>' + rows(bs.cuts) + '<h3>By length to the pocket</h3>' + rows(bs.lens) + '<div class="lbl" style="margin-top:6px">' + bs.read + ' balls made, read from where the balls were. For your make rate on a kind of shot, use a drill (Menu → Drills): it knows what each shot is for.</div>';
   // the drills: tries and makes at each level, and the level reached
-  const ds = typeof DRILL !== 'undefined' ? DRILL.summary(sess.drillTries || []) : [];
+  const ds = typeof DRILL !== 'undefined' ? DRILL.summary(REVIEW.drillTries(sess)) : [];
   $('#sumDrillCard').hidden = !ds.length;
   if (ds.length) $('#sumDrills').innerHTML = ds.map(d => '<h3>' + d.name + ' · made ' + d.made + ' of ' + d.tries + (d.best >= 0 ? ' · reached ' + DRILL.byId(d.id).word(DRILL.byId(d.id).levels[d.best]) : '') + '</h3>' +
     d.levels.map(([l, mk, n]) => '<div class="brow"><span>' + l + '</span><b>' + mk + ' of ' + n + '</b><i><u style="width:' + Math.round(100 * mk / n) + '%"></u></i></div>').join('')).join('');
@@ -167,9 +171,17 @@ function renderReview(sess, live) {
   $('#sumRepeatCard').hidden = !RV.reps.length;
   $('#sumRepeats').innerHTML = RV.reps.map((g, i) => { const mk = g.filter(REVIEW.scored).length; return '<button class="srow sbtn" data-g="' + i + '"><b>' + g[0].n + '–' + g[g.length - 1].n + '</b><span>' + g.length + ' tries · ' + (mk ? 'made ' + mk + ' (' + g.map((x, k) => REVIEW.scored(x) ? k + 1 : null).filter(x => x).map(k => k + (k === 1 ? 'st' : k === 2 ? 'nd' : k === 3 ? 'rd' : 'th')).join(', ') + ')' : 'not made') + '</span><i>›</i></button>'; }).join('');
   for (const b of $('#sumRepeats').querySelectorAll('.sbtn')) b.onclick = () => openGroup(+b.dataset.g);
-  $('#sumList').innerHTML = sh.length ? sh.map((s, i) => '<button class="srow sbtn" data-i="' + i + '"><b>' + s.n + '</b><span>' + shotWords(s) + '</span><i>›</i></button>').join('') : '<div class="lbl">No shots.</div>';
+  $('#sumList').innerHTML = sh.length ? sh.map((s, i) => '<button class="srow sbtn' + (s.notShot ? ' nots' : '') + '" data-i="' + i + '"><b>' + s.n + '</b><span>' + shotWords(s) + '</span><i>›</i></button>').join('') : '<div class="lbl">No shots.</div>';
   for (const b of $('#sumList').querySelectorAll('.sbtn')) b.onclick = () => openShot(+b.dataset.i);
   $('#sumDbg').hidden = !live; $('#sumAgain').hidden = !live;
+}
+// a shot marked as not one, or counted again: kept with the session, and the session's line in the history redone
+function setNotShot(sess, s, why) {
+  if (why) s.notShot = why; else delete s.notShot;
+  if (typeof dbg === 'function') dbg('not_shot_mark', { n: s.n, why: why || null });
+  if (sess.mins) REVIEW.remember(sess, sess.mins);
+  if (typeof A !== 'undefined' && A.lastSess === sess) save();
+  renderHistory();
 }
 function picUrl(data) { const u = URL.createObjectURL(data instanceof Blob ? data : new Blob([data], { type: 'image/jpeg' })); RV.urls.push(u); return u; }
 function dropUrls() { clearTimeout(RV.play); RV.play = null; for (const u of RV.urls) URL.revokeObjectURL(u); RV.urls = []; }
@@ -180,6 +192,9 @@ async function openShot(i) {
   const am = REVIEW.aim(s, RV.sess.ft), ftIn = v => v < 12 ? v + ' in' : (Math.round(v / 6) / 2) + ' ft';
   const dw = s.drill && typeof DRILL !== 'undefined' ? ' · drill: ' + DRILL.byId(s.drill.id).name + ', ' + DRILL.byId(s.drill.id).word(s.drill.value) + (s.drill.made ? ', made' : ', missed') : '';
   $('#svWords').textContent = shotWords(s) + dw + (!s.drill && am ? ' · ' + (am.cut < 3 ? 'straight in' : 'a ' + am.cut + '° cut') + ' to the ' + makeP(RV.sess.ft || 7).pocketNames[am.pocket] + ', ' + ftIn(am.toPocket) + ' from the pocket' : ''); const sw = REVIEW.strokeWords(s.stroke); $('#svStroke').textContent = sw || ''; $('#svStroke').hidden = !sw;
+  // not a shot / count it: the player has the last word (V3.7)
+  const nb = $('#svNot'); nb.hidden = false; nb.textContent = s.notShot ? 'Count it as a shot' : 'Not a shot';
+  nb.onclick = () => { setNotShot(RV.sess, s, s.notShot ? null : 'you'); renderReview(RV.sess, RV.live); openShot(i); };
   $('#svTable').innerHTML = s.paths || s.before ? REVIEW.diagram(s, RV.sess.ft) : '<div class="lbl">No drawing for this shot (sessions before V3.2 kept none).</div>';
   $('#svPrev').disabled = i === 0; $('#svNext').disabled = i === sh.length - 1; $('#svPrev').onclick = () => openShot(RV.i - 1); $('#svNext').onclick = () => openShot(RV.i + 1);
   const nm = 'shot' + String(s.n).padStart(3, '0'), seg = $('#svSeg'); seg.innerHTML = ''; const media = $('#svMedia'); media.innerHTML = '';
@@ -212,7 +227,7 @@ function openGroup(gi) {
   const mk = g.filter(REVIEW.scored).length;
   $('#svTitle').textContent = 'The same shot, ' + g.length + ' tries';
   $('#svWords').textContent = 'Shots ' + g.map(x => x.n).join(', ') + ' · ' + (mk ? 'made ' + mk + ' of ' + g.length : 'not made yet') + '. Each try\'s cue ball ends at its number; a ball\'s path is solid where it went in, dashed where it did not.';
-  $('#svStroke').hidden = true; $('#svSeg').innerHTML = '';
+  $('#svStroke').hidden = true; $('#svNot').hidden = true; $('#svSeg').innerHTML = '';
   $('#svTable').innerHTML = REVIEW.diagram(g[0], RV.sess.ft, g);
   $('#svMedia').innerHTML = g.map((x, k) => { const sw = REVIEW.strokeWords(x.stroke); return '<button class="srow sbtn" data-i="' + RV.sess.shots.indexOf(x) + '"><b>' + (k + 1) + '</b><span>' + (REVIEW.scored(x) ? 'Made · ' : 'Missed · ') + shotWords(x) + (sw && x.stroke.side ? '<br><span class="lbl">' + sw.replace(/^Stroke: /, '') + '</span>' : '') + '</span><i>›</i></button>'; }).join('');
   for (const b of $('#svMedia').querySelectorAll('.sbtn')) b.onclick = () => openShot(+b.dataset.i);

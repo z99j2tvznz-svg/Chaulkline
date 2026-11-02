@@ -1209,3 +1209,33 @@ scoreboard without name counts (the card now takes each share over the sessions 
   cue has the tip slow and staying on the ball as it moves; a hand has no cue at the ball. Next: those measures on the
   clips of these two sessions (and the hands clips of the moves thrown out), tried against the truth before they decide
   anything live.
+
+## V3.7.0 (Nov 2) — a shot or not: the cue ball pushed with the cue; "Not a shot" in one tap
+- Measured on the clips of Nov 1 20:06 and 21:18 (85 real shots; 7 moves counted as shots: 20:06 1, 36; 21:18 8, 10, 16,
+  29, 39), against the truth. What the moves were, from the clips: balls set out by hand (20:06 1, 36; 21:18 8, with the
+  9 nudged by the cue first), the cue ball pushed with the tip (21:18 10, 29, then picked up), raked across by the cue
+  from the far side (16), swept with the cue held at the butt, no bridge (39).
+- What does not tell them apart: how fast the cue ball sets off (the moves 15-58 in/s at the tracker's first look, real
+  shots from 12); the tracker's path (its first points come after a near ball is hit, and on 20:06 #45 it pointed the
+  wrong way); not-cloth round the ball (balls close by, and the bridge hand, on real shots too); a "strike" from the
+  stroke curve (on all 7 moves, as found before); the ball reaching full speed in one frame (in the 320 px picture a
+  dozen real shots look like a ramp, as the pushes do).
+- What does, and only from the side: the way the cue ball sets off against the cue's line at the address. Followed in
+  the small picture ahead of its way (observe's fb: a ball sent off fast leaves the old near search in one frame), real
+  shots leave within about 10 degrees of the cue (all side-view shots of both sessions bar one at 38). A first move back
+  toward the butt (110-180 degrees) is the tip's white ferrule in the backswing (20:06: 3, 5, 17, 22, 28, 39, 40, 45),
+  looked past. A cue more than 12 degrees off level in the picture is not read: the cue then comes down from the far
+  side, its height tilts it in the picture (20:06 13, 15, 20: real shots read 99-117 degrees off at up to 18 degrees).
+  STROKE.moveCheck: the cue steady (80% of the last second within 8 degrees), within 12 degrees of level, the ball off
+  45-110 degrees from the cue's line = pushed, not struck. On the two sessions: 21:18 10 found, no real shot. The others
+  it cannot see: hands (no still ball and cue), rakes from the far side (cue not level), the sweep along the cue (20
+  degrees). Fixture tests/fixtures/v3/move-2118 (21:18 10, 22, 30).
+- Live: the check runs with the stroke's summary 1.6 s after a shot starts (move_check in the debug file). A move with
+  nothing in and no scratch is not counted; a ball called in late counts it again.
+- Not a shot, the player's word: every shot's line ("Shot 12: the 3 in · tap if not a shot") takes a tap to un-count it,
+  or to count back one the app left out; the review's shot view has "Not a shot" / "Count it as a shot". A shot not
+  counted stays in the list (struck through, "not counted: ...") and counts nowhere: stats, racks and runs (a move does
+  not break a run), cuts, the stroke's average, shots set up again, drills (a drill try on it is dropped; live it is not
+  scored), the history (redone when changed). The debug file has not_shot_mark for each tap.
+- Why the tap: with the 320 px picture the cue can call only a clear sideways push; the tap lets normal play mark the
+  rest, and the marks are truth for the next measure (hands and rakes).

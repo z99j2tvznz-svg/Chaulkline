@@ -49,7 +49,38 @@ const STROKE = (() => {
     if (!b) return { ball: null, cue: null };
     const cue = findCue(d, w, h, b, isCloth, o.rBall, o.len, prev.ang, o.inside) || (prev.ang != null ? findCue(d, w, h, b, isCloth, o.rBall, o.len, null, o.inside) : null);
     const ang = cue ? cue.ang : prev.ang, tip0 = ang != null && prev.rest ? tipAlong(d, w, h, prev.rest, ang, isCloth, o.len, o.inside) : null;
-    return { ball: [b.x, b.y], lost: !!b.lost, ang: cue ? cue.ang : null, tip: cue ? cue.tip : null, tip0, run: cue ? cue.run : 0 };
+    // fb: the cue ball followed where it is heading (V3.7: a ball sent off fast leaves the near search in one frame; ahead
+    // of its way, it stays found, so the way it went can be read)
+    const pv = prev.fb ? [prev.fb[0] + (prev.fv ? prev.fv[0] : 0), prev.fb[1] + (prev.fv ? prev.fv[1] : 0)] : prev.ball, fbb = pv && (findBall(d, w, h, pv, o.reach) || findBall(d, w, h, pv, Math.max(8, o.rBall * 3.5)));
+    const fb = fbb ? [fbb.x, fbb.y] : null, fv = fb && prev.fb ? [(fb[0] - prev.fb[0]) * 0.7 + (prev.fv ? prev.fv[0] : 0) * 0.3, (fb[1] - prev.fb[1]) * 0.7 + (prev.fv ? prev.fv[1] : 0) * 0.3] : [0, 0];
+    return { ball: [b.x, b.y], lost: !!b.lost, ang: cue ? cue.ang : null, tip: cue ? cue.tip : null, tip0, run: cue ? cue.run : 0, fb, fv };
+  }
+  // A shot or a ball moved with the cue (V3.7, owner Nov 2: tell what is a shot). On a shot the cue ball leaves along the
+  // cue, away from the butt. Seen from the side (the cue within 12 degrees of level in the picture, held steady at the
+  // ball), a cue ball that sets off sideways, 45 to 110 degrees off the cue's line, was pushed or raked, not struck.
+  // Checked on Nov 1 20:06 and 21:18 (85 real shots, 7 moves): see DESIGN NOTES, V3.7.0. Hands,
+  // rakes from the far side and sweeps along the cue's line it does not tell; for those the player says "Not a shot".
+  // A ball first seen going back toward the butt (more than 110 degrees off) is the tip's white ferrule in the backswing:
+  // looked past.
+  // obs: [{ t, fb, ang }] (observe), at: when the shot was seen to start (ms), toTable(px, py) -> table inches.
+  function moveCheck(obs, at, toTable) {
+    const angd = (a, b) => ((a - b) % 360 + 540) % 360 - 180, T = q => toTable(q.fb[0], q.fb[1]), dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    for (let i = 0; i < obs.length; i++) {
+      const o = obs[i]; if (!o.fb || o.t < at - 2000 || o.t > at + 300) continue;
+      const pre = obs.slice(0, i).filter(q => q.fb && o.t - q.t >= 250 && o.t - q.t <= 900).map(T); if (pre.length < 3) continue; // (a push creeps off its spot: where it rested is looked for a little before)
+      const med = k => { const v = pre.map(p => p[k]).sort((a, b) => a - b); return v[v.length >> 1]; }, R0 = [med(0), med(1)];
+      if (pre.some(p => dist(p, R0) > 0.6) || dist(T(o), R0) <= 0.7 || obs.slice(i, i + 4).some(q => q.fb && dist(T(q), R0) <= 0.7)) continue;
+      const j = obs.slice(i, i + 15).find(q => q.fb && dist(T(q), R0) >= 1.5), p0 = obs.slice(0, i).reverse().find(q => q.fb);
+      const cues = obs.filter(q => q.ang != null && q.t >= o.t - 1100 && q.t <= o.t - 80).map(q => q.ang);
+      if (!j || !p0 || cues.length < 5) return { move: false, why: 'unread' };
+      const a0 = cues.reduce((b, a) => cues.filter(c => Math.abs(angd(a, c)) <= 6).length > cues.filter(c => Math.abs(angd(b, c)) <= 6).length ? a : b, cues[0]);
+      const share = cues.filter(c => Math.abs(angd(a0, c)) <= 8).length / cues.length, level = Math.min(Math.abs(angd(a0, 0)), Math.abs(angd(a0, 180)));
+      const off = Math.round(angd(Math.atan2(j.fb[1] - p0.fb[1], j.fb[0] - p0.fb[0]) / D2, a0 + 180));
+      if (Math.abs(off) > 110) continue; // the ferrule (seen at 130 to 180 degrees on Nov 1 20:06)
+      const read = share >= 0.8 && level <= 12; // (a cue 18 degrees off level came down from the far side on a real shot, 20:06 shot 20)
+      return { move: read && Math.abs(off) >= 45, off, cue: a0, read, why: read ? 'side' : 'not side' };
+    }
+    return { move: false, why: 'no start' };
   }
   // a whole shot: obs = [{ t (ms), ball, ang, tip }] from before the strike to after it; toTable(px, py) gives table inches
   function summarize(obs, toTable) {
@@ -97,6 +128,6 @@ const STROKE = (() => {
   // cloth for the stroke: the cloth's hue AND close to its colour (the shaft over the cloth, a pixel wide in the small
   // picture, only pales or darkens it: s and v drop, the hue stays). cl = the cloth as the app measured it ({ h, s, v })
   const clothTest = (cl, rgb2hsv) => (r, g, b) => { const [h, s, v] = rgb2hsv(r, g, b), dh = Math.abs(((h - cl.h) % 360 + 540) % 360 - 180); return dh < 28 && s >= (cl.s || 0.85) - 0.12 && v * (v > 1 ? 1 : 255) >= (cl.v || 0.95) * 255 - 40; };
-  return { observe, summarize, findBall, findCue, clothTest };
+  return { observe, summarize, moveCheck, findBall, findCue, clothTest };
 })();
 if (typeof module !== 'undefined') module.exports = STROKE;
