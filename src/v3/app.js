@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.1.4';
+const VERSION = 'V3.2.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -74,6 +74,10 @@ const STORE = (() => {
     },
     put(sid, name, data) { return run('files', 'readwrite', fs => fs.put(data, sid + '/' + name)); },
     putMany(sid, files) { return run('files', 'readwrite', fs => { for (const f of files) fs.put(f.data, sid + '/' + f.name); return null; }); },
+    // the files of a session whose names start with pre (one shot's pictures, or its clip)
+    prefix(sid, pre) {
+      return run('files', 'readonly', fs => { const out = [], q = fs.openCursor(IDBKeyRange.bound(sid + '/' + pre, sid + '/' + pre + '\uffff')); q.onsuccess = () => { const c = q.result; if (c) { out.push({ name: c.key.slice(String(sid).length + 1), data: c.value }); c.continue(); } }; return { value: out }; }).then(r => r || []);
+    },
     sessions() { return run('sessions', 'readonly', ss => ss.getAll()).then(r => (r || []).sort((a, b) => b.sid - a.sid)); },
     files(sid) {
       return run('files', 'readonly', fs => { const out = [], q = fs.openCursor(range(sid)); q.onsuccess = () => { const c = q.result; if (c) { out.push({ name: c.key.slice(String(sid).length + 1), data: c.value }); c.continue(); } }; return { value: out }; }).then(r => r || []);
@@ -111,7 +115,8 @@ function renderHome() {
   if (CRASH) { $('#crashCard').hidden = false; $('#crashText').textContent = 'V' + String(CRASH.version || '').replace(/^V/, '') + ' stopped after ' + (CRASH.secs || 0) + ' s and ' + (CRASH.looks || 0) + ' looks, on the ' + (CRASH.engine === 'webgpu' ? 'graphics chip' : CRASH.engine === 'wasm' ? 'processor (' + (CRASH.threads || 1) + ' core' + ((CRASH.threads || 1) > 1 ? 's' : '') + ')' : 'way in') + ', while ' + ({ look: 'looking at the table', done: 'between looks', start: 'starting', camera: 'starting the camera', finder: 'starting the ball finder', table: 'finding the table' }[CRASH.step] || CRASH.step) + '.' + (CRASH.engine === 'webgpu' ? ' The processor is selected now.' : ''); }
   const L = A.lastSess, card = $('#lastCard');
   card.hidden = !(L && L.shots && L.shots.length);
-  if (!card.hidden) $('#lastList').innerHTML = L.shots.slice(-12).map(s => '<div class="srow"><b>' + s.n + '</b><span>' + shotWords(s) + '</span></div>').join('') + (L.shots.length > 12 ? '<div class="lbl">… ' + L.shots.length + ' shots in all</div>' : '');
+  if (typeof renderHistory === 'function') renderHistory(); // (review.js loads after this file; it draws the card itself then)
+  if (!card.hidden) $('#lastList').innerHTML = L.shots.slice(-6).map(s => '<div class="srow"><b>' + s.n + '</b><span>' + shotWords(s) + '</span></div>').join('') + (L.shots.length > 6 ? '<div class="lbl">… ' + L.shots.length + ' shots in all</div>' : '');
 }
 const POCKETS = ['bottom-left', 'bottom side', 'bottom-right', 'top-left', 'top side', 'top-right'];
 function shotWords(s) {
@@ -207,7 +212,7 @@ async function start() {
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P); A.sess = { t0: Date.now(), ft: A.ft, shots: [] }; A.test = null; A.handsN = 0; A.handsT = 0;
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, shots: [], rack: 1, rackOpen: false }; A.test = null; A.handsN = 0; A.handsT = 0;
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
@@ -225,7 +230,9 @@ function goHome() {
   try { if (wl) wl.release(); } catch (e) { } wl = null;
   $('#cam').hidden = true; $('#home').hidden = false; hideCard(); renderHome();
 }
-function endSession() { if (A.sess && A.sess.shots.length) { A.lastSess = A.sess; save(); } }
+function endSession() { if (A.sess && A.sess.shots.length) { A.sess.mins = Math.max(1, Math.round((Date.now() - A.sess.t0) / 60000)); A.lastSess = A.sess; save(); REVIEW.remember(A.sess, A.sess.mins); } }
+// a new rack: the next shot starts it (New rack pressed twice, or before any shot, is not another)
+function rackOpen() { if (A.sess) A.sess.rackOpen = true; }
 // End session (owner, Oct 28): the camera goes off and the session's numbers show, with Save debug, so the debug file is
 // saved with the phone put down and the camera no longer watching (turning the phone upright to save used to count as a
 // shot and send the app looking for the table again)
@@ -237,19 +244,11 @@ function endRun() {
   try { if (wl) wl.release(); } catch (e) { } wl = null;
   hideCard(); $('#cam').hidden = true; $('#sum').hidden = false; renderSummary();
 }
-function renderSummary() {
-  const sh = (A.sess && A.sess.shots) || [], mins = Math.max(1, Math.round((Date.now() - DBG.t0) / 60000));
-  const made = sh.reduce((a, s) => a + s.made.filter(m => m.num !== 0 && m.num !== s.cue).length, 0), scr = sh.filter(s => s.scratch).length;
-  // racks with at least one shot: a rack done by itself at the end, or New rack pressed twice, is not another
-  const racks = 1 + DBG.ev.filter(e => e.k === 'new_rack' && !e.dup && DBG.ev.some(q => q.k === 'shot_end' && q.t > e.t)).length;
-  $('#sumSub').textContent = mins + ' min · ' + A.ft + ' ft table · ' + racks + ' rack' + (racks > 1 ? 's' : '') + ' · ' + VERSION;
-  $('#sumStats').innerHTML = [[sh.length, 'shots'], [made, 'balls in'], [sh.filter(s => !s.scratch && !s.made.some(m => m.num !== 0)).length, 'nothing in'], [scr, 'scratches']].map(([n, l]) => '<div><b>' + n + '</b><span>' + l + '</span></div>').join('');
-  $('#sumList').innerHTML = sh.length ? sh.map(s => '<div class="srow"><b>' + s.n + '</b><span>' + shotWords(s) + '</span></div>').join('') : '<div class="lbl">No shots.</div>';
-  $('#sumDbg').textContent = 'Save debug';
-}
+function renderSummary() { renderReview(A.sess, true); $('#sumDbg').textContent = 'Save debug'; }
 $('#endBtn').onclick = () => endRun();
 $('#sumAgain').onclick = () => { $('#sum').hidden = true; start(); };
-$('#sumHome').onclick = () => { $('#sum').hidden = true; $('#home').hidden = false; A.phase = 'home'; renderHome(); renderGate(); };
+$('#sumHome').onclick = () => { closeShot(); $('#sum').hidden = true; $('#home').hidden = false; A.phase = 'home'; renderHome(); renderGate(); };
+$('#lastOpen').onclick = () => { if (!A.lastSess) return; $('#home').hidden = true; $('#sum').hidden = false; renderReview(A.lastSess, false); };
 $('#sumDbg').onclick = () => saveDebug($('#sumDbg'));
 
 // ---------- the table ----------
@@ -415,8 +414,8 @@ async function look() {
 function second(p, k) { let b = -1; for (let i = 0; i < 10; i++) if (i !== k && (b < 0 || p[i] > p[b])) b = i; return b < 0 ? null : [b, r2(p[b])]; }
 // The tracker's word on racks and hand moves (V3.0.15, owner Oct 31: for testing, said on screen; later done quietly)
 function onSay(s) {
-  if (s.k === 'rack_done') { flushShots(); PATH.clear(); dbg('new_rack', { auto: true }); toast('Rack complete'); }
-  else if (s.k === 'rack_new') { flushShots(); PATH.clear(); dbg('new_rack', { auto: true, set: true }); toast('New rack: balls set out'); }
+  if (s.k === 'rack_done') { flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', { auto: true }); toast('Rack complete'); }
+  else if (s.k === 'rack_new') { flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', { auto: true, set: true }); toast('New rack: balls set out'); }
   else if (s.k === 'not_shot') { PATH.clear(); dbg('not_shot', { num: s.num }); toast('Not counted: hand move'); }
 }
 function onShotStart() {
@@ -443,7 +442,8 @@ function flushShots() {
   for (const n of tk.S.notes.splice(0)) onLateMade(n);
 }
 function onShotEnd(sh) {
-  sh.paths = pathsRow(sh); const row = shotRow(sh); A.sess.shots.push({ n: sh.n, cue: sh.cueNum, first: sh.firstNum, made: row.made, scratch: sh.scratch, break: sh.break, t: Date.now() });
+  sh.paths = pathsRow(sh); const row = shotRow(sh); if (A.sess.rackOpen) { A.sess.rackOpen = false; if (A.sess.shots.length) A.sess.rack++; }
+  A.sess.shots.push(Object.assign({ n: sh.n, rack: A.sess.rack, cue: sh.cueNum, first: sh.firstNum, made: row.made, scratch: sh.scratch, break: sh.break, t: Date.now() }, REVIEW.shotDetail(sh)));
   dbg('shot_end', { n: sh.n, made: row.made, scratch: sh.scratch, first: sh.firstNum });
   jpeg(960).then(b => setPic('shot' + String(sh.n).padStart(3, '0') + '-after.jpg', b)).catch(() => { });
   toast('Shot ' + sh.n + ': ' + shotWords(A.sess.shots[A.sess.shots.length - 1]));
@@ -937,7 +937,7 @@ $('#card').addEventListener('click', e => {
 });
 $('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row"><button class="btn" data-act="test">Stroke test</button><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="dbg">Save debug</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
 // (pressed again after the rack was done by itself, or twice: no shot since, so it is not another rack)
-$('#rackBtn').onclick = () => { if (!A.tk) return; const dup = A.tk.S.setup && A.tk.S.shots.length === A.tk.S.rackAt; A.tk.newRack(); flushShots(); PATH.clear(); dbg('new_rack', dup ? { dup: true } : {}); toast('New rack. Names come once the break spreads the balls.'); };
+$('#rackBtn').onclick = () => { if (!A.tk) return; const dup = A.tk.S.setup && A.tk.S.shots.length === A.tk.S.rackAt; A.tk.newRack(); flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', dup ? { dup: true } : {}); toast('New rack. Names come once the break spreads the balls.'); };
 let toastT = 0;
 function toast(t) { dbg('toast', { s: t }); const e = $('#toast'); e.textContent = t; e.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { e.hidden = true; }, 3500); }
 
