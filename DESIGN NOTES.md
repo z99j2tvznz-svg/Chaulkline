@@ -1086,3 +1086,39 @@ already kept what a review needs (each ball's path, before and after pictures, a
   stroke shows for a few seconds, and the clips keep every frame and 4 s before (with the cue ball close-ups).
 - Next with the stroke: use the strike to tell a shot from a hand (a cue at the ball before it moved), which is what the
   cue-first guess does today; the end-on view from the close-ups.
+
+## Review: Nov 1 20:06 (V3.2.0), the first session on V3.2
+Practice at the side spot with two to four balls at a time, the first shot set up again four times, Check my stroke on;
+12 minutes, 48 shots, 5 parts. Truth from the shot pictures (the yellows checked close up: the striped 9 against the
+solid 1). Live 35 of 46 real shots right, all found, 2 setup moves counted as shots. Wrong: false scratches on 2, 4 and
+17 (the cue ball picked up to set the shot again); in the last set (37 on) no new rack was seen, because the setup move
+at 36 was taken for a shot, so its balls stayed unnamed (their numbers counted in): pots called "a ball" or missed, the 9
+called the 7; the 9 lying in the top-left pocket kept as a ball on the table (35). Names right on 150 of 184 balls. The
+stroke from the side on 31 of 48 shots, but the strike late on 7 hard shots (see V3.3.0). Not counted as a drill: it is
+play, so it is on the scoreboard (now measuring V3.2.0 on).
+
+## V3.3.0 (Nov 2) — the same shot set up again; the review's fixes
+- Set up again (review.js repeats): a shot whose cue ball starts within 4 in of the shot before's, with every other ball
+  within 4 in of one of that shot's balls and as many, is a try of the same shot; consecutive tries are put together.
+  Names play no part (they can be wrong as the cue strikes) and balls rolling as the shot started are left out (balls
+  hidden at the strike, behind the cue or the hand, count where they rested). On the recordings: Nov 1 20:06 shots 2-4,
+  nothing anywhere else. The review shows "Shots you set up again"; each opens one drawing with every try (each cue
+  ball's end at its try's number, a ball's path solid where it went in, dashed where not, unnamed balls left out) and the
+  tries in a list with their result and stroke.
+- The cue ball put back (track.js cueBack): the cue ball gone from where it rested, about to be called in late, while a
+  ball named the cue ball, or whose best read is the cue ball, has come to rest on the table since: it was picked up and
+  put back, not in. 7 of the 8 late scratches in all the recordings were this; the one real one (Oct 31 14:52, 6) stays.
+  Replays: Nov 1 20:06 three false scratches gone, Oct 31 15:10 one.
+- A number put back (track.js reviveGone): a number counted in comes back for a ball that turned up since it went in, at
+  most 15 s ago, unnamed, resting, read as that number strongly over several looks (geometric mean 0.7), with no free
+  number fitting it and no ball holding it. Replays: Oct 29 17:50 +3, Oct 31 14:52 +1, Oct 31 15:10 +1, Nov 1 20:06 +3
+  (35 of 46), none worse. (A ball two minutes on the table, named, read "1" for a while, brought the 1 back on Oct 30
+  18:21 until the rule asked for a new, unnamed ball.)
+- The strike (stroke.js): the tip back at the ball after the last backswing, when that comes before the ball is seen
+  to leave (a ball hit hard is gone in one frame and the tip's white ferrule on its spot passed for the ball); a practice
+  stroke is a backswing of at least 2 in from where the tip rested (a waggle is not). On the 20:06 clips the strike is
+  found on 42 of 47 shots, a median 0.67 s before the shot was seen to start; 2 after it (the app started those shots
+  early, a ball still rolling), against 7 live.
+- Not fixed: a ball lying in a far pocket can sit where a ball on the table 1.5 in off the cushion would be (the 9 in the
+  top-left pocket at 20:06, found with a full ball's score), so it stays a ball on the table.
+- made_late events carry where the ball was last seen (at).

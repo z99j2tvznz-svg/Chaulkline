@@ -29,6 +29,9 @@ function makeTracker(P, opts) {
     rackHold: 2,
     rackNew: 4,         // this many new balls put out since the last shot, and more on the table than then: a new rack
     flicker: 2.2,       // in (a ball's width): motion this close to a ball's resting spot waits a look before it counts (see phase)
+    cueBack: true,      // the cue ball gone with a white ball resting on the table since: put back by hand, not a scratch
+    reviveGone: true,   // a number counted in comes back when a ball put out since reads as it (see name) ...
+    reviveNew: 15,      // ... a ball that turned up at most this many s ago
     cueWait: 2,         // s more, at most, while something new may be the cue ball called in (see cueComing)
     gateRest: 1.6,      // in: a resting ball is looked for this close to where it was
     gateMove: 4,        // in around the predicted spot of a rolling ball, plus gateMoveK of its travel this look
@@ -414,6 +417,12 @@ function makeTracker(P, opts) {
         (wo == null || whiteOf(o) == null || Math.abs(whiteOf(o) - wo) <= O.cueVeto));
       if (sh && newcomer && t - sh.t1 < O.newcomerWait) continue;
       if (!sh || tr.num == null) { tr.state = 'dropped'; ev('cleared', { key: tr.key, num: tr.num }); continue; }
+      // the cue ball gone, but a ball the reader takes for the cue ball rests on the table since: it was picked up and put
+      // back, not in (Nov 1, 20:06: set up again for the same shot three times, three false scratches; of 8 late scratches in
+      // all the recordings, 7 were this). Its name is freed for the ball that is there.
+      if (O.cueBack && tr.num === 0) { const ci = O.ids.indexOf(0), since = o => Math.max(o.firstT || 0, o.restSince || 0) >= tr.lostT - 0.5;
+        const back = ballsNow().find(o => o !== tr && o.state === 'rest' && since(o) && (o.num === 0 || ((o.num == null || !o.sure) && o.nVotes >= 1 && o.votes.indexOf(Math.max(...o.votes)) === ci)));
+        if (back) { tr.state = 'dropped'; ev('cue_back', { key: tr.key, to: back.key, n: sh.n }); continue; } }
       lateIn(tr, sh, t);
     }
     S.tracks = S.tracks.filter(tr => tr.state !== 'dropped');
@@ -427,7 +436,7 @@ function makeTracker(P, opts) {
     tr.state = 'gone'; tr.goneT = t; const d = { key: tr.key, num: tr.num, sure: tr.sure, pocket, late: true };
     if (tr.num !== 0 && !S.gone.includes(tr.num)) S.gone.push(tr.num); // the cue ball comes back (see pocketed)
     sh.made.push(d); if (tr.key === sh.cueKey || tr.num === 0) sh.scratch = true; sh.updated = t;
-    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
+    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)] }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
   }
 
   // New rack or End session: the last shot's calls are settled now, not left waiting (Oct 30: the 9, the last ball of the
@@ -505,6 +514,17 @@ function makeTracker(P, opts) {
   // ---- names: shared out over all balls at once ----
   function name() {
     const balls = ballsNow(), pinned = new Map();
+    // a number counted in comes back when a ball that turned up since it went in rests and reads as it, strongly, over
+    // several looks, and no ball holds it: it was put back on the table (Nov 1, 20:06: a new set of balls put out with no
+    // new rack seen; their numbers counted in, they stayed unnamed and their pots were missed or called "a ball")
+    if (O.reviveGone) for (const g of S.gone.slice()) {
+      const sh = S.shots.slice().reverse().find(x => x.made.some(m => m.num === g)), gt = sh ? sh.t1 : -1, i = O.ids.indexOf(g);
+      const fitFree = tr => Math.max(0, ...O.ids.filter(id => !S.gone.includes(id) && !balls.some(o => o !== tr && o.num === id && o.sure)).map(id => Math.exp(tr.votes[O.ids.indexOf(id)] / tr.nVotes)));
+      // (only for a ball just put out, unnamed, no free number fitting: Oct 30, 18:21: the 9, on the table two minutes,
+      // read "1" for a while, brought the 1 back)
+      const c = balls.find(tr => tr.state === 'rest' && tr.pin == null && tr.num == null && (tr.firstT || 0) > gt && S.t - (tr.firstT || 0) <= O.reviveNew && tr.nVotes >= 3 && Math.exp(tr.votes[i] / tr.nVotes) >= 0.7 && fitFree(tr) < 0.2);
+      if (c && !balls.some(o => o.num === g)) { S.gone.splice(S.gone.indexOf(g), 1); ev('back_on', { key: c.key, num: g, p: +Math.exp(c.votes[i] / c.nVotes).toFixed(2), free: +fitFree(c).toFixed(2), n: +c.nVotes.toFixed(1) }); }
+    }
     for (const tr of balls) if (tr.pin != null) pinned.set(tr.pin, tr);
     const free = O.ids.filter(id => !pinned.has(id) && !S.gone.includes(id));
     const open = balls.filter(tr => tr.pin == null && tr.nVotes >= 1.5);

@@ -22,13 +22,16 @@ const REVIEW = (() => {
   const pct = x => x == null ? '–' : Math.round(100 * x) + '%';
   // ---- the table drawing (table inches; y flipped so the near rail is at the bottom, as the camera sees it from the side)
   // (balls drawn a fifth larger than life, so their numbers read on a phone)
-  function diagram(s, ft) {
+  // tries: several shots set up the same way, drawn on one table (each try's cue ball end marked with its number; a ball's
+  // path solid when it went in, dashed when it did not)
+  function diagram(s, ft, tries) {
+    const T = tries || [s];
     const P = makeP(ft || 7), L = P.L, W = P.W, R = P.R * 1.2, Y = y => (W - y).toFixed(2), X = x => x.toFixed(2), col = n => n == null ? '#9aa7ae' : BALLCOL[n % 10] || '#9aa7ae';
-    const o = [`<svg viewBox="-5 -5 ${L + 10} ${W + 10}" class="tbl" role="img" aria-label="Shot ${s.n} from above">`,
+    const o = [`<svg viewBox="-5 -5 ${L + 10} ${W + 10}" class="tbl" role="img" aria-label="${tries ? 'Shots ' + T.map(x => x.n).join(', ') : 'Shot ' + s.n} from above">`,
       `<rect x="-5" y="-5" width="${L + 10}" height="${W + 10}" rx="3" fill="#3b2a1d"/><rect x="0" y="0" width="${L}" height="${W}" fill="#1c6fa8"/>`];
     for (let i = 1; i < 8; i++) if (i !== 4) o.push(`<circle cx="${X(L * i / 8)}" cy="-2.5" r=".45" fill="#e9e2d0"/><circle cx="${X(L * i / 8)}" cy="${W + 2.5}" r=".45" fill="#e9e2d0"/>`);
     for (let i = 1; i < 4; i++) o.push(`<circle cx="-2.5" cy="${X(W * i / 4)}" r=".45" fill="#e9e2d0"/><circle cx="${L + 2.5}" cy="${X(W * i / 4)}" r=".45" fill="#e9e2d0"/>`);
-    const inPk = new Set(s.made.map(m => m.pocket).filter(p => p != null));
+    const inPk = new Set([].concat(...T.map(x => x.made)).map(m => m.pocket).filter(p => p != null));
     P.pockets.forEach((p, i) => o.push(`<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="${p.r}" fill="#05080a" ${inPk.has(i) ? 'stroke="#ffb84d" stroke-width=".6"' : ''}/>`));
     const madeN = new Set(s.made.map(m => m.num)), moved = new Set((s.paths || []).map(p => p.num));
     const ball = (num, x, y, faint) => `<g opacity="${faint ? .35 : 1}"><circle cx="${X(x)}" cy="${Y(y)}" r="${R}" fill="${col(num)}" stroke="${num === 9 ? '#f4f1e8' : '#000'}" stroke-width="${num === 9 ? .4 : .15}"/>` +
@@ -36,20 +39,23 @@ const REVIEW = (() => {
     // the balls that did not move, where they rested
     for (const b of s.before || []) if (!moved.has(b[0]) && !madeN.has(b[0])) o.push(ball(b[0], b[1], b[2]));
     // each moving ball: where it started (faint), its path, where it stopped or the pocket it went to
-    for (const p of s.paths || []) {
-      const pts = p.p.slice(), m = s.made.find(q => q.num === p.num);
-      if (m && m.pocket != null) { const k = P.pockets[m.pocket]; pts.push([k.x, k.y]); }
-      if (pts.length < 2) continue;
-      o.push(ball(p.num, pts[0][0], pts[0][1], true));
-      o.push(`<polyline points="${pts.map(q => X(q[0]) + ',' + Y(q[1])).join(' ')}" fill="none" stroke="${p.num === 0 ? '#ffffff' : col(p.num)}" stroke-width="${p.num === 0 ? .55 : .45}" stroke-linejoin="round" stroke-linecap="round" opacity=".95"${p.num == null ? ' stroke-dasharray="1 1"' : ''}/>`);
-      if (!m) { const e = pts[pts.length - 1]; o.push(ball(p.num, e[0], e[1])); }
-    }
+    T.forEach((sh, k) => { for (const p of sh.paths || []) {
+      const pts = p.p.slice(), m = sh.made.find(q => q.num === p.num);
+      if (m && m.pocket != null) { const pk = P.pockets[m.pocket]; pts.push([pk.x, pk.y]); }
+      if (pts.length < 2 || (tries && p.num == null)) continue; // (on the tries' drawing an unnamed ball's path is only noise)
+      if (k === 0) o.push(ball(p.num, pts[0][0], pts[0][1], true));
+      const dash = p.num == null || (tries && p.num !== 0 && !m) ? ' stroke-dasharray="1 1"' : '';
+      o.push(`<polyline points="${pts.map(q => X(q[0]) + ',' + Y(q[1])).join(' ')}" fill="none" stroke="${p.num === 0 ? '#ffffff' : col(p.num)}" stroke-width="${p.num === 0 ? .55 : .45}" stroke-linejoin="round" stroke-linecap="round" opacity="${tries ? (p.num === 0 ? .6 : .9) : .95}"${dash}/>`);
+      const e = pts[pts.length - 1];
+      if (!tries) { if (!m) o.push(ball(p.num, e[0], e[1])); }
+      else if (p.num === 0 && !m) o.push(`<circle cx="${X(e[0])}" cy="${Y(e[1])}" r="${R * .8}" fill="#f4f1e8" opacity=".85"/><text x="${X(e[0])}" y="${(W - e[1] + .45).toFixed(2)}" font-size="1.25" font-weight="700" text-anchor="middle" fill="#111">${k + 1}</text>`);
+    } });
     o.push('</svg>'); return o.join('');
   }
   // ---- what a session keeps for its review (on each shot, from the tracker's shot)
   const r1 = v => Math.round(v * 10) / 10;
   function shotDetail(sh) {
-    return { before: (sh.before || []).filter(b => b.state !== 'hidden').map(b => [b.num, r1(b.rx != null ? b.rx : b.x), r1(b.ry != null ? b.ry : b.y)]),
+    return { before: (sh.before || []).filter(b => b.state !== 'moving' || b.num === 0).map(b => [b.num, r1(b.rx != null ? b.rx : b.x), r1(b.ry != null ? b.ry : b.y)]),
       paths: (sh.paths || []).map(p => ({ num: p.num, p: thin(p.p.map(q => [r1(q[1]), r1(q[2])])) })) };
   }
   // drop points closer than half an inch to the last kept one (a path stays its shape, a resting ball adds nothing)
@@ -61,6 +67,17 @@ const REVIEW = (() => {
     const h = history().filter(x => x.t0 !== sess.t0), st = stats(sess.shots);
     h.push({ t0: sess.t0, ft: sess.ft, mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun });
     try { localStorage.setItem(HIST, JSON.stringify(h.slice(-300))); } catch (e) { }
+  }
+  // shots set up again: a shot whose cue ball starts within R in of the one before's, with every other ball within R in of
+  // one of its balls (and as many): the same shot tried again (Nov 1, 20:06: shots 2 to 4). Names play no part (they can be
+  // wrong as the cue strikes); balls rolling as the shot started are left out.
+  function repeats(shots, R = 4) {
+    const cueOf = s => (s.before || []).find(b => b[0] === 0), objs = s => (s.before || []).filter(b => b[0] !== 0), d = (p, q) => Math.hypot(p[1] - q[1], p[2] - q[2]);
+    const same = (a, b) => { const ca = cueOf(a), cb = cueOf(b); if (!ca || !cb || d(ca, cb) > R) return false; const oa = objs(a), ob = objs(b);
+      return oa.length > 0 && oa.length === ob.length && oa.every(p => ob.some(q => d(p, q) <= R)) && ob.every(p => oa.some(q => d(p, q) <= R)); };
+    const out = []; let cur = null;
+    for (const s of shots) { if (cur && same(cur[0], s)) cur.push(s); else { if (cur && cur.length > 1) out.push(cur); cur = [s]; } }
+    if (cur && cur.length > 1) out.push(cur); return out;
   }
   // the stroke in words (from the side only; else what is known)
   function strokeWords(st) {
@@ -74,7 +91,7 @@ const REVIEW = (() => {
     const ss = shots.map(s => s.stroke).filter(st => st && st.side), avg = k => { const v = ss.map(x => x[k]).filter(x => x != null); return v.length ? v.reduce((a, x) => a + x, 0) / v.length : null; };
     return { n: ss.length, strokes: avg('strokes'), back: avg('back'), pause: avg('pause'), follow: avg('follow') };
   }
-  return { objIn, stats, racks, runs, diagram, shotDetail, thin, history, remember, pct, strokeWords, strokeAvg };
+  return { objIn, stats, racks, runs, diagram, shotDetail, thin, history, remember, pct, strokeWords, strokeAvg, repeats, scored };
 })();
 
 // ---------- the review screens ----------
@@ -91,6 +108,10 @@ function renderReview(sess, live) {
   const sa = REVIEW.strokeAvg(sh), f1 = v => v == null ? '–' : (Math.round(v * 10) / 10).toString();
   $('#sumStrokeCard').hidden = !sa.n;
   if (sa.n) $('#sumStroke').innerHTML = '<div class="stats">' + [[f1(sa.strokes), 'practice strokes'], [sa.back == null ? '–' : Math.round(sa.back) + '″', 'backswing'], [sa.pause == null ? '–' : sa.pause.toFixed(1) + ' s', 'pause'], [sa.follow == null ? '–' : Math.round(sa.follow) + '″', 'follow-through']].map(([n, l]) => '<div><b>' + n + '</b><span>' + l + '</span></div>').join('') + '</div><div class="lbl" style="margin-top:6px">Average of ' + sa.n + ' shot' + (sa.n !== 1 ? 's' : '') + ' where the cue was seen from the side.</div>';
+  // the same shot set up again: one line per set of tries, opening them on one drawing
+  RV.reps = REVIEW.repeats(sh); $('#sumRepeatCard').hidden = !RV.reps.length;
+  $('#sumRepeats').innerHTML = RV.reps.map((g, i) => { const mk = g.filter(REVIEW.scored).length; return '<button class="srow sbtn" data-g="' + i + '"><b>' + g[0].n + '–' + g[g.length - 1].n + '</b><span>' + g.length + ' tries · ' + (mk ? 'made ' + mk + ' (' + g.map((x, k) => REVIEW.scored(x) ? k + 1 : null).filter(x => x).map(k => k + (k === 1 ? 'st' : k === 2 ? 'nd' : k === 3 ? 'rd' : 'th')).join(', ') + ')' : 'not made') + '</span><i>›</i></button>'; }).join('');
+  for (const b of $('#sumRepeats').querySelectorAll('.sbtn')) b.onclick = () => openGroup(+b.dataset.g);
   $('#sumList').innerHTML = sh.length ? sh.map((s, i) => '<button class="srow sbtn" data-i="' + i + '"><b>' + s.n + '</b><span>' + shotWords(s) + '</span><i>›</i></button>').join('') : '<div class="lbl">No shots.</div>';
   for (const b of $('#sumList').querySelectorAll('.sbtn')) b.onclick = () => openShot(+b.dataset.i);
   $('#sumDbg').hidden = !live; $('#sumAgain').hidden = !live;
@@ -103,7 +124,7 @@ async function openShot(i) {
   $('#svTitle').textContent = 'Shot ' + s.n + (s.rack ? ' · rack ' + s.rack : '');
   $('#svWords').textContent = shotWords(s); const sw = REVIEW.strokeWords(s.stroke); $('#svStroke').textContent = sw || ''; $('#svStroke').hidden = !sw;
   $('#svTable').innerHTML = s.paths || s.before ? REVIEW.diagram(s, RV.sess.ft) : '<div class="lbl">No drawing for this shot (sessions before V3.2 kept none).</div>';
-  $('#svPrev').disabled = i === 0; $('#svNext').disabled = i === sh.length - 1;
+  $('#svPrev').disabled = i === 0; $('#svNext').disabled = i === sh.length - 1; $('#svPrev').onclick = () => openShot(RV.i - 1); $('#svNext').onclick = () => openShot(RV.i + 1);
   const nm = 'shot' + String(s.n).padStart(3, '0'), seg = $('#svSeg'); seg.innerHTML = ''; const media = $('#svMedia'); media.innerHTML = '';
   // the pictures and the clip: in memory for the session just played, else from the phone's store (the latest two sessions)
   const sid = RV.sess.sid, files = {};
@@ -127,6 +148,19 @@ function playClip(media, clip, ixf) {
   const urls = fr.map(f => picUrl(f.data)), img = new Image(); img.alt = 'The shot'; media.innerHTML = ''; media.appendChild(img);
   let k = 0; const step = () => { img.src = urls[k]; const gap = k === urls.length - 1 ? 1200 : times ? Math.max(15, Math.min(200, times[k + 1] - times[k])) : 66; k = (k + 1) % urls.length; RV.play = setTimeout(step, gap); };
   step();
+}
+// a set of tries of the same shot: all on one drawing, then each try in a line (tap one to see it on its own)
+function openGroup(gi) {
+  const g = RV.reps[gi]; if (!g) return; dropUrls(); RV.i = -1; $('#shotView').hidden = false;
+  const mk = g.filter(REVIEW.scored).length;
+  $('#svTitle').textContent = 'The same shot, ' + g.length + ' tries';
+  $('#svWords').textContent = 'Shots ' + g.map(x => x.n).join(', ') + ' · ' + (mk ? 'made ' + mk + ' of ' + g.length : 'not made yet') + '. Each try\'s cue ball ends at its number; a ball\'s path is solid where it went in, dashed where it did not.';
+  $('#svStroke').hidden = true; $('#svSeg').innerHTML = '';
+  $('#svTable').innerHTML = REVIEW.diagram(g[0], RV.sess.ft, g);
+  $('#svMedia').innerHTML = g.map((x, k) => { const sw = REVIEW.strokeWords(x.stroke); return '<button class="srow sbtn" data-i="' + RV.sess.shots.indexOf(x) + '"><b>' + (k + 1) + '</b><span>' + (REVIEW.scored(x) ? 'Made · ' : 'Missed · ') + shotWords(x) + (sw && x.stroke.side ? '<br><span class="lbl">' + sw.replace(/^Stroke: /, '') + '</span>' : '') + '</span><i>›</i></button>'; }).join('');
+  for (const b of $('#svMedia').querySelectorAll('.sbtn')) b.onclick = () => openShot(+b.dataset.i);
+  $('#svPrev').disabled = gi === 0; $('#svNext').disabled = gi === RV.reps.length - 1;
+  $('#svPrev').onclick = () => openGroup(gi - 1); $('#svNext').onclick = () => openGroup(gi + 1);
 }
 function closeShot() { dropUrls(); $('#shotView').hidden = true; }
 $('#svPrev').onclick = () => openShot(RV.i - 1); $('#svNext').onclick = () => openShot(RV.i + 1); $('#svClose').onclick = () => closeShot();

@@ -57,11 +57,11 @@ const STROKE = (() => {
     const r0 = rest.ball, moved = q => q.ball && !q.lost && Math.hypot(q.ball[0] - r0[0], q.ball[1] - r0[1]) > 2.5;
     // the strike: the first frame the ball has left its spot (and stays away)
     let k = obs.findIndex((q, i) => moved(q) && obs.slice(i, i + 3).every(z => !z.ball || z.lost || moved(z)));
-    if (k < 0) return { strike: null };
+    const noMove = k < 0; if (noMove) k = obs.length; // (the strike may still show from the cue, below)
     // the tip's distance in inches from the ball's spot, along the cue (toTable at the ball's spot and at the tip)
     const T0 = toTable(r0[0], r0[1]), inch = q => { if (q.tip == null || q.ang == null) return null; const c = Math.cos(q.ang * D2), s = Math.sin(q.ang * D2), bx = q.ball ? q.ball[0] : r0[0], by = q.ball ? q.ball[1] : r0[1]; const p = toTable(bx + c * q.tip, by + s * q.tip), b = toTable(bx, by); return Math.hypot(p[0] - b[0], p[1] - b[1]); };
-    const pre = obs.slice(0, k).map(q => ({ t: q.t, d: inch(q), ang: q.ang })).filter(q => q.d != null);
-    if (pre.length < 5) return { strike: obs[k].t, strokes: null };
+    const pre = obs.slice(0, k).map((q, idx) => ({ t: q.t, d: inch(q), ang: q.ang, idx })).filter(q => q.d != null);
+    if (pre.length < 5) return noMove ? { strike: null } : { strike: obs[k].t, strokes: null };
     // smooth (median of 3) and find the turns: the tip going back then coming forward, each at least 1 in
     const ds = pre.map((q, i) => { const a = pre.slice(Math.max(0, i - 1), i + 2).map(z => z.d).sort((x, y) => x - y); return a[a.length >> 1]; });
     // the turns: a zigzag with 1 in of give. 'back' = the tip at its furthest from the ball, 'front' = at its nearest
@@ -71,7 +71,16 @@ const STROKE = (() => {
       else if (trend >= 0 && ds[i] <= lv - 1) { if (trend > 0) turns.push({ i: li, kind: 'back' }); trend = -1; lv = ds[i]; li = i; }
       else if (trend > 0 ? ds[i] > lv : trend < 0 ? ds[i] < lv : false) { lv = ds[i]; li = i; }
     }
-    const backs = turns.filter(x => x.kind === 'back'), last = backs[backs.length - 1];
+    let backs = turns.filter(x => x.kind === 'back'); const last = backs[backs.length - 1];
+    // the strike, from the cue: the tip back at the ball after the last backswing. A ball hit hard is gone in one frame,
+    // and the white ferrule on the tip left on its spot passed for the ball for a second (Nov 1, 20:06: 7 hard shots had
+    // the strike after the app saw the shot start)
+    if (last) { const lo = Math.min(...ds.slice(0, last.i + 1)), j = ds.findIndex((v, i) => i > last.i && v <= lo + 1);
+      if (j > 0 && pre[j].idx < k) { k = pre[j].idx; pre.length = j + 1; ds.length = j + 1; } }
+    if (k >= obs.length) return { strike: null };
+    // a practice stroke goes back at least 2 in from where the tip rested before it (a waggle is not one)
+    const amp = b => { const f = turns.filter(x => x.kind === 'front' && x.i < b.i).pop(); return ds[b.i] - (f ? ds[f.i] : Math.min(...ds.slice(0, b.i + 1))); };
+    backs = backs.filter(b => b === last || amp(b) >= 2);
     // the pause: how long the tip stayed within half an inch of its last backswing
     let pause = null; if (last) { let a = last.i, b = last.i; while (a > 0 && Math.abs(ds[a - 1] - ds[last.i]) <= 0.5) a--; while (b < ds.length - 1 && Math.abs(ds[b + 1] - ds[last.i]) <= 0.5) b++; pause = (pre[b].t - pre[a].t) / 1000; }
     const angs = pre.slice(-8).map(q => q.ang).filter(a => a != null), cueAng = angs.length ? angs.sort((x, y) => x - y)[angs.length >> 1] : null;

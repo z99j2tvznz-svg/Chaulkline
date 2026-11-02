@@ -53,6 +53,10 @@ test('the review screens in the page: the last session from home, a shot from ab
     await page.click('#lastOpen'); await page.waitForSelector('#sum:not([hidden])');
     assert.match(await page.textContent('#sumStats'), /3\s*shots.*1\s*balls in.*50%/s);
     assert.match(await page.textContent('#sumRacks'), /Rack 1.*Rack 2/s);
+    // V3.3: the three shots start from the same layout: one set of tries, on one drawing
+    await page.click('#sumRepeats .sbtn'); await page.waitForSelector('#shotView:not([hidden])');
+    assert.match(await page.textContent('#svTitle'), /The same shot, 3 tries/); assert.strictEqual(await page.locator('#svMedia .sbtn').count(), 3);
+    await page.click('#svClose');
     await page.click('#sumList .sbtn[data-i="1"]'); await page.waitForSelector('#shotView:not([hidden])');
     assert.strictEqual(await page.locator('#svTable svg polyline').count(), 2);
     await page.waitForSelector('#svSeg button');
@@ -71,4 +75,12 @@ test('the stroke from the side on a real shot (Nov 1, 12:58, station 2): the str
   const { run } = require('../tools/v3/stroke.js'), r = run(path.join(__dirname, 'fixtures/v3/stroke-1258'))[0];
   assert.ok(r.early >= 0.2 && r.early <= 0.5, JSON.stringify(r)); assert.ok(r.backLen >= 8 && r.backLen <= 12, JSON.stringify(r));
   assert.ok(r.follow >= 4 && r.follow <= 10, JSON.stringify(r)); assert.strictEqual(r.strokes, 0);
+});
+
+test('the same shot set up again: tries grouped when the cue ball and every other ball start where they were (names play no part)', () => {
+  const S = (n, cue, objs, made = []) => ({ n, made: made.map(num => ({ num })), scratch: false, before: [[0, ...cue], ...objs] });
+  const sh = [S(1, [36, 11], [[9, 39, 11]]), S(2, [20.6, 13.1], [[8, 23.9, 22.6]]), S(3, [20.4, 12.9], [[8, 23.8, 22.7]]), S(4, [22.2, 14.4], [[null, 24, 22.6]], [9]),
+    S(5, [38.7, 9.4], [[8, 23.8, 22.5]]), S(6, [38.5, 9.9], [[8, 23.8, 22.5], [3, 60, 30]])];
+  const g = REVIEW.repeats(sh); assert.deepStrictEqual(g.map(x => x.map(s => s.n)), [[2, 3, 4]]);
+  const svg = REVIEW.diagram(g[0][0], 7, g[0]); assert.ok(/Shots 2, 3, 4 from above/.test(svg));
 });

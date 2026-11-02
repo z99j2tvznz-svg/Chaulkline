@@ -8,7 +8,8 @@
   public: do not put plans, business ideas or future features in it.
 - Debug sessions: the owner attaches the app's debug zip to the chat. Unzip it and commit it to the `sessions` branch
   (not published by Pages), one folder per session, listed in that branch's README. Trimmed fixtures for tests go on
-  main under tests/fixtures/v3/.
+  main under tests/fixtures/v3/. A file over 30 MB comes in parts ("part 1 of 5"), sent one at a time: wait for the rest
+  without asking; remind the owner only if one is still missing once the work on the others is done.
 - After reviewing a session, add its live results to data/v3-gate.json (the app's "Tracking test" card on the home
   screen): sessions from V3.0.6 on, truth from the shot pictures, names checked on the after pictures.
 - Claude leads the project; the owner tests and suggests (owner, Nov 1). Push back on a suggestion when the logic says

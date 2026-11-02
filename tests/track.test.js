@@ -576,3 +576,12 @@ test('the owner\'s V3.1.3 line drill (Nov 1, 18:44, 5 racks of 9 balls frozen in
   // above). The replay has no camera frames for the bare-cloth check and keeps the cue ball's name, so it does better
   assert.ok(r.shots >= 37 && r.right >= 36 && r.falsePots === 0, JSON.stringify(r.rows.filter(x => !x.right)));
 });
+
+test('the owner\'s V3.2.0 session (Nov 1, 20:06, practice with a few balls at a time) replays without losing ground', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261101-2006.json'), 'utf8')));
+  // live: 35 of 46 right. The replay (no camera frames) had 32 before V3.3: the cue ball picked up to set a shot again
+  // called a scratch (2, 4, 17), the last set's new balls left unnamed (their numbers counted in). V3.3: 35; still the 9
+  // lying in a far pocket (35), a ball called but not numbered
+  assert.ok(r.shots >= 45 && r.right >= 35 && r.falsePots <= 5, JSON.stringify(r.rows.filter(x => !x.right)));
+});

@@ -143,6 +143,22 @@
       "ballsRight": 238,
       "wrongNum": 0,
       "extraShots": 3
+    },
+    {
+      "when": "Nov 1 20:06",
+      "app": "V3.2.0",
+      "spot": "side",
+      "racks": 5,
+      "shots": 46,
+      "found": 46,
+      "madeRight": 35,
+      "falseIn": 2,
+      "falseScratch": 3,
+      "keyRight": 30,
+      "balls": 184,
+      "ballsRight": 150,
+      "wrongNum": 0,
+      "extraShots": 2
     }
   ],
   "notCounted": [
@@ -163,5 +179,5 @@
       "why": "a line drill (the 9 balls frozen in a line across the table), not normal play: live 29 of 38 real shots right, 5 real shots thrown out as hand moves (fixed in V3.1.4)"
     }
   ],
-  "measuring": "V3.1.4"
+  "measuring": "V3.2.0"
 }
