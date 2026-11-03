@@ -1375,3 +1375,11 @@ scoreboard without name counts (the card now takes each share over the sessions 
   noses, which the near cushion hangs over (so it ran over the near rail's top). Now, checking the table: the outline at
   the noses' height (1.4 in), on the cushions one sees, with the corners; watching: no outline, a small faint dot at each
   pocket's mouth (the owner's idea).
+
+## Review: Nov 2 20:54 (V3.8.5, Play a rack)
+Two racks of 9-ball in rotation at the side spot, the same table as the drills; 8 minutes, 31 tracked moves. Truth from
+the shot pictures: 29 real shots, 2 setup moves counted as shots (1: the 1 put down by hand; 2: the cue ball nudged an
+inch with the tip). Live 29 of 29 right: every ball made and every miss, both scratches (7, 19), the late calls (4, 28,
+31), the break of rack 2 (nothing in). Names not checked. Diamonds: 17 found, the outline 8.6 px off, 1.9 after. On the
+scoreboard; fixture session-20261102-2054 (the replay 28 of 29: shot 7's scratch, called late live once the cue ball's
+spot read bare cloth, is not caught from the cloth maps of the shot pictures).

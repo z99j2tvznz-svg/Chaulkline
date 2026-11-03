@@ -613,3 +613,11 @@ test('the owner\'s V3.4.0 practice session (Nov 1, 21:18) replays as practice wi
   // picked up, put down a while later, on 3). Left: the cue ball's track jumping to a pocket at 20, a scratch missed at 7
   assert.ok(r.shots >= 40 && r.right >= 33, JSON.stringify(r.rows.filter(x => !x.right)));
 });
+
+test('the owner\'s two racks of 9-ball on V3.8.5 (Nov 2, 20:54) replay as they went live', () => {
+  const { score } = require('../tools/v3/score.js');
+  const r = score(JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'fixtures/v3/session-20261102-2054.json'), 'utf8')));
+  // live: 29 of 29 right, 2 setup moves counted (the 1 put down by hand, the cue ball nudged). The replay misses shot 7's
+  // scratch, called late live once the cue ball's spot read bare cloth (the cloth maps of the shot pictures do not catch it)
+  assert.ok(r.shots === 29 && r.right >= 28 && r.falsePots === 0 && r.extraShots <= 2, JSON.stringify(r.rows.filter(x => !x.right)));
+});
