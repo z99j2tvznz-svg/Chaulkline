@@ -1292,3 +1292,18 @@ scoreboard without name counts (the card now takes each share over the sessions 
   every path stays in the debug file and the review.
 - Drills step by step: three shots at each step, made or missed, then the next; after the last step the drill is done
   and says made x of y. The line at the bottom: "shot 1 of 3 · step 2 of 6". The review shows made of tries per step.
+
+## V3.8.2 (Nov 3) — countdown in double time; a hand stops it; a steadier outline
+- Owner, Nov 3 (18:04 drill session): the countdown is good but slow ("3, 2, 1, ready" in double time); no shot while
+  a hand is on a ball or other balls move; the outline kept bouncing.
+- Ready: 3, 2, 1 at half a second each (1.5 s). While counting, it starts over if anything moves, a ball is about to be
+  called in, or a hand is at a spot: round each spot, 3.5 in out, 2 or more of 8 points that are neither cloth nor a ball
+  (drill_hand in the debug file).
+- Steady (the outline following the phone): on the 18:04 live log it flipped 3 to 5 px from look to look (and every
+  ball's table position with it), while the session's 106 still shot pictures, matched the same way offline at the same
+  half size, show the phone drifting smoothly, 4 px in 20 minutes. The noise was patches half covered by the player still
+  voting. Now: a patch counts at a match of 0.8 (was 0.7), at least 4 must agree within 2 px (was 3 within 3 px), and the
+  outline moves only for a change of 2.5 px or more (was 1.5). A real sway (every patch agrees) is followed at once; the
+  sway test still passes. (Smoothing over several looks was tried first: it lagged a swaying phone and failed that test.)
+- Speed on 18:04: the finder about 260 ms a look, the watcher 29 frames a second, as before; the drill's slowness was the
+  3 s countdown.

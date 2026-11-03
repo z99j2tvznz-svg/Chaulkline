@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.1';
+const VERSION = 'V3.8.2';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -576,16 +576,18 @@ function steady() {
     let best = -2, bx = 0, by = 0;
     for (let dy = 0; dy <= 2 * S; dy += 2) for (let dx = 0; dx <= 2 * S; dx += 2) { const c = ncc(r.f, r.m, r.sd, g, gw, dx, dy, h); if (c > best) { best = c; bx = dx; by = dy; } }
     for (let dy = Math.max(0, by - 1); dy <= Math.min(2 * S, by + 1); dy++) for (let dx = Math.max(0, bx - 1); dx <= Math.min(2 * S, bx + 1); dx++) { const c = ncc(r.f, r.m, r.sd, g, gw, dx, dy, h); if (c > best) { best = c; bx = dx; by = dy; } }
-    if (best >= 0.7) found.push({ i, x: r.cx * 2, y: r.cy * 2, dx: (bx - S) * 2, dy: (by - S) * 2, c: best });
+    if (best >= 0.8) found.push({ i, x: r.cx * 2, y: r.cy * 2, dx: (bx - S) * 2, dy: (by - S) * 2, c: best });
   });
   if (found.length < 3) return;
   // the move most of them agree on (median), then only the ones near it; a plain shift is what a sway on a tripod does
   const med = a => { const b = a.slice().sort((p, q) => p - q); return b[b.length >> 1]; };
-  const mx = med(found.map(f => f.dx)), my = med(found.map(f => f.dy)), ok = found.filter(f => Math.hypot(f.dx - mx, f.dy - my) <= 3);
-  if (ok.length < 3) return;
+  // (Nov 2, 18:04: the outline flipped 3 to 5 px from look to look while the shot pictures show the phone drifting only
+  // 4 px in 20 minutes: patches half covered by the player still voted. Now a clear match, and 4 that agree within 2 px.)
+  const mx = med(found.map(f => f.dx)), my = med(found.map(f => f.dy)), ok = found.filter(f => Math.hypot(f.dx - mx, f.dy - my) <= 2);
+  if (ok.length < Math.min(4, R.filter(Boolean).length)) return;
   const dx = ok.reduce((a, f) => a + f.dx, 0) / ok.length, dy = ok.reduce((a, f) => a + f.dy, 0) / ok.length;
   const cur = A.quad[0], q0 = STEADY.quad0[0], moved = Math.hypot(q0[0] + dx - cur[0], q0[1] + dy - cur[1]);
-  if (moved < 1.5) return; // no real change
+  if (moved < 2.5) return; // no real change (the match is in 2 px steps: a 2 px flutter is not a move)
   A.quad = STEADY.quad0.map(p => [p[0] + dx, p[1] + dy]);
   const { L, Wd } = tableDims(A.ft); A.cam = makeCam(tableCornersFor(A.rot, L, Wd), A.quad, A.W, A.H, LENS * Math.max(A.W, A.H), [A.W / 2, A.H / 2]);
   if (A.tk) A.tk.setBags(pocketBags(A.cam, A.P));
@@ -687,15 +689,27 @@ function drillSetup() {
 }
 // Ready to shoot (owner, Nov 3: moving a ball onto its ring was taken for a shot): both balls on their rings and still for
 // 3 s, counted down at the bottom. Anything that moves before "Ready: shoot" is setting up, not a shot.
-const READY_S = 3;
+// (owner, Nov 3: in double time, 3, 2, 1 at half a second each, once both spots are green; and not while a hand is on a
+// ball or anything moves)
+const READY_S = 1.5;
 function drillTag() {
   const D = A.drill; if (!D || !D.base) return; const left = D.since != null ? READY_S - (performance.now() - D.since) / 1000 : null;
-  $('#drillTag').innerHTML = '<b>' + (D.ready ? 'Ready: shoot' : left != null ? 'Ready in ' + Math.max(1, Math.ceil(left)) : 'Set the balls on their spots') + '</b><br>' + D.base;
+  $('#drillTag').innerHTML = '<b>' + (D.ready ? 'Ready: shoot' : left != null ? 'Ready in ' + Math.max(1, Math.ceil(left * 3 / READY_S)) : 'Set the balls on their spots') + '</b><br>' + D.base;
+}
+// a hand at a ball while counting down: round each spot, 3.5 in out, something that is not cloth and not a ball
+function handAtSpots(st) {
+  const balls = A.tk.balls().filter(b => b.state !== 'hidden');
+  for (const p of [st.O, st.C]) { if (!p) continue; let n = 0;
+    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4, x = p[0] + 3.5 * Math.cos(a), y = p[1] + 3.5 * Math.sin(a);
+      if (x < A.P.R || y < A.P.R || x > A.P.L - A.P.R || y > A.P.W - A.P.R || balls.some(b => Math.hypot(b.x - x, b.y - y) < 2.5)) continue;
+      if (emptyAt(x, y) === false) n++; }
+    if (n >= 2) { dbgOnce('drill_hand', 2000, { at: p.map(r1), n }); return true; } }
+  return false;
 }
 function drillReadyLook() {
   const D = A.drill; if (!D || !D.st || A.phase !== 'run' || !A.tk) return;
   if (A.tk.S.phase === 'shot') return; // (a shot running: it was ready or not as it started)
-  const on = A.tk.S.phase === 'still' && drillTaken(D.st.O, false) && drillTaken(D.st.C, true);
+  const on = A.tk.S.phase === 'still' && !A.tk.balls().some(b => b.state === 'moving' || b.state === 'pending') && drillTaken(D.st.O, false) && drillTaken(D.st.C, true) && !(D.since != null && !D.ready && handAtSpots(D.st));
   if (!on) { D.since = null; D.ready = false; }
   else { if (D.since == null) D.since = performance.now(); if (!D.ready && performance.now() - D.since >= READY_S * 1000) { D.ready = true; dbg('drill_ready', { id: D.id, level: D.level }); } }
   drillTag();
