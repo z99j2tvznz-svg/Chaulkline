@@ -2639,7 +2639,7 @@ const DRILL = (() => {
       levels: [50, 57, 63, 68, 73, 77], word: c => c + '° cut', kind: 'cut', ob: 'rail', obFrom: 1.25, pocket: [8, 0], cueDist: 2.5 },
     { id: 'bank', name: 'Cross-side bank', about: 'The object ball a diamond and a half off the near rail, a little right of the side pockets, banked off the near rail into the far side pocket, shot from the far side. Each step moves it a quarter diamond further right.',
       levels: [0.25, 0.5, 0.75, 1, 1.25, 1.5], word: o => o + ' diamond' + (o > 1 ? 's' : '') + ' right', kind: 'bank', ob: [4, 1.5], pocket: [4, 4], cueDist: 1.2 },
-    { id: 'stop', name: 'Stop shot', about: 'Straight into the far right corner; the cue ball has to stop within a ball and a half of where it hit. Each step puts the cue ball further back.',
+    { id: 'stop', name: 'Stop shot', about: 'Straight into the far right corner; the cue ball has to stop within two balls of where it hit. Each step puts the cue ball further back.',
       levels: [1.2, 2, 2.8, 3.6, 4.4], word: d => d + ' diamonds back', kind: 'stop', ob: [6.6, 3.3], pocket: [8, 4], cueDist: null },
   ];
   const byId = id => LIST.find(d => d.id === id);
@@ -2689,7 +2689,7 @@ const DRILL = (() => {
     // the cut as really set out: from the cue ball to where it had to meet the ball, against the line the ball had to take
     let cut = null; if (C) { const u = unit(O, st.aimAt), G = [O[0] - 2 * R * u[0], O[1] - 2 * R * u[1]], a = Math.atan2(u[1], u[0]) - Math.atan2(G[1] - C[1], G[0] - C[0]); cut = Math.round(Math.abs(((a / D2) + 540) % 360 - 180)); }
     let stopped = null;
-    if (byId(st.id).kind === 'stop') { const c2 = (shot.after || []).find(b => b.num === 0), u = unit(O, st.aimAt), G = [O[0] - 2 * R * u[0], O[1] - 2 * R * u[1]]; stopped = !!c2 && hyp([c2.x, c2.y], G) <= 1.5 * 2 * R; }
+    if (byId(st.id).kind === 'stop') { const c2 = (shot.after || []).find(b => b.num === 0), u = unit(O, st.aimAt), G = [O[0] - 2 * R * u[0], O[1] - 2 * R * u[1]]; stopped = !!c2 && hyp([c2.x, c2.y], G) <= 2 * 2 * R; } // (2 balls, was 1.5: Nov 2 20:27, cue balls at 3.8 and 4 in looked in the pictures where one at 0.3 in did, by the far rail where the tracker's place wobbles an inch)
     return { scored: true, made: made && (stopped == null || stopped), pocketed: made, stopped, cut };
   }
   // the level after a shot: up on a make, down on a miss (Jewett's progressive practice)
@@ -2712,7 +2712,7 @@ const DRILL = (() => {
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.5';
+const VERSION = 'V3.8.6';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];

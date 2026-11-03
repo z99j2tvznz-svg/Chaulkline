@@ -1350,3 +1350,14 @@ scoreboard without name counts (the card now takes each share over the sessions 
   moved by hand) is not a try (drill_untouched).
 - Steady: the outline moves only for 3 px or more (was 2.5): on 19:34, with the diamonds, x still flipped between two
   readings 2.7 px apart while y held.
+
+## Review: Nov 2 20:27 (V3.8.5, drills) and V3.8.6
+- 27 minutes, 4 parts: the cut ladder (18 tries, 16 made, in about 9 minutes, half the time of 19:34), the cross-side
+  bank (18, 12 made) and the stop shot (15) all done through. 31 shots scored the moment the object ball dropped
+  (drill_early); Ready dropped only by balls put down by hand (5); the hand check fired 6 times; 4 shots that never
+  touched the object ball were not tries. Diamonds: 16 found, outline 7.5 to 12.2 px off, 1.9 to 2.1 after (the first
+  table, found from another angle with 7 marks, was found again 33 s later).
+- The stop shot was strict: 6 of 15 "in, but the cue ball did not stop". By the pictures, 64 and 89 (3.8, 4.0 in from
+  where it hit) stopped where 88 (0.3 in) did: by the far rail the tracker's place wobbles an inch. Now within two balls
+  (4.5 in, was 3.4): 64 and 89 made; 62 (drew back 17 in), 63 (7 in sideways) and 86 (4.8 in) still missed; 60 lost
+  the cue ball.

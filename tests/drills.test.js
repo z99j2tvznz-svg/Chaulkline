@@ -27,7 +27,7 @@ test('a shot scored: in the pocket it was for is made; another pocket, a scratch
   const r = DRILL.score(st, shot(st, { off: 3 }), P); assert.ok(r.scored && r.cut !== 20, JSON.stringify(r));
 });
 
-test('the stop shot: in, and the cue ball within a ball and a half of where it hit; the bank: into the far side pocket', () => {
+test('the stop shot: in, and the cue ball within two balls of where it hit; the bank: into the far side pocket', () => {
   const st = DRILL.setup('stop', 1, P, view);
   assert.deepStrictEqual([DRILL.score(st, shot(st), P).made, DRILL.score(st, shot(st, { cueEnd: [st.G[0] - 8, st.G[1]] }), P).made], [true, false]);
   const bk = DRILL.setup('bank', 0, P, view); assert.strictEqual(P.pocketNames[bk.pocket], 'top side');
