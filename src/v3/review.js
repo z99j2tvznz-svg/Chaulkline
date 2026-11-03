@@ -7,7 +7,7 @@ const REVIEW = (() => {
   // balls in on a shot: object balls (an unknown ball counts; the cue ball is a scratch, not a ball in)
   const objIn = s => s.made.filter(m => m.num !== 0 && !(m.num != null && m.num === s.cue)).length;
   const scored = s => objIn(s) > 0 && !s.scratch;
-  // a shot that was not one (V3.7: a ball moved with the cue, or the player said so) stays in the list but counts nowhere
+  // a shot that was not one (V3.7: the cue ball pushed with the cue) stays in the list but counts nowhere
   const real = shots => shots.filter(s => !s.notShot);
   // runs: shots in a row in one rack that put a ball in without a scratch (the break counts when it does)
   function runs(shots) { let best = 0, cur = 0, rack = null; for (const s of shots) { if (s.rack !== rack) { cur = 0; rack = s.rack; } cur = scored(s) ? cur + 1 : 0; best = Math.max(best, cur); } return best; }
@@ -175,14 +175,6 @@ function renderReview(sess, live) {
   for (const b of $('#sumList').querySelectorAll('.sbtn')) b.onclick = () => openShot(+b.dataset.i);
   $('#sumDbg').hidden = !live; $('#sumAgain').hidden = !live;
 }
-// a shot marked as not one, or counted again: kept with the session, and the session's line in the history redone
-function setNotShot(sess, s, why) {
-  if (why) s.notShot = why; else delete s.notShot;
-  if (typeof dbg === 'function') dbg('not_shot_mark', { n: s.n, why: why || null });
-  if (sess.mins) REVIEW.remember(sess, sess.mins);
-  if (typeof A !== 'undefined' && A.lastSess === sess) save();
-  renderHistory();
-}
 function picUrl(data) { const u = URL.createObjectURL(data instanceof Blob ? data : new Blob([data], { type: 'image/jpeg' })); RV.urls.push(u); return u; }
 function dropUrls() { clearTimeout(RV.play); RV.play = null; for (const u of RV.urls) URL.revokeObjectURL(u); RV.urls = []; }
 async function openShot(i) {
@@ -192,9 +184,6 @@ async function openShot(i) {
   const am = REVIEW.aim(s, RV.sess.ft), ftIn = v => v < 12 ? v + ' in' : (Math.round(v / 6) / 2) + ' ft';
   const dw = s.drill && typeof DRILL !== 'undefined' ? ' · drill: ' + DRILL.byId(s.drill.id).name + ', ' + DRILL.byId(s.drill.id).word(s.drill.value) + (s.drill.made ? ', made' : ', missed') : '';
   $('#svWords').textContent = shotWords(s) + dw + (!s.drill && am ? ' · ' + (am.cut < 3 ? 'straight in' : 'a ' + am.cut + '° cut') + ' to the ' + makeP(RV.sess.ft || 7).pocketNames[am.pocket] + ', ' + ftIn(am.toPocket) + ' from the pocket' : ''); const sw = REVIEW.strokeWords(s.stroke); $('#svStroke').textContent = sw || ''; $('#svStroke').hidden = !sw;
-  // not a shot / count it: the player has the last word (V3.7)
-  const nb = $('#svNot'); nb.hidden = false; nb.textContent = s.notShot ? 'Count it as a shot' : 'Not a shot';
-  nb.onclick = () => { setNotShot(RV.sess, s, s.notShot ? null : 'you'); renderReview(RV.sess, RV.live); openShot(i); };
   $('#svTable').innerHTML = s.paths || s.before ? REVIEW.diagram(s, RV.sess.ft) : '<div class="lbl">No drawing for this shot (sessions before V3.2 kept none).</div>';
   $('#svPrev').disabled = i === 0; $('#svNext').disabled = i === sh.length - 1; $('#svPrev').onclick = () => openShot(RV.i - 1); $('#svNext').onclick = () => openShot(RV.i + 1);
   const nm = 'shot' + String(s.n).padStart(3, '0'), seg = $('#svSeg'); seg.innerHTML = ''; const media = $('#svMedia'); media.innerHTML = '';
@@ -227,7 +216,7 @@ function openGroup(gi) {
   const mk = g.filter(REVIEW.scored).length;
   $('#svTitle').textContent = 'The same shot, ' + g.length + ' tries';
   $('#svWords').textContent = 'Shots ' + g.map(x => x.n).join(', ') + ' · ' + (mk ? 'made ' + mk + ' of ' + g.length : 'not made yet') + '. Each try\'s cue ball ends at its number; a ball\'s path is solid where it went in, dashed where it did not.';
-  $('#svStroke').hidden = true; $('#svNot').hidden = true; $('#svSeg').innerHTML = '';
+  $('#svStroke').hidden = true; $('#svSeg').innerHTML = '';
   $('#svTable').innerHTML = REVIEW.diagram(g[0], RV.sess.ft, g);
   $('#svMedia').innerHTML = g.map((x, k) => { const sw = REVIEW.strokeWords(x.stroke); return '<button class="srow sbtn" data-i="' + RV.sess.shots.indexOf(x) + '"><b>' + (k + 1) + '</b><span>' + (REVIEW.scored(x) ? 'Made · ' : 'Missed · ') + shotWords(x) + (sw && x.stroke.side ? '<br><span class="lbl">' + sw.replace(/^Stroke: /, '') + '</span>' : '') + '</span><i>›</i></button>'; }).join('');
   for (const b of $('#svMedia').querySelectorAll('.sbtn')) b.onclick = () => openShot(+b.dataset.i);

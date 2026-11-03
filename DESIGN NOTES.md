@@ -1239,3 +1239,10 @@ scoreboard without name counts (the card now takes each share over the sessions 
   scored), the history (redone when changed). The debug file has not_shot_mark for each tap.
 - Why the tap: with the 320 px picture the cue can call only a clear sideways push; the tap lets normal play mark the
   rest, and the marks are truth for the next measure (hands and rakes).
+
+## V3.7.1 (Nov 3) — no buttons
+- Owner, Nov 3: no buttons to press while playing, no need to watch the screen; check what the app gets wrong from the
+  debug files instead. The tap on a shot's line and the review's Not a shot / Count it are taken out. What stays: the
+  automatic check (the cue ball pushed sideways with a level cue is not counted), and a shot not counted is struck through
+  in the review's list and left out of every number. The truth for telling hand moves and rakes from shots comes from the
+  reviews of the debug files (shot pictures and clips), as before.

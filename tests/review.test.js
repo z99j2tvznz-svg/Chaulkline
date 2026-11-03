@@ -64,14 +64,13 @@ test('the review screens in the page: the last session from home, a shot from ab
     const a = await page.getAttribute('#svMedia img', 'src'); await page.waitForFunction(s => document.querySelector('#svMedia img').src !== s, a, { timeout: 5000 });
     await page.click('#svNext'); await page.waitForFunction(() => document.querySelector('#svTitle').textContent.includes('Shot 3'));
     await page.waitForFunction(() => /No pictures kept/.test(document.querySelector('#svMedia').textContent), null, { timeout: 5000 });
-    // V3.7: "Not a shot" on shot 3: struck through in the list, out of the numbers, and back with "Count it as a shot"
-    assert.strictEqual(await page.textContent('#svNot'), 'Not a shot'); await page.click('#svNot');
-    await page.waitForFunction(() => document.querySelector('#svNot').textContent === 'Count it as a shot');
-    assert.match(await page.textContent('#svWords'), /not counted/); assert.match(await page.textContent('#sumStats'), /2\s*shots/);
-    assert.strictEqual(await page.locator('#sumList .sbtn.nots').count(), 1);
-    await page.click('#svNot'); await page.waitForFunction(() => document.querySelector('#svNot').textContent === 'Not a shot');
-    assert.match(await page.textContent('#sumStats'), /3\s*shots/);
-    await page.click('#svClose'); assert.ok(await page.isHidden('#shotView'));
+    // V3.7: a shot not counted (the cue ball pushed with the cue) is struck through in the list and out of the numbers
+    await page.click('#svClose');
+    const nc = await page.evaluate(() => { const v = window.__v3; v.A.lastSess.shots[2].notShot = 'move'; renderReview(v.A.lastSess, false);
+      return { stats: document.querySelector('#sumStats').textContent, struck: document.querySelectorAll('#sumList .sbtn.nots').length, words: document.querySelector('#sumList .sbtn.nots').textContent }; });
+    assert.match(nc.stats, /2\s*shots/); assert.strictEqual(nc.struck, 1); assert.match(nc.words, /not counted/);
+    await page.evaluate(() => { const v = window.__v3; delete v.A.lastSess.shots[2].notShot; renderReview(v.A.lastSess, false); });
+    assert.ok(await page.isHidden('#shotView'));
     // V3.4: the same session as practice: no racks, the tries of a shot set up again in place of the best run
     const pr = await page.evaluate(() => { const v = window.__v3; v.A.lastSess.mode = 'practice'; renderReview(v.A.lastSess, false);
       return { title: document.querySelector('#sumTitle').textContent, racks: document.querySelector('#sumRackCard').hidden, stats: document.querySelector('#sumStats').textContent, prac: !!document.querySelector('#pracBtn') }; });
@@ -124,7 +123,7 @@ test('a shot or a move: made-up frames (the ball off along the cue, sideways, ba
 });
 
 test('not a shot (V3.7): left out of every number, kept in the list', () => {
-  const sh = [S(1, 1, [1]), S(2, 1, [], { notShot: 'move' }), S(3, 1, [2]), S(4, 1, [], { notShot: 'you' })];
+  const sh = [S(1, 1, [1]), S(2, 1, [], { notShot: 'move' }), S(3, 1, [2]), S(4, 1, [], { notShot: 'move' })];
   const st = REVIEW.stats(sh); assert.strictEqual(st.shots, 2); assert.strictEqual(st.misses, 0); assert.strictEqual(st.bestRun, 2, 'a move does not break a run');
   assert.deepStrictEqual(REVIEW.racks(sh).map(r => r.shots), [2]);
   assert.deepStrictEqual(REVIEW.drillTries({ shots: sh, drillTries: [{ n: 1 }, { n: 2 }, { n: 3 }] }).map(t => t.n), [1, 3]);

@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.7.0';
+const VERSION = 'V3.7.1';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -122,7 +122,7 @@ const POCKETS = ['bottom-left', 'bottom side', 'bottom-right', 'top-left', 'top 
 function shotWords(s) {
   const pk = i => i == null ? '' : ' (' + POCKETS[i] + ')';
   const made = s.made.filter(m => m.num !== s.cue && m.num !== 0);
-  if (s.notShot) return 'not counted: ' + (s.notShot === 'move' ? 'the cue ball was pushed with the cue, not struck' : 'not a shot, you said');
+  if (s.notShot) return 'not counted: ' + (s.notShot === 'move' ? 'the cue ball was pushed with the cue, not struck' : 'not a shot');
   const w = [made.length ? made.map(m => (m.num == null ? 'a ball' : 'the ' + m.num) + pk(m.pocket)).join(', ') + ' in' : 'nothing in'];
   if (s.scratch) w.push('scratch'); if (s.break) w[0] = 'Break: ' + w[0]; else if (s.first != null) w.push('first hit the ' + (s.first === 0 ? 'cue' : s.first));
   return w.join(' · ');
@@ -458,12 +458,9 @@ function onShotEnd(sh) {
   shotToast(row1);
   if (A.sess.shots.length % 3 === 0) { A.lastSess = A.sess; save(); }
 }
-// the shot's line, and a tap on it to say it was not a shot (or that it was): the player has the last word (V3.7)
-function shotToast(row) {
-  toast('Shot ' + row.n + ': ' + shotWords(row) + (row.notShot ? ' · tap to count it' : ' · tap if not a shot'), 6000, () => {
-    setNotShot(A.sess, row, row.notShot ? null : 'you'); toast('Shot ' + row.n + ': ' + (row.notShot ? 'not counted' : 'counted') + '.');
-  });
-}
+// the shot's line (no tap to correct it: owner, Nov 3, no buttons while playing; what the app gets wrong is found in the
+// debug files)
+function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row)); }
 // Each ball's path in the shot: the tracker's positions from just before the shot started, kept after it ends (and for the
 // balls that went in) until the next shot starts, so a quick look at the phone after the shot shows the whole of it.
 const PATH = new Map(); // ball key -> { num, pts: [{ t, x, y }] }
@@ -947,7 +944,7 @@ $('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.sh
 // (pressed again after the rack was done by itself, or twice: no shot since, so it is not another rack)
 $('#rackBtn').onclick = () => { if (!A.tk) return; const dup = A.tk.S.setup && A.tk.S.shots.length === A.tk.S.rackAt; A.tk.newRack(); flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', dup ? { dup: true } : {}); toast('New rack. Names come once the break spreads the balls.'); };
 let toastT = 0;
-function toast(t, ms, act) { dbg('toast', { s: t }); const e = $('#toast'); e.textContent = t; e.hidden = false; e.classList.toggle('act', !!act); e.onclick = act ? () => { e.onclick = null; e.classList.remove('act'); act(); } : null; clearTimeout(toastT); toastT = setTimeout(() => { e.hidden = true; e.onclick = null; }, ms || 3500); }
+function toast(t, ms) { dbg('toast', { s: t }); const e = $('#toast'); e.textContent = t; e.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { e.hidden = true; }, ms || 3500); }
 
 // ---------- Save debug: one zip (log, shot pictures, tapped balls). Two taps: iPhone only shares right after a tap. ----------
 const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();

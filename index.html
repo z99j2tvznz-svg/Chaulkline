@@ -102,7 +102,7 @@ a.old { color: var(--muted); font-size: 13px; }
 #svMedia img { width: 100%; height: auto; display: block; border-radius: 10px; background: #000; }
 .hbars { width: 100%; height: 64px; display: block; margin: 8px 0 4px; }
 .stats b { display: block; font: 600 22px var(--f); } .stats span { font: 500 12px var(--f); color: var(--muted); }
-#toast { position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 70px); transform: translateX(-50%); padding: 9px 16px; font: 500 14px var(--f); z-index: 30; pointer-events: none; max-width: 92vw; } #toast.act { pointer-events: auto; cursor: pointer; text-align: center; }
+#toast { position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 70px); transform: translateX(-50%); padding: 9px 16px; font: 500 14px var(--f); z-index: 30; pointer-events: none; max-width: 92vw; text-align: center; }
 #sheet { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; z-index: 9; }
 .sheetBox { background: rgba(18,26,32,.94); border: 1px solid var(--glass-line); width: min(100%, 520px); border-radius: 20px 20px 0 0; padding: 16px 16px calc(env(safe-area-inset-bottom, 0px) + 16px); display: flex; flex-direction: column; gap: 12px; }
 @media (orientation: landscape) { #sheet { align-items: center; } .sheetBox { border-radius: 20px; } }
@@ -169,7 +169,6 @@ a.old { color: var(--muted); font-size: 13px; }
   <div class="row svhead"><h2 id="svTitle"></h2><button class="btn" id="svClose">Close</button></div>
   <div class="lbl" id="svWords"></div>
   <div class="lbl" id="svStroke" hidden></div>
-  <button class="btn" id="svNot" hidden>Not a shot</button>
   <div id="svTable"></div>
   <div class="seg" id="svSeg"></div>
   <div id="svMedia"></div>
@@ -2688,7 +2687,7 @@ const DRILL = (() => {
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.7.0';
+const VERSION = 'V3.7.1';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -2808,7 +2807,7 @@ const POCKETS = ['bottom-left', 'bottom side', 'bottom-right', 'top-left', 'top 
 function shotWords(s) {
   const pk = i => i == null ? '' : ' (' + POCKETS[i] + ')';
   const made = s.made.filter(m => m.num !== s.cue && m.num !== 0);
-  if (s.notShot) return 'not counted: ' + (s.notShot === 'move' ? 'the cue ball was pushed with the cue, not struck' : 'not a shot, you said');
+  if (s.notShot) return 'not counted: ' + (s.notShot === 'move' ? 'the cue ball was pushed with the cue, not struck' : 'not a shot');
   const w = [made.length ? made.map(m => (m.num == null ? 'a ball' : 'the ' + m.num) + pk(m.pocket)).join(', ') + ' in' : 'nothing in'];
   if (s.scratch) w.push('scratch'); if (s.break) w[0] = 'Break: ' + w[0]; else if (s.first != null) w.push('first hit the ' + (s.first === 0 ? 'cue' : s.first));
   return w.join(' · ');
@@ -3144,12 +3143,9 @@ function onShotEnd(sh) {
   shotToast(row1);
   if (A.sess.shots.length % 3 === 0) { A.lastSess = A.sess; save(); }
 }
-// the shot's line, and a tap on it to say it was not a shot (or that it was): the player has the last word (V3.7)
-function shotToast(row) {
-  toast('Shot ' + row.n + ': ' + shotWords(row) + (row.notShot ? ' · tap to count it' : ' · tap if not a shot'), 6000, () => {
-    setNotShot(A.sess, row, row.notShot ? null : 'you'); toast('Shot ' + row.n + ': ' + (row.notShot ? 'not counted' : 'counted') + '.');
-  });
-}
+// the shot's line (no tap to correct it: owner, Nov 3, no buttons while playing; what the app gets wrong is found in the
+// debug files)
+function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row)); }
 // Each ball's path in the shot: the tracker's positions from just before the shot started, kept after it ends (and for the
 // balls that went in) until the next shot starts, so a quick look at the phone after the shot shows the whole of it.
 const PATH = new Map(); // ball key -> { num, pts: [{ t, x, y }] }
@@ -3633,7 +3629,7 @@ $('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.sh
 // (pressed again after the rack was done by itself, or twice: no shot since, so it is not another rack)
 $('#rackBtn').onclick = () => { if (!A.tk) return; const dup = A.tk.S.setup && A.tk.S.shots.length === A.tk.S.rackAt; A.tk.newRack(); flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', dup ? { dup: true } : {}); toast('New rack. Names come once the break spreads the balls.'); };
 let toastT = 0;
-function toast(t, ms, act) { dbg('toast', { s: t }); const e = $('#toast'); e.textContent = t; e.hidden = false; e.classList.toggle('act', !!act); e.onclick = act ? () => { e.onclick = null; e.classList.remove('act'); act(); } : null; clearTimeout(toastT); toastT = setTimeout(() => { e.hidden = true; e.onclick = null; }, ms || 3500); }
+function toast(t, ms) { dbg('toast', { s: t }); const e = $('#toast'); e.textContent = t; e.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { e.hidden = true; }, ms || 3500); }
 
 // ---------- Save debug: one zip (log, shot pictures, tapped balls). Two taps: iPhone only shares right after a tap. ----------
 const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
@@ -3728,7 +3724,7 @@ const REVIEW = (() => {
   // balls in on a shot: object balls (an unknown ball counts; the cue ball is a scratch, not a ball in)
   const objIn = s => s.made.filter(m => m.num !== 0 && !(m.num != null && m.num === s.cue)).length;
   const scored = s => objIn(s) > 0 && !s.scratch;
-  // a shot that was not one (V3.7: a ball moved with the cue, or the player said so) stays in the list but counts nowhere
+  // a shot that was not one (V3.7: the cue ball pushed with the cue) stays in the list but counts nowhere
   const real = shots => shots.filter(s => !s.notShot);
   // runs: shots in a row in one rack that put a ball in without a scratch (the break counts when it does)
   function runs(shots) { let best = 0, cur = 0, rack = null; for (const s of shots) { if (s.rack !== rack) { cur = 0; rack = s.rack; } cur = scored(s) ? cur + 1 : 0; best = Math.max(best, cur); } return best; }
@@ -3896,14 +3892,6 @@ function renderReview(sess, live) {
   for (const b of $('#sumList').querySelectorAll('.sbtn')) b.onclick = () => openShot(+b.dataset.i);
   $('#sumDbg').hidden = !live; $('#sumAgain').hidden = !live;
 }
-// a shot marked as not one, or counted again: kept with the session, and the session's line in the history redone
-function setNotShot(sess, s, why) {
-  if (why) s.notShot = why; else delete s.notShot;
-  if (typeof dbg === 'function') dbg('not_shot_mark', { n: s.n, why: why || null });
-  if (sess.mins) REVIEW.remember(sess, sess.mins);
-  if (typeof A !== 'undefined' && A.lastSess === sess) save();
-  renderHistory();
-}
 function picUrl(data) { const u = URL.createObjectURL(data instanceof Blob ? data : new Blob([data], { type: 'image/jpeg' })); RV.urls.push(u); return u; }
 function dropUrls() { clearTimeout(RV.play); RV.play = null; for (const u of RV.urls) URL.revokeObjectURL(u); RV.urls = []; }
 async function openShot(i) {
@@ -3913,9 +3901,6 @@ async function openShot(i) {
   const am = REVIEW.aim(s, RV.sess.ft), ftIn = v => v < 12 ? v + ' in' : (Math.round(v / 6) / 2) + ' ft';
   const dw = s.drill && typeof DRILL !== 'undefined' ? ' · drill: ' + DRILL.byId(s.drill.id).name + ', ' + DRILL.byId(s.drill.id).word(s.drill.value) + (s.drill.made ? ', made' : ', missed') : '';
   $('#svWords').textContent = shotWords(s) + dw + (!s.drill && am ? ' · ' + (am.cut < 3 ? 'straight in' : 'a ' + am.cut + '° cut') + ' to the ' + makeP(RV.sess.ft || 7).pocketNames[am.pocket] + ', ' + ftIn(am.toPocket) + ' from the pocket' : ''); const sw = REVIEW.strokeWords(s.stroke); $('#svStroke').textContent = sw || ''; $('#svStroke').hidden = !sw;
-  // not a shot / count it: the player has the last word (V3.7)
-  const nb = $('#svNot'); nb.hidden = false; nb.textContent = s.notShot ? 'Count it as a shot' : 'Not a shot';
-  nb.onclick = () => { setNotShot(RV.sess, s, s.notShot ? null : 'you'); renderReview(RV.sess, RV.live); openShot(i); };
   $('#svTable').innerHTML = s.paths || s.before ? REVIEW.diagram(s, RV.sess.ft) : '<div class="lbl">No drawing for this shot (sessions before V3.2 kept none).</div>';
   $('#svPrev').disabled = i === 0; $('#svNext').disabled = i === sh.length - 1; $('#svPrev').onclick = () => openShot(RV.i - 1); $('#svNext').onclick = () => openShot(RV.i + 1);
   const nm = 'shot' + String(s.n).padStart(3, '0'), seg = $('#svSeg'); seg.innerHTML = ''; const media = $('#svMedia'); media.innerHTML = '';
@@ -3948,7 +3933,7 @@ function openGroup(gi) {
   const mk = g.filter(REVIEW.scored).length;
   $('#svTitle').textContent = 'The same shot, ' + g.length + ' tries';
   $('#svWords').textContent = 'Shots ' + g.map(x => x.n).join(', ') + ' · ' + (mk ? 'made ' + mk + ' of ' + g.length : 'not made yet') + '. Each try\'s cue ball ends at its number; a ball\'s path is solid where it went in, dashed where it did not.';
-  $('#svStroke').hidden = true; $('#svNot').hidden = true; $('#svSeg').innerHTML = '';
+  $('#svStroke').hidden = true; $('#svSeg').innerHTML = '';
   $('#svTable').innerHTML = REVIEW.diagram(g[0], RV.sess.ft, g);
   $('#svMedia').innerHTML = g.map((x, k) => { const sw = REVIEW.strokeWords(x.stroke); return '<button class="srow sbtn" data-i="' + RV.sess.shots.indexOf(x) + '"><b>' + (k + 1) + '</b><span>' + (REVIEW.scored(x) ? 'Made · ' : 'Missed · ') + shotWords(x) + (sw && x.stroke.side ? '<br><span class="lbl">' + sw.replace(/^Stroke: /, '') + '</span>' : '') + '</span><i>›</i></button>'; }).join('');
   for (const b of $('#svMedia').querySelectorAll('.sbtn')) b.onclick = () => openShot(+b.dataset.i);
