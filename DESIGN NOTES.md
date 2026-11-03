@@ -1333,3 +1333,20 @@ scoreboard without name counts (the card now takes each share over the sessions 
   off the far cushion) never got to Ready. Points within R + 3 in of a cushion are now left out.
 - The browser test now asks 3 named balls of 7, not 4: on its 1280 px photo the bunched balls read near the naming cut,
   and the 2% change in the finder's scale tips two of them (the 8 from 0.93 to 0.59). To check on the next real session.
+
+## V3.8.5 (Nov 3) — Ready holds; drills scored on the object ball; review of Nov 2 19:34
+- The 19:34 session (V3.8.4, practice, the cut ladder done through, 2 parts): 18 scored, 14 made; the cuts played now
+  close to the setup (0: 0-9, 10: 11-18, 20: 26-30, 30: 28-42, 40: 40-44, 50: 47-49) with the rail lines. Diamonds: 16
+  found, the outline 9.1 px off them, 2.3 after (corners moved 12.6 px).
+- But the first scored shot came after almost 5 minutes: Ready was reached and then dropped before the shot (shots 2, 4,
+  6, 8, 10, 14, the cue ball 24 to 48 in, counted as setting up). Cause: since V3.8.2 Ready also wanted no ball anywhere
+  moving or about to be called in, and a ball at the far end (17, 6 in) was found and lost every few tenths of a second.
+  Now only the drill's balls count, and Ready, once reached, holds until the shot; only balls put down by hand (the
+  tracker's hands) take it back. Replayed on the looks: those six shots ready, every scored one still ready, the setup
+  moves between them not.
+- Owner: the drill is about the object ball; he stops the cue ball and sets up the next. Now (not the stop shot) the
+  shot is scored as soon as the object ball is known: called in, made; rolled and resting 0.7 s away from the pockets,
+  missed; the next setup shows at once (drill_early). A shot after Ready that never touched the object ball (the cue ball
+  moved by hand) is not a try (drill_untouched).
+- Steady: the outline moves only for 3 px or more (was 2.5): on 19:34, with the diamonds, x still flipped between two
+  readings 2.7 px apart while y held.

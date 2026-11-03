@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.4';
+const VERSION = 'V3.8.5';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -486,7 +486,8 @@ function onShotEnd(sh) {
     const nudge = far < 6 && !(sh.paths || []).some(p => p.key !== sh.cueKey) && !row.made.length && !sh.scratch;
     if (!A.drillReadyOf.get(sh.n) || nudge) { row1.notShot = 'setup'; dbg('drill_setup_move', { n: sh.n, ready: A.drillReadyOf.get(sh.n), far: r1(far) }); }
   }
-  if (row1.notShot !== 'setup') shotToast(row1);
+  const dt = (A.sess.drillTries || []).find(x => x.n === sh.n); if (dt) row1.drill = dt;
+  if (row1.notShot !== 'setup' && !dt) shotToast(row1); // (a drill shot scored early has said its result already)
   if (A.sess.shots.length % 3 === 0) { A.lastSess = A.sess; save(); }
 }
 // the shot's line (no tap to correct it: owner, Nov 3, no buttons while playing; what the app gets wrong is found in the
@@ -612,7 +613,8 @@ function steady() {
   if (ok.length < Math.min(4, R.filter(Boolean).length)) return;
   const dx = ok.reduce((a, f) => a + f.dx, 0) / ok.length, dy = ok.reduce((a, f) => a + f.dy, 0) / ok.length;
   const cur = A.quad[0], q0 = STEADY.quad0[0], moved = Math.hypot(q0[0] + dx - cur[0], q0[1] + dy - cur[1]);
-  if (moved < 2.5) return; // no real change (the match is in 2 px steps: a 2 px flutter is not a move)
+  if (moved < 3) return; // no real change (the match is in 2 px steps; Nov 2 19:34, with the diamonds: x still flipped between
+  // two readings 2.7 px apart, y held)
   A.quad = STEADY.quad0.map(p => [p[0] + dx, p[1] + dy]);
   const { L, Wd } = tableDims(A.ft); A.cam = makeCam(tableCornersFor(A.rot, L, Wd), A.quad, A.W, A.H, LENS * Math.max(A.W, A.H), [A.W / 2, A.H / 2]);
   if (A.tk) A.tk.setBags(pocketBags(A.cam, A.P));
@@ -734,19 +736,43 @@ function handAtSpots(st) {
 }
 function drillReadyLook() {
   const D = A.drill; if (!D || !D.st || A.phase !== 'run' || !A.tk) return;
-  if (A.tk.S.phase === 'shot') return; // (a shot running: it was ready or not as it started)
-  const on = A.tk.S.phase === 'still' && !A.tk.balls().some(b => b.state === 'moving' || b.state === 'pending') && drillTaken(D.st.O, false) && drillTaken(D.st.C, true) && !(D.since != null && !D.ready && handAtSpots(D.st));
+  if (A.tk.S.phase === 'shot') { drillEarly(); return; } // (a shot running: it was ready or not as it started)
+  // Ready holds until the shot (Nov 2, 19:34: a ball flickering at the other end of the table, and the shooter's hand and
+  // cue over the balls at the address, dropped it, and real shots counted as setting up); only balls put down by hand
+  // (the tracker's "hands") take it back
+  if (D.ready) { if (A.tk.S.phase === 'hands') { D.ready = false; D.since = null; dbg('drill_unready', { why: 'hands' }); } drillTag(); return; }
+  const st = D.st, near = b => [st.O, st.C].some(p => p && Math.hypot(b.x - p[0], b.y - p[1]) < 10); // (only the drill's balls)
+  const on = A.tk.S.phase === 'still' && !A.tk.balls().some(b => near(b) && (b.state === 'moving' || b.state === 'pending')) && drillTaken(st.O, false) && drillTaken(st.C, true) && !(D.since != null && handAtSpots(st));
   if (!on) { D.since = null; D.ready = false; }
   else { if (D.since == null) D.since = performance.now(); if (!D.ready && performance.now() - D.since >= READY_S * 1000) { D.ready = true; dbg('drill_ready', { id: D.id, level: D.level }); } }
   drillTag();
 }
-function drillScore(sh, st) {
+// The drill's object ball in a shot: the ball resting nearest its spot when the shot started (within 8 in)
+function drillOb(sh, st) { const at = b => [b.rx != null ? b.rx : b.x, b.ry != null ? b.ry : b.y]; return (sh.before || []).filter(b => b.num !== 0 && b.key !== sh.cueKey).map(b => ({ b, d: Math.hypot(at(b)[0] - st.O[0], at(b)[1] - st.O[1]) })).filter(x => x.d <= 8).sort((a, b) => a.d - b.d).map(x => x.b)[0] || null; }
+// Scored as soon as the object ball is known (owner, Nov 3: the drill is about the object ball; he stops the cue ball and
+// sets up the next one): called in, made; rolled and resting for 0.7 s away from the pockets, missed. The stop shot waits
+// for the cue ball (that is what it tests); a ball never touched waits for the shot's end.
+function drillEarly() {
+  const D = A.drill, tk = A.tk, sh = tk.S.shot; if (!D || !D.st || !sh || D.id === 'stop' || !A.drillReadyOf.get(sh.n) || D.early === sh.n) return;
+  const st = D.st, ob = drillOb(sh, st); if (!ob) return;
+  const inn = sh.made.some(m => m.key === ob.key), tr = tk.S.tracks.find(x => x.key === ob.key);
+  const rested = tr && tr.state === 'rest' && tr.restSince != null && tk.S.t - tr.restSince >= 0.7 && Math.hypot(tr.x - (ob.rx != null ? ob.rx : ob.x), tr.y - (ob.ry != null ? ob.ry : ob.y)) > 2 &&
+    !A.P.pockets.some(q => Math.hypot(q.x - tr.x, q.y - tr.y) < 6);
+  if (!inn && !rested) return;
+  D.early = sh.n; dbg('drill_early', { n: sh.n, made: inn });
+  drillScore({ n: sh.n, cueKey: sh.cueKey, before: sh.before, made: sh.made.slice(), scratch: false, after: [] }, st, true);
+}
+function drillScore(sh, st, early) {
   const D = A.drill; if (!D || D.st !== st) return; // (the drill was changed meanwhile)
-  const r0 = A.sess.shots.find(x => x.n === sh.n); if (r0 && r0.notShot) return; // (not a shot: the cue ball pushed with the cue)
+  if (!early && A.sess.drillTries.some(x => x.n === sh.n)) return; // (scored already, as soon as the object ball was known)
+  const r0 = A.sess.shots.find(x => x.n === sh.n); if (r0 && r0.notShot) return; // (not a shot: setting up)
+  // the object ball never touched and nothing in: the cue ball moved by hand after Ready, not a try
+  if (!early) { const ob = drillOb(sh, st), af = ob && (sh.after || []).find(b => b.key === ob.key);
+    if (ob && af && !sh.made.length && Math.hypot(af.x - (ob.rx != null ? ob.rx : ob.x), af.y - (ob.ry != null ? ob.ry : ob.y)) < 1) { dbg('drill_untouched', { n: sh.n }); if (r0) r0.notShot = 'setup'; return; } }
   const r = DRILL.score(st, sh, A.P);
   if (!r.scored) { toast('Not a drill shot: the object ball was not on its spot.'); return; }
   const t = { id: D.id, level: D.level, value: st.value, made: r.made, pocketed: r.pocketed, stopped: r.stopped, cut: r.cut, n: sh.n }; A.sess.drillTries.push(t);
-  const row = A.sess.shots.find(x => x.n === sh.n); if (row) row.drill = t;
+  const row = A.sess.shots.find(x => x.n === sh.n); if (row) row.drill = t; // (scored early: the row gets it at the shot's end)
   // three at each step, in order, made or missed (owner, Nov 3: progressive kept him from getting on; it may come back
   // as a choice); after the last step the drill is done
   dbg('drill', t); const res = r.made ? 'Made' : r.pocketed && r.stopped === false ? 'In, but the cue ball did not stop' : 'Missed';

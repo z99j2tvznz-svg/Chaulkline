@@ -75,6 +75,12 @@ async function run(rot, viewport, sway, strokeTest) {
         for (let i = 0; i < 3; i++) { const st = A.drill.st; drillScore({ n: 900 + i, before: [{ key: 1, num: 0, x: st.C[0], y: st.C[1] }, { key: 2, num: 3, x: st.O[0], y: st.O[1] }], made: i === 1 ? [] : [{ key: 2, num: 3, pocket: st.pocket }], after: [], scratch: false }, st); }
         return document.querySelector('#drillTag').textContent; });
       assert.match(stepped, /10° cut · shot 1 of 3 · step 2 of 6 · made 2 of 3/);
+      // V3.8.5: scored as soon as the object ball is called in, while the shot is still going (the cue ball rolling)
+      const early = await page.evaluate(() => { const A = window.__v3.A, S = A.tk.S, st = A.drill.st, keep = [S.shot, S.phase];
+        A.drillReadyOf.set(950, true); S.shot = { n: 950, cueKey: 'c', before: [{ key: 'c', num: 0, x: st.C[0], y: st.C[1], rx: st.C[0], ry: st.C[1] }, { key: 'o', num: 3, x: st.O[0], y: st.O[1], rx: st.O[0], ry: st.O[1] }], made: [{ key: 'o', num: 3, pocket: st.pocket }] };
+        drillEarly(); S.shot = keep[0]; S.phase = keep[1];
+        const t = A.sess.drillTries.find(x => x.n === 950); return { made: t && t.made, tag: document.querySelector('#drillTag').textContent }; });
+      assert.strictEqual(early.made, true); assert.match(early.tag, /shot 2 of 3 · step 2 of 6/);
       const dr = await page.evaluate(() => { const A = window.__v3.A; return [A.drill.st.O, A.drill.st.C].every(p => p[0] > 0 && p[1] > 0 && p[0] < A.P.L && p[1] < A.P.W); }); assert.ok(dr);
       await page.click('#menuBtn'); await page.click('[data-act=drills]'); await page.click('[data-act=drill_stop]'); assert.ok(await page.isHidden('#drillTag'));
     }
