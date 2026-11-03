@@ -165,7 +165,7 @@ function renderReview(sess, live) {
   // the drills: tries and makes at each level, and the level reached
   const ds = typeof DRILL !== 'undefined' ? DRILL.summary(REVIEW.drillTries(sess)) : [];
   $('#sumDrillCard').hidden = !ds.length;
-  if (ds.length) $('#sumDrills').innerHTML = ds.map(d => '<h3>' + d.name + ' · made ' + d.made + ' of ' + d.tries + (d.best >= 0 ? ' · reached ' + DRILL.byId(d.id).word(DRILL.byId(d.id).levels[d.best]) : '') + '</h3>' +
+  if (ds.length) $('#sumDrills').innerHTML = ds.map(d => '<h3>' + d.name + ' · made ' + d.made + ' of ' + d.tries + ''+ '</h3>' +
     d.levels.map(([l, mk, n]) => '<div class="brow"><span>' + l + '</span><b>' + mk + ' of ' + n + '</b><i><u style="width:' + Math.round(100 * mk / n) + '%"></u></i></div>').join('')).join('');
   // the same shot set up again: one line per set of tries, opening them on one drawing
   $('#sumRepeatCard').hidden = !RV.reps.length;

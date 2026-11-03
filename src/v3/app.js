@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.0';
+const VERSION = 'V3.8.1';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -429,7 +429,7 @@ function onSay(s) {
   else if (s.k === 'not_shot') { PATH.clear(); dbg('not_shot', { num: s.num }); toast('Not counted: hand move'); }
 }
 function onShotStart() {
-  PATH.clear(); pathLook(); const sh = A.tk.S.shot; if (!sh) return; const nm = 'shot' + String(sh.n).padStart(3, '0');
+  PATH.clear(); A.pathClearAt = null; pathLook(); const sh = A.tk.S.shot; if (!sh) return; const nm = 'shot' + String(sh.n).padStart(3, '0');
   if (A.stillPic) setPic(nm + '-before.jpg', A.stillPic);
   if (A.strokeCheck) sh.test = { check: true };
   if (A.drill) { A.drillReadyOf.set(sh.n, !!A.drill.ready); A.drill.ready = false; A.drill.since = null; }
@@ -453,6 +453,7 @@ function flushShots() {
   for (const n of tk.S.notes.splice(0)) onLateMade(n);
 }
 function onShotEnd(sh) {
+  A.pathClearAt = performance.now() + 1000; // (the shot ends 1.2 s after the balls rest: the paths go about 2 s after; owner, Nov 3)
   sh.paths = pathsRow(sh); const row = shotRow(sh); if (A.sess.rackOpen) { A.sess.rackOpen = false; if (A.sess.shots.length) A.sess.rack++; }
   A.sess.shots.push(Object.assign({ n: sh.n, rack: A.sess.rack, cue: sh.cueNum, first: sh.firstNum, made: row.made, scratch: sh.scratch, break: sh.break, t: Date.now() }, REVIEW.shotDetail(sh), STK.of.has(sh.n) ? { stroke: STK.of.get(sh.n) } : {}));
   dbg('shot_end', { n: sh.n, made: row.made, scratch: sh.scratch, first: sh.firstNum });
@@ -477,7 +478,7 @@ function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row)); }
 const PATH = new Map(); // ball key -> { num, pts: [{ t, x, y }] }
 function pathLook() {
   const tk = A.tk, sh = tk && (tk.S.shot || tk.S.shots[tk.S.shots.length - 1]); if (!sh) return;
-  if (tk.S.phase !== 'shot' && !(tk.S.t - sh.t1 < 2)) return; // the last few looks after it ends: the balls settling
+  if (tk.S.phase !== 'shot' && !(tk.S.t - sh.t1 < 1)) return; // the last few looks after it ends: the balls settling
   for (const b of tk.balls()) {
     // a path starts where the ball rested when the shot started, even if its first moments were not seen (owner, Oct 28)
     let e = PATH.get(b.key);
@@ -669,19 +670,19 @@ function viewXY(dx, dy) {
   return [leftX === 0 ? dx * dia : P.L - dx * dia, nearY === 0 ? dy * dia : P.W - dy * dia];
 }
 function drillMenu() {
-  showCard('<div><b>Drills</b><p>Set the balls on the rings (roughly is fine) and shoot. Made, the next one is harder; missed, it steps back. Practice rules apply: move and pick up balls as you like.</p></div><div class="dlist">' +
+  showCard('<div><b>Drills</b><p>Set each ball where its two faint lines from the rails cross, wait for Ready, and shoot. Three shots at each step, then the next. Practice rules apply: move and pick up balls as you like.</p></div><div class="dlist">' +
     DRILL.LIST.map(d => '<button class="btn" data-drill="' + d.id + '"><b>' + d.name + '</b><small>' + d.about + '</small></button>').join('') + '</div><div class="row">' + (A.drill ? '<button class="btn" data-act="drill_stop">Stop the drill</button>' : '') + '<button class="btn" data-act="close">Close</button></div>');
 }
 function drillStart(id) {
   if (!A.tk || !A.cam) return; hideCard();
   Object.assign(A.tk.O, { practice: true, autoRack: false, rackNew: false }); A.mode = 'practice'; if (A.sess) A.sess.mode = 'practice'; $('#rackBtn').hidden = true;
-  A.drill = { id, level: 0 }; drillSetup(); dbg('drill_start', { id });
-  toast(DRILL.byId(id).name + ': set the balls on the rings and shoot.', 5000);
+  A.drill = { id, level: 0, n: 0, from: A.tk.S.shots.length }; drillSetup(); dbg('drill_start', { id });
+  toast(DRILL.byId(id).name + ': set the balls where the lines cross, wait for Ready, and shoot.', 5000);
 }
 function drillStop() { if (A.drill) dbg('drill_stop', { id: A.drill.id }); A.drill = null; $('#drillTag').hidden = true; hideCard(); }
 function drillSetup() {
   const D = A.drill; D.st = DRILL.setup(D.id, D.level, A.P, viewXY); const ts = (A.sess.drillTries || []).filter(t => t.id === D.id);
-  D.base = DRILL.byId(D.id).name + ' · ' + D.st.word + ' · level ' + (D.level + 1) + ' of ' + DRILL.byId(D.id).levels.length + (ts.length ? ' · made ' + ts.filter(t => t.made).length + ' of ' + ts.length : '');
+  D.base = DRILL.byId(D.id).name + ' · ' + D.st.word + ' · shot ' + ((D.n || 0) + 1) + ' of ' + DRILL.PER + ' · step ' + (D.level + 1) + ' of ' + DRILL.byId(D.id).levels.length + (ts.length ? ' · made ' + ts.filter(t => t.made).length + ' of ' + ts.length : '');
   D.ready = false; D.since = null; $('#drillTag').hidden = false; drillTag();
 }
 // Ready to shoot (owner, Nov 3: moving a ball onto its ring was taken for a shot): both balls on their rings and still for
@@ -689,7 +690,7 @@ function drillSetup() {
 const READY_S = 3;
 function drillTag() {
   const D = A.drill; if (!D || !D.base) return; const left = D.since != null ? READY_S - (performance.now() - D.since) / 1000 : null;
-  $('#drillTag').innerHTML = '<b>' + (D.ready ? 'Ready: shoot' : left != null ? 'Ready in ' + Math.max(1, Math.ceil(left)) : 'Set the balls on the rings') + '</b><br>' + D.base;
+  $('#drillTag').innerHTML = '<b>' + (D.ready ? 'Ready: shoot' : left != null ? 'Ready in ' + Math.max(1, Math.ceil(left)) : 'Set the balls on their spots') + '</b><br>' + D.base;
 }
 function drillReadyLook() {
   const D = A.drill; if (!D || !D.st || A.phase !== 'run' || !A.tk) return;
@@ -703,30 +704,42 @@ function drillScore(sh, st) {
   const D = A.drill; if (!D || D.st !== st) return; // (the drill was changed meanwhile)
   const r0 = A.sess.shots.find(x => x.n === sh.n); if (r0 && r0.notShot) return; // (not a shot: the cue ball pushed with the cue)
   const r = DRILL.score(st, sh, A.P);
-  if (!r.scored) { toast('Not a drill shot: the object ball was not on its ring.'); return; }
+  if (!r.scored) { toast('Not a drill shot: the object ball was not on its spot.'); return; }
   const t = { id: D.id, level: D.level, value: st.value, made: r.made, pocketed: r.pocketed, stopped: r.stopped, cut: r.cut, n: sh.n }; A.sess.drillTries.push(t);
   const row = A.sess.shots.find(x => x.n === sh.n); if (row) row.drill = t;
-  dbg('drill', t); D.level = DRILL.next(D.id, D.level, r.made); drillSetup();
-  toast((r.made ? 'Made' : r.pocketed && r.stopped === false ? 'In, but the cue ball did not stop' : 'Missed') + ' · next: ' + D.st.word, 4000);
+  // three at each step, in order, made or missed (owner, Nov 3: progressive kept him from getting on; it may come back
+  // as a choice); after the last step the drill is done
+  dbg('drill', t); const res = r.made ? 'Made' : r.pocketed && r.stopped === false ? 'In, but the cue ball did not stop' : 'Missed';
+  D.n = (D.n || 0) + 1; if (D.n >= DRILL.PER) { D.n = 0; D.level++; }
+  if (D.level >= DRILL.byId(D.id).levels.length) { const ts = A.sess.drillTries.filter(x => x.id === D.id && x.n > (D.from || 0)); toast(res + ' · ' + DRILL.byId(D.id).name + ' done: made ' + ts.filter(x => x.made).length + ' of ' + ts.length + '.', 7000); drillStop(); return; }
+  drillSetup(); toast(res + ' · next: ' + D.st.word + ' (' + (D.n + 1) + ' of ' + DRILL.PER + ')', 4000);
 }
 // the setup on the live view: rings where the balls go (green when a ball is on it), the cue ball's aim to where it
 // meets the ball, the ball's line to the pocket (off the near cushion for the bank), the pocket ringed
 function drillTaken(p, cue) { return A.tk.balls().some(b => b.state !== 'hidden' && Math.hypot(b.x - p[0], b.y - p[1]) < 4 && (cue ? b.num === 0 || b.num == null : b.num !== 0)); }
 function drillLine(c, S2, a, b) { const flat = (x, y) => S2(A.cam.proj(x, y, 0)), p = flat(a[0], a[1]), q = flat(b[0], b[1]); c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(q[0], q[1]); c.stroke(); }
 function drawDrill(c, S2) {
+  // (owner, Nov 3: the marks as light as can be seen; where a ball goes shown by two faint lines in from the long rail and
+  // the short rail, crossing at its spot; the spots and the ghost ball as dashed ball outlines, green once a ball is on)
   const D = A.drill; if (!D || !D.st || !A.cam) return; const st = D.st, P = A.P, flat = (x, y) => S2(A.cam.proj(x, y, 0));
-  c.save(); c.setLineDash([6, 6]); c.lineWidth = 1.5; c.strokeStyle = 'rgba(234,241,244,.55)'; if (st.C) drillLine(c, S2, st.C, st.G);
-  c.strokeStyle = 'rgba(255,184,77,.8)';
+  const seg = (a, b) => { const p = flat(a[0], a[1]), q = flat(b[0], b[1]); c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(q[0], q[1]); c.stroke(); };
+  const ring = (p, r, z) => { c.beginPath(); for (let i = 0; i <= 36; i++) { const a = i / 36 * Math.PI * 2, s = S2(A.cam.proj(p[0] + r * Math.cos(a), p[1] + r * Math.sin(a), z || 0)); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); } c.stroke(); };
+  c.save(); c.lineWidth = 1;
+  // the rail lines: from the nearer long rail and the nearer short rail to each spot
+  c.strokeStyle = 'rgba(244,241,232,.38)';
+  for (const p of [st.O, st.C]) { if (!p) continue; seg([p[0], p[1] < P.W / 2 ? 0 : P.W], p); seg([p[0] < P.L / 2 ? 0 : P.L, p[1]], p); }
+  // the way: the cue ball to where it meets the object ball, and the object ball to the pocket (off the cushion for a bank)
+  c.setLineDash([4, 6]); c.strokeStyle = 'rgba(244,241,232,.25)'; if (st.C) drillLine(c, S2, st.C, st.G);
   if (st.aimAt === st.Pk) drillLine(c, S2, st.O, st.Pk);
   else { const yc = st.aimAt[1] < 0 ? P.R : P.W - P.R, t = (yc - st.O[1]) / (st.aimAt[1] - st.O[1]), hit = [st.O[0] + t * (st.aimAt[0] - st.O[0]), yc]; drillLine(c, S2, st.O, hit); drillLine(c, S2, hit, st.Pk); }
+  // the spots, the ghost ball and the pocket: dashed outlines
+  c.setLineDash([3, 3]); c.lineWidth = 1.3;
+  for (const [p, isCue] of [[st.O, false], [st.C, true]]) { if (!p) continue; c.strokeStyle = drillTaken(p, isCue) ? 'rgba(61,220,132,.8)' : 'rgba(244,241,232,.65)'; ring(p, P.R, P.R); }
+  c.lineWidth = 1; c.strokeStyle = 'rgba(244,241,232,.3)'; ring(st.G, P.R, P.R);
+  // which spot is the cue ball's: a tiny word under it
+  if (st.C) { const m = S2(A.cam.proj(st.C[0], st.C[1] - 2.2 * P.R, 0)); c.setLineDash([]); c.font = '500 9px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.fillStyle = 'rgba(244,241,232,.6)'; c.fillText('cue', m[0], m[1] + 8); }
+  c.setLineDash([3, 3]); c.strokeStyle = 'rgba(255,184,77,.45)'; ring(st.Pk, P.pockets[st.pocket].r + 1);
   c.restore();
-  const ring = (p, r, col, w, dash) => { c.save(); if (dash) c.setLineDash(dash); c.strokeStyle = col; c.lineWidth = w; c.beginPath(); for (let i = 0; i <= 48; i++) { const a = i / 48 * Math.PI * 2, s = flat(p[0] + r * Math.cos(a), p[1] + r * Math.sin(a)); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); } c.stroke(); c.restore(); };
-  ring(st.Pk, P.pockets[st.pocket].r + 1, '#ffb84d', 3);
-  ring(st.G, P.R, 'rgba(244,241,232,.6)', 1.5, [4, 4]);
-  for (const [p, col, lab, isCue] of [[st.O, '#e8c11d', 'ball', false], [st.C, '#f4f1e8', 'cue', true]]) {
-    if (!p) continue; const ok = drillTaken(p, isCue), colr = ok ? '#3ddc84' : col; ring(p, 4, colr, 2.5);
-    const m = flat(p[0], p[1]); c.fillStyle = colr; c.font = '600 12px ' + getComputedStyle(document.body).fontFamily; c.textAlign = 'center'; c.fillText(lab, m[0], m[1] - 14);
-  }
 }
 
 // ---------- the stroke (V3.2) ----------
@@ -827,6 +840,7 @@ function drawLoop() {
   // a drill's rings as soon as the table is accepted, while the ball finder starts (Nov 2, 16:55: it never started, and
   // the rings never showed)
   if ((A.phase === 'run' || A.phase === 'load') && A.cam) drawDrill(c, S2);
+  if (A.pathClearAt && performance.now() > A.pathClearAt) { PATH.clear(); A.pathClearAt = null; }
   if (A.phase !== 'run' || !A.tk || !A.cam) return;
   drawBalls(c, S2, F);
 }
@@ -889,10 +903,15 @@ function drawBalls(c, S2, F) {
   }
   for (const k of [...TAILV.keys()]) if (!PATH.has(k)) TAILV.delete(k);
   c.globalAlpha = 1; c.setLineDash([]); c.lineCap = 'butt'; c.lineJoin = 'miter';
-  c.lineWidth = 1.3;
-  for (const it of items) { c.strokeStyle = it.col; c.setLineDash(it.b.state === 'hidden' || it.b.state === 'pending' ? [3, 3] : []); c.beginPath(); c.arc(it.s[0], it.s[1], it.r, 0, Math.PI * 2); c.stroke(); }
-  c.setLineDash([]);
-  c.font = '600 11px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+  // (owner, Nov 3: no circle round the balls; the number small, on the ball itself, to the side only where balls are
+  // bunched; in a drill only its two balls. A ball out of sight or about to be called in keeps a faint dashed outline.)
+  if (A.drill && A.drill.st) { const st = A.drill.st, near = it => [st.O, st.C].some(p => p && Math.hypot(it.tx - p[0], it.ty - p[1]) < 8); for (let i = items.length - 1; i >= 0; i--) if (!near(items[i])) items.splice(i, 1); }
+  c.lineWidth = 1; c.setLineDash([3, 3]); c.globalAlpha = 0.4;
+  for (const it of items) if (it.b.state === 'hidden' || it.b.state === 'pending') { c.strokeStyle = it.col; c.beginPath(); c.arc(it.s[0], it.s[1], it.r, 0, Math.PI * 2); c.stroke(); }
+  c.setLineDash([]); c.globalAlpha = 1;
+  c.font = '600 10px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+  const bunched = it => items.some(o => o !== it && Math.hypot(o.s[0] - it.s[0], o.s[1] - it.s[1]) < 2.6 * it.r);
+  for (const it of items) if (!bunched(it)) { c.lineWidth = 2.5; c.strokeStyle = 'rgba(11,16,20,.55)'; c.strokeText(it.t, it.s[0], it.s[1] + 0.5); c.fillStyle = it.col; c.fillText(it.t, it.s[0], it.s[1] + 0.5); }
   const H = 14, placed = [], hit = (a, q) => a.x < q.x + q.w && q.x < a.x + a.w && a.y < q.y + q.h && q.y < a.y + a.h;
   const free = box => box.x >= 0 && box.y >= 0 && box.x + box.w <= F.w && box.y + box.h <= F.h && !placed.some(q => hit(box, q)) &&
     !items.some(o => { const cx = Math.max(box.x, Math.min(o.s[0], box.x + box.w)), cy = Math.max(box.y, Math.min(o.s[1], box.y + box.h)); return Math.hypot(cx - o.s[0], cy - o.s[1]) < o.r; });
@@ -902,13 +921,13 @@ function drawBalls(c, S2, F) {
     const cx = it.s[0] + dx * (g + w / 2 * Math.abs(dx)), cy = it.s[1] + dy * (g + H / 2 * Math.abs(dy)); return { x: cx - w / 2, y: cy - H / 2, w, h: H, cx, cy, far }; };
   // bunched balls first, so they get first choice of the free sides
   const crowd = it => items.filter(o => o !== it && Math.hypot(o.s[0] - it.s[0], o.s[1] - it.s[1]) < 4 * it.r).length;
-  for (const it of items.slice().sort((a, b) => crowd(b) - crowd(a))) {
+  for (const it of items.filter(bunched).sort((a, b) => crowd(b) - crowd(a))) {
     const last = LAB.get(it.b.key), order = [...Array(DIRS.length * 2).keys()]; if (last != null) { order.splice(order.indexOf(last), 1); order.unshift(last); }
     let box = null, k0 = 0; for (const k of order) { const q = at(it, k); if (free(q)) { box = q; k0 = k; break; } }
     if (!box) { box = at(it, 0); k0 = 0; } // nowhere free: above, as before
     LAB.set(it.b.key, k0); placed.push(box);
     if (box.far) { c.strokeStyle = it.col; c.lineWidth = 1; c.beginPath(); const a = Math.atan2(box.cy - it.s[1], box.cx - it.s[0]); c.moveTo(it.s[0] + Math.cos(a) * it.r, it.s[1] + Math.sin(a) * it.r); c.lineTo(box.cx - Math.cos(a) * Math.min(box.w / 2, H / 2), box.cy - Math.sin(a) * H / 2); c.stroke(); }
-    c.fillStyle = 'rgba(11,16,20,.8)'; c.fillRect(box.x, box.y, box.w, box.h);
+    c.fillStyle = 'rgba(11,16,20,.55)'; c.fillRect(box.x, box.y, box.w, box.h);
     c.fillStyle = it.col; c.fillText(it.t, box.cx, box.cy + 0.5);
   }
   for (const k of [...LAB.keys()]) if (!items.some(it => it.b.key === k)) LAB.delete(k);

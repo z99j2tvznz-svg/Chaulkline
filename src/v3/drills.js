@@ -1,7 +1,7 @@
 // Drills (V3.6, owner Nov 2): in free practice the app cannot know what a shot was for (a thin cut, a bank, the open
 // pocket), so its rates were guesses. A drill says it: where the object ball and the cue ball go and the pocket, so a
-// make, a miss and the cut are known. Each drill is progressive (as Bob Jewett's): made, the next level is harder;
-// missed, it steps back; the level reached is the score. Placing the balls roughly is enough: the scoring uses where
+// make, a miss and the cut are known. Each drill goes step by step, three shots at each (owner, Nov 3; it was
+// progressive, as Bob Jewett's, made up a level and missed down one, which kept him from getting on). Placing the balls roughly is enough: the scoring uses where
 // they really are. Pure functions: positions in table inches; view(dx, dy) turns diamonds as the phone sees the table
 // (dx from the left end, dy from the near rail) into table inches. The app draws and feeds the shots; tests use it too.
 const DRILL = (() => {
@@ -12,13 +12,13 @@ const DRILL = (() => {
   // (owner, Nov 3: the phone stands behind the near rail at the middle; no drill may have the player shooting from there.
   // Cuts go the long way of the table, from the left end; the bank is shot from the far side.)
   const LIST = [
-    { id: 'cut', name: 'Cut ladder', about: 'The cue ball 3 diamonds from the left end, in the middle; the object ball a diamond and a half from the far right corner. Straight in first; each make moves the object ball round toward the short rail, 10° thinner.',
+    { id: 'cut', name: 'Cut ladder', about: 'The cue ball 3 diamonds from the left end, in the middle; the object ball a diamond and a half from the far right corner. Straight in, then 10° thinner at each step: the object ball comes round toward the short rail.',
       levels: [0, 10, 20, 30, 40, 50], word: c => c ? c + '° cut' : 'straight in', kind: 'turn', cue: [3, 2], pocket: [8, 4], obDist: 1.5 },
     { id: 'thin', name: 'Thin cuts', about: 'The object ball almost against the right end rail, a diamond and a quarter from the near right corner; the cue ball moves out for each cut, from 50° to 77°, shot from the far side.',
       levels: [50, 57, 63, 68, 73, 77], word: c => c + '° cut', kind: 'cut', ob: 'rail', obFrom: 1.25, pocket: [8, 0], cueDist: 2.5 },
-    { id: 'bank', name: 'Cross-side bank', about: 'The object ball a diamond and a half off the near rail, a little right of the side pockets, banked off the near rail into the far side pocket, shot from the far side. Each make moves it a quarter diamond further right.',
+    { id: 'bank', name: 'Cross-side bank', about: 'The object ball a diamond and a half off the near rail, a little right of the side pockets, banked off the near rail into the far side pocket, shot from the far side. Each step moves it a quarter diamond further right.',
       levels: [0.25, 0.5, 0.75, 1, 1.25, 1.5], word: o => o + ' diamond' + (o > 1 ? 's' : '') + ' right', kind: 'bank', ob: [4, 1.5], pocket: [4, 4], cueDist: 1.2 },
-    { id: 'stop', name: 'Stop shot', about: 'Straight into the far right corner; the cue ball has to stop within a ball and a half of where it hit. Each make puts the cue ball a step further back.',
+    { id: 'stop', name: 'Stop shot', about: 'Straight into the far right corner; the cue ball has to stop within a ball and a half of where it hit. Each step puts the cue ball further back.',
       levels: [1.2, 2, 2.8, 3.6, 4.4], word: d => d + ' diamonds back', kind: 'stop', ob: [6.6, 3.3], pocket: [8, 4], cueDist: null },
   ];
   const byId = id => LIST.find(d => d.id === id);
@@ -72,6 +72,7 @@ const DRILL = (() => {
     return { scored: true, made: made && (stopped == null || stopped), pocketed: made, stopped, cut };
   }
   // the level after a shot: up on a make, down on a miss (Jewett's progressive practice)
+  const PER = 3; // shots at each step (owner, Nov 3: static drills, three at each step)
   const next = (id, level, made) => Math.max(0, Math.min(byId(id).levels.length - 1, level + (made ? 1 : -1)));
   // a session's drill tries: [{ id, level, made }] -> per drill { id, name, tries, made, best (level index), levels: [made, tries] }
   function summary(tries) {
@@ -81,6 +82,6 @@ const DRILL = (() => {
         levels: d.levels.map((v, i) => [d.word(v), ts.filter(t => t.level === i && t.made).length, ts.filter(t => t.level === i).length]).filter(r => r[2]) }); }
     return out;
   }
-  return { LIST, byId, setup, score, next, summary };
+  return { LIST, byId, setup, score, next, summary, PER };
 })();
 if (typeof module !== 'undefined') module.exports = DRILL;

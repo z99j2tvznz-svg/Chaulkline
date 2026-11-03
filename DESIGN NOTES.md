@@ -1278,3 +1278,17 @@ scoreboard without name counts (the card now takes each share over the sessions 
   side pockets (never straight between them), the cue ball 1.2 diamonds behind it; shot from the far side.
 - Test: for every level of every drill, the cue's line traced back off the table (where the player stands) is at least
   2 diamonds from the middle of the near rail.
+
+## V3.8.1 (Nov 3) — lighter marks, rail lines, paths that clear, drills step by step
+- Owner, Nov 3 (after the 18:04 drill session): placing the balls by looking at the screen is hard; the drawing is busy
+  and slow; the progressive drills kept him from getting on.
+- Drill spots: two faint lines in from the nearer long rail and the nearer short rail cross where each ball goes; the
+  spots and the ghost ball are dashed ball outlines (green once a ball is on), the pocket a dashed ring, a tiny "cue" by
+  the cue ball's spot; the old rings and words gone. Checked on a screenshot: light but visible.
+- Balls: no circle; the number small, on the ball itself; to the side (as before) only where balls are bunched; a ball
+  out of sight or about to be called in keeps a faint dashed outline. In a drill only its two balls are labelled (the
+  rest are still followed, for the debug file).
+- Paths: drawn while the balls roll and cleared 1 s after the shot ends (about 2 s after the balls rest), in play too;
+  every path stays in the debug file and the review.
+- Drills step by step: three shots at each step, made or missed, then the next; after the last step the drill is done
+  and says made x of y. The line at the bottom: "shot 1 of 3 · step 2 of 6". The review shows made of tries per step.
