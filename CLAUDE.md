@@ -15,7 +15,8 @@
 - Claude leads the project; the owner tests and suggests (owner, Nov 1). Push back on a suggestion when the logic says
   to, not otherwise. Owner, Nov 2: work in big chunks. Each version adds something the owner can see in play; Claude
   decides and builds it without waiting for "build it". No dedicated test sessions or test modes for the owner: normal
-  play is the test, and no buttons to press while playing (owner, Nov 3: what the app gets wrong is found in the debug
-  files, not marked by the player), and fixes found in reviews ride along with the next big build, not their own versions. Plain
+  play is the test, and no buttons to press while playing: the player should not have to touch or even look at the phone
+  (owner, Nov 3: the app gets it right by itself; what it gets wrong is found in the debug files; if a button seems truly
+  needed, push back and ask the owner first), and fixes found in reviews ride along with the next big build, not their own versions. Plain
   English, positions in diamonds. The owner does not use git:
   commit and push to main (Pages publishes it) and send the link https://z99j2tvznz-svg.github.io/Chaulkline/.
