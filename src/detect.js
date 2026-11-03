@@ -18,7 +18,10 @@ const DET = (() => {
   const bytes = new Map(); // url -> download (a promise), so a file is fetched once even when asked for twice at the same time
   function fetchBytes(url, onProgress) {
     if (!bytes.has(url)) bytes.set(url, fetchNew(url, onProgress).catch(e => { bytes.delete(url); throw e; }));
-    return bytes.get(url);
+    // a copy each time: in the background worker the runtime takes the bytes over (they are moved, not copied), and the
+    // kept download was left empty; the next start then failed with "The object can not be cloned" (Nov 2, 16:55: the
+    // table found again while the finder was starting)
+    return bytes.get(url).then(b => b.slice());
   }
   async function fetchNew(url, onProgress) {
     const res = await fetch(url); if (!res.ok) throw new Error(url + ': ' + res.status);
@@ -28,7 +31,10 @@ const DET = (() => {
     const out = new Uint8Array(got); let o = 0; for (const p of parts) { out.set(p, o); o += p.length; } return out;
   }
   // opts: base (site root, ends in /), ep ('webgpu' | 'wasm' | 'auto'), finder {file, w, h, fixed, weights?}, onProgress(text)
-  async function load(opts) {
+  // one start at a time: a second waits for the first (both would hand the runtime the same files at once)
+  let loading = Promise.resolve();
+  function load(opts) { const p = loading.then(() => load1(opts)); loading = p.catch(() => { }); return p; }
+  async function load1(opts) {
     // several cores only on a cross-origin isolated page (sw.js makes the V3 page one); set before the first session
     const ort = window.ort; ort.env.wasm.wasmPaths = opts.base + 'vendor/ort/';
     if (!st.read) ort.env.wasm.numThreads = window.crossOriginIsolated ? Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 4) - 1)) : 1;

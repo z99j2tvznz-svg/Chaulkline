@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.7.1';
+const VERSION = 'V3.7.2';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -323,6 +323,7 @@ ov.addEventListener('pointerup', dragEnd); ov.addEventListener('pointercancel', 
 ov.addEventListener('touchstart', e => { if (A.phase === 'manual') e.preventDefault(); }, { passive: false });
 ov.addEventListener('contextmenu', e => e.preventDefault());
 async function acceptTable() {
+  const my = A.acceptN = (A.acceptN || 0) + 1; // (the table found again while the finder starts: only the latest goes on)
   const c = A.cand; A.quad = c.quad; A.rot = c.rot;
   const { L, Wd } = tableDims(A.ft), f = LENS * Math.max(A.W, A.H);
   A.cam = makeCam(tableCornersFor(A.rot, L, Wd), A.quad, A.W, A.H, f, [A.W / 2, A.H / 2]);
@@ -345,8 +346,9 @@ async function acceptTable() {
       await DET.load({ base: BASE, ep: A.engine === 'gpu' ? 'webgpu' : 'wasm', finder: sh, onProgress: t => setStatus(t) });
       A.shape = [sh.w, sh.h]; dbg('finder', { ep: DET.ep, shape: A.shape, threads: DET.threads(), isolated: !!window.crossOriginIsolated });
       if (A.engine === 'gpu' && DET.ep !== 'webgpu') toast('The graphics chip is not available: using the processor.');
-    } catch (e) { dbg('error', { m: 'finder load ' + String(e && e.message || e).slice(0, 160) }); setStatus('The ball finder could not start: ' + String(e && e.message || e).slice(0, 80)); return; }
+    } catch (e) { if (my !== A.acceptN) return; dbg('error', { m: 'finder load ' + String(e && e.message || e).slice(0, 160) }); setStatus('The ball finder could not start: ' + String(e && e.message || e).slice(0, 80)); return; }
   }
+  if (my !== A.acceptN) return;
   // (corners set on a still picture: the steady check's reference comes from that picture, so the outline follows the phone
   // if it moved since)
   steadyRef(); A.frozen = false; clothRef(); A.tk.setBags(pocketBags(A.cam, A.P)); A.phase = 'run'; setStatus('Watching'); runLoop(); watchStart();
@@ -1026,4 +1028,4 @@ async function saveDebug(btn) {
 function download(z) { try { const a = document.createElement('a'); a.href = URL.createObjectURL(z.blob); a.download = z.name; document.body.appendChild(a); a.click(); setTimeout(() => a.remove(), 500); toast('Debug file saved'); } catch (e) { toast('Could not save the debug file on this phone.'); } }
 
 renderHome();
-window.__v3 = { A, DBG, start, acceptTable, look, packDebug, goHome, WATCH, STORE, STK }; // for the browser tests
+window.__v3 = { A, DBG, DET, start, acceptTable, look, packDebug, goHome, WATCH, STORE, STK }; // for the browser tests

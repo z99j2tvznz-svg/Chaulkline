@@ -1246,3 +1246,15 @@ scoreboard without name counts (the card now takes each share over the sessions 
   automatic check (the cue ball pushed sideways with a level cue is not counted), and a shot not counted is struck through
   in the review's list and left out of every number. The truth for telling hand moves and rakes from shots comes from the
   reviews of the debug files (shot pictures and clips), as before.
+
+## V3.7.2 (Nov 3) — the ball finder started twice
+- Nov 2, 16:55 (V3.7.1, practice, owner: "the ball thing can't run"): the table accepted at 2.6 s; the ball finder still
+  starting (a new version: its files downloaded again) when the table was found and accepted again at 24 s; the second
+  start failed at 56 s with "The object can not be cloned", and no look was ever taken. Cause: on the processor the finder
+  runs in the runtime's background worker, which takes the model's bytes over (postMessage with the buffer moved); the
+  download kept for reuse (detect.js fetchBytes) was then empty, and a second start of the same finder had nothing to
+  send (on Chromium the two starts at once hang instead). Fix: each start gets a copy of the downloaded bytes, starts run
+  one at a time, and only the latest table acceptance goes on to watching (two would have started two loops). Test
+  tests/finder.test.js (two starts at once, then another shape: all three finish; the old code hangs).
+- The camera "would not start at first": not in this file (the camera started at once, 1920 x 1080); it was an earlier
+  opening of the page, not saved.
