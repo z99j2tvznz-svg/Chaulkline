@@ -1361,3 +1361,17 @@ scoreboard without name counts (the card now takes each share over the sessions 
   where it hit) stopped where 88 (0.3 in) did: by the far rail the tracker's place wobbles an inch. Now within two balls
   (4.5 in, was 3.4): 64 and 89 made; 62 (drew back 17 in), 63 (7 in sideways) and 86 (4.8 in) still missed; 60 lost
   the cue ball.
+
+## V3.8.7 (Nov 3) — a drill ball lying in its pocket is in; the table drawn at the cushion noses
+- Owner: in the 20:27 cut ladder he missed only one. By the clips: shot 7 (the 3) rattled in the far right corner and
+  came back out along the far rail (a miss, resting 5.2 in from the pocket); shot 10 (the 1) went in and lay in the
+  pocket's bowl in view, scored a miss. The tracker has a line per far pocket where a ball lying in it shows up (cloth.js
+  pocketBags) and takes a weak spot there (finder score under 0.6) for a ball in the pocket; the 1 sat 0.5 in from the
+  far right's line at 0.67 to 0.70. Raising 0.6 for everything was tried on the 15 recorded sessions: 0.7 or 0.75, 490
+  shots right against 492 (one session 14 of 14 to 11). So only the drill uses it: its object ball resting within 1.5
+  in of its own pocket's line is in (early and at the shot's end; drill_bag). 20:27: 10 made, 7 still a miss.
+- Owner: the outline looked off. Drawn on the 20:54 picture: the table as the app has it (after the diamonds) is right,
+  the pocket mouths at nose height land in every pocket; the outline was drawn at cloth level, the line under the cushion
+  noses, which the near cushion hangs over (so it ran over the near rail's top). Now, checking the table: the outline at
+  the noses' height (1.4 in), on the cushions one sees, with the corners; watching: no outline, a small faint dot at each
+  pocket's mouth (the owner's idea).

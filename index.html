@@ -2712,7 +2712,7 @@ const DRILL = (() => {
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.6';
+const VERSION = 'V3.8.7';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -3457,6 +3457,11 @@ function drillReadyLook() {
   else { if (D.since == null) D.since = performance.now(); if (!D.ready && performance.now() - D.since >= READY_S * 1000) { D.ready = true; dbg('drill_ready', { id: D.id, level: D.level }); } }
   drillTag();
 }
+// A ball resting on its target pocket's bag line (where a ball lying in that pocket shows up, cloth.js pocketBags) is in
+// it (Nov 2 20:27, cut ladder shot 10: the 1 sat in the far right pocket's bowl, in view, scored a miss; the finder's 0.69
+// for it was over the tracker's 0.6 for a ball in a pocket, which on all the recorded sessions cannot be raised without
+// losing more than it gains. The drill knows the pocket, so it can look there.)
+function onBag(pocket, x, y) { const b = (A.tk.O.bags || []).find(q => q.i === pocket); if (!b) return false; const dx = b.bx - b.ax, dy = b.by - b.ay, u = Math.max(0, Math.min(1, ((x - b.ax) * dx + (y - b.ay) * dy) / (dx * dx + dy * dy || 1))); return Math.hypot(x - b.ax - u * dx, y - b.ay - u * dy) <= 1.5; }
 // The drill's object ball in a shot: the ball resting nearest its spot when the shot started (within 8 in)
 function drillOb(sh, st) { const at = b => [b.rx != null ? b.rx : b.x, b.ry != null ? b.ry : b.y]; return (sh.before || []).filter(b => b.num !== 0 && b.key !== sh.cueKey).map(b => ({ b, d: Math.hypot(at(b)[0] - st.O[0], at(b)[1] - st.O[1]) })).filter(x => x.d <= 8).sort((a, b) => a.d - b.d).map(x => x.b)[0] || null; }
 // Scored as soon as the object ball is known (owner, Nov 3: the drill is about the object ball; he stops the cue ball and
@@ -3465,12 +3470,12 @@ function drillOb(sh, st) { const at = b => [b.rx != null ? b.rx : b.x, b.ry != n
 function drillEarly() {
   const D = A.drill, tk = A.tk, sh = tk.S.shot; if (!D || !D.st || !sh || D.id === 'stop' || !A.drillReadyOf.get(sh.n) || D.early === sh.n) return;
   const st = D.st, ob = drillOb(sh, st); if (!ob) return;
-  const inn = sh.made.some(m => m.key === ob.key), tr = tk.S.tracks.find(x => x.key === ob.key);
-  const rested = tr && tr.state === 'rest' && tr.restSince != null && tk.S.t - tr.restSince >= 0.7 && Math.hypot(tr.x - (ob.rx != null ? ob.rx : ob.x), tr.y - (ob.ry != null ? ob.ry : ob.y)) > 2 &&
-    !A.P.pockets.some(q => Math.hypot(q.x - tr.x, q.y - tr.y) < 6);
+  const tr = tk.S.tracks.find(x => x.key === ob.key), still = tr && tr.state === 'rest' && tr.restSince != null && tk.S.t - tr.restSince >= 0.7 && Math.hypot(tr.x - (ob.rx != null ? ob.rx : ob.x), tr.y - (ob.ry != null ? ob.ry : ob.y)) > 2;
+  const bag = still && onBag(st.pocket, tr.x, tr.y), inn = sh.made.some(m => m.key === ob.key) || bag;
+  const rested = still && !bag && !A.P.pockets.some(q => Math.hypot(q.x - tr.x, q.y - tr.y) < 6);
   if (!inn && !rested) return;
-  D.early = sh.n; dbg('drill_early', { n: sh.n, made: inn });
-  drillScore({ n: sh.n, cueKey: sh.cueKey, before: sh.before, made: sh.made.slice(), scratch: false, after: [] }, st, true);
+  D.early = sh.n; dbg('drill_early', { n: sh.n, made: inn, bag: bag || undefined });
+  drillScore({ n: sh.n, cueKey: sh.cueKey, before: sh.before, made: sh.made.concat(bag ? [{ key: ob.key, num: ob.num, pocket: st.pocket, bag: true }] : []), scratch: false, after: [] }, st, true);
 }
 function drillScore(sh, st, early) {
   const D = A.drill; if (!D || D.st !== st) return; // (the drill was changed meanwhile)
@@ -3479,6 +3484,8 @@ function drillScore(sh, st, early) {
   // the object ball never touched and nothing in: the cue ball moved by hand after Ready, not a try
   if (!early) { const ob = drillOb(sh, st), af = ob && (sh.after || []).find(b => b.key === ob.key);
     if (ob && af && !sh.made.length && Math.hypot(af.x - (ob.rx != null ? ob.rx : ob.x), af.y - (ob.ry != null ? ob.ry : ob.y)) < 1) { dbg('drill_untouched', { n: sh.n }); if (r0) r0.notShot = 'setup'; return; } }
+  // (at the shot's end too: the object ball resting in its pocket's bowl, in view, is in)
+  if (!early) { const ob = drillOb(sh, st), af = ob && (sh.after || []).find(b => b.key === ob.key); if (af && !sh.made.some(m => m.key === ob.key) && onBag(st.pocket, af.x, af.y)) { sh = Object.assign({}, sh, { made: sh.made.concat([{ key: ob.key, num: ob.num, pocket: st.pocket, bag: true }]) }); dbg('drill_bag', { n: sh.n }); } }
   const r = DRILL.score(st, sh, A.P);
   if (!r.scored) { toast('Not a drill shot: the object ball was not on its spot.'); return; }
   const t = { id: D.id, level: D.level, value: st.value, made: r.made, pocketed: r.pocketed, stopped: r.stopped, cut: r.cut, n: sh.n }; A.sess.drillTries.push(t);
@@ -3604,12 +3611,21 @@ function drawLoop() {
   const c = ov.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, F.w, F.h);
   const S2 = p => [F.x + p[0] * F.k, F.y + p[1] * F.k];
   if (A.frozen && A.frame.width) c.drawImage(A.frame, F.x, F.y, A.W * F.k, A.H * F.k); // the still picture over the live one
-  // the table outline: the candidate while checking it, the accepted one (faint) while watching
+  // the table (owner, Nov 3: the outline at cloth level looked off; it is the line on the cloth under the cushion noses,
+  // which the near cushion hangs over). While checking it: the outline at the height of the cushion noses (1.4 in), which
+  // runs along the edges one sees, with the corners. While watching: only a small dot at the mouth of each pocket.
   const q = A.phase === 'verify' && A.cand ? A.cand.quad : A.phase === 'run' || A.phase === 'load' ? A.quad : null;
   if (q) {
-    c.strokeStyle = A.phase === 'verify' ? 'rgba(89,214,232,.95)' : 'rgba(89,214,232,.28)'; c.lineWidth = A.phase === 'verify' ? 2.5 : 1.2; c.beginPath();
-    q.forEach((p, i) => { const s = S2(p); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); }); c.closePath(); c.stroke();
-    if (A.phase === 'verify') for (const p of q) { const s = S2(p); c.fillStyle = '#59d6e8'; c.beginPath(); c.arc(s[0], s[1], 6, 0, Math.PI * 2); c.fill(); }
+    const { L, Wd } = tableDims(A.ft), cm = A.phase === 'verify' ? (A.candCam && A.candCam.q === q ? A.candCam.cam : (A.candCam = { q, cam: makeCam(tableCornersFor(A.cand.rot, L, Wd), q, A.W, A.H, LENS * Math.max(A.W, A.H), [A.W / 2, A.H / 2]) }).cam) : A.cam;
+    if (cm && cm.ok !== false) {
+      const NOSE = 1.4, at = (x, y) => S2(cm.proj(x, y, NOSE));
+      if (A.phase === 'verify') {
+        c.strokeStyle = 'rgba(89,214,232,.95)'; c.lineWidth = 2.5; c.beginPath(); let k = 0;
+        for (const [a0, b0] of [[[0, 0], [L, 0]], [[L, 0], [L, Wd]], [[L, Wd], [0, Wd]], [[0, Wd], [0, 0]]]) for (let i = 0; i <= 12; i++) { const t = i / 12, p = at(a0[0] + (b0[0] - a0[0]) * t, a0[1] + (b0[1] - a0[1]) * t); k++ ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]); }
+        c.closePath(); c.stroke();
+        for (const [x, y] of [[0, 0], [L, 0], [L, Wd], [0, Wd]]) { const p = at(x, y); c.fillStyle = '#59d6e8'; c.beginPath(); c.arc(p[0], p[1], 6, 0, Math.PI * 2); c.fill(); }
+      } else for (const pk of A.P.pockets) { const p = at(pk.x, pk.y); c.fillStyle = 'rgba(89,214,232,.55)'; c.beginPath(); c.arc(p[0], p[1], 2.5, 0, Math.PI * 2); c.fill(); }
+    }
   }
   if (A.phase === 'manual' && A.man) drawManual(c, S2, F);
   // a drill's rings as soon as the table is accepted, while the ball finder starts (Nov 2, 16:55: it never started, and
