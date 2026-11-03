@@ -3490,8 +3490,11 @@ function drawLoop() {
     if (A.phase === 'verify') for (const p of q) { const s = S2(p); c.fillStyle = '#59d6e8'; c.beginPath(); c.arc(s[0], s[1], 6, 0, Math.PI * 2); c.fill(); }
   }
   if (A.phase === 'manual' && A.man) drawManual(c, S2, F);
+  // a drill's rings as soon as the table is accepted, while the ball finder starts (Nov 2, 16:55: it never started, and
+  // the rings never showed)
+  if ((A.phase === 'run' || A.phase === 'load') && A.cam) drawDrill(c, S2);
   if (A.phase !== 'run' || !A.tk || !A.cam) return;
-  drawDrill(c, S2); drawBalls(c, S2, F);
+  drawBalls(c, S2, F);
 }
 
 function drawManual(c, S2, F) {

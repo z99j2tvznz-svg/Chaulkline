@@ -1258,3 +1258,5 @@ scoreboard without name counts (the card now takes each share over the sessions 
   tests/finder.test.js (two starts at once, then another shape: all three finish; the old code hangs).
 - The camera "would not start at first": not in this file (the camera started at once, 1920 x 1080); it was an earlier
   opening of the page, not saved.
+- The drill's rings never showed on 16:55 either: they were drawn only while watching, which never began. Now they show as
+  soon as the table is accepted, while the ball finder starts (each ring turns green once a ball is seen on it).
