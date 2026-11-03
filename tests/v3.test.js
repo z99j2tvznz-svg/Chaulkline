@@ -60,7 +60,10 @@ async function run(rot, viewport, sway, strokeTest) {
       await page.click('#menuBtn'); assert.match(await page.textContent('#card'), /Stop checking my stroke/); await page.click('[data-act=close]');
       // V3.6: Menu -> Drills -> Cut ladder: its setup on the table, its line at the bottom
       await page.click('#menuBtn'); await page.click('[data-act=drills]'); await page.click('[data-drill=cut]');
-      assert.match(await page.textContent('#drillTag'), /Cut ladder · straight in · level 1 of 6/);
+      assert.match(await page.textContent('#drillTag'), /Set the balls on the rings.*Cut ladder · straight in · level 1 of 6/s);
+      // V3.7.2: both balls on their rings and the table still: counted down to "Ready: shoot" by itself
+      await page.evaluate(() => { window.drillTaken = () => true; });
+      await page.waitForFunction(() => /Ready: shoot/.test(document.querySelector('#drillTag').textContent), null, { timeout: 15000 });
       const dr = await page.evaluate(() => { const A = window.__v3.A; return [A.drill.st.O, A.drill.st.C].every(p => p[0] > 0 && p[1] > 0 && p[0] < A.P.L && p[1] < A.P.W); }); assert.ok(dr);
       await page.click('#menuBtn'); await page.click('[data-act=drills]'); await page.click('[data-act=drill_stop]'); assert.ok(await page.isHidden('#drillTag'));
     }

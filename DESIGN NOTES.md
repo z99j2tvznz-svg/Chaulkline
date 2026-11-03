@@ -1260,3 +1260,21 @@ scoreboard without name counts (the card now takes each share over the sessions 
   opening of the page, not saved.
 - The drill's rings never showed on 16:55 either: they were drawn only while watching, which never began. Now they show as
   soon as the table is accepted, while the ball finder starts (each ring turns green once a ball is seen on it).
+
+## V3.8.0 (Nov 3) — drills: ready to shoot, and laid out away from the phone
+- Owner, Nov 3: moving a ball onto its ring was taken for a shot; the cut drills had him shooting from where the phone
+  stands (behind the near rail at the middle); the cross-side bank left no room to shoot; the stop shot was fine.
+- Ready to shoot: once a drill is on, both balls on their rings (within 4 in) and the table still for 3 s, counted down
+  in the drill's line at the bottom ("Set the balls on the rings", "Ready in 3, 2, 1", "Ready: shoot"). A shot that
+  starts before "Ready: shoot", or after it only nudges the cue ball (under 6 in, nothing else moved, nothing in), is
+  setting up: not said, not scored, not counted, not listed in the review (kept in the debug file: drill_setup_move;
+  drill_ready when ready). No button: the balls on the rings and still are the signal.
+- Cut ladder: the cue ball stays 3 diamonds from the left end in the middle; the object ball 1.5 diamonds from the far
+  right corner, turned round the pocket toward the end rail until the cut is right (0 to 50 degrees). Shot the long way,
+  from the left end.
+- Thin cuts (as the owner described): the object ball a hair off the right end rail, 1.25 diamonds from the near right
+  corner; the cue ball moves out for each cut, 50 to 77 degrees, shot from the far side or the left.
+- Cross-side bank: the object ball 1.5 diamonds off the near rail (was 1), a quarter to a diamond and a half right of the
+  side pockets (never straight between them), the cue ball 1.2 diamonds behind it; shot from the far side.
+- Test: for every level of every drill, the cue's line traced back off the table (where the player stands) is at least
+  2 diamonds from the middle of the near rail.

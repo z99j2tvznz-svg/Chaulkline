@@ -171,7 +171,8 @@ function renderReview(sess, live) {
   $('#sumRepeatCard').hidden = !RV.reps.length;
   $('#sumRepeats').innerHTML = RV.reps.map((g, i) => { const mk = g.filter(REVIEW.scored).length; return '<button class="srow sbtn" data-g="' + i + '"><b>' + g[0].n + '–' + g[g.length - 1].n + '</b><span>' + g.length + ' tries · ' + (mk ? 'made ' + mk + ' (' + g.map((x, k) => REVIEW.scored(x) ? k + 1 : null).filter(x => x).map(k => k + (k === 1 ? 'st' : k === 2 ? 'nd' : k === 3 ? 'rd' : 'th')).join(', ') + ')' : 'not made') + '</span><i>›</i></button>'; }).join('');
   for (const b of $('#sumRepeats').querySelectorAll('.sbtn')) b.onclick = () => openGroup(+b.dataset.g);
-  $('#sumList').innerHTML = sh.length ? sh.map((s, i) => '<button class="srow sbtn' + (s.notShot ? ' nots' : '') + '" data-i="' + i + '"><b>' + s.n + '</b><span>' + shotWords(s) + '</span><i>›</i></button>').join('') : '<div class="lbl">No shots.</div>';
+  // (setting up a drill: kept in the debug file, not listed)
+  $('#sumList').innerHTML = sh.length ? sh.map((s, i) => s.notShot === 'setup' ? '' : '<button class="srow sbtn' + (s.notShot ? ' nots' : '') + '" data-i="' + i + '"><b>' + s.n + '</b><span>' + shotWords(s) + '</span><i>›</i></button>').join('') : '<div class="lbl">No shots.</div>';
   for (const b of $('#sumList').querySelectorAll('.sbtn')) b.onclick = () => openShot(+b.dataset.i);
   $('#sumDbg').hidden = !live; $('#sumAgain').hidden = !live;
 }
@@ -185,7 +186,9 @@ async function openShot(i) {
   const dw = s.drill && typeof DRILL !== 'undefined' ? ' · drill: ' + DRILL.byId(s.drill.id).name + ', ' + DRILL.byId(s.drill.id).word(s.drill.value) + (s.drill.made ? ', made' : ', missed') : '';
   $('#svWords').textContent = shotWords(s) + dw + (!s.drill && am ? ' · ' + (am.cut < 3 ? 'straight in' : 'a ' + am.cut + '° cut') + ' to the ' + makeP(RV.sess.ft || 7).pocketNames[am.pocket] + ', ' + ftIn(am.toPocket) + ' from the pocket' : ''); const sw = REVIEW.strokeWords(s.stroke); $('#svStroke').textContent = sw || ''; $('#svStroke').hidden = !sw;
   $('#svTable').innerHTML = s.paths || s.before ? REVIEW.diagram(s, RV.sess.ft) : '<div class="lbl">No drawing for this shot (sessions before V3.2 kept none).</div>';
-  $('#svPrev').disabled = i === 0; $('#svNext').disabled = i === sh.length - 1; $('#svPrev').onclick = () => openShot(RV.i - 1); $('#svNext').onclick = () => openShot(RV.i + 1);
+  // (Prev and Next step over drill setup moves, as the list does)
+  const listed = j => sh[j] && sh[j].notShot !== 'setup', pv = (() => { for (let j = i - 1; j >= 0; j--) if (listed(j)) return j; return -1; })(), nx = (() => { for (let j = i + 1; j < sh.length; j++) if (listed(j)) return j; return -1; })();
+  $('#svPrev').disabled = pv < 0; $('#svNext').disabled = nx < 0; $('#svPrev').onclick = () => openShot(pv); $('#svNext').onclick = () => openShot(nx);
   const nm = 'shot' + String(s.n).padStart(3, '0'), seg = $('#svSeg'); seg.innerHTML = ''; const media = $('#svMedia'); media.innerHTML = '';
   // the pictures and the clip: in memory for the session just played, else from the phone's store (the latest two sessions)
   const sid = RV.sess.sid, files = {};

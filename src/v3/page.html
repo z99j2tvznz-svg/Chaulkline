@@ -87,7 +87,7 @@ a.old { color: var(--muted); font-size: 13px; }
 #shotView { position: fixed; inset: 0; overflow-y: auto; z-index: 7; background: var(--bg); padding: calc(env(safe-area-inset-top, 0px) + 16px) calc(env(safe-area-inset-right, 0px) + 16px) calc(env(safe-area-inset-bottom, 0px) + 24px) calc(env(safe-area-inset-left, 0px) + 16px); }
 #shotView .wrap { gap: 12px; } .svhead { justify-content: space-between; } .svhead h2 { margin: 0; font-size: 18px; }
 #svSeg:empty { display: none; }
-#drillTag { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); transform: translateX(-50%); padding: 6px 14px; font: 600 14px var(--f); z-index: 29; pointer-events: none; white-space: nowrap; max-width: 92vw; overflow: hidden; text-overflow: ellipsis; }
+#drillTag { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); transform: translateX(-50%); padding: 6px 14px; font: 600 14px var(--f); z-index: 29; pointer-events: none; max-width: 92vw; text-align: center; line-height: 1.35; }
 .dlist { display: flex; flex-direction: column; gap: 6px; margin: 6px 0; } .dlist .btn { flex-direction: column; align-items: flex-start; text-align: left; padding: 8px 12px; } .dlist small { color: var(--muted); font-weight: 400; font-size: 12px; }
 #histCuts h3, #sumShots h3, #sumDrills h3 { font: 600 13px var(--f); color: var(--muted); margin: 10px 0 4px; } #histCuts h3:first-child, #sumShots h3:first-child, #sumDrills h3:first-child { margin-top: 0; }
 .brow { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 5px 0; font-size: 14px; } .brow b { font-weight: 600; }

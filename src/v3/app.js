@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.7.2';
+const VERSION = 'V3.8.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -122,7 +122,7 @@ const POCKETS = ['bottom-left', 'bottom side', 'bottom-right', 'top-left', 'top 
 function shotWords(s) {
   const pk = i => i == null ? '' : ' (' + POCKETS[i] + ')';
   const made = s.made.filter(m => m.num !== s.cue && m.num !== 0);
-  if (s.notShot) return 'not counted: ' + (s.notShot === 'move' ? 'the cue ball was pushed with the cue, not struck' : 'not a shot');
+  if (s.notShot) return 'not counted: ' + (s.notShot === 'move' ? 'the cue ball was pushed with the cue, not struck' : s.notShot === 'setup' ? 'setting up the drill' : 'not a shot');
   const w = [made.length ? made.map(m => (m.num == null ? 'a ball' : 'the ' + m.num) + pk(m.pocket)).join(', ') + ' in' : 'nothing in'];
   if (s.scratch) w.push('scratch'); if (s.break) w[0] = 'Break: ' + w[0]; else if (s.first != null) w.push('first hit the ' + (s.first === 0 ? 'cue' : s.first));
   return w.join(' · ');
@@ -218,7 +218,7 @@ async function start(mode) {
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P, TK_OPTS(A.mode)); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0;
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P, TK_OPTS(A.mode)); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map();
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
@@ -411,6 +411,7 @@ async function look() {
   if (before !== 'hands' && tk.S.phase === 'hands' && Date.now() - A.handsT > 4000) { A.handsT = Date.now(); clipStart('hands-' + String(++A.handsN).padStart(3, '0'), 2000, 2000); }
   if (tk.S.shots.length > A.nShots) { for (const sh of tk.S.shots.slice(A.nShots)) onShotEnd(sh); A.nShots = tk.S.shots.length; }
   for (const s of tk.S.say.splice(0)) onSay(s);
+  drillReadyLook();
   // in the stroke test the 1 is put back after every pot: no number stays counted in, so it is found and named again
   // (Nov 1: it showed ? every time it came back)
   // a picture of the still table every 1.5 s, kept as the "before" of the next shot
@@ -431,6 +432,7 @@ function onShotStart() {
   PATH.clear(); pathLook(); const sh = A.tk.S.shot; if (!sh) return; const nm = 'shot' + String(sh.n).padStart(3, '0');
   if (A.stillPic) setPic(nm + '-before.jpg', A.stillPic);
   if (A.strokeCheck) sh.test = { check: true };
+  if (A.drill) { A.drillReadyOf.set(sh.n, !!A.drill.ready); A.drill.ready = false; A.drill.since = null; }
   clipStart(nm, A.strokeCheck ? 4000 : 2000, 2000, sh.test || null); strokeShot(sh.n);
   dbg('shot_start', Object.assign({ n: sh.n, test: sh.test }, aroundCue(sh)));
 }
@@ -457,7 +459,14 @@ function onShotEnd(sh) {
   if (A.drill && A.drill.st) { const st = A.drill.st; setTimeout(() => drillScore(sh, st), 2500); }
   jpeg(960).then(b => setPic('shot' + String(sh.n).padStart(3, '0') + '-after.jpg', b)).catch(() => { });
   const row1 = A.sess.shots[A.sess.shots.length - 1], mv = STK.of.get(sh.n); if (mv && mv.move && !row.made.length && !sh.scratch) row1.notShot = 'move';
-  shotToast(row1);
+  // in a drill: moved before "Ready: shoot", or after it the cue ball nudged (under 6 in, nothing else moved, nothing in):
+  // setting up, not a shot; not said, not scored
+  if (A.drill && A.drillReadyOf.has(sh.n)) {
+    const cp = (sh.paths || []).find(p => p.key === sh.cueKey), far = cp ? Math.max(...cp.p.map(q => Math.hypot(q[1] - cp.p[0][1], q[2] - cp.p[0][2]))) : 0;
+    const nudge = far < 6 && !(sh.paths || []).some(p => p.key !== sh.cueKey) && !row.made.length && !sh.scratch;
+    if (!A.drillReadyOf.get(sh.n) || nudge) { row1.notShot = 'setup'; dbg('drill_setup_move', { n: sh.n, ready: A.drillReadyOf.get(sh.n), far: r1(far) }); }
+  }
+  if (row1.notShot !== 'setup') shotToast(row1);
   if (A.sess.shots.length % 3 === 0) { A.lastSess = A.sess; save(); }
 }
 // the shot's line (no tap to correct it: owner, Nov 3, no buttons while playing; what the app gets wrong is found in the
@@ -672,7 +681,23 @@ function drillStart(id) {
 function drillStop() { if (A.drill) dbg('drill_stop', { id: A.drill.id }); A.drill = null; $('#drillTag').hidden = true; hideCard(); }
 function drillSetup() {
   const D = A.drill; D.st = DRILL.setup(D.id, D.level, A.P, viewXY); const ts = (A.sess.drillTries || []).filter(t => t.id === D.id);
-  $('#drillTag').hidden = false; $('#drillTag').textContent = DRILL.byId(D.id).name + ' · ' + D.st.word + ' · level ' + (D.level + 1) + ' of ' + DRILL.byId(D.id).levels.length + (ts.length ? ' · made ' + ts.filter(t => t.made).length + ' of ' + ts.length : '');
+  D.base = DRILL.byId(D.id).name + ' · ' + D.st.word + ' · level ' + (D.level + 1) + ' of ' + DRILL.byId(D.id).levels.length + (ts.length ? ' · made ' + ts.filter(t => t.made).length + ' of ' + ts.length : '');
+  D.ready = false; D.since = null; $('#drillTag').hidden = false; drillTag();
+}
+// Ready to shoot (owner, Nov 3: moving a ball onto its ring was taken for a shot): both balls on their rings and still for
+// 3 s, counted down at the bottom. Anything that moves before "Ready: shoot" is setting up, not a shot.
+const READY_S = 3;
+function drillTag() {
+  const D = A.drill; if (!D || !D.base) return; const left = D.since != null ? READY_S - (performance.now() - D.since) / 1000 : null;
+  $('#drillTag').innerHTML = '<b>' + (D.ready ? 'Ready: shoot' : left != null ? 'Ready in ' + Math.max(1, Math.ceil(left)) : 'Set the balls on the rings') + '</b><br>' + D.base;
+}
+function drillReadyLook() {
+  const D = A.drill; if (!D || !D.st || A.phase !== 'run' || !A.tk) return;
+  if (A.tk.S.phase === 'shot') return; // (a shot running: it was ready or not as it started)
+  const on = A.tk.S.phase === 'still' && drillTaken(D.st.O, false) && drillTaken(D.st.C, true);
+  if (!on) { D.since = null; D.ready = false; }
+  else { if (D.since == null) D.since = performance.now(); if (!D.ready && performance.now() - D.since >= READY_S * 1000) { D.ready = true; dbg('drill_ready', { id: D.id, level: D.level }); } }
+  drillTag();
 }
 function drillScore(sh, st) {
   const D = A.drill; if (!D || D.st !== st) return; // (the drill was changed meanwhile)

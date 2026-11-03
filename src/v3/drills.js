@@ -9,13 +9,15 @@ const DRILL = (() => {
   const hyp = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]), unit = (a, b) => { const d = hyp(a, b) || 1; return [(b[0] - a[0]) / d, (b[1] - a[1]) / d]; };
   // each drill: its levels, and for a level where the balls go (in diamonds as seen: x from the left end, y from the
   // near rail; a diamond is an eighth of the table's length) and the pocket (as seen: the far right corner, ...)
+  // (owner, Nov 3: the phone stands behind the near rail at the middle; no drill may have the player shooting from there.
+  // Cuts go the long way of the table, from the left end; the bank is shot from the far side.)
   const LIST = [
-    { id: 'cut', name: 'Cut ladder', about: 'The object ball a diamond off the far rail, two from the right end, into the far right corner. Straight in first; each make cuts it 10° thinner.',
-      levels: [0, 10, 20, 30, 40, 50], word: c => c ? c + '° cut' : 'straight in', kind: 'cut', ob: [6, 3], pocket: [8, 4], cueDist: 2.8 },
-    { id: 'thin', name: 'Thin cuts', about: 'The same ball and pocket, cut thin: from 45° to 77°, the cue ball closer.',
-      levels: [45, 55, 62, 68, 73, 77], word: c => c + '° cut', kind: 'cut', ob: [6, 3], pocket: [8, 4], cueDist: 1.9 },
-    { id: 'bank', name: 'Cross-side bank', about: 'The object ball a diamond off the near rail, banked off it into the far side pocket. Each make moves the ball a quarter diamond to the right, so the bank is cut.',
-      levels: [0, 0.25, 0.5, 0.75, 1, 1.25], word: o => o ? o + ' diamond' + (o > 1 ? 's' : '') + ' right' : 'straight across', kind: 'bank', ob: [4, 1], pocket: [4, 4], cueDist: 1.4 },
+    { id: 'cut', name: 'Cut ladder', about: 'The cue ball 3 diamonds from the left end, in the middle; the object ball a diamond and a half from the far right corner. Straight in first; each make moves the object ball round toward the short rail, 10° thinner.',
+      levels: [0, 10, 20, 30, 40, 50], word: c => c ? c + '° cut' : 'straight in', kind: 'turn', cue: [3, 2], pocket: [8, 4], obDist: 1.5 },
+    { id: 'thin', name: 'Thin cuts', about: 'The object ball almost against the right end rail, a diamond and a quarter from the near right corner; the cue ball moves out for each cut, from 50° to 77°, shot from the far side.',
+      levels: [50, 57, 63, 68, 73, 77], word: c => c + '° cut', kind: 'cut', ob: 'rail', obFrom: 1.25, pocket: [8, 0], cueDist: 2.5 },
+    { id: 'bank', name: 'Cross-side bank', about: 'The object ball a diamond and a half off the near rail, a little right of the side pockets, banked off the near rail into the far side pocket, shot from the far side. Each make moves it a quarter diamond further right.',
+      levels: [0.25, 0.5, 0.75, 1, 1.25, 1.5], word: o => o + ' diamond' + (o > 1 ? 's' : '') + ' right', kind: 'bank', ob: [4, 1.5], pocket: [4, 4], cueDist: 1.2 },
     { id: 'stop', name: 'Stop shot', about: 'Straight into the far right corner; the cue ball has to stop within a ball and a half of where it hit. Each make puts the cue ball a step further back.',
       levels: [1.2, 2, 2.8, 3.6, 4.4], word: d => d + ' diamonds back', kind: 'stop', ob: [6.6, 3.3], pocket: [8, 4], cueDist: null },
   ];
@@ -25,7 +27,22 @@ const DRILL = (() => {
     const d = byId(id), v = d.levels[Math.max(0, Math.min(d.levels.length - 1, level))], dia = P.L / 8, R = P.R, T = p => view(p[0], p[1]);
     const pkAt = T(d.pocket), pocket = P.pockets.reduce((b, q, i) => Math.hypot(q.x - pkAt[0], q.y - pkAt[1]) < Math.hypot(P.pockets[b].x - pkAt[0], P.pockets[b].y - pkAt[1]) ? i : b, 0);
     const Pk = [P.pockets[pocket].x, P.pockets[pocket].y];
-    let O = T(d.ob), aimAt = Pk;
+    let O = d.ob === 'rail' ? null : d.ob ? T(d.ob) : null, aimAt = Pk;
+    // the object ball almost against the end rail by the pocket (a hair off the cushion), obFrom diamonds along it
+    if (d.ob === 'rail') { const e = T([d.pocket[0] ? 8 : 0, d.pocket[1] ? 4 - d.obFrom : d.obFrom]); O = [e[0] < P.L / 2 ? R + 0.3 : P.L - R - 0.3, e[1]]; }
+    // the cue ball where it is set (cue); the object ball obDist diamonds from the pocket, turned round it until the cut is
+    // right, on the side toward the end rail (the cut gets thinner as it comes round)
+    if (d.kind === 'turn') {
+      const C0 = T(d.cue), r = d.obDist * dia, m = R + 1; let best = null;
+      for (let t = 0; t < 360; t += 0.25) {
+        const o = [Pk[0] + r * Math.cos(t * D2), Pk[1] + r * Math.sin(t * D2)]; if (!(o[0] > m && o[1] > m && o[0] < P.L - m && o[1] < P.W - m)) continue;
+        const u = unit(o, Pk), g = [o[0] - 2 * R * u[0], o[1] - 2 * R * u[1]], a = Math.atan2(u[1], u[0]) - Math.atan2(g[1] - C0[1], g[0] - C0[0]), cut = Math.abs(((a / D2) + 540) % 360 - 180);
+        if (Math.abs(cut - v) > 0.4) continue; const side = Math.abs(o[0] - Pk[0]);
+        if (!best || side < best.side) best = { o, side };
+      }
+      O = best.o; const u = unit(O, Pk), G = [O[0] - 2 * R * u[0], O[1] - 2 * R * u[1]];
+      return { id, level, value: v, word: d.word(v), O, C: C0, G, pocket, aimAt: Pk, Pk };
+    }
     if (d.kind === 'bank') { O = T([d.ob[0] + v, d.ob[1]]); const near = T([d.ob[0], 0]); aimAt = [Pk[0], 2 * near[1] + (near[1] < P.W / 2 ? R : -R) * 2 - Pk[1]]; } // the pocket's mirror in the near cushion
     if (d.kind === 'stop') { const u0 = unit(Pk, T([4, 2])); O = [Pk[0] + u0[0] * 1.4 * dia, Pk[1] + u0[1] * 1.4 * dia]; }
     const u = unit(O, aimAt), G = [O[0] - 2 * R * u[0], O[1] - 2 * R * u[1]];

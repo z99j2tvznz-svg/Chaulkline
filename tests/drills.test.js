@@ -9,10 +9,10 @@ const shot = (st, o = {}) => ({ before: [{ key: 1, num: 0, x: st.C[0], y: st.C[1
 
 test('every level of every drill sets out on the table, as cut as it says', () => {
   for (const d of DRILL.LIST) d.levels.forEach((v, l) => {
-    const st = DRILL.setup(d.id, l, P, view), on = p => p && p[0] > 2 && p[1] > 2 && p[0] < P.L - 2 && p[1] < P.W - 2;
+    const st = DRILL.setup(d.id, l, P, view), on = p => p && p[0] >= P.R && p[1] >= P.R && p[0] <= P.L - P.R && p[1] <= P.W - P.R; // (the thin cut's ball is meant to sit almost against the rail)
     assert.ok(on(st.O) && on(st.C), d.id + ' ' + l + ' ' + JSON.stringify(st));
     const r = DRILL.score(st, shot(st), P); assert.ok(r.scored && r.made, d.id + ' ' + l);
-    if (d.kind === 'cut') assert.ok(Math.abs(r.cut - v) <= 1, d.id + ' ' + l + ' cut ' + r.cut);
+    if (d.kind === 'cut' || d.kind === 'turn') assert.ok(Math.abs(r.cut - v) <= 1, d.id + ' ' + l + ' cut ' + r.cut);
   });
 });
 
@@ -38,4 +38,21 @@ test('progressive: up a level on a make, down on a miss, within the drill', () =
   assert.deepStrictEqual([DRILL.next('cut', 0, true), DRILL.next('cut', 0, false), DRILL.next('cut', 5, true), DRILL.next('cut', 3, false)], [1, 0, 5, 2]);
   const s = DRILL.summary([{ id: 'cut', level: 0, made: true }, { id: 'cut', level: 1, made: false }, { id: 'cut', level: 0, made: true }]);
   assert.deepStrictEqual(s.map(x => [x.id, x.tries, x.made, x.best]), [['cut', 3, 2, 0]]);
+});
+
+test('no drill is shot from where the phone stands (owner, Nov 3: the phone behind the near rail at the middle)', () => {
+  for (const d of DRILL.LIST) d.levels.forEach((v, l) => {
+    const st = DRILL.setup(d.id, l, P, view), u = [st.G[0] - st.C[0], st.G[1] - st.C[1]], n = Math.hypot(...u);
+    // back along the cue from the cue ball to where it leaves the table: where the player stands
+    let p = st.C.slice(); while (p[0] > 0 && p[1] > 0 && p[0] < P.L && p[1] < P.W) p = [p[0] - u[0] / n, p[1] - u[1] / n];
+    const fromPhone = Math.hypot(p[0] - P.L / 2, p[1]) / dia;
+    assert.ok(fromPhone >= 2, d.id + ' ' + st.word + ': stands ' + fromPhone.toFixed(1) + ' diamonds from the phone at ' + (p[0] / dia).toFixed(1) + ',' + (p[1] / dia).toFixed(1));
+  });
+});
+
+test('the cut ladder: the cue ball stays put, the object ball comes round toward the end rail as the cut grows; thin cuts: the ball against the end rail', () => {
+  const sts = DRILL.byId('cut').levels.map((v, l) => DRILL.setup('cut', l, P, view));
+  assert.ok(sts.every(st => st.C[0] === sts[0].C[0] && st.C[1] === sts[0].C[1]));
+  for (let i = 1; i < sts.length; i++) assert.ok(sts[i].O[0] > sts[i - 1].O[0], 'closer to the right end rail at each level');
+  const th = DRILL.setup('thin', 0, P, view); assert.ok(P.L - th.O[0] < P.R + 0.5, 'against the end rail'); assert.strictEqual(P.pocketNames[th.pocket], 'bottom-right');
 });
