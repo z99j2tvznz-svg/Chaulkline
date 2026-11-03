@@ -78,7 +78,8 @@ const STROKE = (() => {
       const off = Math.round(angd(Math.atan2(j.fb[1] - p0.fb[1], j.fb[0] - p0.fb[0]) / D2, a0 + 180));
       if (Math.abs(off) > 110) continue; // the ferrule (seen at 130 to 180 degrees on Nov 1 20:06)
       const read = share >= 0.8 && level <= 12; // (a cue 18 degrees off level came down from the far side on a real shot, 20:06 shot 20)
-      return { move: read && Math.abs(off) >= 45, off, cue: a0, read, why: read ? 'side' : 'not side' };
+      const runs = obs.filter(q => q.ang != null && q.t >= o.t - 1100 && q.t <= o.t - 80 && Math.abs(angd(q.ang, a0)) <= 8).map(q => q.run).sort((x, y) => x - y), run = runs.length ? runs[runs.length >> 1] : 0;
+      return { move: read && Math.abs(off) >= 45, off, cue: a0, read, why: read ? 'side' : 'not side', run };
     }
     return { move: false, why: 'no start' };
   }

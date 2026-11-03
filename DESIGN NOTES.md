@@ -1307,3 +1307,11 @@ scoreboard without name counts (the card now takes each share over the sessions 
   sway test still passes. (Smoothing over several looks was tried first: it lagged a swaying phone and failed that test.)
 - Speed on 18:04: the finder about 260 ms a look, the watcher 29 frames a second, as before; the drill's slowness was the
   3 s countdown.
+
+## V3.8.3 (Nov 3) — the move check decides nothing
+- The 18:04 session: the V3.7 move check threw out 8 real cross-side bank shots (45 to 53; the misses, so they were not
+  scored either). Shot from the far side, the cue is seen end on, short and upright in the picture; the detector took
+  another line, level in the picture (352 to 2 degrees), and the ball leaving toward the near rail was 80 to 100 degrees
+  off it. The cue's run length does not tell it (26 to 31 px here, the real push of 21:18 10 was 27, real shots 24 to
+  29). One real push found in all, against 8 real shots lost: the check now only logs (move_check), and the drills'
+  Ready to shoot handles setting up. The tool keeps the check, with the cue's run, for measuring.

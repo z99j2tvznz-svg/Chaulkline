@@ -2563,7 +2563,8 @@ const STROKE = (() => {
       const off = Math.round(angd(Math.atan2(j.fb[1] - p0.fb[1], j.fb[0] - p0.fb[0]) / D2, a0 + 180));
       if (Math.abs(off) > 110) continue; // the ferrule (seen at 130 to 180 degrees on Nov 1 20:06)
       const read = share >= 0.8 && level <= 12; // (a cue 18 degrees off level came down from the far side on a real shot, 20:06 shot 20)
-      return { move: read && Math.abs(off) >= 45, off, cue: a0, read, why: read ? 'side' : 'not side' };
+      const runs = obs.filter(q => q.ang != null && q.t >= o.t - 1100 && q.t <= o.t - 80 && Math.abs(angd(q.ang, a0)) <= 8).map(q => q.run).sort((x, y) => x - y), run = runs.length ? runs[runs.length >> 1] : 0;
+      return { move: read && Math.abs(off) >= 45, off, cue: a0, read, why: read ? 'side' : 'not side', run };
     }
     return { move: false, why: 'no start' };
   }
@@ -2711,7 +2712,7 @@ const DRILL = (() => {
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.2';
+const VERSION = 'V3.8.3';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -3168,7 +3169,9 @@ function onShotEnd(sh) {
   dbg('shot_end', { n: sh.n, made: row.made, scratch: sh.scratch, first: sh.firstNum });
   if (A.drill && A.drill.st) { const st = A.drill.st; setTimeout(() => drillScore(sh, st), 2500); }
   jpeg(960).then(b => setPic('shot' + String(sh.n).padStart(3, '0') + '-after.jpg', b)).catch(() => { });
-  const row1 = A.sess.shots[A.sess.shots.length - 1], mv = STK.of.get(sh.n); if (mv && mv.move && !row.made.length && !sh.scratch) row1.notShot = 'move';
+  // (the move check, V3.7, only logs now: on Nov 2 18:04 it threw out 8 real bank shots, a cue seen end on read as a level
+  // line; it had found 1 real push in all)
+  const row1 = A.sess.shots[A.sess.shots.length - 1];
   // in a drill: moved before "Ready: shoot", or after it the cue ball nudged (under 6 in, nothing else moved, nothing in):
   // setting up, not a shot; not said, not scored
   if (A.drill && A.drillReadyOf.has(sh.n)) {
@@ -3501,11 +3504,10 @@ function strokeShot(n) {
     const level = med != null && Math.min(Math.abs(((med + 180) % 180)), 180 - ((med + 180) % 180)) <= 25, seen = pre.length ? angs.length / pre.length : 0;
     const st = r && r.strike != null ? { early: r2((t - r.strike) / 1000), side: level && seen >= 0.6, strokes: r.strokes, back: r.backLen, pause: r.pause, follow: r.follow, seen: r2(seen), ang: med } : { none: true };
     dbg('stroke', Object.assign({ n }, st, r && r.curve ? { curve: r.curve.map(c => [c[0] - t, c[1]]) } : {}));
-    // pushed with the cue rather than struck (see STROKE.moveCheck): the shot is not counted, unless a ball went in
+    // pushed with the cue rather than struck (see STROKE.moveCheck): logged only, for measuring (it decides nothing since V3.8.3)
     let mv = null; try { mv = obs.length > 10 ? STROKE.moveCheck(obs, t, toTable) : null; } catch (e) { dbg('error', { m: 'move ' + String(e && e.message || e).slice(0, 100) }); }
     if (mv) { st.move = mv.move; dbg('move_check', Object.assign({ n }, mv)); }
     STK.of.set(n, st); const row = A.sess && A.sess.shots.find(x => x.n === n); if (row) row.stroke = st;
-    if (row && mv && mv.move && !row.notShot && !row.made.length && !row.scratch) { row.notShot = 'move'; shotToast(row); }
     if (A.strokeCheck) toast('Shot ' + n + ' · ' + (REVIEW.strokeWords(st) || 'Stroke: the cue was not seen.').replace(/^Stroke: /, ''), 7000);
     STK.shotT = null; STK.rest0 = null; STK.obs = [];
   }, 1600);
