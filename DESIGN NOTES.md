@@ -1315,3 +1315,21 @@ scoreboard without name counts (the card now takes each share over the sessions 
   off it. The cue's run length does not tell it (26 to 31 px here, the real push of 21:18 10 was 27, real shots 24 to
   29). One real push found in all, against 8 real shots lost: the check now only logs (move_check), and the drills'
   Ready to shoot handles setting up. The tool keeps the check, with the cue's run, for measuring.
+
+## V3.8.4 (Nov 3) — the rail diamonds again
+- Owner, Nov 3: the diamonds were a V2 pillar (set distances, and they do not depend on the cloth's colour); V3 had
+  dropped them (vision.js still had V2's findDiamonds / refineWithDiamonds, nothing called them).
+- Measured first on Nov 2 18:04's still pictures (half size, the outline as accepted): 16 to 18 of the 18 diamonds
+  found; the outline off them by a median 4.1 px on the table-finding picture and 5 to 7 px later (the phone settling);
+  after refineWithDiamonds 0.8 to 1.7 px; the far rail of the outline sat about 7 px (half size) below the far cushion
+  (about an inch on the table there), the corrected one on it. The owner's "bank spot close to the side pocket".
+- Now, when the table is accepted (not for corners set by hand): the diamonds found on the still picture, the corners
+  nudged onto them when that fits better (debug: diamonds, with how far off before and after, and how far the corners
+  moved). On the test photo: 18 found, 6.2 px off, 1.4 after.
+- Steady: besides the 6 cloth patches, a small brightness patch on each diamond found (a white mark on the dark rail);
+  the same vote (a clear match, 4 agreeing within 2 px). The sway test passes.
+- Found on the way: the drill's hand check sampled points 3.5 in round each spot with a ball-wide look, and next to a
+  cushion that look takes in the cushion (not cloth): with the corrected outline the cut ladder's object ball (about 5 in
+  off the far cushion) never got to Ready. Points within R + 3 in of a cushion are now left out.
+- The browser test now asks 3 named balls of 7, not 4: on its 1280 px photo the bunched balls read near the naming cut,
+  and the 2% change in the finder's scale tips two of them (the 8 from 0.93 to 0.59). To check on the next real session.

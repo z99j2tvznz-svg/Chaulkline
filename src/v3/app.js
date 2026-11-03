@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.3';
+const VERSION = 'V3.8.4';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -322,9 +322,26 @@ ov.addEventListener('pointerup', dragEnd); ov.addEventListener('pointercancel', 
 // on the picture does nothing of Safari's while the corners are set)
 ov.addEventListener('touchstart', e => { if (A.phase === 'manual') e.preventDefault(); }, { passive: false });
 ov.addEventListener('contextmenu', e => e.preventDefault());
+// The rail diamonds (a V2 pillar, owner Nov 3: they sit at set distances and do not depend on the cloth's colour). On the
+// still picture the table was found on: every small white mark round the rails, matched to where the diamonds should be,
+// and the corners nudged until they land on them (vision.js, as V2 did). On Nov 2 18:04's still pictures 16 to 18 of the
+// 18 were found; the outline as found was off them by a median of 4 to 7 px (half size; about an inch at the far rail),
+// 1 px after. The marks found are kept for the steady check.
+function diamondFit() {
+  A.dia = null;
+  try {
+    if (!A.fctx || !A.W) return; const img = A.fctx.getImageData(0, 0, A.W, A.H), pp = [A.W / 2, A.H / 2];
+    const med = d => { const e = d.found.map(f => Math.hypot(f.px - f.ex, f.py - f.ey)).sort((a, b) => a - b); return e.length ? e[e.length >> 1] : null; };
+    const d = findDiamonds(img, A.quad, A.rot, A.ft, LENS, pp); let use = d, moved = 0;
+    if (d.n >= 8) { const rq = refineWithDiamonds(img, A.quad, A.rot, A.ft, LENS, d, pp);
+      if (rq) { const d2 = findDiamonds(img, rq, A.rot, A.ft, LENS, pp); if (d2.n >= d.n - 1 && med(d2) < med(d)) { moved = Math.max(...rq.map((q, i) => Math.hypot(q[0] - A.quad[i][0], q[1] - A.quad[i][1]))); A.quad = rq; use = d2; } } }
+    A.dia = use.n >= 8 ? use.found.map(f => [f.px, f.py]) : null;
+    dbg('diamonds', { n: d.n, off: d.n ? r1(med(d)) : null, after: r1(med(use) || 0), moved: r1(moved), D: use.D, z: use.z });
+  } catch (e) { dbg('error', { m: 'diamonds ' + String(e && e.message || e).slice(0, 100) }); }
+}
 async function acceptTable() {
   const my = A.acceptN = (A.acceptN || 0) + 1; // (the table found again while the finder starts: only the latest goes on)
-  const c = A.cand; A.quad = c.quad; A.rot = c.rot;
+  const c = A.cand; A.quad = c.quad; A.rot = c.rot; if (!c.manual) diamondFit(); else A.dia = null;
   const { L, Wd } = tableDims(A.ft), f = LENS * Math.max(A.W, A.H);
   A.cam = makeCam(tableCornersFor(A.rot, L, Wd), A.quad, A.W, A.H, f, [A.W / 2, A.H / 2]);
   if (A.drill) drillSetup(); // (the rings follow the table found again)
@@ -544,7 +561,7 @@ function jpeg(w) {
 // outline (and with it every ball's table position) is moved to match. Always measured against the accepted outline, so
 // small errors do not add up. A ball or a hand over a pocket only removes that one picture from the vote.
 const STEADY = { ref: null, h: 20, S: 15, cv: document.createElement('canvas'), n: 0, last: null };
-function feat(d, n) { const o = new Float32Array(n); for (let i = 0, j = 0; i < n; i++, j += 4) o[i] = d[j + 2] - d[j]; return o; } // blue minus red: cloth high, rails and pockets low
+function feat(d, n, lum) { const o = new Float32Array(n); for (let i = 0, j = 0; i < n; i++, j += 4) o[i] = lum ? d[j] + d[j + 1] + d[j + 2] : d[j + 2] - d[j]; return o; } // blue minus red: cloth high, rails and pockets low; or brightness (a diamond: a white mark on the rail)
 function steadyGrab() {
   const w = Math.round(A.W / 2), h = Math.round(A.H / 2), c = STEADY.cv; if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
   const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(A.frame, 0, 0, w, h); return x;
@@ -556,10 +573,16 @@ function steadyRef() {
     for (const [px, py] of steadyPts()) {
       const cx = Math.round(px / 2), cy = Math.round(py / 2); if (cx - h < 0 || cy - h < 0 || cx + h > STEADY.cv.width || cy + h > STEADY.cv.height) { ref.push(null); continue; }
       const f = feat(x.getImageData(cx - h, cy - h, 2 * h, 2 * h).data, 4 * h * h); let m = 0; for (const v of f) m += v; m /= f.length; let sd = 0; for (const v of f) sd += (v - m) ** 2; sd = Math.sqrt(sd / f.length);
-      ref.push(sd > 8 ? { cx, cy, f, m, sd } : null); // a flat patch (no edge in it) cannot show a move
+      ref.push(sd > 8 ? { cx, cy, f, m, sd, h } : null); // a flat patch (no edge in it) cannot show a move
+    }
+    // and each diamond found (V3.8.4): a small patch of brightness round it, at half size
+    for (const [px, py] of A.dia || []) {
+      const hd = 7, cx = Math.round(px / 2), cy = Math.round(py / 2); if (cx - hd < 0 || cy - hd < 0 || cx + hd > STEADY.cv.width || cy + hd > STEADY.cv.height) continue;
+      const f = feat(x.getImageData(cx - hd, cy - hd, 2 * hd, 2 * hd).data, 4 * hd * hd, true); let m = 0; for (const v of f) m += v; m /= f.length; let sd = 0; for (const v of f) sd += (v - m) ** 2; sd = Math.sqrt(sd / f.length);
+      if (sd > 20) ref.push({ cx, cy, f, m, sd, h: hd, lum: true });
     }
     STEADY.ref = ref; STEADY.quad0 = A.quad.map(p => p.slice()); STEADY.n = 0; STEADY.last = null;
-    dbg('steady_ref', { patches: ref.filter(Boolean).length });
+    dbg('steady_ref', { patches: ref.filter(Boolean).length, diamonds: ref.filter(r => r && r.lum).length });
   } catch (e) { STEADY.ref = null; dbg('error', { m: 'steady ref ' + String(e).slice(0, 80) }); }
 }
 function ncc(f, m, sd, g, gw, ox, oy, h) {
@@ -570,11 +593,11 @@ function ncc(f, m, sd, g, gw, ox, oy, h) {
 function steady() {
   const R = STEADY.ref; if (!R || !A.cam) return;
   STEADY.n++; // every look, on the same picture the finder is about to see, so the balls and the outline move together
-  const x = steadyGrab(), h = STEADY.h, S = STEADY.S, found = [];
+  const x = steadyGrab(), S = STEADY.S, found = [];
   R.forEach((r, i) => {
-    if (!r) return; const gw = 2 * (h + S), x0 = r.cx - h - S, y0 = r.cy - h - S;
+    if (!r) return; const h = r.h, gw = 2 * (h + S), x0 = r.cx - h - S, y0 = r.cy - h - S;
     if (x0 < 0 || y0 < 0 || x0 + gw > STEADY.cv.width || y0 + gw > STEADY.cv.height) return;
-    const g = feat(x.getImageData(x0, y0, gw, gw).data, gw * gw);
+    const g = feat(x.getImageData(x0, y0, gw, gw).data, gw * gw, r.lum);
     let best = -2, bx = 0, by = 0;
     for (let dy = 0; dy <= 2 * S; dy += 2) for (let dx = 0; dx <= 2 * S; dx += 2) { const c = ncc(r.f, r.m, r.sd, g, gw, dx, dy, h); if (c > best) { best = c; bx = dx; by = dy; } }
     for (let dy = Math.max(0, by - 1); dy <= Math.min(2 * S, by + 1); dy++) for (let dx = Math.max(0, bx - 1); dx <= Math.min(2 * S, bx + 1); dx++) { const c = ncc(r.f, r.m, r.sd, g, gw, dx, dy, h); if (c > best) { best = c; bx = dx; by = dy; } }
@@ -703,7 +726,8 @@ function handAtSpots(st) {
   const balls = A.tk.balls().filter(b => b.state !== 'hidden');
   for (const p of [st.O, st.C]) { if (!p) continue; let n = 0;
     for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4, x = p[0] + 3.5 * Math.cos(a), y = p[1] + 3.5 * Math.sin(a);
-      if (x < A.P.R || y < A.P.R || x > A.P.L - A.P.R || y > A.P.W - A.P.R || balls.some(b => Math.hypot(b.x - x, b.y - y) < 2.5)) continue;
+      const m = A.P.R + 3; // (the check looks at a ball's width round the point: kept off the cushions, which are not cloth)
+      if (x < m || y < m || x > A.P.L - m || y > A.P.W - m || balls.some(b => Math.hypot(b.x - x, b.y - y) < 2.5)) continue;
       if (emptyAt(x, y) === false) n++; }
     if (n >= 2) { dbgOnce('drill_hand', 2000, { at: p.map(r1), n }); return true; } }
   return false;
