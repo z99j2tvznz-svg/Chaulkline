@@ -25,8 +25,8 @@ test('finder and reader in the browser match the Python reference on the verifie
       const out = await page.evaluate(async ({ url, labels }) => {
         const im = new Image(); im.src = url; await im.decode();
         const cv = document.createElement('canvas'); cv.width = im.naturalWidth; cv.height = im.naturalHeight; const c = cv.getContext('2d'); c.drawImage(im, 0, 0);
-        const img = c.getImageData(0, 0, cv.width, cv.height), spots = await DET.find(cv, cv.width, cv.height); await DET.read(img, spots);
-        const atLabels = await DET.read(img, labels.map(b => ({ px: b.x, py: b.y, r: b.r })));
+        const img = c.getImageData(0, 0, cv.width, cv.height), spots = await DET.find(cv, cv.width, cv.height), nine = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; await DET.read(img, spots, nine); // 9-ball frames
+        const atLabels = await DET.read(img, labels.map(b => ({ px: b.x, py: b.y, r: b.r })), nine);
         return { spots: spots.map(s => ({ px: s.px, py: s.py, r: s.r, num: s.num, kind: s.kind })), atLabels: atLabels.map(s => ({ num: s.num, kind: s.kind })) };
       }, { url: srv.url + '/tests/fixtures/v3/' + encodeURIComponent(jpgOf(name)), labels });
       const ref = REF[name]['960x544']; tot.refSpots += ref.length;

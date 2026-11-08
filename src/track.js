@@ -85,10 +85,14 @@ function makeTracker(P, opts) {
   // in, the struck ball left on the table), so matching weighs this. The 9 counts as white here: the owner's 9 is a white
   // ball with a yellow band, and the reader takes the cue ball for the 9 now and then (Oct 26: the resting cue ball read
   // "9, sure" once and its own track refused the spot). Cue ball or 9 is settled by the votes and the colour shares.
-  const wIds = [O.ids.indexOf(0), O.ids.indexOf(9)].filter(i => i >= 0);
+  // With all fifteen balls (V3.9.0) the stripes 10-15 count as white too: each is half white, and seen end on the white
+  // cap fills the picture. With the nine balls of 9-ball (ids 0-9) this is the cue ball and the 9 as before.
+  const wNums = O.ids.filter(n => n === 0 || n >= 9), wIds = wNums.map(n => O.ids.indexOf(n));
   const whiteOf = tr => tr.pin === 0 || tr.pin === 9 ? 1 : tr.pin != null ? 0 : tr.nVotes >= 1.5 ? wIds.reduce((a, i) => a + Math.exp(tr.votes[i] / tr.nVotes), 0) : null;
-  const whiteSp = sp => sp.p && sp.p[10] < 0.5 ? (sp.p[0] + sp.p[9]) / (1 - sp.p[10]) : null; // a blurred "not a ball" read says nothing
-  const topNum = p => { let b = 0; for (let i = 1; i < 10; i++) if (p[i] > p[b]) b = i; return b; };
+  // the reader's probabilities: one per ball number, then "not a ball" last (11 with reader v2, 17 with reader v3)
+  const nbOf = p => p[p.length - 1];
+  const whiteSp = sp => sp.p && nbOf(sp.p) < 0.5 ? wNums.reduce((a, n) => a + (sp.p[n] || 0), 0) / (1 - nbOf(sp.p)) : null; // a blurred "not a ball" read says nothing
+  const topNum = p => { let b = O.ids[0]; for (const i of O.ids) if ((p[i] || 0) > (p[b] || 0)) b = i; return b; };
   const wGap = (tr, sp) => { const a = whiteOf(tr), b = whiteSp(sp); return a == null || b == null ? 0 : Math.abs(a - b); };
   // The reader also runs on rolling balls, and on the owner's phone it is sure of most of them even blurred (Oct 28: on a
   // hard hit, 3,124 of 3,215 spots during shots read "sure"). The finder saw the balls on almost every look; the tracker
@@ -97,7 +101,9 @@ function makeTracker(P, opts) {
   // in motion. The 9 is read as the cue ball or the 1 now and then (white with a yellow band).
   const readOf = sp => sp.kind === 'sure' && sp.p ? topNum(sp.p) : null;
   const named = tr => tr.num != null && (tr.pin != null || tr.sure);
-  const mixed = (a, b) => (a === 9 && (b === 0 || b === 1)) || (b === 9 && (a === 0 || a === 1));
+  // a stripe is also read as its solid (the same colour, the band turned away) or as the cue ball (the white cap end on)
+  const mixed = (a, b) => (a === 9 && (b === 0 || b === 1)) || (b === 9 && (a === 0 || a === 1)) ||
+    (a >= 10 && (b === a - 8 || b === 0)) || (b >= 10 && (a === b - 8 || a === 0));
   const readSame = (tr, sp) => named(tr) && readOf(sp) === tr.num;
   const readOther = (tr, sp) => { const r = readOf(sp); return named(tr) && r != null && r !== tr.num && !mixed(r, tr.num); };
 
@@ -122,7 +128,7 @@ function makeTracker(P, opts) {
   }
 
   function newTrack(sp, t) {
-    return { key: ++keyN, x: sp.x, y: sp.y, vx: 0, vy: 0, state: 'new', ok: false, firstT: t, seenT: t, looks: 1, seen: 1, nbSum: sp.p ? sp.p[10] : 0, nbN: sp.p ? 1 : 0, wS: whiteSp(sp) || 0, wN: whiteSp(sp) == null ? 0 : 1,
+    return { key: ++keyN, x: sp.x, y: sp.y, vx: 0, vy: 0, state: 'new', ok: false, firstT: t, seenT: t, looks: 1, seen: 1, nbSum: sp.p ? nbOf(sp.p) : 0, nbN: sp.p ? 1 : 0, wS: whiteSp(sp) || 0, wN: whiteSp(sp) == null ? 0 : 1,
       restX: sp.x, restY: sp.y, restSince: t, hist: [{ t, x: sp.x, y: sp.y }], votes: new Float64Array(O.ids.length), nVotes: 0, num: null, sure: false, pin: null, lostT: null, pocket: null, sp,
       rd: readOf(sp) == null ? [] : [readOf(sp)] };
   }
@@ -273,7 +279,7 @@ function makeTracker(P, opts) {
       tr.vx = k * vx + (1 - k) * tr.vx; tr.vy = k * vy + (1 - k) * tr.vy;
       tr.x = sp.x; tr.y = sp.y; tr.sp = sp; tr.seenT = t; tr.seen++; tr.lostT = null;
       (tr.hist = tr.hist || []).push({ t, x: sp.x, y: sp.y }); while (tr.hist.length && t - tr.hist[0].t > 1) tr.hist.shift();
-      if (sp.p) { tr.nbSum += sp.p[10]; tr.nbN++; } if (whiteSp(sp) != null) { tr.wS += whiteSp(sp); tr.wN++; }
+      if (sp.p) { tr.nbSum += nbOf(sp.p); tr.nbN++; } if (whiteSp(sp) != null) { tr.wS += whiteSp(sp); tr.wN++; }
       if (!tr.ok && sp.p && sp.kind === 'sure') (tr.rd = tr.rd || []).push(topNum(sp.p));
       tr.emptyN = 0;
       // seen again after it was lost at a pocket: it did not go in (yet); back to rolling, and the rest test below decides
@@ -505,13 +511,13 @@ function makeTracker(P, opts) {
       // next to another ball the crop shows both: only a sure read counts there (the Oct 20 benchmark: on balls within 2.5
       // radii of another the reader was sure 8 times, all right, and unsure or "not a ball" the other 104 times)
       if (sp.kind !== 'sure' && spots.some((q, i) => i !== j && Math.hypot(q.px - sp.px, q.py - sp.py) < O.touchPx * Math.max(q.r, sp.r))) continue;
-      const p = sp.p.slice(0, 10), s = p.reduce((a, b) => a + b, 0) || 1;
+      const p = sp.p.slice(0, sp.p.length - 1), s = O.ids.reduce((a, n) => a + (p[n] || 0), 0) || 1;
       // the owner's cue ball (white, red dots) and the 9 (white, yellow stripe): the colour shares settle a close call
       if (sp.col) {
         const top2 = p.map((v, i) => [v, i]).sort((a, b) => b[0] - a[0]).slice(0, 2).map(x => x[1]).sort().join();
         if (top2 === '0,9') { if (sp.col.y >= 0.1) { p[9] += p[0] * 0.8; p[0] *= 0.2; } else if (sp.col.y < 0.04 && sp.col.w >= 0.35) { p[0] += p[9] * 0.8; p[9] *= 0.2; } }
       }
-      for (let i = 0; i < tr.votes.length; i++) tr.votes[i] = tr.votes[i] * O.voteKeep + Math.log(p[O.ids[i]] / s + EPS);
+      for (let i = 0; i < tr.votes.length; i++) tr.votes[i] = tr.votes[i] * O.voteKeep + Math.log((p[O.ids[i]] || 0) / s + EPS);
       tr.nVotes = tr.nVotes * O.voteKeep + 1;
     }
   }

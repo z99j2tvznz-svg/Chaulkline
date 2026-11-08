@@ -5,7 +5,7 @@
 const VERSION = 'V3.8.13';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
-const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
+const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
 // focal length / longer picture side of the main camera at 1x, in video: measured from the owner's tables (Oct 29: the
 // outlines of four sideways sessions come out exactly 2 to 1 at 0.71-0.72; the V2 value 0.86 made them 1.7 to 1)
 const LENS = 0.72;
@@ -212,7 +212,8 @@ function smallImg() {
 
 // ---------- start ----------
 // mode: 'play' (a rack at a time: racks done by themselves, runs) or 'practice' (balls set out and moved at will; owner Nov 2)
-const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false } : {};
+// practice reads all fifteen balls (V3.9.0); Play a rack is 9-ball, the cue ball and 1-9
+const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false, ids: Array.from({ length: 16 }, (_, i) => i) } : {};
 async function start(mode) {
   homeMsg(''); A.mode = mode === 'practice' ? 'practice' : 'play';
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
@@ -436,7 +437,7 @@ async function look() {
   for (const s of found) { const q = A.cam.unproj(s.px, s.py, R); s.x = q[0]; s.y = q[1]; if (s.x > -3 && s.y > -3 && s.x < P.L + 3 && s.y < P.W + 3) on.push(s); }
   // the reader runs every look (about 10 ms against 220 for the finder on the owner's phone). During a shot its numbers
   // are not votes (the tracker votes on resting balls only), but white or not still tells the cue ball from the rest
-  const read = true; await DET.read(A.fctx, on);
+  const read = true; await DET.read(A.fctx, on, tk.O.ids);
   const t2 = performance.now(), before = tk.S.phase;
   tk.update(t, on, { read, empty: emptyAt });
   for (const n of tk.S.notes.splice(0)) onLateMade(n);
@@ -460,7 +461,7 @@ async function look() {
 }
 // the reader's second choice and its share (from V3.0.11, so a replay can rebuild how sure the reader was: Oct 30, a replay
 // with every read made 90% sure scored 37 of 44 on a session that live got 42)
-function second(p, k) { let b = -1; for (let i = 0; i < 10; i++) if (i !== k && (b < 0 || p[i] > p[b])) b = i; return b < 0 ? null : [b, r2(p[b])]; }
+function second(p, k) { let b = -1; for (let i = 0; i < p.length - 1; i++) if (i !== k && (b < 0 || p[i] > p[b])) b = i; return b < 0 ? null : [b, r2(p[b])]; }
 // The tracker's word on racks and hand moves (V3.0.15, owner Oct 31: for testing, said on screen; later done quietly)
 function onSay(s) {
   if (s.k === 'rack_done') { flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', { auto: true }); toast('Rack complete'); }

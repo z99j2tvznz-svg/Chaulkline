@@ -4,9 +4,11 @@
 // "Challenger B"), a small network on a 40 x 40 crop of 3.2 ball radii: right 97% of the time when sure, and the 9 is no
 // longer read as the cue ball on the test pictures (0 of 210, the old reader 120). Both need window.ort (vendor/ort).
 const DET = (() => {
-  const VERSION = 'det 5'; // pages check this, so a copy of this file Safari kept from before cannot be mixed with a newer page
-  const CLASSES = ['cue', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'not a ball'];
-  const NB = 10, READ_T = 0.6674199270850172, NB_T = 0.5, P_T = 0.6; // reader temperature and decision rule (benchmark config)
+  const VERSION = 'det 6'; // pages check this, so a copy of this file Safari kept from before cannot be mixed with a newer page
+  // reader v3 (V3.9.0): the cue ball, 1-15 and not a ball; the same network as v2, taught the stripes 10-15 on the owner's
+  // 15-ball sessions of Nov 8 (models/README.md)
+  const CLASSES = ['cue'].concat(Array.from({ length: 15 }, (_, i) => String(i + 1)), ['not a ball']);
+  const NB = 16, READ_T = /*READ_T*/1, NB_T = 0.5, P_T = 0.6; // reader temperature and decision rule (benchmark config)
   const FIND_T = 0.35, NMS_IOU = 0.7, SIDE = 40, CROP = 3.2; // finder threshold of the v0.4 baseline (results barely change 0.25-0.7)
   const st = { find: null, read: null, ep: null, w: 0, h: 0, fixed: false, inCv: null, cropCv: null };
   // V3 finder shapes (models/v3, one shared weights file): about 550 thousand input pixels each, from a thin strip to 16:9.
@@ -47,7 +49,7 @@ const DET = (() => {
     const fb = await fetchBytes(opts.base + opts.finder.file, opts.finder.weights ? null : prog);
     const wb = opts.finder.weights ? await fetchBytes(opts.base + opts.finder.weights, prog) : null;
     const so = e => Object.assign({ executionProviders: [e], graphOptimizationLevel: 'all' }, wb ? { externalData: [{ path: opts.finder.weights.split('/').pop(), data: wb }] } : {});
-    const rb = await fetchBytes(opts.base + 'models/reader-v2.onnx');
+    const rb = await fetchBytes(opts.base + 'models/reader-v3.onnx');
     say('Starting the ball finder…');
     if (st.find && st.find.release) { try { await st.find.release(); } catch (e) { } }
     let find = null, ep = null;
@@ -139,9 +141,10 @@ const DET = (() => {
     return t ? { y: ye / t, r: re / t, w: wh / t } : { y: 0, r: 0, w: 0 };
   }
   function softmax(z, T) { const v = Array.from(z, x => x / T), mx = Math.max(...v), e = v.map(x => Math.exp(x - mx)), t = e.reduce((s, x) => s + x, 0); return e.map(x => x / t); }
-  // Number for each spot: adds p (11 probabilities), num (0 = cue, 1-9), pTop, nb (not-a-ball) and kind
-  // ('sure' | 'unsure' | 'not_a_ball'). img: ImageData or 2D context of the same picture the spots came from.
-  async function read(img, spots) {
+  // Number for each spot: adds p (17 probabilities: the cue ball, 1-15, not a ball), num (0 = cue, 1-15), pTop, nb
+  // (not-a-ball) and kind ('sure' | 'unsure' | 'not_a_ball'). img: ImageData or 2D context of the same picture the spots
+  // came from. ids: the balls in play (9-ball: 0-9); the numbers not in play are taken out and the rest shared out again.
+  async function read(img, spots, ids) {
     if (!spots.length) return spots;
     const ort = window.ort, x = new Float32Array(spots.length * 3 * SIDE * SIDE), P = SIDE * SIDE;
     spots.forEach((b, i) => {
@@ -150,7 +153,9 @@ const DET = (() => {
     });
     const out = await st.read.run({ x: new ort.Tensor('float32', x, [spots.length, 3, SIDE, SIDE]) }), z = out.logits.data;
     spots.forEach((b, i) => {
-      const p = softmax(z.subarray(i * 11, i * 11 + 11), READ_T); let k = 0; for (let j = 1; j < NB; j++) if (p[j] > p[k]) k = j;
+      const p = softmax(z.subarray(i * (NB + 1), (i + 1) * (NB + 1)), READ_T);
+      if (ids) { let t = 0; for (let j = 0; j < NB; j++) { if (!ids.includes(j)) p[j] = 0; t += p[j]; } t += p[NB]; for (let j = 0; j <= NB; j++) p[j] /= t; }
+      let k = 0; for (let j = 1; j < NB; j++) if (p[j] > p[k]) k = j;
       b.p = p; b.num = k; b.pTop = p[k]; b.nb = p[NB]; b.kind = p[NB] >= NB_T ? 'not_a_ball' : p[k] >= P_T ? 'sure' : 'unsure';
     });
     return spots;
