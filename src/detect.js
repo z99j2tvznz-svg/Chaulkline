@@ -8,7 +8,7 @@ const DET = (() => {
   // reader v3 (V3.9.0): the cue ball, 1-15 and not a ball; the same network as v2, taught the stripes 10-15 on the owner's
   // 15-ball sessions of Nov 8 (models/README.md)
   const CLASSES = ['cue'].concat(Array.from({ length: 15 }, (_, i) => String(i + 1)), ['not a ball']);
-  const NB = 16, READ_T = /*READ_T*/1, NB_T = 0.5, P_T = 0.6; // reader temperature and decision rule (benchmark config)
+  const NB = 16, READ_T = 1.21, NB_T = 0.5, P_T = 0.6; // reader temperature and decision rule (benchmark config)
   const FIND_T = 0.35, NMS_IOU = 0.7, SIDE = 40, CROP = 3.2; // finder threshold of the v0.4 baseline (results barely change 0.25-0.7)
   const st = { find: null, read: null, ep: null, w: 0, h: 0, fixed: false, inCv: null, cropCv: null };
   // V3 finder shapes (models/v3, one shared weights file): about 550 thousand input pixels each, from a thin strip to 16:9.
