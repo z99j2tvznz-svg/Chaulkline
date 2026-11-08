@@ -1383,3 +1383,12 @@ inch with the tip). Live 29 of 29 right: every ball made and every miss, both sc
 31), the break of rack 2 (nothing in). Names not checked. Diamonds: 17 found, the outline 8.6 px off, 1.9 after. On the
 scoreboard; fixture session-20261102-2054 (the replay 28 of 29: shot 7's scratch, called late live once the cue ball's
 spot read bare cloth, is not caught from the cloth maps of the shot pictures).
+
+## Review: Nov 8 10:59 (V3.8.7, Play a rack, another room)
+One rack of 9-ball on a different table, 4 minutes, 11 shots. Diamonds: 16 found, the outline 14 px off them, 2 after.
+Live 10 of 11 right, no setup moves counted. Wrong: the break called the 2 in the top-right corner. A person stood
+between the phone and the rack as it was broken, so the break was not seen as one (the 1 first taken for the cue ball),
+and the 2, lost twice by that pocket, was called in after the wait; it lay about a diamond short of the corner and came
+back 18 s later as a new ball (tapped as the 2). The known "ball by a far pocket" case. Fixture session-20261108-1059
+(the replay 9: shot 10's 8, called late live from the cloth, is not caught from the shot pictures' cloth maps). On the
+scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
