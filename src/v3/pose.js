@@ -45,6 +45,25 @@ const POSE = (() => {
     const v = vec(p.kp, p.box); let z = M.b; for (let i = 0; i < v.length; i++) z += M.w[i] * (v[i] - M.mu[i]) / M.sd[i];
     return 1 / (1 + Math.exp(-z));
   }
-  return { decode, vec, down, M };
+  // whether the face of the biggest person is seen (nose or an eye): from behind, the body shape cannot show a lean over
+  // the table, so an upright reading from the back is not trusted (V3.8.13: Nov 8 14:15 shot 12, a pot shot with the back
+  // to the phone, read upright)
+  function face(persons) {
+    const ps = persons.filter(p => p.conf >= 0.4); if (!ps.length) return false;
+    const p = ps.reduce((a, q) => (q.box[2] - q.box[0]) * (q.box[3] - q.box[1]) > (a.box[2] - a.box[0]) * (a.box[3] - a.box[1]) ? q : a);
+    return Math.max(p.kp[0][2], p.kp[1][2], p.kp[2][2]) >= 0.5;
+  }
+  // the player's stance when a ball sets off at time t, from the readings so far ({t, p, over, face}, oldest first):
+  // 'down' when the last reading within 1.5 s is 0.6 or more; 'up' only when every reading of the last 2 s (two at least)
+  // is 0.3 or less, the person is over the table and the face is seen (V3.8.13: Nov 8 14:15 shot 15, bent at 0.8 s
+  // before a long reach shot and read upright at the last look); otherwise null (unsure: the hand rules decide)
+  function stance(hist, t) {
+    const hs = hist.filter(q => q.t <= t + 0.05 && t - q.t <= 2), h = hs.filter(q => t - q.t <= 1.5).pop();
+    if (!h || h.p == null) return null;
+    if (h.p >= 0.6) return 'down';
+    if (hs.length >= 2 && hs.every(q => q.p != null && q.p <= 0.3) && h.over && h.face) return 'up';
+    return null;
+  }
+  return { decode, vec, down, face, stance, M };
 })();
 if (typeof module !== 'undefined') module.exports = POSE;

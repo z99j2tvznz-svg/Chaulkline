@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.12';
+const VERSION = 'V3.8.13';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -410,7 +410,7 @@ async function runLoop() {
 // The player's pose (V3.8.11, owner Nov 8: what makes a shot is the player down on it, from any side): about every 0.8 s
 // while no shot runs, on the picture of the last look, YOLO11n-pose (DET.pose) and the body-shape model (src/v3/pose.js)
 // give how likely the biggest person is down on a shot. The tracker asks (O.stance) when a ball sets off: 'down' (0.6 or
-// more in the last look within 1.5 s), 'up' (0.3 or less, the person over the table), else null (nobody seen, or unsure).
+// more in the last look within 1.5 s), 'up' (every look of the last 2 s upright, over the table, face seen: POSE.stance), else null.
 const POSEST = { t: -9, hist: [], logT: 0 };
 async function poseLook() {
   if (!DET.poseReady || !A.frame.width) return; const now = performance.now() / 1000; if (now - POSEST.t < 0.8) return; POSEST.t = now;
@@ -418,12 +418,12 @@ async function poseLook() {
   const ps = POSE.decode(r.data, r.N, 0.4).map(p => ({ conf: p.conf, box: [...r.back(p.box[0], p.box[1]), ...r.back(p.box[2], p.box[3])], kp: p.kp.map(q => [...r.back(q[0], q[1]), q[2]]) }));
   const p = POSE.down(ps), big = ps.length ? ps.reduce((a, q) => (q.box[2] - q.box[0]) * (q.box[3] - q.box[1]) > (a.box[2] - a.box[0]) * (a.box[3] - a.box[1]) ? q : a) : null;
   const xs = A.quad.map(q => q[0]), ys = A.quad.map(q => q[1]), over = !!big && big.box[2] > Math.min(...xs) && big.box[0] < Math.max(...xs) && big.box[3] > Math.min(...ys) - 0.1 * A.H && big.box[1] < Math.max(...ys);
-  POSEST.hist.push({ t: now, p, over, n: ps.length }); while (POSEST.hist.length > 8) POSEST.hist.shift();
+  POSEST.hist.push({ t: now, p, over, face: POSE.face(ps), n: ps.length }); while (POSEST.hist.length > 8) POSEST.hist.shift();
   if (now - POSEST.logT > 2) { POSEST.logT = now; dbg('pose', { p: p == null ? null : r2(p), over, n: ps.length }); }
 }
 function stanceAt(t) {
-  const h = POSEST.hist.filter(q => q.t <= t + 0.05 && t - q.t <= 1.5).pop(); if (!h || h.p == null) return null;
-  const v = h.p >= 0.6 ? 'down' : h.p <= 0.3 && h.over ? 'up' : null; if (v) dbg('stance', { v, p: r2(h.p), ago: r2(t - h.t) }); return v;
+  const v = POSE.stance(POSEST.hist, t), h = POSEST.hist.filter(q => q.t <= t + 0.05).pop();
+  if (v || (h && t - h.t <= 1.5)) dbg('stance', { v, p: h && h.p != null ? r2(h.p) : null, face: h && h.face, ago: h ? r2(t - h.t) : null }); return v;
 }
 async function look() {
   if (!grab() || A.phase !== 'run') return;

@@ -23,3 +23,15 @@ test('the pose: down on the shot from two sides, standing up from two', { timeou
     assert.deepStrictEqual(errors, []);
   } finally { await browser.close(); srv.close(); }
 });
+
+// The stance call from the readings before a ball sets off (V3.8.13), on the readings of Nov 8 14:15 (0.8 s apart).
+test('the stance: down at once, upright only when sure', () => {
+  const POSE = require('../src/v3/pose.js'), r = (a, face = true, over = true) => a.map(([t, p]) => ({ t, p, face, over }));
+  assert.strictEqual(POSE.stance(r([[9.2, 0.99]]), 10), 'down', 'hands 3: down on the shot');
+  assert.strictEqual(POSE.stance(r([[9.2, 0.56], [9.75, 0.05]]), 10), null, 'shot 15: bent 0.8 s before a reach shot, not upright');
+  assert.strictEqual(POSE.stance(r([[9.2, 0.02], [9.75, 0.02]], false), 10), null, 'shot 12: from behind, unsure');
+  assert.strictEqual(POSE.stance(r([[9.2, 0.01], [9.75, 0.01]]), 10), 'up', 'shot 1: upright facing the phone, setting balls');
+  assert.strictEqual(POSE.stance(r([[9.75, 0.01]]), 10), null, 'one reading is not enough');
+  assert.strictEqual(POSE.stance(r([[9.2, 0.01], [9.75, 0.01]], true, false), 10), null, 'away from the table');
+  assert.strictEqual(POSE.stance(r([[7, 0.99]]), 10), null, 'too old');
+});

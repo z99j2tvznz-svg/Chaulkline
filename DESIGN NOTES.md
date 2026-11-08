@@ -1474,3 +1474,18 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   shots with the player down (0.6 to 1.0: the rule counts them), 2 real shots from the left end with only the hand and
   the cue in the picture (nobody seen: still lost). With the fix the rule would have been right on every move it can see.
   Finder 257 ms a look, watcher 29 fps (the pose had not been running).
+
+## Review: Nov 8 14:15 (V3.8.11, practice) and V3.8.13
+- The pose check failed live as at 14:09 (266 errors, the bug fixed in V3.8.12). Offline on the looks before each move:
+  23 of the 24 counted moves real shots, read down on the shot (0.63 to 1.00) where the player is in the picture; shot 1
+  the player setting balls at the right end, standing and facing the phone (upright 0.01: rightly out). Hand moves 1 and
+  2 standing (rightly out), 3 a real shot down on it (0.99: counted).
+- Two real shots read upright, which the V3.8.11 rule (the last reading upright, over the table) would have thrown out:
+  shot 15, a long reach from the left end, bent over 0.8 s before and upright with the cue out at the last look (0.56,
+  0.34, 0.05; the 7 made); shot 12, a short pot of the 5 with his back to the phone (0.02 each look, the face not seen:
+  from behind the body shape does not show a lean over the table).
+- V3.8.13: the stance call moved into POSE.stance (tested). Down as before (0.6 or more in the last 1.5 s). Upright only
+  when every reading of the last 2 s (two at least, 0.8 s apart) is 0.3 or less, the person is over the table and the
+  face (nose or an eye) is seen; otherwise unsure, and the hand rules decide. On all five Nov 8 15-ball sessions: every
+  standing move still called upright where the face is seen, shots 12 and 15 not, no down shot called upright. The back
+  view standing moves (14:15 hands 1, 2) fall to the hand rules, which kept them out before.
