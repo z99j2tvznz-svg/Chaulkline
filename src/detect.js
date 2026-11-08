@@ -157,7 +157,27 @@ const DET = (() => {
   }
   const prefetch = (base, path, onProgress) => fetchBytes(base + path, onProgress); // start a download early (cached for load)
   const threads = () => (window.ort && ort.env.wasm.numThreads) || 1;
-  return { VERSION, threads, prefetch, load, setSize, find, read, letterbox, crop, resize, colours, pickShape, SHAPES, CLASSES, get ep() { return st.ep; }, get size() { return [st.w, st.h]; }, get fixed() { return st.fixed; } };
+  // The player's pose (V3.8.11): YOLO11n-pose (Ultralytics, AGPL-3.0; models/pose/yolo11n-pose.onnx, 640 x 384, 17 body
+  // points a person). Loaded once beside the finder (one start at a time, as load); the whole picture letterboxed into
+  // 640 x 384. Returns the model's raw output for POSE.decode, and the scale back to the picture.
+  const PW = 640, PH = 384; let poseSess = null, poseLoading = null, poseCv = null, poseBuf = null;
+  function loadPose(base) {
+    if (poseSess) return Promise.resolve(poseSess);
+    if (!poseLoading) poseLoading = loading.then(async () => { const b = await fetchBytes(base + 'models/pose/yolo11n-pose.onnx'); poseSess = await window.ort.InferenceSession.create(b, { executionProviders: ['wasm'], graphOptimizationLevel: 'all' }); return poseSess; }).catch(e => { poseLoading = null; throw e; });
+    loading = poseLoading.catch(() => { }); return poseLoading;
+  }
+  async function pose(src, W, H) {
+    if (!poseSess) return null;
+    const k = Math.min(PW / W, PH / H), nw = Math.round(W * k), nh = Math.round(H * k), left = Math.round((PW - nw) / 2), top = Math.round((PH - nh) / 2);
+    const cv = poseCv || (poseCv = document.createElement('canvas')); if (cv.width !== PW) { cv.width = PW; cv.height = PH; }
+    const c = cv.getContext('2d', { willReadFrequently: true }); c.fillStyle = 'rgb(114,114,114)'; c.fillRect(0, 0, PW, PH); c.drawImage(src, 0, 0, W, H, left, top, nw, nh);
+    const px = c.getImageData(0, 0, PW, PH).data, n = PW * PH, x = poseBuf || (poseBuf = new Float32Array(3 * n));
+    for (let i = 0, j = 0; i < n; i++, j += 4) { x[i] = px[j] / 255; x[n + i] = px[j + 1] / 255; x[2 * n + i] = px[j + 2] / 255; }
+    const out = await poseSess.run({ [poseSess.inputNames[0]]: new window.ort.Tensor('float32', x, [1, 3, PH, PW]) }), o = out[poseSess.outputNames[0]];
+    const data = o.data.slice ? o.data.slice() : o.data; if (o.dispose) o.dispose();
+    return { data, N: o.dims[2], back: (u, v) => [(u - left) / k, (v - top) / k] };
+  }
+  return { VERSION, threads, prefetch, load, setSize, find, read, letterbox, crop, resize, colours, pickShape, SHAPES, CLASSES, loadPose, pose, get poseReady() { return !!poseSess; }, get ep() { return st.ep; }, get size() { return [st.w, st.h]; }, get fixed() { return st.fixed; } };
 })();
 if (typeof window !== 'undefined') window.DET = DET;
 if (typeof module !== 'undefined') module.exports = { DET };

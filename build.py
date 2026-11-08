@@ -34,7 +34,7 @@ def build_v2():
 def build_v3():
     t = read('v3/page.html')
     parts = {'/*CORE*/': strip(read('core.js')), '/*VISION*/': strip(read('vision.js')), '/*DETECT*/': strip(read('detect.js')),
-             '/*TRACK*/': strip(read('track.js')), '/*STROKE*/': strip(read('stroke.js')), '/*DRILLS*/': strip(read('v3/drills.js')), '/*CLOTH*/': strip(read('v3/cloth.js')), '/*APP*/': read('v3/app.js'), '/*REVIEW*/': read('v3/review.js')}
+             '/*TRACK*/': strip(read('track.js')), '/*STROKE*/': strip(read('stroke.js')), '/*DRILLS*/': strip(read('v3/drills.js')), '/*POSE*/': strip(read('v3/pose.js')), '/*CLOTH*/': strip(read('v3/cloth.js')), '/*APP*/': read('v3/app.js'), '/*REVIEW*/': read('v3/review.js')}
     for k, v in parts.items():
         assert k in t, k
         t = t.replace(k, v)

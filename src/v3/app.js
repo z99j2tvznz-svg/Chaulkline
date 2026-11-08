@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.10';
+const VERSION = 'V3.8.11';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -218,7 +218,7 @@ async function start(mode) {
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P, TK_OPTS(A.mode)); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
@@ -362,6 +362,7 @@ async function acceptTable() {
     try {
       await DET.load({ base: BASE, ep: A.engine === 'gpu' ? 'webgpu' : 'wasm', finder: sh, onProgress: t => setStatus(t) });
       A.shape = [sh.w, sh.h]; dbg('finder', { ep: DET.ep, shape: A.shape, threads: DET.threads(), isolated: !!window.crossOriginIsolated });
+      DET.loadPose(BASE).then(() => dbg('pose_model', { ok: true })).catch(e => dbg('error', { m: 'pose model ' + String(e && e.message || e).slice(0, 120) }));
       if (A.engine === 'gpu' && DET.ep !== 'webgpu') toast('The graphics chip is not available: using the processor.');
     } catch (e) { if (my !== A.acceptN) return; dbg('error', { m: 'finder load ' + String(e && e.message || e).slice(0, 160) }); setStatus('The ball finder could not start: ' + String(e && e.message || e).slice(0, 80)); return; }
   }
@@ -398,11 +399,31 @@ async function runLoop() {
     while (A.live && A.phase === 'run') {
       const t0 = performance.now();
       if (!document.hidden) { try { await look(); A.errs = 0; } catch (e) { A.errs++; dbg('error', { m: 'look ' + String(e && e.message || e).slice(0, 160) }); if (A.errs > 5) setStatus('Something is wrong with the ball finder: ' + String(e && e.message || e).slice(0, 60)); await sleep(500); } }
+      // the player's pose, between looks while no shot runs (V3.8.11)
+      if (!document.hidden && A.tk.S.phase !== 'shot') { try { await poseLook(); } catch (e) { dbg('error', { m: 'pose ' + String(e && e.message || e).slice(0, 120) }); } }
       // during a shot as fast as the phone goes; otherwise about 5 looks a second (battery and heat)
       const gap = A.tk.S.phase === 'shot' ? 0 : 200 - (performance.now() - t0);
       await sleep(Math.max(document.hidden ? 300 : 0, gap));
     }
   } finally { A.looping = false; }
+}
+// The player's pose (V3.8.11, owner Nov 8: what makes a shot is the player down on it, from any side): about every 0.8 s
+// while no shot runs, on the picture of the last look, YOLO11n-pose (DET.pose) and the body-shape model (src/v3/pose.js)
+// give how likely the biggest person is down on a shot. The tracker asks (O.stance) when a ball sets off: 'down' (0.6 or
+// more in the last look within 1.5 s), 'up' (0.3 or less, the person over the table), else null (nobody seen, or unsure).
+const POSEST = { t: -9, hist: [], logT: 0 };
+async function poseLook() {
+  if (!DET.poseReady || !A.frame.width) return; const now = performance.now() / 1000; if (now - POSEST.t < 0.8) return; POSEST.t = now;
+  const r = await DET.pose(A.frame, A.W, A.H); if (!r) return;
+  const ps = POSE.decode(r.data, r.N, 0.4).map(p => ({ conf: p.conf, box: [...r.back(p.box[0], p.box[1]), ...r.back(p.box[2], p.box[3])], kp: p.kp.map(q => [...r.back(q[0], q[1]), q[2]]) }));
+  const p = POSE.down(ps), big = ps.length ? ps.reduce((a, q) => (q.box[2] - q.box[0]) * (q.box[3] - q.box[1]) > (a.box[2] - a.box[0]) * (a.box[3] - a.box[1]) ? q : a) : null;
+  const xs = A.quad.map(q => q[0]), ys = A.quad.map(q => q[1]), over = !!big && big.box[2] > Math.min(...xs) && big.box[0] < Math.max(...xs) && big.box[3] > Math.min(...ys) - 0.1 * A.H && big.box[1] < Math.max(...ys);
+  POSEST.hist.push({ t: now, p, over, n: ps.length }); while (POSEST.hist.length > 8) POSEST.hist.shift();
+  if (now - POSEST.logT > 2) { POSEST.logT = now; dbg('pose', { p: p == null ? null : r2(p), over, n: ps.length }); }
+}
+function stanceAt(t) {
+  const h = POSEST.hist.filter(q => q.t <= t + 0.05 && t - q.t <= 1.5).pop(); if (!h || h.p == null) return null;
+  const v = h.p >= 0.6 ? 'down' : h.p <= 0.3 && h.over ? 'up' : null; if (v) dbg('stance', { v, p: r2(h.p), ago: r2(t - h.t) }); return v;
 }
 async function look() {
   if (!grab() || A.phase !== 'run') return;
@@ -1090,7 +1111,7 @@ function hideCard() { $('#card').hidden = true; $('#cam').classList.remove('manu
 $('#card').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.drill) { drillStart(b.dataset.drill); return; }
-  if (b.dataset.ft) { A.ft = +b.dataset.ft; save(); A.P = makeP(A.ft); A.tk = makeTracker(A.P, TK_OPTS(A.mode)); A.nShots = 0; dbg('ft', { ft: A.ft }); refind('Table size ' + A.ft + ' ft: looking again…'); return; }
+  if (b.dataset.ft) { A.ft = +b.dataset.ft; save(); A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.nShots = 0; dbg('ft', { ft: A.ft }); refind('Table size ' + A.ft + ' ft: looking again…'); return; }
   const a = b.dataset.act;
   if (a === 'accept') acceptTable(); else if (a === 'retry') refind(); else if (a === 'manual') beginManual();
   else if (a === 'undo') { if (A.man && A.man.length) A.man.pop(); if (A.man) manualCard(); }

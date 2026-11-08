@@ -611,7 +611,18 @@ function makeTracker(P, opts) {
       for (const tr of near) { tr.flickV = Math.max(tr.flickT === S.prevT ? tr.flickV : 0, speed(tr)); tr.flickT = t; }
       const waited = tr => tr.flickT != null && tr.flickT === S.prevT;
       const stir = !far.length ? [] : near.length <= 1 ? far : moving;
+      // the player's pose (V3.8.11, the app's O.stance: 'down' on the shot, 'up' standing at the table, null not seen): down
+      // on the shot, a ball setting off is a shot, whatever the hand rules below say and even straight after a hand move
+      // (Nov 8, 13:13: 12 real shots taken for hands, a striped ball read as the cue ball); standing up, it is not one
+      const st = O.stance && (stir.length || pend.length) ? O.stance(t) : null;
       if (!stir.length && !pend.length) { if (S.stillSince == null) S.stillSince = t; if (S.phase === 'hands' && t - S.stillSince >= O.stillHold) { S.phase = 'still'; ev('still', {}); } }
+      else if (st === 'down' && stir.length && Math.max(...stir.map(tr => Math.max(speed(tr), waited(tr) ? tr.flickV : 0))) >= O.shotSpeed * 0.5) {
+        const cueOf = tr => tr.pin === 0 ? 9 : tr.nVotes ? tr.votes[O.ids.indexOf(0)] / tr.nVotes : -9, mv = stir.filter(tr => tr.movedT === t || waited(tr)), from = mv.length ? mv : stir;
+        const cue = from.slice().sort((a, b) => (cueOf(b) - cueOf(a)) || (Math.hypot(b.x - b.restX, b.y - b.restY) - Math.hypot(a.x - a.restX, a.y - a.restY)))[0];
+        ev('stance', { v: 'down', n: stir.length, was: S.phase }); startShot(cue, t); if (from.length === 2) S.shot.first = from.find(tr => tr !== cue).key;
+        S.stillSince = null;
+      }
+      else if (S.phase === 'still' && st === 'up') { S.phase = 'hands'; ev('hands', { n: stir.length, stance: 'up' }); S.stillSince = null; }
       else if (S.phase === 'still') {
         // a finger on the screen shakes the phone: every ball seems to move a little for a look (Oct 28: a tap to rename the 9
         // moved the balls about an inch, and a shot was counted)

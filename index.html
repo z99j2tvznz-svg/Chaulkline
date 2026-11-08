@@ -1703,7 +1703,27 @@ const DET = (() => {
   }
   const prefetch = (base, path, onProgress) => fetchBytes(base + path, onProgress); // start a download early (cached for load)
   const threads = () => (window.ort && ort.env.wasm.numThreads) || 1;
-  return { VERSION, threads, prefetch, load, setSize, find, read, letterbox, crop, resize, colours, pickShape, SHAPES, CLASSES, get ep() { return st.ep; }, get size() { return [st.w, st.h]; }, get fixed() { return st.fixed; } };
+  // The player's pose (V3.8.11): YOLO11n-pose (Ultralytics, AGPL-3.0; models/pose/yolo11n-pose.onnx, 640 x 384, 17 body
+  // points a person). Loaded once beside the finder (one start at a time, as load); the whole picture letterboxed into
+  // 640 x 384. Returns the model's raw output for POSE.decode, and the scale back to the picture.
+  const PW = 640, PH = 384; let poseSess = null, poseLoading = null, poseCv = null, poseBuf = null;
+  function loadPose(base) {
+    if (poseSess) return Promise.resolve(poseSess);
+    if (!poseLoading) poseLoading = loading.then(async () => { const b = await fetchBytes(base + 'models/pose/yolo11n-pose.onnx'); poseSess = await window.ort.InferenceSession.create(b, { executionProviders: ['wasm'], graphOptimizationLevel: 'all' }); return poseSess; }).catch(e => { poseLoading = null; throw e; });
+    loading = poseLoading.catch(() => { }); return poseLoading;
+  }
+  async function pose(src, W, H) {
+    if (!poseSess) return null;
+    const k = Math.min(PW / W, PH / H), nw = Math.round(W * k), nh = Math.round(H * k), left = Math.round((PW - nw) / 2), top = Math.round((PH - nh) / 2);
+    const cv = poseCv || (poseCv = document.createElement('canvas')); if (cv.width !== PW) { cv.width = PW; cv.height = PH; }
+    const c = cv.getContext('2d', { willReadFrequently: true }); c.fillStyle = 'rgb(114,114,114)'; c.fillRect(0, 0, PW, PH); c.drawImage(src, 0, 0, W, H, left, top, nw, nh);
+    const px = c.getImageData(0, 0, PW, PH).data, n = PW * PH, x = poseBuf || (poseBuf = new Float32Array(3 * n));
+    for (let i = 0, j = 0; i < n; i++, j += 4) { x[i] = px[j] / 255; x[n + i] = px[j + 1] / 255; x[2 * n + i] = px[j + 2] / 255; }
+    const out = await poseSess.run({ [poseSess.inputNames[0]]: new window.ort.Tensor('float32', x, [1, 3, PH, PW]) }), o = out[poseSess.outputNames[0]];
+    const data = o.data.slice ? o.data.slice() : o.data; if (o.dispose) o.dispose();
+    return { data, N: o.dims[2], back: (u, v) => [(u - left) / k, (v - top) / k] };
+  }
+  return { VERSION, threads, prefetch, load, setSize, find, read, letterbox, crop, resize, colours, pickShape, SHAPES, CLASSES, loadPose, pose, get poseReady() { return !!poseSess; }, get ep() { return st.ep; }, get size() { return [st.w, st.h]; }, get fixed() { return st.fixed; } };
 })();
 
 </script>
@@ -2368,7 +2388,18 @@ function makeTracker(P, opts) {
       for (const tr of near) { tr.flickV = Math.max(tr.flickT === S.prevT ? tr.flickV : 0, speed(tr)); tr.flickT = t; }
       const waited = tr => tr.flickT != null && tr.flickT === S.prevT;
       const stir = !far.length ? [] : near.length <= 1 ? far : moving;
+      // the player's pose (V3.8.11, the app's O.stance: 'down' on the shot, 'up' standing at the table, null not seen): down
+      // on the shot, a ball setting off is a shot, whatever the hand rules below say and even straight after a hand move
+      // (Nov 8, 13:13: 12 real shots taken for hands, a striped ball read as the cue ball); standing up, it is not one
+      const st = O.stance && (stir.length || pend.length) ? O.stance(t) : null;
       if (!stir.length && !pend.length) { if (S.stillSince == null) S.stillSince = t; if (S.phase === 'hands' && t - S.stillSince >= O.stillHold) { S.phase = 'still'; ev('still', {}); } }
+      else if (st === 'down' && stir.length && Math.max(...stir.map(tr => Math.max(speed(tr), waited(tr) ? tr.flickV : 0))) >= O.shotSpeed * 0.5) {
+        const cueOf = tr => tr.pin === 0 ? 9 : tr.nVotes ? tr.votes[O.ids.indexOf(0)] / tr.nVotes : -9, mv = stir.filter(tr => tr.movedT === t || waited(tr)), from = mv.length ? mv : stir;
+        const cue = from.slice().sort((a, b) => (cueOf(b) - cueOf(a)) || (Math.hypot(b.x - b.restX, b.y - b.restY) - Math.hypot(a.x - a.restX, a.y - a.restY)))[0];
+        ev('stance', { v: 'down', n: stir.length, was: S.phase }); startShot(cue, t); if (from.length === 2) S.shot.first = from.find(tr => tr !== cue).key;
+        S.stillSince = null;
+      }
+      else if (S.phase === 'still' && st === 'up') { S.phase = 'hands'; ev('hands', { n: stir.length, stance: 'up' }); S.stillSince = null; }
       else if (S.phase === 'still') {
         // a finger on the screen shakes the phone: every ball seems to move a little for a look (Oct 28: a tap to rename the 9
         // moved the balls about an inch, and a shot was counted)
@@ -2706,13 +2737,63 @@ const DRILL = (() => {
   return { LIST, byId, setup, score, next, summary, PER };
 })();
 
+// The player's pose (V3.8.11, owner Nov 8: a shot is the player down on it, the tip at the cue ball with a bridge hand out,
+// from any side; standing up with a hand at a ball is not one). The pose comes from YOLO11n-pose (Ultralytics, 17 body
+// points, models/pose/yolo11n-pose.onnx, 640 x 384). From the biggest person seen, a body-shape vector (the points
+// round the person's box, mirrored so the hand further out is on the right, plus torso lean, arm reach and how far the
+// head is above the lower hand) goes through a logistic model learned on the owner's sessions (Nov 8 13:04, 13:09, 13:13:
+// the three looks before each move, 144 frames down on the shot and 24 upright; and earlier upright setup moves). Left
+// out a session at a time: every move down on the shot of the three sessions called so, every upright one caught.
+// Pure functions; the app feeds the model's output. Tested in tests/pose.test.js.
+const POSE = (() => {
+  const M = { mu: [0.01691, -0.18735, 0.84211, 0.00343, -0.16908, 0.70526, 0.02852, -0.1458, 0.6, -0.02718, -0.17675, 0.61579, 0.00807, -0.13445, 0.44737, -0.09018, -0.19986, 0.97895, -0.12372, -0.26918, 0.96316, 0.04304, -0.00032, 0.98421, 0.00723, -0.12636, 0.76842, 0.19124, 0.08877, 0.97895, 0.10977, -0.01622, 0.85263, -0.23517, 0.07753, 0.95263, -0.15633, 0.01133, 0.83684, -0.09556, 0.22672, 0.76842, -0.05005, 0.18734, 0.71053, -0.08527, 0.24618, 0.54737, -0.03111, 0.21258, 0.47368, 1.09164, 0.38418, 0.77574, 0.43225],
+    sd: [0.13403, 0.1562, 0.36464, 0.12215, 0.15803, 0.45593, 0.11162, 0.16657, 0.4899, 0.12577, 0.16081, 0.48641, 0.10951, 0.17121, 0.49722, 0.16464, 0.12997, 0.14356, 0.27859, 0.13395, 0.18838, 0.22302, 0.15676, 0.12466, 0.34858, 0.16747, 0.42184, 0.3709, 0.23946, 0.14356, 0.33618, 0.19229, 0.35447, 0.31087, 0.18679, 0.21243, 0.37026, 0.14666, 0.36951, 0.22535, 0.21426, 0.42184, 0.29819, 0.21043, 0.45352, 0.28504, 0.25819, 0.49775, 0.30885, 0.24983, 0.49931, 0.49648, 0.27804, 0.26599, 0.238],
+    w: [-0.11006, 0.44636, 0.69269, -0.02655, 0.56159, 0.34655, 0.17489, 0.32317, 0.44393, -0.06654, 0.26454, 0.30182, -0.03838, 0.16637, 0.27842, 0.11715, 0.80199, -0.08928, -0.14441, 0.425, 0.44376, 0.30843, -0.04816, 0.41632, 0.04837, 0.08064, -0.13762, 0.10329, -0.28746, 0.09974, 0.02817, -0.11991, 0.06843, -0.16631, -0.24999, 0.18078, -0.14787, -0.23725, -0.16485, -0.10242, -0.13774, -0.09893, 0.01417, -0.09051, -0.11798, -0.0556, 0.17289, 0.06985, -0.04386, 0.23389, 0.01153, 0.71056, 0.56605, 0.33935, -0.96284], b: 2.65375 };
+  // persons from the model's output (1 x 56 x N: box cx cy w h, score, 17 x (x, y, score)), in the model's input pixels
+  function decode(data, N, thr) {
+    const out = [];
+    for (let i = 0; i < N; i++) {
+      const s = data[4 * N + i]; if (s < (thr || 0.4)) continue;
+      const cx = data[i], cy = data[N + i], w = data[2 * N + i], h = data[3 * N + i], kp = [];
+      for (let k = 0; k < 17; k++) kp.push([data[(5 + 3 * k) * N + i], data[(6 + 3 * k) * N + i], data[(7 + 3 * k) * N + i]]);
+      out.push({ box: [cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2], conf: s, kp });
+    }
+    out.sort((a, b) => b.conf - a.conf); const keep = [];
+    const iou = (a, b) => { const w = Math.min(a[2], b[2]) - Math.max(a[0], b[0]), h = Math.min(a[3], b[3]) - Math.max(a[1], b[1]); if (w <= 0 || h <= 0) return 0; const i = w * h; return i / ((a[2] - a[0]) * (a[3] - a[1]) + (b[2] - b[0]) * (b[3] - b[1]) - i); };
+    for (const p of out) if (!keep.some(k => iou(k.box, p.box) > 0.6)) keep.push(p);
+    return keep;
+  }
+  function vec(kp, b) {
+    const cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2, h = Math.max(1, b[3] - b[1]), w = Math.max(1, b[2] - b[0]);
+    const pts = kp.map(p => [(p[0] - cx) / h, (p[1] - cy) / h, p[2]]);
+    const wr = [pts[9], pts[10]], far = Math.abs(wr[0][0]) * wr[0][2] >= Math.abs(wr[1][0]) * wr[1][2] ? wr[0] : wr[1], sgn = far[0] >= 0 ? 1 : -1;
+    const v = []; for (const [x, y, c] of pts) { const on = c > 0.3 ? 1 : 0; v.push(sgn * x * on, y * on, on); }
+    v.push(w / h);
+    const g = i => pts[i][2] > 0.3 ? pts[i] : null, sh = [g(5), g(6)].filter(Boolean), hp = [g(11), g(12)].filter(Boolean), wrs = [g(9), g(10)].filter(Boolean), hd = [g(0), g(1), g(2), g(3), g(4)].filter(Boolean);
+    const avg = (a, k) => a.reduce((s, q) => s + q[k], 0) / a.length;
+    const ta = sh.length && hp.length ? Math.atan2(Math.abs(avg(sh, 0) - avg(hp, 0)), Math.abs(avg(sh, 1) - avg(hp, 1)) + 1e-6) * 180 / Math.PI : 45;
+    let ext = 0; for (const a of wrs) for (const s of sh) ext = Math.max(ext, Math.hypot(a[0] - s[0], a[1] - s[1]));
+    const hdrop = wrs.length && hd.length ? Math.max(...wrs.map(q => q[1])) - Math.min(...hd.map(q => q[1])) : 0.5;
+    v.push(ta / 90, ext, hdrop);
+    return v;
+  }
+  // how likely the biggest person is down on a shot (null: nobody seen)
+  function down(persons) {
+    const ps = persons.filter(p => p.conf >= 0.4); if (!ps.length) return null;
+    const p = ps.reduce((a, q) => (q.box[2] - q.box[0]) * (q.box[3] - q.box[1]) > (a.box[2] - a.box[0]) * (a.box[3] - a.box[1]) ? q : a);
+    const v = vec(p.kp, p.box); let z = M.b; for (let i = 0; i < v.length; i++) z += M.w[i] * (v[i] - M.mu[i]) / M.sd[i];
+    return 1 / (1 + Math.exp(-z));
+  }
+  return { decode, vec, down, M };
+})();
+
 </script>
 <script>
 // ===== V3 APP =====
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.10';
+const VERSION = 'V3.8.11';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -2928,7 +3009,7 @@ async function start(mode) {
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P, TK_OPTS(A.mode)); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
@@ -3072,6 +3153,7 @@ async function acceptTable() {
     try {
       await DET.load({ base: BASE, ep: A.engine === 'gpu' ? 'webgpu' : 'wasm', finder: sh, onProgress: t => setStatus(t) });
       A.shape = [sh.w, sh.h]; dbg('finder', { ep: DET.ep, shape: A.shape, threads: DET.threads(), isolated: !!window.crossOriginIsolated });
+      DET.loadPose(BASE).then(() => dbg('pose_model', { ok: true })).catch(e => dbg('error', { m: 'pose model ' + String(e && e.message || e).slice(0, 120) }));
       if (A.engine === 'gpu' && DET.ep !== 'webgpu') toast('The graphics chip is not available: using the processor.');
     } catch (e) { if (my !== A.acceptN) return; dbg('error', { m: 'finder load ' + String(e && e.message || e).slice(0, 160) }); setStatus('The ball finder could not start: ' + String(e && e.message || e).slice(0, 80)); return; }
   }
@@ -3108,11 +3190,31 @@ async function runLoop() {
     while (A.live && A.phase === 'run') {
       const t0 = performance.now();
       if (!document.hidden) { try { await look(); A.errs = 0; } catch (e) { A.errs++; dbg('error', { m: 'look ' + String(e && e.message || e).slice(0, 160) }); if (A.errs > 5) setStatus('Something is wrong with the ball finder: ' + String(e && e.message || e).slice(0, 60)); await sleep(500); } }
+      // the player's pose, between looks while no shot runs (V3.8.11)
+      if (!document.hidden && A.tk.S.phase !== 'shot') { try { await poseLook(); } catch (e) { dbg('error', { m: 'pose ' + String(e && e.message || e).slice(0, 120) }); } }
       // during a shot as fast as the phone goes; otherwise about 5 looks a second (battery and heat)
       const gap = A.tk.S.phase === 'shot' ? 0 : 200 - (performance.now() - t0);
       await sleep(Math.max(document.hidden ? 300 : 0, gap));
     }
   } finally { A.looping = false; }
+}
+// The player's pose (V3.8.11, owner Nov 8: what makes a shot is the player down on it, from any side): about every 0.8 s
+// while no shot runs, on the picture of the last look, YOLO11n-pose (DET.pose) and the body-shape model (src/v3/pose.js)
+// give how likely the biggest person is down on a shot. The tracker asks (O.stance) when a ball sets off: 'down' (0.6 or
+// more in the last look within 1.5 s), 'up' (0.3 or less, the person over the table), else null (nobody seen, or unsure).
+const POSEST = { t: -9, hist: [], logT: 0 };
+async function poseLook() {
+  if (!DET.poseReady || !A.frame.width) return; const now = performance.now() / 1000; if (now - POSEST.t < 0.8) return; POSEST.t = now;
+  const r = await DET.pose(A.frame, A.W, A.H); if (!r) return;
+  const ps = POSE.decode(r.data, r.N, 0.4).map(p => ({ conf: p.conf, box: [...r.back(p.box[0], p.box[1]), ...r.back(p.box[2], p.box[3])], kp: p.kp.map(q => [...r.back(q[0], q[1]), q[2]]) }));
+  const p = POSE.down(ps), big = ps.length ? ps.reduce((a, q) => (q.box[2] - q.box[0]) * (q.box[3] - q.box[1]) > (a.box[2] - a.box[0]) * (a.box[3] - a.box[1]) ? q : a) : null;
+  const xs = A.quad.map(q => q[0]), ys = A.quad.map(q => q[1]), over = !!big && big.box[2] > Math.min(...xs) && big.box[0] < Math.max(...xs) && big.box[3] > Math.min(...ys) - 0.1 * A.H && big.box[1] < Math.max(...ys);
+  POSEST.hist.push({ t: now, p, over, n: ps.length }); while (POSEST.hist.length > 8) POSEST.hist.shift();
+  if (now - POSEST.logT > 2) { POSEST.logT = now; dbg('pose', { p: p == null ? null : r2(p), over, n: ps.length }); }
+}
+function stanceAt(t) {
+  const h = POSEST.hist.filter(q => q.t <= t + 0.05 && t - q.t <= 1.5).pop(); if (!h || h.p == null) return null;
+  const v = h.p >= 0.6 ? 'down' : h.p <= 0.3 && h.over ? 'up' : null; if (v) dbg('stance', { v, p: r2(h.p), ago: r2(t - h.t) }); return v;
 }
 async function look() {
   if (!grab() || A.phase !== 'run') return;
@@ -3800,7 +3902,7 @@ function hideCard() { $('#card').hidden = true; $('#cam').classList.remove('manu
 $('#card').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.drill) { drillStart(b.dataset.drill); return; }
-  if (b.dataset.ft) { A.ft = +b.dataset.ft; save(); A.P = makeP(A.ft); A.tk = makeTracker(A.P, TK_OPTS(A.mode)); A.nShots = 0; dbg('ft', { ft: A.ft }); refind('Table size ' + A.ft + ' ft: looking again…'); return; }
+  if (b.dataset.ft) { A.ft = +b.dataset.ft; save(); A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.nShots = 0; dbg('ft', { ft: A.ft }); refind('Table size ' + A.ft + ' ft: looking again…'); return; }
   const a = b.dataset.act;
   if (a === 'accept') acceptTable(); else if (a === 'retry') refind(); else if (a === 'manual') beginManual();
   else if (a === 'undo') { if (A.man && A.man.length) A.man.pop(); if (A.man) manualCard(); }

@@ -1439,3 +1439,26 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
 - V3.8.10: each look keeps a 640 px copy of the whole picture for 2 s; when a move starts the three looks before it are
   saved (shotNNN-pre1..3.jpg; handsNNN-pre for a move taken for hands; pre_frames in the log). The next sessions give the
   player at the moment that matters, from every side; the rule comes from them. Nothing decides on it yet.
+
+## V3.8.11 (Nov 8) — a shot told by the player's pose
+- The three practice racks of Nov 8 (13:04, 13:09, 13:13; V3.8.10; 15 balls) brought the looks just before every move
+  (0.8, 0.5, 0.25 s). By eye, of 38 moves the tracker counted, 32 had the player down on the shot and 6 out of the
+  picture (shooting from the ends, only the bridge hand in view); of 25 it threw out as hands, 15 were real shots with
+  the player down on them (13:13: 12 of 16; a striped ball read as the cue ball, so the real cue ball setting off looked
+  like a ball moved by hand) and 9 had the player standing.
+- YOLO11n-pose (Ultralytics, AGPL-3.0, exported to ONNX: models/pose/yolo11n-pose.onnx, 11.7 MB, 640 x 384) on those
+  looks, and a logistic model on the biggest person's body shape (src/v3/pose.js: the 17 points round the box, mirrored
+  so the hand further out is on the right, torso lean, arm reach, head over the lower hand), learned on 190 frames (those
+  three sessions, and earlier setup moves seen standing). Left out one session at a time: of 54 moves down on the shot 53
+  called so (the one wrong an early before picture of Nov 2), of 24 standing 22 caught. In the app's onnxruntime-web on
+  four of the frames: down 0.997 and 0.80 (far side facing the phone), standing 0.005 and 0.011 (tests/pose.test.js).
+- Live: the pose model loads after the finder; while no shot runs it reads the picture of the last look about every
+  0.8 s, in the idle time between looks (never during a shot). The tracker asks when a ball sets off (O.stance): down
+  (0.6 or more in the last 1.5 s) and a ball setting off is a shot, whatever the hand rules say, even straight after a
+  hand move; standing (0.3 or less, the person over the table) it is a hand move; otherwise (nobody seen, unsure) the
+  rules as before. Logged: pose (every 2 s), stance (each time the tracker asks), tracker events stance / hands with
+  stance up. On the three racks' looks: 34 counted shots stay, 14 of the 15 real shots thrown out would be counted, the
+  8 standing moves stay out, no wrong call; 5 out of the picture as before.
+- Not yet measured on the phone: the time the pose takes there (the next debug file: pose events and the finder's ms).
+  The licence: AGPL is fine for this public app; a closed product would need Ultralytics' licence or an Apache-2.0
+  pose model (RTMPose, MoveNet; their downloads blocked from this session).
