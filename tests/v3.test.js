@@ -59,6 +59,10 @@ async function run(rot, viewport, sway, strokeTest) {
     const sk = await page.evaluate(() => ({ errs: window.__v3.DBG.ev.filter(e => e.k === 'error').map(e => e.m), obs: window.__v3.STK.obs.length, cue: !!window.__v3.A.tk.balls().find(b => b.num === 0 && b.sure) }));
     assert.deepStrictEqual(sk.errs.filter(m => /stroke/.test(m)), []); if (sk.cue) assert.ok(sk.obs > 0, JSON.stringify(sk));
     if (strokeTest) {
+      // V3.8.10: the whole picture just before a move is kept: three looks saved as pictures
+      const pre = await page.evaluate(async () => { preSave('shot999', performance.now() / 1000 + 0.01); for (let i = 0; i < 40 && !window.__v3.A.pics.has('shot999-pre3.jpg'); i++) await new Promise(r => setTimeout(r, 50));
+        return ['shot999-pre1.jpg', 'shot999-pre2.jpg', 'shot999-pre3.jpg'].map(k => (window.__v3.A.pics.get(k) || []).length); });
+      assert.ok(pre.every(n => n > 5000), 'pre-move pictures saved: ' + JSON.stringify(pre));
       // V3.8.9: no Check my stroke in the menu (the stroke is read on every shot, above)
       await page.click('#menuBtn'); assert.strictEqual(await page.locator('[data-act=stroke]').count(), 0); await page.click('[data-act=close]');
       // V3.6: Menu -> Drills -> Cut ladder: its setup on the table, its line at the bottom

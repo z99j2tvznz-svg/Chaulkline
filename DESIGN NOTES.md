@@ -1416,3 +1416,26 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   (looking at the phone in play). The menu item, its message and its toggle are gone; the stroke is measured as before.
 - Still from the side only (the cue within 25 degrees of level in the picture): about half the shots in play. The other
   half, the stroke toward or away from the phone, is the "stroke from the end of the table" item.
+
+## Telling a shot from a move: the player's pose (Nov 8), and V3.8.10
+- Owner, Nov 8: a shot is the player down on it, the tip addressing the cue ball with a bridge hand out, from any side,
+  then the cue ball taking off and hitting a ball; all of that should decide, not one sign.
+- Measured on 291 tracked moves with known answers (221 real shots, 70 setup moves; play sessions 20:06, 21:18, 20:54,
+  10:59; drills 19:34, 20:27, 10:48), signs from the watcher's 320 px clip and the log: the cue ball in view and still
+  until it leaves (real 77%, moves 46%), a cue at it before (81% / 50%), a ball hit (52% / 11%), a fast first frame
+  (43% / 16%), something planted near it (63% / 20%). No cut on them keeps every real shot: about 70 real shots show two
+  signs or fewer (banks and stop shots from the far side or the ends: the cue end on, the ball behind the player, 6 px
+  in that picture), and pushes or rakes with the cue look like strokes there.
+- The player's pose: YOLO11n-pose (Ultralytics' release, 17 body points; exported to ONNX, 11.7 MB, 640 x 384, runs in
+  the app's onnxruntime-web, about 0.3 s a picture in a test browser) on each move's before picture. How low the head is
+  against the hands (as a share of the person's height): real shots a median 0.16 (p75 0.27), setup moves 0.63 (p25
+  0.38). Going through all 70 setup moves by eye: 6 were real shots mislabelled (20:27, 58, 61, 68, 71, 78, 80: the
+  player down on the shot, the pose reading the head low), the bank drill's setups show the player upright with a hand
+  at a ball, and in the cut ladders the player stands at the left end, often out of the picture (no pose).
+- But the before picture is the last still picture, up to 1.5 s before the move: a hand has not reached the ball yet,
+  the player has not got down yet. "Upright, a wrist at a ball, nothing hit or made" catches only 1 to 4 of the 64 there.
+  The pose has to be read on the looks just before the ball moves, which no debug file has kept (the clips are the table
+  only, 320 px).
+- V3.8.10: each look keeps a 640 px copy of the whole picture for 2 s; when a move starts the three looks before it are
+  saved (shotNNN-pre1..3.jpg; handsNNN-pre for a move taken for hands; pre_frames in the log). The next sessions give the
+  player at the moment that matters, from every side; the rule comes from them. Nothing decides on it yet.

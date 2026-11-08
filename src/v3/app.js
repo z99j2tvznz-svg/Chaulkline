@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.9';
+const VERSION = 'V3.8.10';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -409,6 +409,7 @@ async function look() {
   crumb('look');
   steady();
   const t = performance.now() / 1000, t0 = performance.now(), tk = A.tk, P = A.P, R = P.R;
+  preKeep(t);
   const found = await DET.find(A.frame, A.W, A.H, { box: A.box, kmax: A.kmax }), t1 = performance.now();
   const on = [];
   for (const s of found) { const q = A.cam.unproj(s.px, s.py, R); s.x = q[0]; s.y = q[1]; if (s.x > -3 && s.y > -3 && s.x < P.L + 3 && s.y < P.W + 3) on.push(s); }
@@ -425,7 +426,7 @@ async function look() {
   A.timing.push(t1 - t0); if (A.timing.length > 30) A.timing.shift();
   if (before !== 'shot' && tk.S.phase === 'shot') onShotStart();
   // hands on the table (not a shot): a clip of that too, at most one every 4 s
-  if (before !== 'hands' && tk.S.phase === 'hands' && Date.now() - A.handsT > 4000) { A.handsT = Date.now(); clipStart('hands-' + String(++A.handsN).padStart(3, '0'), 2000, 2000); }
+  if (before !== 'hands' && tk.S.phase === 'hands' && Date.now() - A.handsT > 4000) { A.handsT = Date.now(); const hn = 'hands-' + String(++A.handsN).padStart(3, '0'); clipStart(hn, 2000, 2000); preSave(hn, t); }
   if (tk.S.shots.length > A.nShots) { for (const sh of tk.S.shots.slice(A.nShots)) onShotEnd(sh); A.nShots = tk.S.shots.length; }
   for (const s of tk.S.say.splice(0)) onSay(s);
   drillReadyLook();
@@ -445,9 +446,26 @@ function onSay(s) {
   else if (s.k === 'rack_new') { flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', { auto: true, set: true }); toast('New rack: balls set out'); }
   else if (s.k === 'not_shot') { PATH.clear(); dbg('not_shot', { num: s.num }); toast('Not counted: hand move'); }
 }
+// The whole picture just before each move (V3.8.10, owner Nov 8: what makes a shot is the player down on it, the tip at
+// the cue ball with a bridge hand out, from any side; a hand at the ball is not one). Each look keeps a 640 px copy of the
+// picture for 2 s; when a move starts, the three looks before it are saved (shotNNN-pre1..3.jpg, or handsNNN-pre for a
+// move taken for hands) for the player's pose to be measured on, before anything decides on it.
+const PRE = { ring: [], free: [] };
+function preKeep(t) {
+  try {
+    const c = PRE.free.pop() || document.createElement('canvas'); if (c.width !== 640) { c.width = 640; c.height = Math.round(640 * A.H / A.W); }
+    c.getContext('2d').drawImage(A.frame, 0, 0, c.width, c.height); PRE.ring.push({ t, c });
+    while (PRE.ring.length && (t - PRE.ring[0].t > 2.2 || PRE.ring.length > 9)) PRE.free.push(PRE.ring.shift().c);
+  } catch (e) { }
+}
+function preSave(nm, t0) {
+  const fr = PRE.ring.filter(f => f.t < t0 - 1e-3).slice(-3); dbg('pre_frames', { name: nm, n: fr.length, dt: fr.map(f => r2(f.t - t0)) });
+  fr.forEach((f, i) => f.c.toBlob(b => { if (b) b.arrayBuffer().then(a => setPic(nm + '-pre' + (i + 1) + '.jpg', new Uint8Array(a))); }, 'image/jpeg', 0.7));
+}
 function onShotStart() {
   PATH.clear(); A.pathClearAt = null; pathLook(); const sh = A.tk.S.shot; if (!sh) return; const nm = 'shot' + String(sh.n).padStart(3, '0');
   if (A.stillPic) setPic(nm + '-before.jpg', A.stillPic);
+  preSave(nm, sh.t0);
   if (A.strokeCheck) sh.test = { check: true };
   if (A.drill) { A.drillReadyOf.set(sh.n, !!A.drill.ready); A.drill.ready = false; A.drill.since = null; }
   clipStart(nm, A.strokeCheck ? 4000 : 2000, 2000, sh.test || null); strokeShot(sh.n);
@@ -549,7 +567,7 @@ function ballColours() {
 // copy in memory keeps the latest 400 shot pictures, for a phone where that storage is not there (the table-finding ones
 // are always kept: Oct 29, the upright session's were thrown away first)
 function setPic(name, data) { A.pics.set(name, data); trimPics(); STORE.put(DBG.t0, name, data); }
-function trimPics() { const keys = [...A.pics.keys()].filter(k => k.startsWith('shot')).sort(); while (keys.length > 400) A.pics.delete(keys.shift()); }
+function trimPics() { const keys = [...A.pics.keys()].filter(k => k.startsWith('shot')).sort(); while (keys.length > 700) A.pics.delete(keys.shift()); } // (700: five pictures a shot from V3.8.10)
 function jpeg(w) {
   const k = Math.min(1, w / Math.max(A.W, A.H)), c = document.createElement('canvas'); c.width = Math.round(A.W * k); c.height = Math.round(A.H * k);
   c.getContext('2d').drawImage(A.frame, 0, 0, c.width, c.height);
