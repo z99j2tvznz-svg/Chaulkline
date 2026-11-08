@@ -621,3 +621,21 @@ test('the owner\'s two racks of 9-ball on V3.8.5 (Nov 2, 20:54) replay as they w
   // scratch, called late live once the cue ball's spot read bare cloth (the cloth maps of the shot pictures do not catch it)
   assert.ok(r.shots === 29 && r.right >= 28 && r.falsePots === 0 && r.extraShots <= 2, JSON.stringify(r.rows.filter(x => !x.right)));
 });
+
+// ---- V3.9.0: all fifteen balls (reader v3: the cue ball, 1-15, not a ball) and 8-ball ----
+function probs17(num, p = 0.85, nb = 0.02) { const q = new Array(17).fill((1 - p - nb) / 15); q[num] = p; q[16] = nb; return q; }
+const ALL15 = Array.from({ length: 16 }, (_, i) => i);
+test('8-ball: stripes named, and the 8 in ends the rack with balls still on the table', () => {
+  for (const eight of [true, false]) {
+    const tk = makeTracker(P, eight ? { ids: ALL15, eightEnds: true } : { ids: ALL15 }), lay = [{ num: 0, x: 30, y: 20 }, { num: 8, x: 72, y: 36.5 }, { num: 12, x: 20, y: 8 }, { num: 3, x: 50, y: 10 }];
+    let t = settle(tk, 0, lay.map(b => Object.assign({ p: probs17(b.num) }, b)));
+    assert.deepStrictEqual(Object.keys(names(tk)).map(Number).sort((a, b) => a - b), [0, 3, 8, 12]);
+    tk.S.setup = false;
+    const rest = lay.slice(2).map(b => Object.assign({ p: probs17(b.num) }, b));
+    for (const x of [36, 44, 52, 58, 62]) { look(tk, t, [{ num: 0, x, y: 20 + (x - 30) * 0.4, moving: true }, { num: 8, x: 72, y: 36.5, p: probs17(8) }, ...rest], false); t += 0.1; }
+    for (const f of [0.4, 0.8]) { look(tk, t, [{ num: 0, x: 62, y: 32.8, p: probs17(0) }, { num: 8, x: 72 + 5 * f, y: 36.5 + 2 * f, moving: true }, ...rest], false); t += 0.1; }
+    t = settle(tk, t, [{ num: 0, x: 62, y: 32.8, p: probs17(0) }, ...rest], 6);
+    assert.deepStrictEqual(tk.S.shots[0].made.map(m => m.num), [8]);
+    assert.strictEqual(tk.S.events.some(e => e.k === 'rack_done'), eight, eight ? '8-ball: rack over' : 'not 8-ball: the rack goes on');
+  }
+});

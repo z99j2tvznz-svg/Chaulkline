@@ -121,10 +121,16 @@ a.old { color: var(--muted); font-size: 13px; }
     <button class="btn primary" id="updBtn" hidden></button>
     <button class="go glass" id="goBtn"><b>Play a rack</b><small>A rack at a time: made balls, scratches, the first ball hit, runs; the rack is done by itself when only the cue ball is left.</small><i>›</i></button>
     <button class="go glass" id="pracBtn"><b>Practice</b><small>Set balls where you like and shoot. Moving or picking up balls is fine; tries of the same shot are put together.</small><i>›</i></button>
+    <div class="card glass"><div class="lbl" style="margin-bottom:8px">Game for Play a rack</div><div class="seg" id="segGame"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
+    <div class="card glass"><h2>New in V3.9</h2><ul>
+      <li>All fifteen balls: the 10 to 15 are read now, stripes seen end on too (a white cap with a coloured ring is not the cue ball). Practice reads all fifteen.</li>
+      <li>8-ball: pick the game above, then Play a rack. The rack is over when the 8 goes in, or when only the cue ball is left.</li>
+      <li>A shot is told by your pose: down on the shot counts, standing at the table with a hand on a ball does not. Standing only keeps a move out when the app is sure.</li>
+    </ul></div>
     <div class="card glass"><h2>New in V3.6</h2><ul>
       <li>Drills (Menu → Drills): a cut ladder, thin cuts, a cross-side bank and a stop shot. Rings show where the balls go and the pocket; made, the next one is harder; missed, it steps back. Your drills over all sessions on this screen.</li>
       <li>Free practice says what went in and how cut it was, and leaves the rest alone: a miss may have been a bank or anything.</li>
@@ -1550,9 +1556,11 @@ function recogTop(p) { if (!p) return null; let bi = 0; for (let c = 1; c < 10; 
 // "Challenger B"), a small network on a 40 x 40 crop of 3.2 ball radii: right 97% of the time when sure, and the 9 is no
 // longer read as the cue ball on the test pictures (0 of 210, the old reader 120). Both need window.ort (vendor/ort).
 const DET = (() => {
-  const VERSION = 'det 5'; // pages check this, so a copy of this file Safari kept from before cannot be mixed with a newer page
-  const CLASSES = ['cue', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'not a ball'];
-  const NB = 10, READ_T = 0.6674199270850172, NB_T = 0.5, P_T = 0.6; // reader temperature and decision rule (benchmark config)
+  const VERSION = 'det 6'; // pages check this, so a copy of this file Safari kept from before cannot be mixed with a newer page
+  // reader v3 (V3.9.0): the cue ball, 1-15 and not a ball; the same network as v2, taught the stripes 10-15 on the owner's
+  // 15-ball sessions of Nov 8 (models/README.md)
+  const CLASSES = ['cue'].concat(Array.from({ length: 15 }, (_, i) => String(i + 1)), ['not a ball']);
+  const NB = 16, READ_T = 1.21, NB_T = 0.5, P_T = 0.6; // reader temperature and decision rule (benchmark config)
   const FIND_T = 0.35, NMS_IOU = 0.7, SIDE = 40, CROP = 3.2; // finder threshold of the v0.4 baseline (results barely change 0.25-0.7)
   const st = { find: null, read: null, ep: null, w: 0, h: 0, fixed: false, inCv: null, cropCv: null };
   // V3 finder shapes (models/v3, one shared weights file): about 550 thousand input pixels each, from a thin strip to 16:9.
@@ -1593,7 +1601,7 @@ const DET = (() => {
     const fb = await fetchBytes(opts.base + opts.finder.file, opts.finder.weights ? null : prog);
     const wb = opts.finder.weights ? await fetchBytes(opts.base + opts.finder.weights, prog) : null;
     const so = e => Object.assign({ executionProviders: [e], graphOptimizationLevel: 'all' }, wb ? { externalData: [{ path: opts.finder.weights.split('/').pop(), data: wb }] } : {});
-    const rb = await fetchBytes(opts.base + 'models/reader-v2.onnx');
+    const rb = await fetchBytes(opts.base + 'models/reader-v3.onnx');
     say('Starting the ball finder…');
     if (st.find && st.find.release) { try { await st.find.release(); } catch (e) { } }
     let find = null, ep = null;
@@ -1685,9 +1693,10 @@ const DET = (() => {
     return t ? { y: ye / t, r: re / t, w: wh / t } : { y: 0, r: 0, w: 0 };
   }
   function softmax(z, T) { const v = Array.from(z, x => x / T), mx = Math.max(...v), e = v.map(x => Math.exp(x - mx)), t = e.reduce((s, x) => s + x, 0); return e.map(x => x / t); }
-  // Number for each spot: adds p (11 probabilities), num (0 = cue, 1-9), pTop, nb (not-a-ball) and kind
-  // ('sure' | 'unsure' | 'not_a_ball'). img: ImageData or 2D context of the same picture the spots came from.
-  async function read(img, spots) {
+  // Number for each spot: adds p (17 probabilities: the cue ball, 1-15, not a ball), num (0 = cue, 1-15), pTop, nb
+  // (not-a-ball) and kind ('sure' | 'unsure' | 'not_a_ball'). img: ImageData or 2D context of the same picture the spots
+  // came from. ids: the balls in play (9-ball: 0-9); the numbers not in play are taken out and the rest shared out again.
+  async function read(img, spots, ids) {
     if (!spots.length) return spots;
     const ort = window.ort, x = new Float32Array(spots.length * 3 * SIDE * SIDE), P = SIDE * SIDE;
     spots.forEach((b, i) => {
@@ -1696,7 +1705,9 @@ const DET = (() => {
     });
     const out = await st.read.run({ x: new ort.Tensor('float32', x, [spots.length, 3, SIDE, SIDE]) }), z = out.logits.data;
     spots.forEach((b, i) => {
-      const p = softmax(z.subarray(i * 11, i * 11 + 11), READ_T); let k = 0; for (let j = 1; j < NB; j++) if (p[j] > p[k]) k = j;
+      const p = softmax(z.subarray(i * (NB + 1), (i + 1) * (NB + 1)), READ_T);
+      if (ids) { let t = 0; for (let j = 0; j < NB; j++) { if (!ids.includes(j)) p[j] = 0; t += p[j]; } t += p[NB]; for (let j = 0; j <= NB; j++) p[j] /= t; }
+      let k = 0; for (let j = 1; j < NB; j++) if (p[j] > p[k]) k = j;
       b.p = p; b.num = k; b.pTop = p[k]; b.nb = p[NB]; b.kind = p[NB] >= NB_T ? 'not_a_ball' : p[k] >= P_T ? 'sure' : 'unsure';
     });
     return spots;
@@ -1803,6 +1814,7 @@ function makeTracker(P, opts) {
     cueFirst: true,     // a shot starts with the cue ball: a first mover that is not, with the cue ball still elsewhere, is a hand
     setupDrop: true,    // till a rack's first real shot, the cue ball rolling on its own (nothing else moved, nothing in) is a hand
     autoRack: true,     // only the cue ball left, still for rackHold s after a shot: the rack is done (see phase)
+    eightEnds: false,   // 8-ball (V3.9.0): the 8 in, the balls still for rackHold s: the rack is over whatever is left
     rackHold: 2,
     rackNew: 4,         // this many new balls put out since the last shot, and more on the table than then: a new rack
     flicker: 2.2,       // in (a ball's width): motion this close to a ball's resting spot waits a look before it counts (see phase)
@@ -1862,10 +1874,14 @@ function makeTracker(P, opts) {
   // in, the struck ball left on the table), so matching weighs this. The 9 counts as white here: the owner's 9 is a white
   // ball with a yellow band, and the reader takes the cue ball for the 9 now and then (Oct 26: the resting cue ball read
   // "9, sure" once and its own track refused the spot). Cue ball or 9 is settled by the votes and the colour shares.
-  const wIds = [O.ids.indexOf(0), O.ids.indexOf(9)].filter(i => i >= 0);
+  // With all fifteen balls (V3.9.0) the stripes 10-15 count as white too: each is half white, and seen end on the white
+  // cap fills the picture. With the nine balls of 9-ball (ids 0-9) this is the cue ball and the 9 as before.
+  const wNums = O.ids.filter(n => n === 0 || n >= 9), wIds = wNums.map(n => O.ids.indexOf(n));
   const whiteOf = tr => tr.pin === 0 || tr.pin === 9 ? 1 : tr.pin != null ? 0 : tr.nVotes >= 1.5 ? wIds.reduce((a, i) => a + Math.exp(tr.votes[i] / tr.nVotes), 0) : null;
-  const whiteSp = sp => sp.p && sp.p[10] < 0.5 ? (sp.p[0] + sp.p[9]) / (1 - sp.p[10]) : null; // a blurred "not a ball" read says nothing
-  const topNum = p => { let b = 0; for (let i = 1; i < 10; i++) if (p[i] > p[b]) b = i; return b; };
+  // the reader's probabilities: one per ball number, then "not a ball" last (11 with reader v2, 17 with reader v3)
+  const nbOf = p => p[p.length - 1];
+  const whiteSp = sp => sp.p && nbOf(sp.p) < 0.5 ? wNums.reduce((a, n) => a + (sp.p[n] || 0), 0) / (1 - nbOf(sp.p)) : null; // a blurred "not a ball" read says nothing
+  const topNum = p => { let b = O.ids[0]; for (const i of O.ids) if ((p[i] || 0) > (p[b] || 0)) b = i; return b; };
   const wGap = (tr, sp) => { const a = whiteOf(tr), b = whiteSp(sp); return a == null || b == null ? 0 : Math.abs(a - b); };
   // The reader also runs on rolling balls, and on the owner's phone it is sure of most of them even blurred (Oct 28: on a
   // hard hit, 3,124 of 3,215 spots during shots read "sure"). The finder saw the balls on almost every look; the tracker
@@ -1874,7 +1890,9 @@ function makeTracker(P, opts) {
   // in motion. The 9 is read as the cue ball or the 1 now and then (white with a yellow band).
   const readOf = sp => sp.kind === 'sure' && sp.p ? topNum(sp.p) : null;
   const named = tr => tr.num != null && (tr.pin != null || tr.sure);
-  const mixed = (a, b) => (a === 9 && (b === 0 || b === 1)) || (b === 9 && (a === 0 || a === 1));
+  // a stripe is also read as its solid (the same colour, the band turned away) or as the cue ball (the white cap end on)
+  const mixed = (a, b) => (a === 9 && (b === 0 || b === 1)) || (b === 9 && (a === 0 || a === 1)) ||
+    (a >= 10 && (b === a - 8 || b === 0)) || (b >= 10 && (a === b - 8 || a === 0));
   const readSame = (tr, sp) => named(tr) && readOf(sp) === tr.num;
   const readOther = (tr, sp) => { const r = readOf(sp); return named(tr) && r != null && r !== tr.num && !mixed(r, tr.num); };
 
@@ -1899,7 +1917,7 @@ function makeTracker(P, opts) {
   }
 
   function newTrack(sp, t) {
-    return { key: ++keyN, x: sp.x, y: sp.y, vx: 0, vy: 0, state: 'new', ok: false, firstT: t, seenT: t, looks: 1, seen: 1, nbSum: sp.p ? sp.p[10] : 0, nbN: sp.p ? 1 : 0, wS: whiteSp(sp) || 0, wN: whiteSp(sp) == null ? 0 : 1,
+    return { key: ++keyN, x: sp.x, y: sp.y, vx: 0, vy: 0, state: 'new', ok: false, firstT: t, seenT: t, looks: 1, seen: 1, nbSum: sp.p ? nbOf(sp.p) : 0, nbN: sp.p ? 1 : 0, wS: whiteSp(sp) || 0, wN: whiteSp(sp) == null ? 0 : 1,
       restX: sp.x, restY: sp.y, restSince: t, hist: [{ t, x: sp.x, y: sp.y }], votes: new Float64Array(O.ids.length), nVotes: 0, num: null, sure: false, pin: null, lostT: null, pocket: null, sp,
       rd: readOf(sp) == null ? [] : [readOf(sp)] };
   }
@@ -2050,7 +2068,7 @@ function makeTracker(P, opts) {
       tr.vx = k * vx + (1 - k) * tr.vx; tr.vy = k * vy + (1 - k) * tr.vy;
       tr.x = sp.x; tr.y = sp.y; tr.sp = sp; tr.seenT = t; tr.seen++; tr.lostT = null;
       (tr.hist = tr.hist || []).push({ t, x: sp.x, y: sp.y }); while (tr.hist.length && t - tr.hist[0].t > 1) tr.hist.shift();
-      if (sp.p) { tr.nbSum += sp.p[10]; tr.nbN++; } if (whiteSp(sp) != null) { tr.wS += whiteSp(sp); tr.wN++; }
+      if (sp.p) { tr.nbSum += nbOf(sp.p); tr.nbN++; } if (whiteSp(sp) != null) { tr.wS += whiteSp(sp); tr.wN++; }
       if (!tr.ok && sp.p && sp.kind === 'sure') (tr.rd = tr.rd || []).push(topNum(sp.p));
       tr.emptyN = 0;
       // seen again after it was lost at a pocket: it did not go in (yet); back to rolling, and the rest test below decides
@@ -2282,13 +2300,13 @@ function makeTracker(P, opts) {
       // next to another ball the crop shows both: only a sure read counts there (the Oct 20 benchmark: on balls within 2.5
       // radii of another the reader was sure 8 times, all right, and unsure or "not a ball" the other 104 times)
       if (sp.kind !== 'sure' && spots.some((q, i) => i !== j && Math.hypot(q.px - sp.px, q.py - sp.py) < O.touchPx * Math.max(q.r, sp.r))) continue;
-      const p = sp.p.slice(0, 10), s = p.reduce((a, b) => a + b, 0) || 1;
+      const p = sp.p.slice(0, sp.p.length - 1), s = O.ids.reduce((a, n) => a + (p[n] || 0), 0) || 1;
       // the owner's cue ball (white, red dots) and the 9 (white, yellow stripe): the colour shares settle a close call
       if (sp.col) {
         const top2 = p.map((v, i) => [v, i]).sort((a, b) => b[0] - a[0]).slice(0, 2).map(x => x[1]).sort().join();
         if (top2 === '0,9') { if (sp.col.y >= 0.1) { p[9] += p[0] * 0.8; p[0] *= 0.2; } else if (sp.col.y < 0.04 && sp.col.w >= 0.35) { p[0] += p[9] * 0.8; p[9] *= 0.2; } }
       }
-      for (let i = 0; i < tr.votes.length; i++) tr.votes[i] = tr.votes[i] * O.voteKeep + Math.log(p[O.ids[i]] / s + EPS);
+      for (let i = 0; i < tr.votes.length; i++) tr.votes[i] = tr.votes[i] * O.voteKeep + Math.log((p[O.ids[i]] || 0) / s + EPS);
       tr.nVotes = tr.nVotes * O.voteKeep + 1;
     }
   }
@@ -2370,6 +2388,8 @@ function makeTracker(P, opts) {
     // the button stays for the rest (a 9 made early in 9-ball)
     if (O.autoRack && S.phase === 'still' && !S.setup && !S.recon && S.shots.length > S.rackAt && S.stillSince != null && t - S.stillSince >= O.rackHold &&
       ballsNow().every(b => b.num === 0 && b.sure && b.state !== 'hidden')) { ev('rack_done', { n: S.shots.length }); S.say.push({ k: 'rack_done' }); newRack(); return; }
+    if (O.autoRack && O.eightEnds && S.gone.includes(8) && S.phase === 'still' && !S.setup && S.shots.length > S.rackAt && S.stillSince != null && t - S.stillSince >= O.rackHold) {
+      ev('rack_done', { n: S.shots.length, eight: true }); S.say.push({ k: 'rack_done', eight: true }); newRack(); return; }
     // a new set of balls put out while the rack is still open is a new rack (Oct 31, 15:10: a missed 3 kept rack 3 open,
     // and rack 4's balls stayed unnamed, their numbers already counted in): rackNew more balls standing on the table than
     // after the last shot, all come since it ended
@@ -2812,10 +2832,10 @@ const POSE = (() => {
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.13';
+const VERSION = 'V3.9.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
-const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
+const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
 // focal length / longer picture side of the main camera at 1x, in video: measured from the owner's tables (Oct 29: the
 // outlines of four sideways sessions come out exactly 2 to 1 at 0.71-0.72; the V2 value 0.86 made them 1.7 to 1)
 const LENS = 0.72;
@@ -2828,8 +2848,8 @@ const r1 = v => Math.round(v * 10) / 10, r2 = v => Math.round(v * 100) / 100, sl
 const numName = n => n === 0 ? 'cue ball' : n == null ? 'unknown ball' : n + ' ball';
 
 // ---------- settings and the last session ----------
-function save() { try { localStorage.setItem(KEY, JSON.stringify({ ft: A.ft, lastSess: A.lastSess, engine: A.engine })); } catch (e) { } }
-try { const d = JSON.parse(localStorage.getItem(KEY) || 'null'); if (d) { if ([7, 8, 9].includes(d.ft)) A.ft = d.ft; A.lastSess = d.lastSess || null; if (d.engine === 'gpu') A.engine = 'gpu'; } } catch (e) { }
+function save() { try { localStorage.setItem(KEY, JSON.stringify({ ft: A.ft, lastSess: A.lastSess, engine: A.engine, game: A.game })); } catch (e) { } }
+try { const d = JSON.parse(localStorage.getItem(KEY) || 'null'); if (d) { if ([7, 8, 9].includes(d.ft)) A.ft = d.ft; A.lastSess = d.lastSess || null; if (d.engine === 'gpu') A.engine = 'gpu'; if (d.game === 8) A.game = 8; } } catch (e) { }
 // ---------- crash notes: a few words in the phone's storage after every step, so if Safari closes the page we know where ----------
 // (V3.0 on the owner's iPhone: Safari closed the page seconds after the ball finder started on the graphics chip; the same
 // happened on the check page, while the processor ran 188 looks without trouble. So the processor is the default now.)
@@ -2895,7 +2915,7 @@ const STORE = (() => {
   };
 })();
 function header() {
-  return { app: 'chalkline', build: VERSION, mode: A.mode || 'play', det: DET.VERSION, started: new Date(DBG.t0).toISOString(), ua: navigator.userAgent, screen: [screen.width, screen.height], dpr: window.devicePixelRatio || 1,
+  return { app: 'chalkline', build: VERSION, mode: A.mode || 'play', game: A.mode === 'play' ? (A.game || 9) : null, det: DET.VERSION, started: new Date(DBG.t0).toISOString(), ua: navigator.userAgent, screen: [screen.width, screen.height], dpr: window.devicePixelRatio || 1,
     gpu: !!navigator.gpu, engine: DET.ep, engineSetting: A.engine, threads: DET.threads(), isolated: !!window.crossOriginIsolated, cores: navigator.hardwareConcurrency || null, shape: A.shape, kmax: r2(A.kmax), ft: A.ft, picture: A.tableWH || [A.W, A.H], pictureNow: [A.W, A.H], quad: A.quad && A.quad.map(p => [r1(p[0]), r1(p[1])]), rot: A.rot, box: A.box && A.box.map(Math.round),
     camOk: A.cam ? A.cam.ok : null, cam: A.camInfo, lens: LENS };
 }
@@ -2920,6 +2940,9 @@ function renderHome() {
   $('#verTag').textContent = VERSION;
   const sf = $('#segFt'); sf.innerHTML = '';
   for (const f of [7, 8, 9]) { const b = document.createElement('button'); b.textContent = f + ' ft'; b.className = f === A.ft ? 'on' : ''; b.onclick = () => { A.ft = f; save(); renderHome(); }; sf.appendChild(b); }
+  // the game for Play a rack (V3.9.0): 9-ball, or 8-ball (all fifteen balls; the rack is over when the 8 goes in)
+  const sg = $('#segGame'); if (sg) { sg.innerHTML = ''; for (const g of [9, 8]) { const b = document.createElement('button'); b.textContent = g + '-ball'; b.className = g === (A.game || 9) ? 'on' : ''; b.onclick = () => { A.game = g; save(); renderHome(); }; sg.appendChild(b); } }
+  const gb = $('#goBtn small'); if (gb) gb.textContent = (A.game === 8 ? '8-ball, all fifteen balls: made balls, scratches, runs; the rack is over when the 8 goes in or only the cue ball is left.' : '9-ball: made balls, scratches, the first ball hit, runs; the rack is done by itself when only the cue ball is left.');
   const se = $('#segEng'); if (se) { se.innerHTML = ''; for (const [v, l] of [['cpu', 'Processor'], ['gpu', 'Graphics chip']]) { const b = document.createElement('button'); b.textContent = l; b.className = v === A.engine ? 'on' : ''; b.onclick = () => { A.engine = v; save(); renderHome(); }; se.appendChild(b); } }
   const eh = $('#engHint'); if (eh) eh.textContent = A.engine === 'gpu' ? 'Faster, but on your iPhone Safari has closed the page when the ball finder runs here.' : 'Steady. ' + (window.crossOriginIsolated ? 'Uses several cores.' : 'One core: reload the page once if this stays.');
   if (CRASH) { $('#crashCard').hidden = false; $('#crashText').textContent = 'V' + String(CRASH.version || '').replace(/^V/, '') + ' stopped after ' + (CRASH.secs || 0) + ' s and ' + (CRASH.looks || 0) + ' looks, on the ' + (CRASH.engine === 'webgpu' ? 'graphics chip' : CRASH.engine === 'wasm' ? 'processor (' + (CRASH.threads || 1) + ' core' + ((CRASH.threads || 1) > 1 ? 's' : '') + ')' : 'way in') + ', while ' + ({ look: 'looking at the table', done: 'between looks', start: 'starting', camera: 'starting the camera', finder: 'starting the ball finder', table: 'finding the table' }[CRASH.step] || CRASH.step) + '.' + (CRASH.engine === 'webgpu' ? ' The processor is selected now.' : ''); }
@@ -3022,13 +3045,15 @@ function smallImg() {
 
 // ---------- start ----------
 // mode: 'play' (a rack at a time: racks done by themselves, runs) or 'practice' (balls set out and moved at will; owner Nov 2)
-const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false } : {};
+// practice reads all fifteen balls (V3.9.0); Play a rack is 9-ball, the cue ball and 1-9
+const ALL15 = Array.from({ length: 16 }, (_, i) => i);
+const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false, ids: ALL15 } : A.game === 8 ? { ids: ALL15, eightEnds: true } : {};
 async function start(mode) {
   homeMsg(''); A.mode = mode === 'practice' ? 'practice' : 'play';
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, game: A.mode === 'play' ? (A.game || 9) : null, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
@@ -3246,7 +3271,7 @@ async function look() {
   for (const s of found) { const q = A.cam.unproj(s.px, s.py, R); s.x = q[0]; s.y = q[1]; if (s.x > -3 && s.y > -3 && s.x < P.L + 3 && s.y < P.W + 3) on.push(s); }
   // the reader runs every look (about 10 ms against 220 for the finder on the owner's phone). During a shot its numbers
   // are not votes (the tracker votes on resting balls only), but white or not still tells the cue ball from the rest
-  const read = true; await DET.read(A.fctx, on);
+  const read = true; await DET.read(A.fctx, on, tk.O.ids);
   const t2 = performance.now(), before = tk.S.phase;
   tk.update(t, on, { read, empty: emptyAt });
   for (const n of tk.S.notes.splice(0)) onLateMade(n);
@@ -3270,10 +3295,10 @@ async function look() {
 }
 // the reader's second choice and its share (from V3.0.11, so a replay can rebuild how sure the reader was: Oct 30, a replay
 // with every read made 90% sure scored 37 of 44 on a session that live got 42)
-function second(p, k) { let b = -1; for (let i = 0; i < 10; i++) if (i !== k && (b < 0 || p[i] > p[b])) b = i; return b < 0 ? null : [b, r2(p[b])]; }
+function second(p, k) { let b = -1; for (let i = 0; i < p.length - 1; i++) if (i !== k && (b < 0 || p[i] > p[b])) b = i; return b < 0 ? null : [b, r2(p[b])]; }
 // The tracker's word on racks and hand moves (V3.0.15, owner Oct 31: for testing, said on screen; later done quietly)
 function onSay(s) {
-  if (s.k === 'rack_done') { flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', { auto: true }); toast('Rack complete'); }
+  if (s.k === 'rack_done') { flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', { auto: true, eight: !!s.eight }); toast(s.eight ? 'The 8 is in: rack over' : 'Rack complete'); }
   else if (s.k === 'rack_new') { flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', { auto: true, set: true }); toast('New rack: balls set out'); }
   else if (s.k === 'not_shot') { PATH.clear(); dbg('not_shot', { num: s.num }); toast('Not counted: hand move'); }
 }
@@ -4096,7 +4121,7 @@ const REVIEW = (() => {
   function remember(sess, mins) {
     if (!sess || !sess.shots || !sess.shots.length) return;
     const h = history().filter(x => x.t0 !== sess.t0), st = stats(sess.shots), bs = byShot(sess.shots, sess.ft);
-    h.push({ t0: sess.t0, ft: sess.ft, mode: sess.mode || 'play', mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun, cuts: bs.cuts, drills: typeof DRILL !== 'undefined' ? DRILL.summary(drillTries(sess)).map(d => ({ id: d.id, name: d.name, tries: d.tries, made: d.made, best: d.best })) : [] });
+    h.push({ t0: sess.t0, ft: sess.ft, mode: sess.mode || 'play', game: sess.game || null, mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun, cuts: bs.cuts, drills: typeof DRILL !== 'undefined' ? DRILL.summary(drillTries(sess)).map(d => ({ id: d.id, name: d.name, tries: d.tries, made: d.made, best: d.best })) : [] });
     try { localStorage.setItem(HIST, JSON.stringify(h.slice(-300))); } catch (e) { }
   }
   // shots set up again: a shot whose cue ball starts within R in of the one before's, with every other ball within R in of
@@ -4262,7 +4287,7 @@ function renderHistory() {
   const tot = {}; for (const x of h) for (const d of x.drills || []) { const o = tot[d.id] = tot[d.id] || { name: d.name, tries: 0, made: 0, best: -1 }; o.tries += d.tries; o.made += d.made; o.best = Math.max(o.best, d.best); }
   const tl = Object.keys(tot); $('#histCuts').hidden = !tl.length;
   if (tl.length) $('#histCuts').innerHTML = '<h3>Your drills, all sessions</h3>' + tl.map(k => { const o = tot[k], D = typeof DRILL !== 'undefined' && DRILL.byId(k); return '<div class="brow"><span>' + o.name + (D && o.best >= 0 ? ' · best ' + D.word(D.levels[o.best]) : '') + '</span><b>' + o.made + ' of ' + o.tries + '</b><i><u style="width:' + Math.round(100 * o.made / o.tries) + '%"></u></i></div>'; }).join('');
-  $('#histList').innerHTML = h.slice(0, 8).map(x => '<div class="rrow"><b>' + dateWords(x.t0) + (x.mode === 'practice' ? ' · practice' : '') + '</b><span>' + x.shots + ' shots · ' + x.ballsIn + ' in · ' + REVIEW.pct(x.tries ? x.potted / x.tries : null) + ' made a ball · best run ' + x.bestRun + '</span></div>').join('');
+  $('#histList').innerHTML = h.slice(0, 8).map(x => '<div class="rrow"><b>' + dateWords(x.t0) + (x.mode === 'practice' ? ' · practice' : x.game === 8 ? ' · 8-ball' : '') + '</b><span>' + x.shots + ' shots · ' + x.ballsIn + ' in · ' + REVIEW.pct(x.tries ? x.potted / x.tries : null) + ' made a ball · best run ' + x.bestRun + '</span></div>').join('');
 }
 renderHistory();
 

@@ -114,10 +114,16 @@ a.old { color: var(--muted); font-size: 13px; }
     <button class="btn primary" id="updBtn" hidden></button>
     <button class="go glass" id="goBtn"><b>Play a rack</b><small>A rack at a time: made balls, scratches, the first ball hit, runs; the rack is done by itself when only the cue ball is left.</small><i>›</i></button>
     <button class="go glass" id="pracBtn"><b>Practice</b><small>Set balls where you like and shoot. Moving or picking up balls is fine; tries of the same shot are put together.</small><i>›</i></button>
+    <div class="card glass"><div class="lbl" style="margin-bottom:8px">Game for Play a rack</div><div class="seg" id="segGame"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
+    <div class="card glass"><h2>New in V3.9</h2><ul>
+      <li>All fifteen balls: the 10 to 15 are read now, stripes seen end on too (a white cap with a coloured ring is not the cue ball). Practice reads all fifteen.</li>
+      <li>8-ball: pick the game above, then Play a rack. The rack is over when the 8 goes in, or when only the cue ball is left.</li>
+      <li>A shot is told by your pose: down on the shot counts, standing at the table with a hand on a ball does not. Standing only keeps a move out when the app is sure.</li>
+    </ul></div>
     <div class="card glass"><h2>New in V3.6</h2><ul>
       <li>Drills (Menu → Drills): a cut ladder, thin cuts, a cross-side bank and a stop shot. Rings show where the balls go and the pocket; made, the next one is harder; missed, it steps back. Your drills over all sessions on this screen.</li>
       <li>Free practice says what went in and how cut it was, and leaves the rest alone: a miss may have been a bank or anything.</li>

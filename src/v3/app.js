@@ -2,10 +2,10 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.13';
+const VERSION = 'V3.9.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
-const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
+const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
 // focal length / longer picture side of the main camera at 1x, in video: measured from the owner's tables (Oct 29: the
 // outlines of four sideways sessions come out exactly 2 to 1 at 0.71-0.72; the V2 value 0.86 made them 1.7 to 1)
 const LENS = 0.72;
@@ -18,8 +18,8 @@ const r1 = v => Math.round(v * 10) / 10, r2 = v => Math.round(v * 100) / 100, sl
 const numName = n => n === 0 ? 'cue ball' : n == null ? 'unknown ball' : n + ' ball';
 
 // ---------- settings and the last session ----------
-function save() { try { localStorage.setItem(KEY, JSON.stringify({ ft: A.ft, lastSess: A.lastSess, engine: A.engine })); } catch (e) { } }
-try { const d = JSON.parse(localStorage.getItem(KEY) || 'null'); if (d) { if ([7, 8, 9].includes(d.ft)) A.ft = d.ft; A.lastSess = d.lastSess || null; if (d.engine === 'gpu') A.engine = 'gpu'; } } catch (e) { }
+function save() { try { localStorage.setItem(KEY, JSON.stringify({ ft: A.ft, lastSess: A.lastSess, engine: A.engine, game: A.game })); } catch (e) { } }
+try { const d = JSON.parse(localStorage.getItem(KEY) || 'null'); if (d) { if ([7, 8, 9].includes(d.ft)) A.ft = d.ft; A.lastSess = d.lastSess || null; if (d.engine === 'gpu') A.engine = 'gpu'; if (d.game === 8) A.game = 8; } } catch (e) { }
 // ---------- crash notes: a few words in the phone's storage after every step, so if Safari closes the page we know where ----------
 // (V3.0 on the owner's iPhone: Safari closed the page seconds after the ball finder started on the graphics chip; the same
 // happened on the check page, while the processor ran 188 looks without trouble. So the processor is the default now.)
@@ -85,7 +85,7 @@ const STORE = (() => {
   };
 })();
 function header() {
-  return { app: 'chalkline', build: VERSION, mode: A.mode || 'play', det: DET.VERSION, started: new Date(DBG.t0).toISOString(), ua: navigator.userAgent, screen: [screen.width, screen.height], dpr: window.devicePixelRatio || 1,
+  return { app: 'chalkline', build: VERSION, mode: A.mode || 'play', game: A.mode === 'play' ? (A.game || 9) : null, det: DET.VERSION, started: new Date(DBG.t0).toISOString(), ua: navigator.userAgent, screen: [screen.width, screen.height], dpr: window.devicePixelRatio || 1,
     gpu: !!navigator.gpu, engine: DET.ep, engineSetting: A.engine, threads: DET.threads(), isolated: !!window.crossOriginIsolated, cores: navigator.hardwareConcurrency || null, shape: A.shape, kmax: r2(A.kmax), ft: A.ft, picture: A.tableWH || [A.W, A.H], pictureNow: [A.W, A.H], quad: A.quad && A.quad.map(p => [r1(p[0]), r1(p[1])]), rot: A.rot, box: A.box && A.box.map(Math.round),
     camOk: A.cam ? A.cam.ok : null, cam: A.camInfo, lens: LENS };
 }
@@ -110,6 +110,9 @@ function renderHome() {
   $('#verTag').textContent = VERSION;
   const sf = $('#segFt'); sf.innerHTML = '';
   for (const f of [7, 8, 9]) { const b = document.createElement('button'); b.textContent = f + ' ft'; b.className = f === A.ft ? 'on' : ''; b.onclick = () => { A.ft = f; save(); renderHome(); }; sf.appendChild(b); }
+  // the game for Play a rack (V3.9.0): 9-ball, or 8-ball (all fifteen balls; the rack is over when the 8 goes in)
+  const sg = $('#segGame'); if (sg) { sg.innerHTML = ''; for (const g of [9, 8]) { const b = document.createElement('button'); b.textContent = g + '-ball'; b.className = g === (A.game || 9) ? 'on' : ''; b.onclick = () => { A.game = g; save(); renderHome(); }; sg.appendChild(b); } }
+  const gb = $('#goBtn small'); if (gb) gb.textContent = (A.game === 8 ? '8-ball, all fifteen balls: made balls, scratches, runs; the rack is over when the 8 goes in or only the cue ball is left.' : '9-ball: made balls, scratches, the first ball hit, runs; the rack is done by itself when only the cue ball is left.');
   const se = $('#segEng'); if (se) { se.innerHTML = ''; for (const [v, l] of [['cpu', 'Processor'], ['gpu', 'Graphics chip']]) { const b = document.createElement('button'); b.textContent = l; b.className = v === A.engine ? 'on' : ''; b.onclick = () => { A.engine = v; save(); renderHome(); }; se.appendChild(b); } }
   const eh = $('#engHint'); if (eh) eh.textContent = A.engine === 'gpu' ? 'Faster, but on your iPhone Safari has closed the page when the ball finder runs here.' : 'Steady. ' + (window.crossOriginIsolated ? 'Uses several cores.' : 'One core: reload the page once if this stays.');
   if (CRASH) { $('#crashCard').hidden = false; $('#crashText').textContent = 'V' + String(CRASH.version || '').replace(/^V/, '') + ' stopped after ' + (CRASH.secs || 0) + ' s and ' + (CRASH.looks || 0) + ' looks, on the ' + (CRASH.engine === 'webgpu' ? 'graphics chip' : CRASH.engine === 'wasm' ? 'processor (' + (CRASH.threads || 1) + ' core' + ((CRASH.threads || 1) > 1 ? 's' : '') + ')' : 'way in') + ', while ' + ({ look: 'looking at the table', done: 'between looks', start: 'starting', camera: 'starting the camera', finder: 'starting the ball finder', table: 'finding the table' }[CRASH.step] || CRASH.step) + '.' + (CRASH.engine === 'webgpu' ? ' The processor is selected now.' : ''); }
@@ -212,13 +215,15 @@ function smallImg() {
 
 // ---------- start ----------
 // mode: 'play' (a rack at a time: racks done by themselves, runs) or 'practice' (balls set out and moved at will; owner Nov 2)
-const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false } : {};
+// practice reads all fifteen balls (V3.9.0); Play a rack is 9-ball, the cue ball and 1-9
+const ALL15 = Array.from({ length: 16 }, (_, i) => i);
+const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false, ids: ALL15 } : A.game === 8 ? { ids: ALL15, eightEnds: true } : {};
 async function start(mode) {
   homeMsg(''); A.mode = mode === 'practice' ? 'practice' : 'play';
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, game: A.mode === 'play' ? (A.game || 9) : null, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
@@ -436,7 +441,7 @@ async function look() {
   for (const s of found) { const q = A.cam.unproj(s.px, s.py, R); s.x = q[0]; s.y = q[1]; if (s.x > -3 && s.y > -3 && s.x < P.L + 3 && s.y < P.W + 3) on.push(s); }
   // the reader runs every look (about 10 ms against 220 for the finder on the owner's phone). During a shot its numbers
   // are not votes (the tracker votes on resting balls only), but white or not still tells the cue ball from the rest
-  const read = true; await DET.read(A.fctx, on);
+  const read = true; await DET.read(A.fctx, on, tk.O.ids);
   const t2 = performance.now(), before = tk.S.phase;
   tk.update(t, on, { read, empty: emptyAt });
   for (const n of tk.S.notes.splice(0)) onLateMade(n);
@@ -460,10 +465,10 @@ async function look() {
 }
 // the reader's second choice and its share (from V3.0.11, so a replay can rebuild how sure the reader was: Oct 30, a replay
 // with every read made 90% sure scored 37 of 44 on a session that live got 42)
-function second(p, k) { let b = -1; for (let i = 0; i < 10; i++) if (i !== k && (b < 0 || p[i] > p[b])) b = i; return b < 0 ? null : [b, r2(p[b])]; }
+function second(p, k) { let b = -1; for (let i = 0; i < p.length - 1; i++) if (i !== k && (b < 0 || p[i] > p[b])) b = i; return b < 0 ? null : [b, r2(p[b])]; }
 // The tracker's word on racks and hand moves (V3.0.15, owner Oct 31: for testing, said on screen; later done quietly)
 function onSay(s) {
-  if (s.k === 'rack_done') { flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', { auto: true }); toast('Rack complete'); }
+  if (s.k === 'rack_done') { flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', { auto: true, eight: !!s.eight }); toast(s.eight ? 'The 8 is in: rack over' : 'Rack complete'); }
   else if (s.k === 'rack_new') { flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', { auto: true, set: true }); toast('New rack: balls set out'); }
   else if (s.k === 'not_shot') { PATH.clear(); dbg('not_shot', { num: s.num }); toast('Not counted: hand move'); }
 }

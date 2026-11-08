@@ -1489,3 +1489,21 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   face (nose or an eye) is seen; otherwise unsure, and the hand rules decide. On all five Nov 8 15-ball sessions: every
   standing move still called upright where the face is seen, shots 12 and 15 not, no down shot called upright. The back
   view standing moves (14:15 hands 1, 2) fall to the hand rules, which kept them out before.
+
+## V3.9.0: all fifteen balls, 8-ball (several upgrades in one version, owner Nov 8)
+- Reader v3 (models/reader-v3.onnx, tools/v3/reader3): the cue ball, 1-15, not a ball. 1,116 balls from the five 15-ball
+  sessions of Nov 8 labelled: colour from reader v2, solid or stripe from the white shown (each colour splits cleanly:
+  the 2 at most 16% white, the 10 at least 24%), stripes end on (white cap, coloured ring, read as the cue ball by v2:
+  10, 13, 14, 15, 9, 11) one by one, the measle cue ball by its red dots; checked that no picture has a number twice
+  (it found the 11 and the 15 swapped in 13:04). 59 left out (two balls in a crop, blurred, too small).
+- Held out a session at a time: 95.5% right first choice; sure and wrong 2.6% (v2 on 1-9 about 3%), most of it two balls
+  each in one pose for a whole session. On v2's test crops it beats v2 (sure wrong 362 against 528); on the verified
+  9-ball frames 110 of 110. The first training called the 9 behind the 2 on the Oct 27 photo "not a ball" (the swaying
+  test lost it): retrained with a neighbour ball pasted on 30% of crops, the 9 is a ball again and the 4 there is sure.
+- detect.js: 17 outputs, temperature 1.21 (fitted on the held-out readings); read(img, spots, ids) takes the numbers not
+  in play out. track.js: "not a ball" is the last output, names only from O.ids, the stripes count as white (the white
+  test that ties blurred spots to the cue ball), a stripe "mixed" with its solid and with the cue ball (a sure read of
+  one does not rule out the other on a rolling ball). With ids 0-9 (9-ball) everything is as before (100 tracker tests).
+- Practice reads 0-15. Play a rack has a Game choice on the home screen: 9-ball (0-9, as before) or 8-ball (0-15; the
+  rack over when the 8 goes in and the balls are still, O.eightEnds, or when only the cue ball is left). Session and
+  history keep the game. Check page needs det 6.

@@ -72,7 +72,7 @@ const REVIEW = (() => {
   function remember(sess, mins) {
     if (!sess || !sess.shots || !sess.shots.length) return;
     const h = history().filter(x => x.t0 !== sess.t0), st = stats(sess.shots), bs = byShot(sess.shots, sess.ft);
-    h.push({ t0: sess.t0, ft: sess.ft, mode: sess.mode || 'play', mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun, cuts: bs.cuts, drills: typeof DRILL !== 'undefined' ? DRILL.summary(drillTries(sess)).map(d => ({ id: d.id, name: d.name, tries: d.tries, made: d.made, best: d.best })) : [] });
+    h.push({ t0: sess.t0, ft: sess.ft, mode: sess.mode || 'play', game: sess.game || null, mins, racks: racks(sess.shots).length, shots: st.shots, ballsIn: st.ballsIn, potted: st.potted, tries: st.tries, scratches: st.scratches, bestRun: st.bestRun, cuts: bs.cuts, drills: typeof DRILL !== 'undefined' ? DRILL.summary(drillTries(sess)).map(d => ({ id: d.id, name: d.name, tries: d.tries, made: d.made, best: d.best })) : [] });
     try { localStorage.setItem(HIST, JSON.stringify(h.slice(-300))); } catch (e) { }
   }
   // shots set up again: a shot whose cue ball starts within R in of the one before's, with every other ball within R in of
@@ -238,6 +238,6 @@ function renderHistory() {
   const tot = {}; for (const x of h) for (const d of x.drills || []) { const o = tot[d.id] = tot[d.id] || { name: d.name, tries: 0, made: 0, best: -1 }; o.tries += d.tries; o.made += d.made; o.best = Math.max(o.best, d.best); }
   const tl = Object.keys(tot); $('#histCuts').hidden = !tl.length;
   if (tl.length) $('#histCuts').innerHTML = '<h3>Your drills, all sessions</h3>' + tl.map(k => { const o = tot[k], D = typeof DRILL !== 'undefined' && DRILL.byId(k); return '<div class="brow"><span>' + o.name + (D && o.best >= 0 ? ' · best ' + D.word(D.levels[o.best]) : '') + '</span><b>' + o.made + ' of ' + o.tries + '</b><i><u style="width:' + Math.round(100 * o.made / o.tries) + '%"></u></i></div>'; }).join('');
-  $('#histList').innerHTML = h.slice(0, 8).map(x => '<div class="rrow"><b>' + dateWords(x.t0) + (x.mode === 'practice' ? ' · practice' : '') + '</b><span>' + x.shots + ' shots · ' + x.ballsIn + ' in · ' + REVIEW.pct(x.tries ? x.potted / x.tries : null) + ' made a ball · best run ' + x.bestRun + '</span></div>').join('');
+  $('#histList').innerHTML = h.slice(0, 8).map(x => '<div class="rrow"><b>' + dateWords(x.t0) + (x.mode === 'practice' ? ' · practice' : x.game === 8 ? ' · 8-ball' : '') + '</b><span>' + x.shots + ' shots · ' + x.ballsIn + ' in · ' + REVIEW.pct(x.tries ? x.potted / x.tries : null) + ' made a ball · best run ' + x.bestRun + '</span></div>').join('');
 }
 renderHistory();
