@@ -56,3 +56,9 @@ test('the cut ladder: the cue ball stays put, the object ball comes round toward
   for (let i = 1; i < sts.length; i++) assert.ok(sts[i].O[0] > sts[i - 1].O[0], 'closer to the right end rail at each level');
   const th = DRILL.setup('thin', 0, P, view); assert.ok(P.L - th.O[0] < P.R + 0.5, 'against the end rail'); assert.strictEqual(P.pocketNames[th.pocket], 'bottom-right');
 });
+
+test('a late call of the object ball counts whatever pocket it guessed (Nov 8 10:48, 6: the 8 called in late, in the wrong pocket)', () => {
+  const st = DRILL.setup('cut', 1, P, view), sh = shot(st, { pocket: (st.pocket + 2) % 6 });
+  assert.strictEqual(DRILL.score(st, sh, P).made, false);
+  sh.made[0].late = true; assert.strictEqual(DRILL.score(st, sh, P).made, true);
+});

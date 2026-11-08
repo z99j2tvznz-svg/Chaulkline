@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.8.7';
+const VERSION = 'V3.8.8';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d'];
@@ -218,7 +218,7 @@ async function start(mode) {
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P, TK_OPTS(A.mode)); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map();
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P, TK_OPTS(A.mode)); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
@@ -474,7 +474,7 @@ function onShotEnd(sh) {
   sh.paths = pathsRow(sh); const row = shotRow(sh); if (A.sess.rackOpen) { A.sess.rackOpen = false; if (A.sess.shots.length) A.sess.rack++; }
   A.sess.shots.push(Object.assign({ n: sh.n, rack: A.sess.rack, cue: sh.cueNum, first: sh.firstNum, made: row.made, scratch: sh.scratch, break: sh.break, t: Date.now() }, REVIEW.shotDetail(sh), STK.of.has(sh.n) ? { stroke: STK.of.get(sh.n) } : {}));
   dbg('shot_end', { n: sh.n, made: row.made, scratch: sh.scratch, first: sh.firstNum });
-  if (A.drill && A.drill.st) { const st = A.drill.st; setTimeout(() => drillScore(sh, st), 2500); }
+  if (A.drill && A.drill.st) { const st = A.drill.st; A.drillStOf.set(sh.n, st); setTimeout(() => drillScore(sh, st), 2500); }
   jpeg(960).then(b => setPic('shot' + String(sh.n).padStart(3, '0') + '-after.jpg', b)).catch(() => { });
   // (the move check, V3.7, only logs now: on Nov 2 18:04 it threw out 8 real bank shots, a cue seen end on read as a level
   // line; it had found 1 real push in all)
@@ -516,7 +516,7 @@ function pathsRow(sh) { const o = []; for (const [key, e] of PATH) if (moved(e.p
 function onLateMade(n) {
   const row = A.sess.shots.find(s => s.n === n.n), sh = A.tk.S.shots.find(s => s.n === n.n);
   if (row && sh) { row.made = shotRow(sh).made; row.scratch = sh.scratch; if (row.notShot === 'move' && (row.made.length || row.scratch)) delete row.notShot; } // (something went in: it was a shot)
-  dbg('late_made', n); renderDown();
+  dbg('late_made', n); renderDown(); drillLate(n.n);
   toast('Shot ' + n.n + ': ' + (n.num === 0 ? 'the cue ball went in too (scratch)' : 'the ' + (n.num == null ? 'ball' : n.num) + ' went in too') + (n.pocket != null ? ' (' + POCKETS[n.pocket] + ')' : ''));
 }
 // Each ball's own colour, read from the picture while it rests (sets differ: a pink 4, a teal 2, a black 9 with a yellow
@@ -752,6 +752,14 @@ function drillReadyLook() {
 // for it was over the tracker's 0.6 for a ball in a pocket, which on all the recorded sessions cannot be raised without
 // losing more than it gains. The drill knows the pocket, so it can look there.)
 function onBag(pocket, x, y) { const b = (A.tk.O.bags || []).find(q => q.i === pocket); if (!b) return false; const dx = b.bx - b.ax, dy = b.by - b.ay, u = Math.max(0, Math.min(1, ((x - b.ax) * dx + (y - b.ay) * dy) / (dx * dx + dy * dy || 1))); return Math.hypot(x - b.ax - u * dx, y - b.ay - u * dy) <= 1.5; }
+// A ball called in late on a drill shot (Nov 8 10:48: twice the object ball was called in just after the drill had set
+// the shot aside as never touched, once after it was scored a miss): the shot is scored again
+function drillLate(n) {
+  const D = A.drill, sh = A.tk && A.tk.S.shots.find(s => s.n === n), st = A.drillStOf && A.drillStOf.get(n); if (!D || !sh || !st) return;
+  const row = A.sess.shots.find(x => x.n === n), t = A.sess.drillTries.find(x => x.n === n);
+  if (t) { if (t.made || DRILL.byId(st.id).kind === 'stop') return; const r = DRILL.score(st, sh, A.P); if (r.made) { Object.assign(t, { made: true, pocketed: true }); if (row) row.drill = t; dbg('drill_late', { n }); drillTag(); toast('Shot ' + n + ': made after all'); } return; }
+  if (row && row.untouched && D.st === st) { delete row.notShot; delete row.untouched; dbg('drill_late', { n, untouched: true }); drillScore(sh, st); }
+}
 // The drill's object ball in a shot: the ball resting nearest its spot when the shot started (within 8 in)
 function drillOb(sh, st) { const at = b => [b.rx != null ? b.rx : b.x, b.ry != null ? b.ry : b.y]; return (sh.before || []).filter(b => b.num !== 0 && b.key !== sh.cueKey).map(b => ({ b, d: Math.hypot(at(b)[0] - st.O[0], at(b)[1] - st.O[1]) })).filter(x => x.d <= 8).sort((a, b) => a.d - b.d).map(x => x.b)[0] || null; }
 // Scored as soon as the object ball is known (owner, Nov 3: the drill is about the object ball; he stops the cue ball and
@@ -773,7 +781,12 @@ function drillScore(sh, st, early) {
   const r0 = A.sess.shots.find(x => x.n === sh.n); if (r0 && r0.notShot) return; // (not a shot: setting up)
   // the object ball never touched and nothing in: the cue ball moved by hand after Ready, not a try
   if (!early) { const ob = drillOb(sh, st), af = ob && (sh.after || []).find(b => b.key === ob.key);
-    if (ob && af && !sh.made.length && Math.hypot(af.x - (ob.rx != null ? ob.rx : ob.x), af.y - (ob.ry != null ? ob.ry : ob.y)) < 1) { dbg('drill_untouched', { n: sh.n }); if (r0) r0.notShot = 'setup'; return; } }
+    if (ob && af && !sh.made.length && Math.hypot(af.x - (ob.rx != null ? ob.rx : ob.x), af.y - (ob.ry != null ? ob.ry : ob.y)) < 1) { dbg('drill_untouched', { n: sh.n }); if (r0) { r0.notShot = 'setup'; r0.untouched = true; } return; }
+    // the object ball lost on its way to the pocket and not seen again: in (Nov 8 10:48, 20: the 8 dropped, lost an inch
+    // from its spot, never called; the next ball was set on its spot before the cloth there was looked at)
+    if (ob && (!af || af.state === 'hidden') && !sh.made.some(m => m.key === ob.key) && DRILL.byId(st.id).kind !== 'stop') { const p0 = [ob.rx != null ? ob.rx : ob.x, ob.ry != null ? ob.ry : ob.y];
+      if (af && Math.hypot(af.x - p0[0], af.y - p0[1]) > 0.5) { const a1 = Math.atan2(af.y - p0[1], af.x - p0[0]), a2 = Math.atan2(st.Pk[1] - p0[1], st.Pk[0] - p0[0]);
+        if (Math.abs(((a1 - a2) / Math.PI * 180 + 540) % 360 - 180) < 30) { sh = Object.assign({}, sh, { made: sh.made.concat([{ key: ob.key, num: ob.num, pocket: st.pocket, vanished: true }]) }); dbg('drill_vanished', { n: sh.n }); } } } }
   // (at the shot's end too: the object ball resting in its pocket's bowl, in view, is in)
   if (!early) { const ob = drillOb(sh, st), af = ob && (sh.after || []).find(b => b.key === ob.key); if (af && !sh.made.some(m => m.key === ob.key) && onBag(st.pocket, af.x, af.y)) { sh = Object.assign({}, sh, { made: sh.made.concat([{ key: ob.key, num: ob.num, pocket: st.pocket, bag: true }]) }); dbg('drill_bag', { n: sh.n }); } }
   const r = DRILL.score(st, sh, A.P);

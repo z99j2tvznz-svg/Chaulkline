@@ -1392,3 +1392,18 @@ and the 2, lost twice by that pocket, was called in after the wait; it lay about
 back 18 s later as a new ball (tapped as the 2). The known "ball by a far pocket" case. Fixture session-20261108-1059
 (the replay 9: shot 10's 8, called late live from the cloth, is not caught from the shot pictures' cloth maps). On the
 scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
+
+## Review: Nov 8 10:48 (V3.8.7, cut ladder, another room) and V3.8.8
+- The cut ladder done through in 11 minutes (2 parts, part 2 first). Live 18 tries, 14 made; by the pictures and clips 20
+  tries, 18 made (missed only 14 and 16). On this table made balls stay in view in the far right pocket.
+- Lost: 3 and 15, made, set aside as never touched (drill_untouched 2.5 s after the shot's end), the object ball called
+  in 0.05 and 1.5 s later; 6, made, scored a miss because the late call guessed the near side pocket; 20, made, the 8
+  lost an inch from its spot as it went and never called (the next ball was set on its spot before the cloth there was
+  looked at). 23, counted made by the ball-in-its-pocket rule (V3.8.7), was right (the 9 came to rest beside the 8 and
+  the 3 in that pocket); 19 (the cue ball never moved) rightly not a try.
+- V3.8.8: a late call on a drill shot scores it again (drill_late: one set aside as untouched is scored; one scored a
+  miss becomes made); a late-called object ball counts in whatever pocket the call guessed (its pocket is a guess); the
+  object ball lost on its way to the pocket (last seen moving within 30 degrees of the line to it) and not seen again is
+  in (drill_vanished; not for the stop shot). Checked on every drill session so far: of the shots scored misses, only
+  10:48's 20 changes (20:27's 25, a bank, was scored early, before the ball was lost when picked up). Replayed by hand
+  on 10:48: 20 tries, 18 made.

@@ -64,7 +64,7 @@ const DRILL = (() => {
     const ob = obs[0].b, O = at(ob), cue = (shot.before || []).find(b => b.num === 0), C = cue ? at(cue) : null;
     const m = (shot.made || []).find(q => (q.key != null && q.key === ob.key) || (ob.num != null && q.num === ob.num));
     // in the pocket it was for (a call without a pocket counts: the ball was set up for that one)
-    const made = !!m && !shot.scratch && (m.pocket == null || m.pocket === st.pocket);
+    const made = !!m && !shot.scratch && (m.pocket == null || m.pocket === st.pocket || !!m.late); // (a late call's pocket is a guess from where the ball was last seen: Nov 8 10:48, 6)
     // the cut as really set out: from the cue ball to where it had to meet the ball, against the line the ball had to take
     let cut = null; if (C) { const u = unit(O, st.aimAt), G = [O[0] - 2 * R * u[0], O[1] - 2 * R * u[1]], a = Math.atan2(u[1], u[0]) - Math.atan2(G[1] - C[1], G[0] - C[0]); cut = Math.round(Math.abs(((a / D2) + 540) % 360 - 180)); }
     let stopped = null;
