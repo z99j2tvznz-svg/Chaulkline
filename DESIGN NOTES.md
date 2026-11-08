@@ -1407,3 +1407,12 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   in (drill_vanished; not for the stop shot). Checked on every drill session so far: of the shots scored misses, only
   10:48's 20 changes (20:27's 25, a bank, was scored early, before the ball was lost when picked up). Replayed by hand
   on 10:48: 20 tries, 18 made.
+
+## V3.8.9 (Nov 8) — Check my stroke taken out
+- Owner, Nov 8: the stroke should be tracked all the time, without telling the app. It already was: the stroke is read
+  on every shot (Nov 2 20:54, Check my stroke off: 30 of 31 read, 14 from the side; Nov 8 10:59: 6 of 11 from the side)
+  and shown per shot and averaged in the review. Check my stroke only added full-rate clips with close-ups round the cue
+  ball (for checking the measure, done Nov 2; they made drill debug files 4 or 5 parts) and a message after each shot
+  (looking at the phone in play). The menu item, its message and its toggle are gone; the stroke is measured as before.
+- Still from the side only (the cue within 25 degrees of level in the picture): about half the shots in play. The other
+  half, the stroke toward or away from the phone, is the "stroke from the end of the table" item.

@@ -1,6 +1,6 @@
 // V3 app end to end in headless Chromium: the camera is a video made from the owner's photo of Oct 27 (home 7 ft table,
 // low side view, balls bunched at one end). Sideways and upright: the table is found, the finder starts (CPU engine here),
-// the balls get rings and names, a tap renames a ball and the name sticks, the watcher keeps up, Check my stroke turns on, End session turns the camera off, and Save debug there gives a zip with the log and the clip.
+// the balls get rings and names, a tap renames a ball and the name sticks, the watcher keeps up, End session turns the camera off, and Save debug there gives a zip with the log and the clip.
 const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('node:fs'), os = require('node:os'), path = require('node:path'), { execFileSync } = require('node:child_process');
@@ -59,11 +59,8 @@ async function run(rot, viewport, sway, strokeTest) {
     const sk = await page.evaluate(() => ({ errs: window.__v3.DBG.ev.filter(e => e.k === 'error').map(e => e.m), obs: window.__v3.STK.obs.length, cue: !!window.__v3.A.tk.balls().find(b => b.num === 0 && b.sure) }));
     assert.deepStrictEqual(sk.errs.filter(m => /stroke/.test(m)), []); if (sk.cue) assert.ok(sk.obs > 0, JSON.stringify(sk));
     if (strokeTest) {
-      // Menu -> Check my stroke (V3.2, in place of the stroke test's stations): on, the watcher keeps every frame and
-      // the menu offers to stop it
-      await page.click('#menuBtn'); await page.click('[data-act=stroke]');
-      assert.strictEqual(await page.evaluate(() => window.__v3.A.strokeCheck), true);
-      await page.click('#menuBtn'); assert.match(await page.textContent('#card'), /Stop checking my stroke/); await page.click('[data-act=close]');
+      // V3.8.9: no Check my stroke in the menu (the stroke is read on every shot, above)
+      await page.click('#menuBtn'); assert.strictEqual(await page.locator('[data-act=stroke]').count(), 0); await page.click('[data-act=close]');
       // V3.6: Menu -> Drills -> Cut ladder: its setup on the table, its line at the bottom
       await page.click('#menuBtn'); await page.click('[data-act=drills]'); await page.click('[data-drill=cut]');
       assert.match(await page.textContent('#drillTag'), /Set the balls on their spots.*Cut ladder · straight in · shot 1 of 3 · step 1 of 6/s);
@@ -95,6 +92,6 @@ async function run(rot, viewport, sway, strokeTest) {
   } finally { await browser.close(); srv.close(); fs.rmSync(dir, { recursive: true, force: true }); }
 }
 
-test('V3 sideways: table, balls, names, a tap that sticks, the watcher, Check my stroke, Save debug', { timeout: 400000 }, async () => { console.log('sideways:', JSON.stringify(await run(0, { width: 956, height: 440 }, 0, true))); });
+test('V3 sideways: table, balls, names, a tap that sticks, the watcher, the stroke, Save debug', { timeout: 400000 }, async () => { console.log('sideways:', JSON.stringify(await run(0, { width: 956, height: 440 }, 0, true))); });
 test('V3 upright: the same with the phone standing up', { timeout: 400000 }, async () => { console.log('upright:', JSON.stringify(await run(90, { width: 440, height: 956 }))); });
 test('V3 on a swaying phone: the outline follows, the balls stay at rest, no hands or shots', { timeout: 500000 }, async () => { const st = await run(0, { width: 956, height: 440 }, 10); console.log('sway:', JSON.stringify({ steady: st.steady.slice(-6), threads: st.threads })); });
