@@ -26,6 +26,7 @@ function makeTracker(P, opts) {
     cueFirst: true,     // a shot starts with the cue ball: a first mover that is not, with the cue ball still elsewhere, is a hand
     setupDrop: true,    // till a rack's first real shot, the cue ball rolling on its own (nothing else moved, nothing in) is a hand
     autoRack: true,     // only the cue ball left, still for rackHold s after a shot: the rack is done (see phase)
+    eightEnds: false,   // 8-ball (V3.9.0): the 8 in, the balls still for rackHold s: the rack is over whatever is left
     rackHold: 2,
     rackNew: 4,         // this many new balls put out since the last shot, and more on the table than then: a new rack
     flicker: 2.2,       // in (a ball's width): motion this close to a ball's resting spot waits a look before it counts (see phase)
@@ -599,6 +600,8 @@ function makeTracker(P, opts) {
     // the button stays for the rest (a 9 made early in 9-ball)
     if (O.autoRack && S.phase === 'still' && !S.setup && !S.recon && S.shots.length > S.rackAt && S.stillSince != null && t - S.stillSince >= O.rackHold &&
       ballsNow().every(b => b.num === 0 && b.sure && b.state !== 'hidden')) { ev('rack_done', { n: S.shots.length }); S.say.push({ k: 'rack_done' }); newRack(); return; }
+    if (O.autoRack && O.eightEnds && S.gone.includes(8) && S.phase === 'still' && !S.setup && S.shots.length > S.rackAt && S.stillSince != null && t - S.stillSince >= O.rackHold) {
+      ev('rack_done', { n: S.shots.length, eight: true }); S.say.push({ k: 'rack_done', eight: true }); newRack(); return; }
     // a new set of balls put out while the rack is still open is a new rack (Oct 31, 15:10: a missed 3 kept rack 3 open,
     // and rack 4's balls stayed unnamed, their numbers already counted in): rackNew more balls standing on the table than
     // after the last shot, all come since it ended
