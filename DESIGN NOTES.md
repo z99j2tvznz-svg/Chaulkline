@@ -1462,3 +1462,15 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
 - Not yet measured on the phone: the time the pose takes there (the next debug file: pose events and the finder's ms).
   The licence: AGPL is fine for this public app; a closed product would need Ultralytics' licence or an Apache-2.0
   pose model (RTMPose, MoveNet; their downloads blocked from this session).
+
+## Review: Nov 8 14:09 (V3.8.11, practice) and V3.8.12
+- The pose model loaded, read once (standing: one move kept out, rightly), then failed on every look after (268 errors,
+  "Tensor's size does not match data length(0)"): on the phone the runtime runs in its background worker and takes the
+  input over, and the pose kept its input buffer for reuse. The browser test had not put the runtime in the worker (no
+  finder loaded first). V3.8.12: a new buffer each time; the test now loads the finder first and runs each picture twice
+  (on the old code it fails with the phone's error).
+- Offline on the session's looks before each move: the 14 counted moves all real shots, the player down on each (0.63 to
+  1.00); of 7 moves thrown out as hands, 3 standing (racking, setting out, the cue held upright: rightly out), 2 real
+  shots with the player down (0.6 to 1.0: the rule counts them), 2 real shots from the left end with only the hand and
+  the cue in the picture (nobody seen: still lost). With the fix the rule would have been right on every move it can see.
+  Finder 257 ms a look, watcher 29 fps (the pose had not been running).

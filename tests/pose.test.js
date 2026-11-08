@@ -9,11 +9,12 @@ test('the pose: down on the shot from two sides, standing up from two', { timeou
     const page = await browser.newPage(), errors = []; page.on('pageerror', e => errors.push(String(e)));
     await page.goto(srv.url + '/index.html'); await page.waitForFunction(() => window.crossOriginIsolated === true && window.__v3, null, { timeout: 30000 });
     const r = await page.evaluate(async () => {
-      const base = location.href.replace(/[^/]*$/, ''); window.ort.env.wasm.wasmPaths = base + 'vendor/ort/'; await DET.loadPose(base); const out = {};
+      // as on the phone: the finder first (it puts the runtime in its background worker), then the pose, each picture twice
+      const base = location.href.replace(/[^/]*$/, ''); await DET.load({ base, ep: 'wasm', finder: DET.pickShape(1700, 430) }); await DET.loadPose(base); const out = {};
       for (const f of ['down-1313-hands009', 'down-1304-shot017-farside', 'up-1313-hands001', 'up-1309-hands002']) {
         const img = new Image(); img.src = 'tests/fixtures/v3/pose/' + f + '.jpg'; await img.decode();
         const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; c.getContext('2d').drawImage(img, 0, 0);
-        const o = await DET.pose(c, c.width, c.height), ps = POSE.decode(o.data, o.N, 0.4); out[f] = { n: ps.length, p: POSE.down(ps.map(p => ({ conf: p.conf, box: [...o.back(p.box[0], p.box[1]), ...o.back(p.box[2], p.box[3])], kp: p.kp.map(q => [...o.back(q[0], q[1]), q[2]]) }))) };
+        await DET.pose(c, c.width, c.height); const o = await DET.pose(c, c.width, c.height), ps = POSE.decode(o.data, o.N, 0.4); out[f] = { n: ps.length, p: POSE.down(ps.map(p => ({ conf: p.conf, box: [...o.back(p.box[0], p.box[1]), ...o.back(p.box[2], p.box[3])], kp: p.kp.map(q => [...o.back(q[0], q[1]), q[2]]) }))) };
       }
       return out;
     });
