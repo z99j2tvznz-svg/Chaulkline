@@ -33,7 +33,7 @@ test('ball in hand after a scratch; a ball just behind the cue ball (Nov 8 19:32
 test('the power test: a lone cue ball\'s speed from how far it went', () => {
   const sim = require('../src/core.js').simulate;
   for (const v of [40, 90, 180]) {
-    const r = sim([{ id: 0, x: 10, y: 19.5 }], { angle: 0.1, speed: v, a: 0, b: 0 }, Object.assign({}, P, { pockets: [] }), { record: true, maxT: 40 }), q = r.paths[0]; let len = 0; for (let i = 1; i < q.length; i++) len += Math.hypot(q[i][1] - q[i - 1][1], q[i][2] - q[i - 1][2]);
+    const r = sim([{ id: 0, x: 10, y: 19.5 }], { angle: 0.1, speed: v, a: 0, b: 0 }, Object.assign({}, P, { pockets: [], cushionRoll: 0.6 }), { record: true, maxT: 40 }), q = r.paths[0]; let len = 0; for (let i = 1; i < q.length; i++) len += Math.hypot(q[i][1] - q[i - 1][1], q[i][2] - q[i - 1][2]);
     const got = COACH.speedFor([10, 19.5], [Math.cos(0.1), Math.sin(0.1)], len, P); assert.ok(Math.abs(got - v) / v < 0.05, v + ' -> ' + got);
   }
   assert.ok(Math.abs(COACH.powerOf(3.5) - 5) < 1e-9 && Math.abs(COACH.powerOf(0.9) - 1) < 1e-9); // Dr. Dave's speeds: medium 2-4 mph

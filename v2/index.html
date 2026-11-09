@@ -346,6 +346,9 @@ function cushion(b, nx, ny, P, res, t) {
   const nvt = vt + dvt, nvn = -e * vn;
   b.vx = nvn * nx + nvt * tx; b.vy = nvn * ny + nvt * ty;
   b.wz += 2.5 * dvt / P.R;
+  // P.cushionRoll (the coaching planner, V3.13; unset elsewhere): the cushion's nose sits above the ball's middle and turns
+  // part of the spin the ball came in with into roll the new way, so it comes off rolling instead of sliding to a stop
+  if (P.cushionRoll) { const k = P.cushionRoll; b.wx += k * (-b.vy / P.R - b.wx); b.wy += k * (b.vx / P.R - b.wy); }
   if (res.contacted) res.railAfter = true;
 }
 function simulate(init, shot, P, opts = {}) {

@@ -1620,3 +1620,27 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
 - Drawn: the kick's dashed line along the cue ball's simulated way off the cushions; the bank's object-ball path in its
   colour; no zone for a safety. The stroke box: what (pot, bank, kick 1 or 2 rails, safety), the stroke and power, the
   percentages (coloured by band), the alternative, the zone's legend. Ball in hand shows its percentages.
+
+## Review: Nov 8 20:50 (V3.12.0, Coaching test) and V3.13.0
+- 11 minutes, 27 shots, 46 plans, no errors. Owner: the zones too transparent; the cue ball's deviation not seen (wants a
+  line for the thin hit, one for the thick hit, see-through white between); power 5 on a thin cut expecting the cue ball
+  to stay where the object ball was; no paths into the shot line; the planned stop not in the zone (conflicting).
+- Found: most planned stops outside the zone (value = make x (0.6 + 0.4 next) let a sure pot with no leave win); the "stays
+  where the ball was" plans were the cue ball meeting a cushion a few inches away and dying there: core.js's cushion keeps
+  the incoming topspin, so a ball off a rail slides to a stop. Real cushions (the nose above the ball's middle) turn part
+  of that spin into roll the new way.
+- V3.13.0: core.js cushion: P.cushionRoll (the coaching planner sets 0.6; unset elsewhere, V2 unchanged in behaviour) blends
+  the spin toward roll in the new direction at each cushion. Pot value = make x (0.4 + 0.6 next); safety 0.35 x legal x
+  (1 - theirs). The next shot counts more coming into the zone's line (0.75 + 0.25 along). Ball positions known to 0.3 in:
+  the make is counted on the balls as seen (the player aims at the real ones), the leave on the balls moved by that much
+  with the aim to the moved ghost ball (a plan that only works with exact positions, e.g. follow near straight in that
+  scratches if the cut is the other way, loses its percentage). The short list favours soft-to-medium strokes and is 14
+  long (10 runs each); the best three run 24 times again before one is picked (a 10-run sample flatters the lucky one).
+  On the 20:50 layouts: 22 of 35 plans leave 60%+ for the next shot with the position doubt counted (V3.12 live: 22
+  without it), mean make 0.84, one plan under 60%; about 0.7 s each on the desktop.
+- Drawn: the zone stronger (cone up to 0.78, yellow and red bands 0.24, the ideal line brighter); the band: two clear
+  lines (the thin hit and the thick hit, labelled at their ends), see-through white between; "No stroke reaches the zone
+  from here" when the plan's leave is under 60%.
+- Reject plan (owner, Nov 9): a button in the Coaching test while a plan shows; one tap logs coach_reject (the plan, the
+  layout, a picture reject-NNN.jpg) and the next shot's row says rejected. coach_shot also keeps the planned shot's
+  geometry (cut, cue ball to object ball, object ball to pocket) for the player's own percentages later.
