@@ -1584,3 +1584,18 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   play principles (BD Feb 2021) against the planner: keep it simple (stop or roll; avoid sidespin and multiple rails;
   banks rarely), leave the correct angle, three balls ahead, come into the line, cushions as brakes, stay off the
   cushions, corners before sides: all in the scoring; added a cost per cushion the cue ball meets after the first.
+
+## Review: Nov 8 20:24 (V3.11.1, Coaching test) and V3.11.2
+- 2.5 minutes, 5 shots, 15 plans. Owner: no dashed line, no path lines, no inside/outside band, no tip-and-power box; a
+  plan came after a shot but it could not be told what it wanted.
+- Cause: 2,848 errors "The provided value is non-finite" from the cone's createRadialGradient: since V3.11.0 the spot is
+  where the planned stroke stops, which can be outside the green; the cone was centred on the spot's direction, found no
+  green there, had no radii, and its size was not a number. The canvas threw every frame part way through the plan, so
+  nothing after the cone (lines, band, spot, rings, stroke box) was drawn.
+- V3.11.2: the cone centred on the green's own middle direction when the spot is outside it, and no cone without radii;
+  the coaching drawing in a try (one bad number cannot take the rest off the screen; the first error logged once); finite
+  checks before the gradient. Four of the 15 plans had no clean pot on the lowest ball at all (the 2 blocked by the 3 and
+  the 7, the 4 blocked by the 8 with the other corner too thin): those now say "No clean pot on the N: a bank or a safety
+  (not planned yet)" and put no ring on a pot that is not there. The stroke reader no longer looks for a cue ball it is
+  not following (one error "stroke null ... at[0]"). Test: every layout of the session gives a stroke, ball in hand or
+  "no clean pot", with a drawable cone.

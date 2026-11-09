@@ -54,3 +54,11 @@ test('the planner in the page, in a background worker from its own source, as th
     assert.deepStrictEqual(errors, []);
   } finally { await browser.close(); srv.close(); }
 });
+test('Nov 8 20:24 (V3.11.1): every layout of the session gives a stroke, ball in hand or "no clean pot", with a drawable cone', () => {
+  const lays = require('./fixtures/v3/coach-20261108-2024.json'), fin = q => q.every(v => isFinite(v[0]) && isFinite(v[1]));
+  for (const [i, balls] of lays.entries()) {
+    const r = COACH.plan(balls, P, { inHand: !balls.some(b => b.n === 0) }); if (!r) continue;
+    assert.ok(r.inHand || (r.path && r.path.stroke) || r.noShot, 'layout ' + (i + 1) + ': something to show');
+    const cn = r.shapes && r.shapes.cone; if (cn) assert.ok(fin(cn.core) && cn.sides.every(fin) && isFinite(cn.r1), 'layout ' + (i + 1) + ': the cone is a shape');
+  }
+});

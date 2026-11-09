@@ -2993,6 +2993,9 @@ function coachFactory(sim) {
       const c0 = w.r.final.find(q => q.id === 0);
       return { val: score(w), pocket: w.o.pi, cut: Math.round(w.s.cut), ghost: w.s.G, pts: after(w.r), stroke: Object.assign(strokeOf(w.p, w.a, w.b), { hard: w.rob < 0.3, jacked: !!out.jacked }), fan: lo && hi && lo !== hi ? [after(lo), after(hi)] : null, p: [c0.x, c0.y], zone: +w.v.toFixed(2), robust: +w.rob.toFixed(2), alts };
     }
+    // no clean pot on the lowest ball at all (V3.11.2, Nov 8 20:24: every pocket blocked or the cut too thin; the screen
+    // showed nothing and the player could not tell what the plan wanted): said so
+    function noShot(out) { if (inHand || (out.path && out.path.stroke)) return; out.noShot = { n: A.n, why: pA.length ? 'thin' : 'blocked' }; }
     // no shape to play for (the last ball, or no zone): still the shot line and a stroke that makes it
     function finishA(out) {
       const o = pA.find(q => q.pi === out.A.pocket); if (!o) return; const s = shot(pt(cue), A, o, []); if (!s) return;
@@ -3004,7 +3007,7 @@ function coachFactory(sim) {
     const pA = pocketsFor(A, []);
     const easiestA = () => { let best = null; for (const o of pA) { const s = shot(pt(cue), A, o, []); if (s && !s.blk.length && s.cut <= 70 && (!best || s.ease > best.e)) best = { e: s.ease, pi: o.pi }; } return best ? best.pi : pA.length ? pA[0].pi : null; };
     out.inHand = inHand;
-    if (!B && !inHand) { out.A.pocket = easiestA(); finishA(out); out.ms = Date.now() - t0; return out; }
+    if (!B && !inHand) { out.A.pocket = easiestA(); finishA(out); noShot(out); out.ms = Date.now() - t0; return out; }
     // the zone, for each of the ball's pockets; keep the pocket with the biggest, best zone
     const pB = pocketsFor(Zb, goneZ); let bestZ = null; const zones = [];
     for (const o of pB) {
@@ -3023,7 +3026,7 @@ function coachFactory(sim) {
       const worth = Array.from(sc).sort((a, b) => b - a).slice(0, Math.round(150 / (STEP * STEP))).reduce((a, b) => a + b, 0);
       const z = { o, g, sc, worth }; zones.push(z); if (!bestZ || worth > bestZ.worth) bestZ = z;
     }
-    if (!bestZ) { if (!inHand) { out.A.pocket = easiestA(); finishA(out); } out.ms = Date.now() - t0; return out; }
+    if (!bestZ) { if (!inHand) { out.A.pocket = easiestA(); finishA(out); noShot(out); } out.ms = Date.now() - t0; return out; }
     // every pocket's zone graded against the best spot of all (V3.11: position counts for whichever pocket the ball is then
     // played in; the plan's pocket for it is the one the planned stroke leaves it best for)
     const top = Math.max(...zones.map(z => Math.max(...z.sc))) || 1;
@@ -3088,6 +3091,7 @@ function coachFactory(sim) {
     if (C && out.C.pocket == null) { const pC = pocketsFor(C, [A.n, B.n]); if (pC.length) out.C.pocket = pC.sort((a, b) => a.dist - b.dist)[0].pi; }
     if (inHand && B && out.B.pocket == null) { const pq = pocketsFor(B, [A.n]); if (pq.length) out.B.pocket = pq.sort((a, b) => a.dist - b.dist)[0].pi; }
     out.shapes = shapes(out, Zb);
+    noShot(out);
     out.ms = Date.now() - t0;
     return out;
   }
@@ -3138,7 +3142,12 @@ function coachFactory(sim) {
   function cone(pl, gp, B, Lt, Wt, R) {
     const c = [B.x, B.y], cells = [].concat(...gp.map(q => q.ks)).map(k => [pl.origin[0] + (k % pl.nx + 0.5) * pl.step, pl.origin[1] + (Math.floor(k / pl.nx) + 0.5) * pl.step]);
     if (cells.length < 3) return null;
-    const ang = p => Math.atan2(p[1] - c[1], p[0] - c[0]), ref = pl.spot ? ang(pl.spot) : ang(cells[Math.floor(cells.length / 2)]);
+    const ang = p => Math.atan2(p[1] - c[1], p[0] - c[0]);
+    // the cone's middle: the spot's direction when the spot is in the green, else the green's own middle direction (V3.11.2:
+    // the spot is where the planned stroke stops and can be outside the green; the cone came out empty and not a number)
+    const mid = (() => { let sx = 0, sy = 0; for (const p of cells) { const a = ang(p); sx += Math.cos(a); sy += Math.sin(a); } return Math.atan2(sy, sx); })();
+    const inGreen = pl.spot && cells.some(p => Math.abs(p[0] - pl.spot[0]) <= pl.step && Math.abs(p[1] - pl.spot[1]) <= pl.step);
+    const ref = inGreen ? ang(pl.spot) : mid;
     const rel = p => { let a = ang(p) - ref; while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
     const BIN = 2 * D2R, NB = 90, cnt = new Array(2 * NB + 1).fill(0), bin = a => Math.round(a / BIN) + NB;
     const ar = cells.map(p => ({ a: rel(p), r: Math.hypot(p[0] - c[0], p[1] - c[1]) }));
@@ -3146,6 +3155,7 @@ function coachFactory(sim) {
     let lo = NB, hi = NB; const has = b => b >= 0 && b < cnt.length && cnt[b] > 0;
     while (has(lo - 1) || has(lo - 2)) lo--; while (has(hi + 1) || has(hi + 2)) hi++;
     const a0 = (lo - NB - 0.5) * BIN, a1 = (hi - NB + 0.5) * BIN, rs = ar.filter(q => q.a >= a0 && q.a <= a1).map(q => q.r).sort((x, y) => x - y);
+    if (rs.length < 2) return null;
     const r0 = 2 * R + 0.5, r1 = Math.max(r0 + 2, rs[Math.min(rs.length - 1, Math.floor(rs.length * 0.95))]);
     const w = a1 - a0, e = Math.max(w * 0.1, 1.5 * D2R), A0 = ref + a0, A1 = ref + a1;
     const core = sector(c, r0, r1, A0 + e, A1 - e, Lt, Wt, R), sides = [sector(c, r0, r1, A0, A0 + e, Lt, Wt, R), sector(c, r0, r1, A1 - e, A1, Lt, Wt, R)];
@@ -3191,7 +3201,7 @@ const COACH = coachFactory(typeof simulate !== 'undefined' ? simulate : typeof m
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.11.1';
+const VERSION = 'V3.11.2';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -4089,6 +4099,7 @@ function strokeFrame(img, t) {
           opt: { rBall: Math.ceil(rb), reach: Math.max(4, rb * 1.6), inside: (x, y) => !!W.mask[(y * W.w + x) >> 1] } }); } }
     else if (!STK.rest0) return;
   }
+  if (!STK.ball) return; // (no cue ball being followed: off the table, Nov 8 20:24)
   const o = STROKE.observe(img, W.w, W.h, { ball: STK.ball, ang: STK.ang, rest: STK.rest, fb: STK.fb, fv: STK.fv }, STK.test, STK.opt); STK.fb = o.fb; STK.fv = o.fv;
   if (o.ball && !o.lost) { STK.ball = o.ball; if (!STK.rest) STK.rest = o.ball; }
   if (o.ang != null) STK.ang = o.ang;
@@ -4267,6 +4278,11 @@ function coachRing(c, S2, pk, k, col, num) {
   c.font = '600 11px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineWidth = 3; c.strokeStyle = 'rgba(11,16,20,.6)'; c.strokeText(String(num), lp[0], lp[1]); c.fillStyle = col; c.fillText(String(num), lp[0], lp[1]);
 }
 function drawCoach(c, S2, F) {
+  // each part on its own: one bad number must not take the rest of the plan off the screen (Nov 8 20:24: the cone's radius was
+  // not a number, the canvas threw every frame and the lines, the band and the stroke box never showed)
+  try { drawCoach1(c, S2, F); } catch (e) { c.restore(); if (!CO.drawErr) { CO.drawErr = 1; dbg('error', { m: 'coach draw ' + String(e && e.message || e).slice(0, 120) }); } }
+}
+function drawCoach1(c, S2, F) {
   const p = CO.plan; if (!p) return;
   // the plan stays on the screen through the shot and until the next one is made, faint (owner, Nov 9: to see the cue ball's
   // real path against the planned one and the zone): full while the balls are still where the plan had them
@@ -4278,10 +4294,11 @@ function drawCoach(c, S2, F) {
     // no hard edges (owner, Nov 9). The wrong side faint; the zone a cone from the next ball, green strongest near that
     // ball and lighter further away, the outer tenth on each side yellow, the ideal line down the middle; balls in the way dark
     for (const q of sh.red) { poly(q); c.fillStyle = 'rgba(231,76,60,.14)'; c.fill(); }
-    const cn = sh.cone;
-    if (cn) {
+    const cn = sh.cone, fin = q => q.every(v => isFinite(v[0]) && isFinite(v[1]));
+    if (cn && fin(cn.core) && cn.sides.every(fin) && isFinite(cn.from[0])) {
       const o = S2(A.cam.proj(cn.from[0], cn.from[1], 0)); let rad = 1;
       for (const q of [cn.core, ...cn.sides]) for (const v of q) { const a = S2(A.cam.proj(v[0], v[1], 0)); rad = Math.max(rad, Math.hypot(a[0] - o[0], a[1] - o[1])); }
+      if (!isFinite(rad) || !isFinite(o[0]) || !isFinite(o[1])) rad = 1;
       const grad = (rgb, a0, a1, a2) => { const g = c.createRadialGradient(o[0], o[1], 0, o[0], o[1], rad); g.addColorStop(0, 'rgba(' + rgb + ',' + a0 + ')'); g.addColorStop(0.45, 'rgba(' + rgb + ',' + a1 + ')'); g.addColorStop(1, 'rgba(' + rgb + ',' + a2 + ')'); return g; };
       if (cn.core.length > 2) { poly(cn.core); c.fillStyle = grad('46,204,113', .6, .4, .08); c.fill(); }
       for (const q of cn.sides) if (q.length > 2) { poly(q); c.fillStyle = grad('241,196,15', .32, .22, .05); c.fill(); }
@@ -4315,10 +4332,17 @@ function drawCoach(c, S2, F) {
     c.fillStyle = 'rgba(244,241,232,.95)'; c.beginPath(); c.arc(a[0], a[1], 2.2, 0, Math.PI * 2); c.fill(); }
   // the pockets: this ball, the next, the one after
   const used = {};
-  for (const b of [p.A, p.B, p.C]) { if (!b || b.pocket == null) continue; const k = used[b.pocket] = (used[b.pocket] == null ? 0 : used[b.pocket] + 1); coachRing(c, S2, A.P.pockets[b.pocket], k, BALLCOL[b.n] || '#eaf1f4', b.n); }
+  // (no ring for a pot that is not there)
+  for (const b of [p.noShot ? null : p.A, p.B, p.C]) { if (!b || b.pocket == null) continue; const k = used[b.pocket] = (used[b.pocket] == null ? 0 : used[b.pocket] + 1); coachRing(c, S2, A.P.pockets[b.pocket], k, BALLCOL[b.n] || '#eaf1f4', b.n); }
   // the stroke: a cue ball with the tip where it should meet it, and the power (bottom left of the picture)
   if (p.path && p.path.stroke && F) coachStroke(c, F, p.path.stroke, p.A.n);
+  else if (p.noShot && F) coachNoShot(c, F, p.noShot);
   c.restore();
+}
+function coachNoShot(c, F, ns) {
+  const x = F.x + 20, y = F.y + F.h - 30 - 70; c.fillStyle = 'rgba(11,16,20,.6)'; c.beginPath(); c.roundRect ? c.roundRect(x, y, 300, 58, 12) : c.rect(x, y, 300, 58); c.fill();
+  c.font = '600 13px system-ui, -apple-system, sans-serif'; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('No clean pot on the ' + ns.n, x + 14, y + 19);
+  c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.85)'; c.fillText((ns.why === 'blocked' ? 'Every pocket is blocked' : 'Blocked or too thin') + ': a bank or a safety (not planned yet)', x + 14, y + 40);
 }
 function coachStroke(c, F, st, n) {
   const R = 24, x = F.x + 20 + R, y = F.y + F.h - 30 - R - 22;

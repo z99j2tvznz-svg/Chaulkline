@@ -154,6 +154,9 @@ function coachFactory(sim) {
       const c0 = w.r.final.find(q => q.id === 0);
       return { val: score(w), pocket: w.o.pi, cut: Math.round(w.s.cut), ghost: w.s.G, pts: after(w.r), stroke: Object.assign(strokeOf(w.p, w.a, w.b), { hard: w.rob < 0.3, jacked: !!out.jacked }), fan: lo && hi && lo !== hi ? [after(lo), after(hi)] : null, p: [c0.x, c0.y], zone: +w.v.toFixed(2), robust: +w.rob.toFixed(2), alts };
     }
+    // no clean pot on the lowest ball at all (V3.11.2, Nov 8 20:24: every pocket blocked or the cut too thin; the screen
+    // showed nothing and the player could not tell what the plan wanted): said so
+    function noShot(out) { if (inHand || (out.path && out.path.stroke)) return; out.noShot = { n: A.n, why: pA.length ? 'thin' : 'blocked' }; }
     // no shape to play for (the last ball, or no zone): still the shot line and a stroke that makes it
     function finishA(out) {
       const o = pA.find(q => q.pi === out.A.pocket); if (!o) return; const s = shot(pt(cue), A, o, []); if (!s) return;
@@ -165,7 +168,7 @@ function coachFactory(sim) {
     const pA = pocketsFor(A, []);
     const easiestA = () => { let best = null; for (const o of pA) { const s = shot(pt(cue), A, o, []); if (s && !s.blk.length && s.cut <= 70 && (!best || s.ease > best.e)) best = { e: s.ease, pi: o.pi }; } return best ? best.pi : pA.length ? pA[0].pi : null; };
     out.inHand = inHand;
-    if (!B && !inHand) { out.A.pocket = easiestA(); finishA(out); out.ms = Date.now() - t0; return out; }
+    if (!B && !inHand) { out.A.pocket = easiestA(); finishA(out); noShot(out); out.ms = Date.now() - t0; return out; }
     // the zone, for each of the ball's pockets; keep the pocket with the biggest, best zone
     const pB = pocketsFor(Zb, goneZ); let bestZ = null; const zones = [];
     for (const o of pB) {
@@ -184,7 +187,7 @@ function coachFactory(sim) {
       const worth = Array.from(sc).sort((a, b) => b - a).slice(0, Math.round(150 / (STEP * STEP))).reduce((a, b) => a + b, 0);
       const z = { o, g, sc, worth }; zones.push(z); if (!bestZ || worth > bestZ.worth) bestZ = z;
     }
-    if (!bestZ) { if (!inHand) { out.A.pocket = easiestA(); finishA(out); } out.ms = Date.now() - t0; return out; }
+    if (!bestZ) { if (!inHand) { out.A.pocket = easiestA(); finishA(out); noShot(out); } out.ms = Date.now() - t0; return out; }
     // every pocket's zone graded against the best spot of all (V3.11: position counts for whichever pocket the ball is then
     // played in; the plan's pocket for it is the one the planned stroke leaves it best for)
     const top = Math.max(...zones.map(z => Math.max(...z.sc))) || 1;
@@ -249,6 +252,7 @@ function coachFactory(sim) {
     if (C && out.C.pocket == null) { const pC = pocketsFor(C, [A.n, B.n]); if (pC.length) out.C.pocket = pC.sort((a, b) => a.dist - b.dist)[0].pi; }
     if (inHand && B && out.B.pocket == null) { const pq = pocketsFor(B, [A.n]); if (pq.length) out.B.pocket = pq.sort((a, b) => a.dist - b.dist)[0].pi; }
     out.shapes = shapes(out, Zb);
+    noShot(out);
     out.ms = Date.now() - t0;
     return out;
   }
@@ -299,7 +303,12 @@ function coachFactory(sim) {
   function cone(pl, gp, B, Lt, Wt, R) {
     const c = [B.x, B.y], cells = [].concat(...gp.map(q => q.ks)).map(k => [pl.origin[0] + (k % pl.nx + 0.5) * pl.step, pl.origin[1] + (Math.floor(k / pl.nx) + 0.5) * pl.step]);
     if (cells.length < 3) return null;
-    const ang = p => Math.atan2(p[1] - c[1], p[0] - c[0]), ref = pl.spot ? ang(pl.spot) : ang(cells[Math.floor(cells.length / 2)]);
+    const ang = p => Math.atan2(p[1] - c[1], p[0] - c[0]);
+    // the cone's middle: the spot's direction when the spot is in the green, else the green's own middle direction (V3.11.2:
+    // the spot is where the planned stroke stops and can be outside the green; the cone came out empty and not a number)
+    const mid = (() => { let sx = 0, sy = 0; for (const p of cells) { const a = ang(p); sx += Math.cos(a); sy += Math.sin(a); } return Math.atan2(sy, sx); })();
+    const inGreen = pl.spot && cells.some(p => Math.abs(p[0] - pl.spot[0]) <= pl.step && Math.abs(p[1] - pl.spot[1]) <= pl.step);
+    const ref = inGreen ? ang(pl.spot) : mid;
     const rel = p => { let a = ang(p) - ref; while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
     const BIN = 2 * D2R, NB = 90, cnt = new Array(2 * NB + 1).fill(0), bin = a => Math.round(a / BIN) + NB;
     const ar = cells.map(p => ({ a: rel(p), r: Math.hypot(p[0] - c[0], p[1] - c[1]) }));
@@ -307,6 +316,7 @@ function coachFactory(sim) {
     let lo = NB, hi = NB; const has = b => b >= 0 && b < cnt.length && cnt[b] > 0;
     while (has(lo - 1) || has(lo - 2)) lo--; while (has(hi + 1) || has(hi + 2)) hi++;
     const a0 = (lo - NB - 0.5) * BIN, a1 = (hi - NB + 0.5) * BIN, rs = ar.filter(q => q.a >= a0 && q.a <= a1).map(q => q.r).sort((x, y) => x - y);
+    if (rs.length < 2) return null;
     const r0 = 2 * R + 0.5, r1 = Math.max(r0 + 2, rs[Math.min(rs.length - 1, Math.floor(rs.length * 0.95))]);
     const w = a1 - a0, e = Math.max(w * 0.1, 1.5 * D2R), A0 = ref + a0, A1 = ref + a1;
     const core = sector(c, r0, r1, A0 + e, A1 - e, Lt, Wt, R), sides = [sector(c, r0, r1, A0, A0 + e, Lt, Wt, R), sector(c, r0, r1, A1 - e, A1, Lt, Wt, R)];
