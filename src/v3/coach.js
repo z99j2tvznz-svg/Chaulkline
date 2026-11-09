@@ -95,7 +95,8 @@ function coachFactory(sim) {
       return Math.min(1, g * spinF(r) / 14);
     }
     // ---- the stroke on A, in the physics simulation (V3.11) ----
-    const MPH = [1.5, 2.5, 3.5, 4.5, 5.5, 7, 8.5, 10, 12, 15], TRY = [0, 1, 2, 3, 4, 5, 6, 8], TIPS = [-0.5, -0.35, -0.2, 0, 0.2, 0.35, 0.5];
+    // power 1-10 on Dr. Dave's speed scale (V3.11.1): 1-2 slow (1-2 mph), 3-5 medium (2-4), 6-8 fast (4-7), 9-10 a power shot (7-10)
+    const MPH = [0.9, 1.5, 2.1, 2.8, 3.5, 4.3, 5.3, 6.4, 7.8, 9.5], TRY = [0, 1, 2, 3, 4, 5, 6, 7, 8], TIPS = [-0.5, -0.35, -0.2, 0, 0.2, 0.35, 0.5];
     const init = () => [{ id: 0, x: cue.x, y: cue.y }].concat(objs.map(o => ({ id: o.n, x: o.x, y: o.y })));
     const run = (ang, v, a, b) => sim(init(), { angle: ang, speed: v, a, b }, P, { record: true, only: new Set([0]), maxT: 9 });
     const strokeOf = (p, a, b) => ({ tip: b, side: a, power: p + 1, mph: MPH[p], kind: b < -0.1 ? 'draw' : b > 0.1 ? 'follow' : 'center' });
@@ -111,7 +112,10 @@ function coachFactory(sim) {
         const rd = Math.min(c.x, L - c.x, c.y, W - c.y); return rd < 3 ? 0.5 : 0.8; // the last ball: just stay off the cushion
       };
       // simple strokes first: soft to medium (power 5 or less), the tip near the middle, no side unless it pays (owner, Nov 9)
-      const simple = (p, a, b) => (p <= 4 ? 1 : Math.pow(0.78, p - 4)) * (1 - 0.6 * Math.max(0, Math.abs(b) - 0.2)) * (a ? 0.85 : 1);
+      const simple = (p, a, b) => (p <= 5 ? 1 : Math.pow(0.82, p - 5)) * (1 - 0.6 * Math.max(0, Math.abs(b) - 0.2)) * (a ? 0.85 : 1);
+      // the cushions the cue ball hits after contact (Dr. Dave, pattern play: avoid going off multiple rails; one as a brake is fine)
+      const rails = r => { const q = after(r); let n = 0, on = false; for (const p of q) { const at = p[0] < R + 0.25 || p[0] > L - R - 0.25 || p[1] < R + 0.25 || p[1] > W - R - 0.25; if (at && !on) n++; on = at; } return n; };
+      const railF = r => { const n = rails(r); return n <= 1 ? 1 : Math.pow(0.82, n - 1); };
       for (const o of pA) {
         const s = shot(pt(cue), A, o, []); if (!s || s.blk.length || s.cut > 70) continue;
         const ang0 = Math.atan2(s.G[1] - cue.y, s.G[0] - cue.x);
@@ -125,7 +129,7 @@ function coachFactory(sim) {
           for (const da of [0, 0.5, -0.5, 1, -1]) { // the aim corrected a little where throw would miss it
             const r = run(ang0 + da * D2R, MPH[p] * 17.6, 0, b), v = val(r, o); if (v >= 0) { best = { r, v, da }; break; }
           }
-          if (best) cands.push({ o, s, ang: ang0 + best.da * D2R, p, a: 0, b, v: best.v, r: best.r });
+          if (best) cands.push({ o, s, ang: ang0 + best.da * D2R, p, a: 0, b, v: best.v * railF(best.r), r: best.r });
         }
       }
       if (!cands.length) return null;
@@ -140,7 +144,7 @@ function coachFactory(sim) {
       // side spin on the three best (the cue ball off the cushions, and the angle off the object ball)
       for (const c of top.slice(0, 3)) for (const a of [-0.3, 0.3]) {
         let best = null; for (const da of [0, 0.5, -0.5, 1, -1, 1.5, -1.5]) { const r = run(c.ang + da * D2R, MPH[c.p] * 17.6, a, c.b), v = val(r, c.o); if (v >= 0) { best = { r, v, da }; break; } }
-        if (best) { const n2 = { o: c.o, s: c.s, ang: c.ang + best.da * D2R, p: c.p, a, b: c.b, v: best.v, r: best.r }; n2.rob = robust(n2); top.push(n2); }
+        if (best) { const n2 = { o: c.o, s: c.s, ang: c.ang + best.da * D2R, p: c.p, a, b: c.b, v: best.v * railF(best.r), r: best.r }; n2.rob = robust(n2); top.push(n2); }
       }
       top.sort((x, y) => score(y) - score(x)); const w = top[0];
       const alts = top.slice(0, 4).map(c => ({ pocket: c.o.pi, tip: c.b, side: c.a, power: c.p + 1, zone: +c.v.toFixed(2), robust: +c.rob.toFixed(2), score: +score(c).toFixed(3) }));
@@ -328,8 +332,8 @@ function coachFactory(sim) {
     if (i < 0 || j < 0 || i >= pl.nx || j >= pl.ny) return null; return ({ 1: 'green', 2: 'amber', 3: 'red', 4: 'blocked' })[pl.cells[j * pl.nx + i]] || null;
   }
   // the power scale (V3.11): power 1-10 as cue-ball speeds, mph
-  const POWER_MPH = [1.5, 2.5, 3.5, 4.5, 5.5, 7, 8.5, 10, 12, 15];
-  const powerOf = mph => { const m = POWER_MPH; if (mph <= m[0]) return mph / m[0]; for (let i = 1; i < m.length; i++) if (mph <= m[i]) return i + (mph - m[i - 1]) / (m[i] - m[i - 1]); return 10 + (mph - m[9]) / 3; };
+  const POWER_MPH = [0.9, 1.5, 2.1, 2.8, 3.5, 4.3, 5.3, 6.4, 7.8, 9.5]; // Dr. Dave's speeds (see plan)
+  const powerOf = mph => { const m = POWER_MPH; if (mph <= m[0]) return mph / m[0]; for (let i = 1; i < m.length; i++) if (mph <= m[i]) return i + (mph - m[i - 1]) / (m[i] - m[i - 1]); return 10 + (mph - m[9]) / 2; };
   // the speed a lone cue ball was struck at, from where it started, its first direction and how far it went (in), in the
   // simulation (cushions included); for the power test
   function speedFor(start, dir, dist, P, b) {

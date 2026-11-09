@@ -16,8 +16,9 @@ test('three balls ahead on Nov 2 rack 2: the 1 top-right, the 2 bottom side, the
   console.log('plan ms', r.ms);
 });
 test('a ball not named for sure is still in the way; a short runout; the 9 alone', () => {
-  const r0 = COACH.plan([{ n: 0, x: 20, y: 20 }, { n: 3, x: 40, y: 20 }, { n: 9, x: 60, y: 30 }], P), r1 = COACH.plan([{ n: 0, x: 20, y: 20 }, { n: 3, x: 40, y: 20 }, { n: 9, x: 60, y: 30 }, { n: 107, x: 52, y: 26 }], P);
-  assert.deepStrictEqual(r1.order, [3, 9]); assert.ok(count(r1, 4) > count(r0, 4) + 20, 'the unnamed ball blocks: ' + count(r0, 4) + ' -> ' + count(r1, 4));
+  const r0 = COACH.plan([{ n: 0, x: 20, y: 20 }, { n: 3, x: 40, y: 20 }, { n: 9, x: 60, y: 30 }], P), r1 = COACH.plan([{ n: 0, x: 20, y: 20 }, { n: 3, x: 40, y: 20 }, { n: 9, x: 60, y: 30 }, { n: 107, x: 30, y: 20 }], P);
+  // an unnamed ball between the cue ball and the 3: not in the order, but in the way (no direct stroke on the 3)
+  assert.deepStrictEqual(r1.order, [3, 9]); assert.ok(r0.path && r0.path.stroke, 'a stroke when clear'); assert.ok(!(r1.path && r1.path.stroke), 'no direct stroke through the unnamed ball');
   assert.ok(r0.A.pocket != null && r0.B.pocket != null && r0.C === null);
   const r2 = COACH.plan([{ n: 0, x: 20, y: 20 }, { n: 9, x: 70, y: 34 }], P); assert.strictEqual(r2.B, null); assert.strictEqual(r2.A.pocket, 5);
   assert.ok(r2.path && r2.path.stroke, 'the last ball: still a line and a stroke');
@@ -35,7 +36,7 @@ test('the power test: a lone cue ball\'s speed from how far it went', () => {
     const r = sim([{ id: 0, x: 10, y: 19.5 }], { angle: 0.1, speed: v, a: 0, b: 0 }, Object.assign({}, P, { pockets: [] }), { record: true, maxT: 40 }), q = r.paths[0]; let len = 0; for (let i = 1; i < q.length; i++) len += Math.hypot(q[i][1] - q[i - 1][1], q[i][2] - q[i - 1][2]);
     const got = COACH.speedFor([10, 19.5], [Math.cos(0.1), Math.sin(0.1)], len, P); assert.ok(Math.abs(got - v) / v < 0.05, v + ' -> ' + got);
   }
-  assert.ok(Math.abs(COACH.powerOf(5.5) - 5) < 1e-9 && Math.abs(COACH.powerOf(1.5) - 1) < 1e-9);
+  assert.ok(Math.abs(COACH.powerOf(3.5) - 5) < 1e-9 && Math.abs(COACH.powerOf(0.9) - 1) < 1e-9); // Dr. Dave's speeds: medium 2-4 mph
 });
 test('the planner in the page, in a background worker from its own source, as the app runs it', { timeout: 120000 }, async () => {
   const { chromium } = require('playwright'), { serve } = require('./lib/serve.js');

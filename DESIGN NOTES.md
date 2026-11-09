@@ -1575,3 +1575,12 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   line through zero (ours = k x the player's), kept on the phone; the plan's power then shown in the player's numbers.
 - Not yet: the simulation's cloth and cushions measured on the owner's table (the compare rows and the power test are
   the data for that).
+- V3.11.1, checked against Dr. Dave (drdavepoolinfo.com, billiards.colostate.edu; reachable from this project's environment
+  from Nov 9): his pool physics constants (ball-cloth sliding 0.15-0.4, typical 0.2; rolling resistance 0.005-0.015; spin
+  deceleration 5-15 rad/s2; ball-ball friction 0.03-0.08, restitution 0.92-0.98; ball-rail restitution 0.6-0.9) contain
+  core.js's (0.2, 4.5 in/s2 = 0.012, 12, 0.06, 0.95, 0.72): the simulation's defaults stand until measured on the owner's
+  table. His typical speeds (slow 1-2 mph, medium 2-4, fast 4-7, power shot 7-10) put the old power scale too fast (power 5
+  was 5.5 mph, 10 was 15): now power 1-2 slow, 3-5 medium, 6-8 fast, 9-10 a power shot (0.9 to 9.5 mph). His ten pattern
+  play principles (BD Feb 2021) against the planner: keep it simple (stop or roll; avoid sidespin and multiple rails;
+  banks rarely), leave the correct angle, three balls ahead, come into the line, cushions as brakes, stay off the
+  cushions, corners before sides: all in the scoring; added a cost per cushion the cue ball meets after the first.
