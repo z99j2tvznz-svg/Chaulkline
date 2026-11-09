@@ -1,6 +1,6 @@
 {
   "about": "Tracking test: what has to be true before V3.1 starts. Counted by Claude from each session's debug file, with the truth taken from the shot pictures and the names checked on the after pictures. Live results of the app as it was in that session (not replays). Goals revised with the owner on Oct 31: only sessions on the version being measured count, its latest 10 racks. From V3.1.0 (Oct 31) a scoreboard while the player and cue work goes on, not a gate; stroke-test sessions are not normal play and are not counted. keyRight: shots after which the cue ball and the lowest ball on the table were named right; balls / ballsRight: balls on the after pictures and how many were named right; wrongNum: balls shown with a wrong number (not a ?). From V3.4 practice sessions are counted too (mode: practice; no racks); a session without names checked (no keyRight, balls) leaves the name rows to the sessions that have them.",
-  "updated": "2026-11-08",
+  "updated": "2026-11-09",
   "target": {
     "racks": 10,
     "sessions": 3,
@@ -196,6 +196,19 @@
       "falseIn": 1,
       "falseScratch": 0,
       "extraShots": 0
+    },
+    {
+      "when": "Nov 8 16:14",
+      "app": "V3.9.0",
+      "spot": "side",
+      "game": "8-ball",
+      "racks": 1,
+      "shots": 19,
+      "found": 19,
+      "madeRight": 18,
+      "falseIn": 1,
+      "falseScratch": 1,
+      "extraShots": 1
     }
   ],
   "notCounted": [
