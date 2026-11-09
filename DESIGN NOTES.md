@@ -1599,3 +1599,24 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   (not planned yet)" and put no ring on a pot that is not there. The stroke reader no longer looks for a cue ball it is
   not following (one error "stroke null ... at[0]"). Test: every layout of the session gives a stroke, ball in hand or
   "no clean pot", with a drawable cone.
+
+## V3.12.0: always a plan, in percentages (owner, Nov 9)
+- Owner: there is always a shot (kick, bank, two-rail kick, jump...), and in a match one gets left safe or hooked: show the
+  highest-percentage plan first, and a low one when that is all there is; colours as percentages: green 90-100, light green
+  80-90, yellow 60-80, red 50-60, darker below (the scale to be adjusted).
+- The zone's value per spot is now a probability: the make (a good amateur's aim error, 0.2 degrees on the cue ball's line
+  plus 0.6 degrees on the object ball, magnified by the cut, against the pocket's width seen from the ball: corner 2.8 in,
+  side 2 in, narrower from a steep entry) times the leave for the ball after (0.55 to 1, from the path value), less straight
+  in (0.9) and on a cushion. Bands: 1 green 90%+, 5 light green 80-90, 2 yellow 60-80, 3 red 50-60, 6 under 50, 4 in the way.
+  The cone is drawn over 80%+, the yellow and red bands as shapes round it.
+- The plan for A: every candidate stroke run again N times (12, the chosen one 24) with errors (aim 0.2 degrees, speed 8%,
+  tip and side 0.05): its percentage to make and the mean chance of the next shot where the cue ball stops. Value of a pot
+  = make x (0.6 + 0.4 next) x simplicity: a sure pot with a poor leave (0.6) beats the best safety (0.5), a 50/50 does not.
+  Banks (A off one cushion: the pocket mirrored in the cushion, the hit point clear of pockets, aim nudged up to 2.1
+  degrees) when the best pot is under 0.55; kicks (the cue ball off one cushion to A's ghost, or two adjacent cushions) under
+  0.4; safeties (A hit full or thin either side, or off a cushion when A cannot be seen; soft; legal: A first, no scratch, a
+  cushion after contact or a ball in) under 0.5, valued 0.5 x legal x (1 - the other player's best straight pot on the lowest
+  ball from where the cue ball stops). The best of another kind kept as the alternative. Jump shots are not planned.
+- Drawn: the kick's dashed line along the cue ball's simulated way off the cushions; the bank's object-ball path in its
+  colour; no zone for a safety. The stroke box: what (pot, bank, kick 1 or 2 rails, safety), the stroke and power, the
+  percentages (coloured by band), the alternative, the zone's legend. Ball in hand shows its percentages.

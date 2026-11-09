@@ -7,18 +7,18 @@ const count = (r, v) => r.cells.filter(c => c === v).length;
 test('three balls ahead on Nov 2 rack 2: the 1 top-right, the 2 bottom side, the 3 bottom-right; the 6 in the way, a wrong side', () => {
   const r = COACH.plan(NOV2, P);
   assert.strictEqual(r.A.pocket, 5); assert.ok([1, 2].includes(r.B.pocket), 'the 2 in the bottom side or corner: ' + r.B.pocket); assert.strictEqual(r.C.pocket, 2);
-  assert.ok(count(r, 1) > 20 && count(r, 4) > 50, 'green and grey: ' + [count(r, 1), count(r, 4)]);
+  assert.ok(count(r, 1) + count(r, 5) + count(r, 2) > 20 && count(r, 4) > 50, '60%+ and grey: ' + [count(r, 1) + count(r, 5) + count(r, 2), count(r, 4)]);
   // V3.11: a real stroke from the simulation: the 1 goes in, the cue ball stays up, stops in the zone; a band for the pocket's width
   const st = r.path.stroke; assert.ok(st && st.power >= 1 && st.power <= 10 && Math.abs(st.tip) <= 0.5, JSON.stringify(st));
-  assert.ok(r.path.zone > 0 && r.path.pts.length > 5 && r.path.fan, 'into the zone, with a band');
-  assert.ok(['green', 'amber'].includes(COACH.gradeAt(r, r.spot[0], r.spot[1])), 'the spot in the zone');
+  assert.ok(r.path.shot === 'pot' && r.path.make > 0.5 && r.path.pts.length > 5 && r.path.fan, 'a pot with its percentages and a band: ' + JSON.stringify({ make: r.path.make, next: r.path.next }));
+  assert.ok(COACH.gradeAt(r, r.spot[0], r.spot[1]) && COACH.gradeAt(r, r.spot[0], r.spot[1]) !== 'blocked', 'the spot in the zone');
   assert.strictEqual(COACH.gradeAt(r, 30, 20), 'blocked'); // behind the 6
   console.log('plan ms', r.ms);
 });
 test('a ball not named for sure is still in the way; a short runout; the 9 alone', () => {
   const r0 = COACH.plan([{ n: 0, x: 20, y: 20 }, { n: 3, x: 40, y: 20 }, { n: 9, x: 60, y: 30 }], P), r1 = COACH.plan([{ n: 0, x: 20, y: 20 }, { n: 3, x: 40, y: 20 }, { n: 9, x: 60, y: 30 }, { n: 107, x: 30, y: 20 }], P);
   // an unnamed ball between the cue ball and the 3: not in the order, but in the way (no direct stroke on the 3)
-  assert.deepStrictEqual(r1.order, [3, 9]); assert.ok(r0.path && r0.path.stroke, 'a stroke when clear'); assert.ok(!(r1.path && r1.path.stroke), 'no direct stroke through the unnamed ball');
+  assert.deepStrictEqual(r1.order, [3, 9]); assert.ok(r0.path && r0.path.stroke, 'a stroke when clear'); assert.ok(!(r1.path && r1.path.shot === 'pot'), 'no straight pot through the unnamed ball (a kick or a safety instead): ' + (r1.path && r1.path.shot));
   assert.ok(r0.A.pocket != null && r0.B.pocket != null && r0.C === null);
   const r2 = COACH.plan([{ n: 0, x: 20, y: 20 }, { n: 9, x: 70, y: 34 }], P); assert.strictEqual(r2.B, null); assert.strictEqual(r2.A.pocket, 5);
   assert.ok(r2.path && r2.path.stroke, 'the last ball: still a line and a stroke');
@@ -26,7 +26,7 @@ test('a ball not named for sure is still in the way; a short runout; the 9 alone
 });
 test('ball in hand after a scratch; a ball just behind the cue ball (Nov 8 19:32 shot 22)', () => {
   const h = COACH.plan([{ n: 3, x: 73.2, y: 11.4 }, { n: 4, x: 19, y: 19.7 }, { n: 6, x: 38.5, y: 12.4 }, { n: 9, x: 7.9, y: 6.6 }], P, { inHand: true });
-  assert.ok(h.inHand && h.spot && h.A.pocket != null, 'where to put the cue ball'); assert.ok(['green', 'amber'].includes(COACH.gradeAt(h, h.spot[0], h.spot[1])));
+  assert.ok(h.inHand && h.spot && h.A.pocket != null && h.path.make > 0.5, 'where to put the cue ball, with its percentages'); assert.ok(['green', 'lightgreen', 'yellow'].includes(COACH.gradeAt(h, h.spot[0], h.spot[1])));
   const j = COACH.plan([{ n: 4, x: 67.5, y: 21.5 }, { n: 7, x: 53.2, y: 0.7 }, { n: 0, x: 56.9, y: 4.6 }, { n: 9, x: 19.4, y: 12 }], P);
   assert.ok(j.jacked && j.path.stroke.tip >= -0.2 && j.path.stroke.power <= 6, 'cue raised: no real draw, no hard hit: ' + JSON.stringify(j.path.stroke));
 });
@@ -61,4 +61,17 @@ test('Nov 8 20:24 (V3.11.1): every layout of the session gives a stroke, ball in
     assert.ok(r.inHand || (r.path && r.path.stroke) || r.noShot, 'layout ' + (i + 1) + ': something to show');
     const cn = r.shapes && r.shapes.cone; if (cn) assert.ok(fin(cn.core) && cn.sides.every(fin) && isFinite(cn.r1), 'layout ' + (i + 1) + ': the cone is a shape');
   }
+});
+test('V3.12: there is always a plan: banks, kicks and safeties when no clean pot; percentages for each (Nov 8 20:24 layouts)', () => {
+  const lays = require('./fixtures/v3/coach-20261108-2024.json'); const kinds = new Set();
+  for (const balls of lays) {
+    const r = COACH.plan(balls, P, { inHand: !balls.some(b => b.n === 0) }); if (!r || r.inHand) continue;
+    assert.ok(r.path && r.path.stroke, 'a plan for the ' + r.A.n); kinds.add(r.path.shot);
+    if (r.path.shot === 'safety') assert.ok(r.path.legal > 0.5 && r.path.opp < 0.6, 'a real safety: ' + JSON.stringify({ legal: r.path.legal, opp: r.path.opp }));
+    else assert.ok(r.path.make > 0, 'a percentage to make');
+  }
+  assert.ok(kinds.has('pot') && kinds.has('safety'), 'pots and safeties: ' + [...kinds]);
+  // a bank: the 3 hidden from every pocket but one off the top cushion
+  const b = COACH.plan([{ n: 0, x: 20, y: 10 }, { n: 3, x: 39, y: 12 }, { n: 9, x: 60, y: 30 }, { n: 101, x: 39, y: 7 }, { n: 102, x: 45, y: 13 }, { n: 103, x: 33, y: 13 }], P);
+  assert.ok(b.path && b.path.stroke, 'a plan when the 3 has no straight pot: ' + (b.path && b.path.shot));
 });

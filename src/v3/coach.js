@@ -32,7 +32,7 @@ function coachFactory(sim) {
         const nx = pk.corner ? (pk.x < L / 2 ? -1 : 1) / Math.SQRT2 : 0, ny = pk.corner ? (pk.y < W / 2 ? -1 : 1) / Math.SQRT2 : (pk.y < W / 2 ? -1 : 1);
         const entry = Math.acos(Math.max(-1, Math.min(1, (v[0] * nx + v[1] * ny) / vl))) / D2R;
         if (entry > (pk.corner ? 55 : 45)) return;
-        out.push({ pi, pk, u: unit(v), dist: vl });
+        out.push({ pi, pk, u: unit(v), dist: vl, entry });
       });
       return out;
     }
@@ -43,6 +43,17 @@ function coachFactory(sim) {
       const v = unit(aim), cut = Math.acos(Math.max(-1, Math.min(1, dot(v, o.u)))) / D2R; if (cut > 70) return null;
       const ease = Math.cos(cut * D2R) ** 1.5 / (1 + (dl / 40) ** 1.3 + (o.dist / 45) ** 1.3) * (o.pk.corner ? 1 : 0.85);
       return { G, v, cut, dl, ease, blk: blockers(X, G, [T.n, ...gone]) };
+    }
+    // the chance of making a shot (V3.12, owner Nov 9: percentages, not scores): the cue ball's line off by a good amateur's
+    // aim error (about 0.2 degrees, plus 0.6 degrees on the object ball for stroke and throw), turned into the object ball's
+    // error through the cut (a thinner cut magnifies it) and set against the pocket's width seen from the ball (corner about
+    // 2.8 in wide, side 2 in, narrower from a steep entry). To be tuned from the owner's sessions.
+    const AIM_SD = 0.2 * D2R, OB_SD = 0.6 * D2R;
+    function erf(x) { const t = 1 / (1 + 0.3275911 * Math.abs(x)), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x >= 0 ? y : -y; }
+    function pMake(s, o) {
+      const tol = (o.pk.corner ? 1.4 : 1.0) * Math.max(0.35, Math.cos((o.entry || 0) * D2R)), tolA = Math.atan(tol / Math.max(1, o.dist));
+      const sd = Math.hypot(s.dl * AIM_SD / (2 * R * Math.max(0.25, Math.cos(s.cut * D2R))), OB_SD);
+      return erf(tolA / (sd * Math.SQRT2));
     }
     function trace(p0, d0, ignore) {
       let p = p0.slice(), d = d0.slice(), left = o0.maxLen, bounces = 0; const pts = [p.slice()];
@@ -101,68 +112,140 @@ function coachFactory(sim) {
     const run = (ang, v, a, b) => sim(init(), { angle: ang, speed: v, a, b }, P, { record: true, only: new Set([0]), maxT: 9 });
     const strokeOf = (p, a, b) => ({ tip: b, side: a, power: p + 1, mph: MPH[p], kind: b < -0.1 ? 'draw' : b > 0.1 ? 'follow' : 'center' });
     function after(r) { const ht = r.hitAt ? r.hitAt.t : 0, pts = (r.paths[0] || []).filter(q => q[0] >= ht).map(q => [q[1], q[2]]); return pts; }
+    // ---- the plan for A (V3.12): every kind of shot, with real percentages ----
+    // Strokes run in the simulation; each candidate run again with a good amateur's errors (aim 0.2 degrees, speed 8%, tip
+    // and side 0.05 of the radius) to count how often A goes in and where the cue ball ends: its percentage to make, and the
+    // chance of the next shot from where it stops (the zone's percentages). Kinds: pot (straight at A), bank (A off one
+    // cushion), kick (the cue ball off one or two cushions first) and safety (A hit, the cue ball and A left so the other
+    // player has little). The best is shown first whatever its percentage (owner, Nov 9: there is always a shot); the best of
+    // another kind is kept as the alternative. Jump shots are not planned.
+    function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+    const gauss = r => { let u = 0; while (!u) u = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); };
+    const runAll = (ang, v, a, b) => sim(init(), { angle: ang, speed: v, a, b }, P, { record: true, only: new Set([0, A.n]), maxT: 9 });
+    const pathOf = (r, id, fromHit) => { const ht = fromHit && r.hitAt ? r.hitAt.t : -1, q = r.paths[id] || []; return q.filter(z => fromHit === false ? (!r.hitAt || z[0] <= r.hitAt.t) : z[0] >= ht).map(z => [z[1], z[2]]); };
+    const mirror = (p, c) => c === 0 ? [2 * R - p[0], p[1]] : c === 1 ? [2 * (L - R) - p[0], p[1]] : c === 2 ? [p[0], 2 * R - p[1]] : [p[0], 2 * (W - R) - p[1]];
+    // the other player's best chance after a safety: from where the cue ball stopped, on the lowest ball left, straight in
+    function oppBest(r) {
+      const fin = r.final, cb = fin.find(q => q.id === 0); if (!cb) return 1;
+      const left = fin.filter(q => q.id !== 0 && ord.some(o => o.n === q.id)).sort((x, y) => x.id - y.id), T = left[0]; if (!T) return 0;
+      const blk = (a, b, skip) => fin.some(q => !skip.includes(q.id) && segDist([q.x, q.y], a, b) < 2 * R - 0.05);
+      let best = 0;
+      P.pockets.forEach(pk => {
+        const v = sub([pk.x, pk.y], [T.x, T.y]), vl = len(v); if (vl < 0.5 || blk([T.x, T.y], [pk.x, pk.y], [T.id])) return;
+        const u = unit(v), G = [T.x - 2 * R * u[0], T.y - 2 * R * u[1]], aim = sub(G, [cb.x, cb.y]), dl = len(aim); if (dl < 2.2 * R || blk([cb.x, cb.y], G, [0, T.id])) return;
+        const cut = Math.acos(Math.max(-1, Math.min(1, dot(unit(aim), u)))) / D2R; if (cut > 70) return;
+        const nx = pk.corner ? (pk.x < L / 2 ? -1 : 1) / Math.SQRT2 : 0, ny = pk.corner ? (pk.y < W / 2 ? -1 : 1) / Math.SQRT2 : (pk.y < W / 2 ? -1 : 1), entry = Math.acos(Math.max(-1, Math.min(1, (v[0] * nx + v[1] * ny) / vl))) / D2R;
+        if (entry > (pk.corner ? 55 : 45)) return;
+        best = Math.max(best, pMake({ dl, cut }, { pk, dist: vl, entry }));
+      });
+      return best;
+    }
     function searchA(out, zoneAt) {
-      const cands = [];
-      const val = (r, o) => {
-        if (!r.pocketed.some(q => q.id === A.n) || r.pocketed.some(q => q.id === 0) || r.firstHit !== A.n) return -1;
-        const c = r.final.find(q => q.id === 0); if (!c) return -1;
-        if (zoneAt) { // green worth clearly more than yellow; more again rolling into the zone along its line (toward or away from the ball)
-          const z = Math.pow(zoneAt([c.x, c.y]), 1.6), q = r.paths[0] || [], n = q.length; if (!z || n < 3) return z;
-          const d = unit([q[n - 1][1] - q[n - 3][1], q[n - 1][2] - q[n - 3][2]]), rad = unit([c.x - Zb.x, c.y - Zb.y]); return z * (0.7 + 0.3 * Math.abs(dot(d, rad))); }
-        const rd = Math.min(c.x, L - c.x, c.y, W - c.y); return rd < 3 ? 0.5 : 0.8; // the last ball: just stay off the cushion
+      const R0 = rng(1234 + Math.round(cue.x * 7 + cue.y * 13));
+      const potted = r => r.pocketed.some(q => q.id === A.n) && !r.pocketed.some(q => q.id === 0) && r.firstHit === A.n;
+      // the next shot's chance from where the cue ball stopped (the zone), a little more coming in along the zone's line
+      const nextQ = r => {
+        const c = r.final.find(q => q.id === 0); if (!c) return 0;
+        if (!zoneAt) { const rd = Math.min(c.x, L - c.x, c.y, W - c.y); return rd < 3 ? 0.9 : 1; }
+        const z = zoneAt([c.x, c.y]), q = r.paths[0] || [], n = q.length; if (!z || n < 3) return z;
+        const d = unit([q[n - 1][1] - q[n - 3][1], q[n - 1][2] - q[n - 3][2]]), rad = unit([c.x - Zb.x, c.y - Zb.y]); return Math.min(1, z * (0.9 + 0.1 * Math.abs(dot(d, rad))));
       };
-      // simple strokes first: soft to medium (power 5 or less), the tip near the middle, no side unless it pays (owner, Nov 9)
-      const simple = (p, a, b) => (p <= 5 ? 1 : Math.pow(0.82, p - 5)) * (1 - 0.6 * Math.max(0, Math.abs(b) - 0.2)) * (a ? 0.85 : 1);
-      // the cushions the cue ball hits after contact (Dr. Dave, pattern play: avoid going off multiple rails; one as a brake is fine)
-      const rails = r => { const q = after(r); let n = 0, on = false; for (const p of q) { const at = p[0] < R + 0.25 || p[0] > L - R - 0.25 || p[1] < R + 0.25 || p[1] > W - R - 0.25; if (at && !on) n++; on = at; } return n; };
-      const railF = r => { const n = rails(r); return n <= 1 ? 1 : Math.pow(0.82, n - 1); };
+      // simple strokes first: soft to medium, the tip near the middle, no side unless it pays; few cushions (Dr. Dave)
+      const simple = c => (c.p <= 5 ? 1 : Math.pow(0.85, c.p - 5)) * (1 - 0.5 * Math.max(0, Math.abs(c.b) - 0.2)) * (c.a ? 0.9 : 1);
+      const rails = pts => { let n = 0, on = false; for (const p of pts) { const at = p[0] < R + 0.25 || p[0] > L - R - 0.25 || p[1] < R + 0.25 || p[1] > W - R - 0.25; if (at && !on) n++; on = at; } return n; };
+      const railF = r => { const n = rails(after(r)); return n <= 1 ? 1 : Math.pow(0.85, n - 1); };
+      // a candidate's percentages: N runs with the player's errors
+      const mc = (c, N) => {
+        let made = 0, q = 0, legal = 0, opp = 0;
+        for (let i = 0; i < N; i++) {
+          const r = runAll(c.ang + gauss(R0) * AIM_SD, MPH[c.p] * 17.6 * (1 + gauss(R0) * 0.08), c.a + gauss(R0) * 0.05, Math.max(-0.55, Math.min(0.55, c.b + gauss(R0) * 0.05)));
+          if (c.kind === 'safety') { const ok = r.firstHit === A.n && !r.pocketed.some(z => z.id === 0) && (r.railAfter || r.pocketed.length); if (ok) { legal++; opp += oppBest(r); } continue; }
+          if (potted(r)) { made++; q += nextQ(r); }
+        }
+        if (c.kind === 'safety') { c.legal = legal / N; c.opp = legal ? opp / legal : 1; c.value = 0.5 * c.legal * (1 - c.opp) * simple(c); c.pMake = 0; c.pNext = 0; return c; }
+        // offence first: a sure pot with a poor leave (0.6) still beats the best safety (0.5); a 50/50 pot does not
+        c.pMake = made / N; c.pNext = made ? q / made : 0; c.value = c.pMake * (0.6 + 0.4 * c.pNext) * simple(c) * (c.rf || 1); return c;
+      };
+      const all = [];
+      // 1. straight at A: every pocket, tip, speed (the nominal stroke first; the aim nudged up to a degree for throw)
+      const direct = [];
       for (const o of pA) {
-        const s = shot(pt(cue), A, o, []); if (!s || s.blk.length || s.cut > 70) continue;
+        const s = shot(pt(cue), A, o, []); if (!s || s.blk.length || s.cut > 75) continue;
         const ang0 = Math.atan2(s.G[1] - cue.y, s.G[0] - cue.x);
-        // a ball just behind the cue ball (owner, Nov 9: the 7 behind on a straight-in 4): the cue has to be raised, so no
-        // real draw and no hard hit
         const back = [-Math.cos(ang0), -Math.sin(ang0)], jack = objs.some(q => { const d = [q.x - cue.x, q.y - cue.y], t = dot(d, back); return t > 0 && t < 9 && Math.abs(d[0] * back[1] - d[1] * back[0]) < 1.9; });
         if (jack) out.jacked = true;
         for (const p of TRY) for (const b of TIPS) {
           if (jack && (b < -0.2 || p > 5)) continue;
-          let best = null;
-          for (const da of [0, 0.5, -0.5, 1, -1]) { // the aim corrected a little where throw would miss it
-            const r = run(ang0 + da * D2R, MPH[p] * 17.6, 0, b), v = val(r, o); if (v >= 0) { best = { r, v, da }; break; }
-          }
-          if (best) cands.push({ o, s, ang: ang0 + best.da * D2R, p, a: 0, b, v: best.v * railF(best.r), r: best.r });
+          for (const da of [0, 0.5, -0.5, 1, -1]) { const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, 0, b); if (potted(r)) { direct.push({ kind: 'pot', o, s, ang: ang0 + da * D2R, p, a: 0, b, r, v0: nextQ(r) * railF(r), rf: railF(r) }); break; } }
         }
       }
-      if (!cands.length) return null;
-      // the best few, again with small mistakes: aim 0.35 degrees either way, speed 12% either way, tip 0.1 either way
-      const robust = c => { let t = 0, n = 0; for (const [da, dv, db] of [[0.35, 1, 0], [-0.35, 1, 0], [0, 1.12, 0], [0, 0.88, 0], [0, 1, 0.1], [0, 1, -0.1]]) {
-        const r = run(c.ang + da * D2R, MPH[c.p] * 17.6 * dv, c.a, Math.max(-0.55, Math.min(0.55, c.b + db))), v = val(r, c.o); t += Math.max(0, v); n++; } return t / n; };
-      // what it is worth: mostly how well it holds up to small mistakes, a stroke that only works when perfect is nearly worthless
-      const score = c => (0.25 * c.v + 0.75 * c.rob) * (c.rob < 0.1 ? 0.3 : 1) * simple(c.p, c.a, c.b);
-      cands.sort((x, y) => y.v * simple(y.p, y.a, y.b) - x.v * simple(x.p, x.a, x.b));
-      const top = cands.slice(0, 12); for (const c of top) c.rob = robust(c);
-      top.sort((x, y) => score(y) - score(x));
-      // side spin on the three best (the cue ball off the cushions, and the angle off the object ball)
-      for (const c of top.slice(0, 3)) for (const a of [-0.3, 0.3]) {
-        let best = null; for (const da of [0, 0.5, -0.5, 1, -1, 1.5, -1.5]) { const r = run(c.ang + da * D2R, MPH[c.p] * 17.6, a, c.b), v = val(r, c.o); if (v >= 0) { best = { r, v, da }; break; } }
-        if (best) { const n2 = { o: c.o, s: c.s, ang: c.ang + best.da * D2R, p: c.p, a, b: c.b, v: best.v * railF(best.r), r: best.r }; n2.rob = robust(n2); top.push(n2); }
+      direct.sort((x, y) => y.v0 * simple(y) - x.v0 * simple(x));
+      const top = direct.slice(0, 10).map(c => mc(c, 12)); top.sort((x, y) => y.value - x.value);
+      for (const c of top.slice(0, 3)) for (const a of [-0.3, 0.3]) { // side spin on the best three
+        for (const da of [0, 0.5, -0.5, 1, -1, 1.5, -1.5]) { const r = runAll(c.ang + da * D2R, MPH[c.p] * 17.6, a, c.b); if (potted(r)) { top.push(mc({ kind: 'pot', o: c.o, s: c.s, ang: c.ang + da * D2R, p: c.p, a, b: c.b, r, rf: railF(r) }, 12)); break; } }
       }
-      top.sort((x, y) => score(y) - score(x)); const w = top[0];
-      const alts = top.slice(0, 4).map(c => ({ pocket: c.o.pi, tip: c.b, side: c.a, power: c.p + 1, zone: +c.v.toFixed(2), robust: +c.rob.toFixed(2), score: +score(c).toFixed(3) }));
-      // the band of the cue ball's path: the stroke aimed to the inside and to the outside of the pocket (the ball still in)
+      all.push(...top);
+      const bestPot = () => Math.max(0, ...all.filter(c => c.kind !== 'safety').map(c => c.value));
+      // 2. banks: A off one cushion (the pocket mirrored in the cushion), the cue ball straight at its ghost
+      if (bestPot() < 0.55) {
+        const banks = [];
+        P.pockets.forEach((pk, pi) => { for (let cu = 0; cu < 4; cu++) {
+          if ((cu === 0 && pk.x < 1) || (cu === 1 && pk.x > L - 1) || (cu === 2 && pk.y < 1) || (cu === 3 && pk.y > W - 1)) continue;
+          const m = mirror([pk.x, pk.y], cu), u = unit(sub(m, pt(A))), G = [A.x - 2 * R * u[0], A.y - 2 * R * u[1]];
+          const tt = cu < 2 ? ((cu === 0 ? R : L - R) - A.x) / (m[0] - A.x) : ((cu === 2 ? R : W - R) - A.y) / (m[1] - A.y); if (!(tt > 0 && tt < 1)) continue;
+          const hit = [A.x + (m[0] - A.x) * tt, A.y + (m[1] - A.y) * tt]; if (P.pockets.some(q => Math.hypot(q.x - hit[0], q.y - hit[1]) < 5)) continue;
+          const aim = sub(G, pt(cue)); if (len(aim) < 2.5 * R || blockers(pt(cue), G, [A.n]).length) continue;
+          if (Math.acos(Math.max(-1, Math.min(1, dot(unit(aim), u)))) / D2R > 60) continue;
+          const ang0 = Math.atan2(aim[1], aim[0]);
+          for (const p of [3, 5, 7]) for (const da of [0, 0.7, -0.7, 1.4, -1.4, 2.1, -2.1]) { const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, 0, 0); if (potted(r)) { banks.push({ kind: 'bank', o: { pi, pk }, s: { G, cut: 0 }, ang: ang0 + da * D2R, p, a: 0, b: 0, r, rf: railF(r) }); break; } }
+        } });
+        all.push(...banks.map(c => mc(c, 10)));
+      }
+      // 3. kicks: the cue ball off one or two cushions to A's ghost (to pot it), or to A itself (to hit it)
+      if (bestPot() < 0.4) {
+        const targets = pA.map(o => ({ o, G: [A.x - 2 * R * o.u[0], A.y - 2 * R * o.u[1]] }));
+        const kicks = [], tryKick = (Gm, o, k, rails2) => {
+          const aim = sub(Gm, pt(cue)), ang0 = Math.atan2(aim[1], aim[0]);
+          for (const p of [3, 5, 7]) for (const da of [0, 0.6, -0.6, 1.2, -1.2]) {
+            const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, 0, 0);
+            if (potted(r)) { kicks.push({ kind: rails2 ? 'kick2' : 'kick', o, s: { G: Gm, cut: 0 }, ang: ang0 + da * D2R, p, a: 0, b: 0, r, rf: 1 }); return true; }
+          }
+          return false;
+        };
+        for (const t of targets) for (let cu = 0; cu < 4; cu++) tryKick(mirror(t.G, cu), t.o, cu, false);
+        if (!kicks.length) for (const t of targets) for (const [c1, c2] of [[0, 2], [0, 3], [1, 2], [1, 3], [2, 0], [3, 0], [2, 1], [3, 1]]) tryKick(mirror(mirror(t.G, c1), c2), t.o, c1, true);
+        all.push(...kicks.map(c => mc(c, 10)));
+      }
+      // 4. safety: A hit softly, full or thin either side, straight or off a cushion when A cannot be seen
+      if (bestPot() < 0.5) {
+        const safe = [], see = !blockers(pt(cue), pt(A), [A.n]).length;
+        const aims = see ? [0, 1, -1].map(k => { const d = unit(sub(pt(A), pt(cue))), n = [-d[1], d[0]]; return [A.x + n[0] * k * 1.8, A.y + n[1] * k * 1.8]; }) : [0, 1, 2, 3].map(cu => mirror(pt(A), cu));
+        for (const T of aims) { const aim = sub(T, pt(cue)), ang0 = Math.atan2(aim[1], aim[0]);
+          for (const p of [0, 1, 2, 3]) for (const b of [-0.2, 0, 0.2]) { const r = runAll(ang0, MPH[p] * 17.6, 0, b); if (r.firstHit === A.n && !r.pocketed.some(z => z.id === 0) && (r.railAfter || r.pocketed.length)) safe.push({ kind: 'safety', o: null, s: { G: T, cut: 0 }, ang: ang0, p, a: 0, b, r, v0: 1 - oppBest(r) }); } }
+        safe.sort((x, y) => y.v0 - x.v0); all.push(...safe.slice(0, 4).map(c => mc(c, 8)));
+      }
+      if (!all.length) return null;
+      all.sort((x, y) => y.value - x.value);
+      const w = mc(Object.assign({}, all[0]), 24), alt = all.find(c => c.kind !== w.kind);
+      // the band of the cue ball's path: the same stroke aimed to the inside and to the outside of the pocket (A still in)
       let lo = null, hi = null;
-      for (let d = -2; d <= 2.001; d += 0.25) { const r = run(w.ang + d * D2R, MPH[w.p] * 17.6, w.a, w.b); if (val(r, w.o) < 0) continue; if (!lo) lo = r; hi = r; }
+      if (w.kind !== 'safety') for (let d = -2; d <= 2.001; d += 0.25) { const r = runAll(w.ang + d * D2R, MPH[w.p] * 17.6, w.a, w.b); if (!potted(r)) continue; if (!lo) lo = r; hi = r; }
       const c0 = w.r.final.find(q => q.id === 0);
-      return { val: score(w), pocket: w.o.pi, cut: Math.round(w.s.cut), ghost: w.s.G, pts: after(w.r), stroke: Object.assign(strokeOf(w.p, w.a, w.b), { hard: w.rob < 0.3, jacked: !!out.jacked }), fan: lo && hi && lo !== hi ? [after(lo), after(hi)] : null, p: [c0.x, c0.y], zone: +w.v.toFixed(2), robust: +w.rob.toFixed(2), alts };
+      const alts = all.slice(0, 4).map(c => ({ kind: c.kind, pocket: c.o ? c.o.pi : null, tip: c.b, side: c.a, power: c.p + 1, make: +c.pMake.toFixed(2), next: +c.pNext.toFixed(2), value: +c.value.toFixed(3) }));
+      return { kind: w.kind, val: w.value, pocket: w.o ? w.o.pi : null, cut: Math.round(w.s.cut || 0), ghost: w.s.G, pts: after(w.r), pre: w.kind === 'kick' || w.kind === 'kick2' ? pathOf(w.r, 0, false) : null, ob: w.kind === 'bank' ? pathOf(w.r, A.n, true) : null,
+        stroke: Object.assign(strokeOf(w.p, w.a, w.b), { hard: w.kind === 'safety' ? false : w.pMake < 0.6 || w.pNext < 0.5, jacked: !!out.jacked }),
+        fan: lo && hi && lo !== hi ? [after(lo), after(hi)] : null, p: c0 ? [c0.x, c0.y] : null, make: +w.pMake.toFixed(2), next: +w.pNext.toFixed(2), legal: w.legal != null ? +w.legal.toFixed(2) : null, opp: w.opp != null ? +w.opp.toFixed(2) : null,
+        zone: +w.pNext.toFixed(2), robust: +w.pMake.toFixed(2), alts, alt: alt ? { kind: alt.kind, make: +alt.pMake.toFixed(2), value: +alt.value.toFixed(2) } : null };
     }
     // no clean pot on the lowest ball at all (V3.11.2, Nov 8 20:24: every pocket blocked or the cut too thin; the screen
     // showed nothing and the player could not tell what the plan wanted): said so
     function noShot(out) { if (inHand || (out.path && out.path.stroke)) return; out.noShot = { n: A.n, why: pA.length ? 'thin' : 'blocked' }; }
     // no shape to play for (the last ball, or no zone): still the shot line and a stroke that makes it
     function finishA(out) {
-      const o = pA.find(q => q.pi === out.A.pocket); if (!o) return; const s = shot(pt(cue), A, o, []); if (!s) return;
-      const pl = sim && !inHand ? searchA(out, null) : null;
-      out.path = pl ? { ghost: pl.ghost, pts: pl.pts, kind: pl.stroke.kind, s: pl.stroke.tip, cut: pl.cut, stroke: pl.stroke, fan: pl.fan, p: pl.p, noShape: true } : { ghost: s.G, pts: [], cut: Math.round(s.cut), noShape: true };
-      if (pl) out.A.pocket = pl.pocket;
+      const o = pA.find(q => q.pi === out.A.pocket), s = o ? shot(pt(cue), A, o, []) : null;
+      const pl = sim && !inHand ? searchA(out, null) : null; if (!pl && !s) return;
+      out.path = pl ? { shot: pl.kind, ghost: pl.ghost, pts: pl.pts, pre: pl.pre, ob: pl.ob, kind: pl.stroke.kind, s: pl.stroke.tip, cut: pl.cut, stroke: pl.stroke, fan: pl.fan, p: pl.p, make: pl.make, next: pl.next, legal: pl.legal, opp: pl.opp, alts: pl.alts, alt: pl.alt, noShape: true } : { ghost: s.G, pts: [], cut: Math.round(s.cut), noShape: true };
+      if (pl && pl.pocket != null) out.A.pocket = pl.pocket;
     }
     const out = { L, W, R, order: ord.map(o => o.n), A: { n: A.n, pocket: null }, B: B ? { n: B.n, pocket: null } : null, C: C ? { n: C.n, pocket: null } : null, step: STEP, nx, ny, origin: [R, R], cells: null, path: null, spot: null, route: null };
     const pA = pocketsFor(A, []);
@@ -179,10 +262,11 @@ function coachFactory(sim) {
         if (s.blk.length) { g[j * nx + i] = 4; continue; } // grey: in the way
         if (s.cut > 60) continue;
         let posC = 1; if (Ub) { posC = 0; for (const r of exits(s, o, goneU)) { if (r.pts.scratch) continue; const v = pathValue(r); if (v > posC) posC = v; } }
-        const angle = s.cut < 6 ? 0.55 : s.cut < 12 ? 0.8 : s.cut <= 40 ? 1 : 0.75;
-        const rd = Math.min(X[0], L - X[0], X[1], W - X[1]), rail = rd < 2.5 ? 0.55 : rd < 4.5 ? 0.85 : 1;
-        const v = Math.min(1, s.ease / 0.6) * angle * rail * (0.25 + 0.75 * posC);
-        sc[j * nx + i] = v; g[j * nx + i] = Ub && posC < 0.12 ? 3 : 9; n++; // 3 red; 9 graded below
+        // the chance of making it and being on the next one: the make, times how well it leaves the ball after (the wrong side
+        // about half), less straight in (no control of the cue ball) and on a cushion (the cue raised)
+        const rd = Math.min(X[0], L - X[0], X[1], W - X[1]), rail = rd < 2.5 ? 0.8 : rd < 4.5 ? 0.93 : 1;
+        const v = pMake(s, o) * (Ub ? 0.55 + 0.45 * posC : 1) * (s.cut < 6 ? 0.9 : 1) * rail;
+        sc[j * nx + i] = v; g[j * nx + i] = 9; n++; // graded below
       }
       const worth = Array.from(sc).sort((a, b) => b - a).slice(0, Math.round(150 / (STEP * STEP))).reduce((a, b) => a + b, 0);
       const z = { o, g, sc, worth }; zones.push(z); if (!bestZ || worth > bestZ.worth) bestZ = z;
@@ -190,16 +274,10 @@ function coachFactory(sim) {
     if (!bestZ) { if (!inHand) { out.A.pocket = easiestA(); finishA(out); noShot(out); } out.ms = Date.now() - t0; return out; }
     // every pocket's zone graded against the best spot of all (V3.11: position counts for whichever pocket the ball is then
     // played in; the plan's pocket for it is the one the planned stroke leaves it best for)
-    const top = Math.max(...zones.map(z => Math.max(...z.sc))) || 1;
-    for (const z of zones) {
-      for (let k = 0; k < nx * ny; k++) if (z.g[k] === 9) { const r = z.sc[k] / top; z.g[k] = r >= 0.62 ? 1 : r >= 0.38 ? 2 : 0; } // 1 green, 2 amber
-      // one smoothing pass (the grid samples the zone's edges unevenly): a yellow spot ringed by green is green, a lone green spot yellow
-      const g0 = z.g.slice(), at = (i, j) => i < 0 || j < 0 || i >= nx || j >= ny ? 0 : g0[j * nx + i];
-      for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const k = j * nx + i; if (g0[k] !== 1 && g0[k] !== 2) continue; let n1 = 0; for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) if ((di || dj) && at(i + di, j + dj) === 1) n1++;
-        if (g0[k] === 2 && n1 >= 5) z.g[k] = 1; else if (g0[k] === 1 && n1 <= 1) z.g[k] = 2; }
-    }
-    const zv = (z, p) => { const k = idx(p); if (k < 0) return 0; const g = z.g[k]; return g === 1 || g === 2 ? z.sc[k] / top : 0; };
-    const zoneAt = p => Math.max(0, ...zones.map(z => zv(z, p)));
+    // the owner's bands (Nov 9): 1 green 90%+, 5 light green 80-90, 2 yellow 60-80, 3 red 50-60, 6 under 50; 4 a ball in the way
+    for (const z of zones) for (let k = 0; k < nx * ny; k++) if (z.g[k] === 9) { const q = z.sc[k]; z.g[k] = q >= 0.9 ? 1 : q >= 0.8 ? 5 : q >= 0.6 ? 2 : q >= 0.5 ? 3 : 6; }
+    const zv = (z, p) => { const k = idx(p); if (k < 0) return 0; const g = z.g[k]; return g && g !== 4 ? z.sc[k] : 0; };
+    const zoneAt = p => Math.max(0, ...zones.map(z => zv(z, p))); out.zoneAt = null;
     // A, the ball being shot (V3.11, owner Nov 9: the plans asked for strokes that could not be played): real strokes tried
     // in the physics simulation (core.js simulate: tip height, side spin, speed, throw, cushions), each pocket the ball can
     // go in, power 1-10; kept only when the ball goes in and the cue ball stays up; scored on where the cue ball stops in the
@@ -223,11 +301,13 @@ function coachFactory(sim) {
     out.cells = bestZ.g; if (inHand) out.A.pocket = bestZ.o.pi; else out.B.pocket = bestZ.o.pi;
     if (!inHand) {
       out.A.pocket = pl ? pl.pocket : easiestA();
-      if (pl) out.path = { ghost: pl.ghost, pts: pl.pts, kind: pl.stroke.kind, s: pl.stroke.tip, cut: pl.cut, stroke: pl.stroke, fan: pl.fan || null, p: pl.p, zone: pl.zone, robust: pl.robust, alts: pl.alts };
+      if (pl) out.path = { shot: pl.kind, ghost: pl.ghost, pts: pl.pts, pre: pl.pre, ob: pl.ob, kind: pl.stroke.kind, s: pl.stroke.tip, cut: pl.cut, stroke: pl.stroke, fan: pl.fan || null, p: pl.p, make: pl.make, next: pl.next, legal: pl.legal, opp: pl.opp, zone: pl.zone, robust: pl.robust, alts: pl.alts, alt: pl.alt };
       else finishA(out);
     }
     // the zone's spot the plan aims for, the shot on B from there and where the cue ball goes on to for C
-    const greens = []; for (let k = 0; k < nx * ny; k++) if (bestZ.g[k] === 1) greens.push([cx(k % nx), cy(Math.floor(k / nx)), bestZ.sc[k]]);
+    // the zone's good spots: green and light green (80%+), else the best there are (V3.12)
+    let greens = []; for (let k = 0; k < nx * ny; k++) if (bestZ.g[k] === 1 || bestZ.g[k] === 5) greens.push([cx(k % nx), cy(Math.floor(k / nx)), bestZ.sc[k]]);
+    if (!greens.length) { for (let k = 0; k < nx * ny; k++) if (bestZ.g[k] && bestZ.g[k] !== 4) greens.push([cx(k % nx), cy(Math.floor(k / nx)), bestZ.sc[k]]); greens = greens.sort((a, b) => b[2] - a[2]).slice(0, 30); }
     let sp = null;
     if (!inHand && pl && pl.p) sp = [pl.p[0], pl.p[1], 1]; // the perfect spot: where the planned stroke stops
     else if (inHand) { const d = q => Math.hypot(q[0] - A.x, q[1] - A.y); sp = greens.sort((a, b) => b[2] * Math.exp(-d(b) / 40) - a[2] * Math.exp(-d(a) / 40))[0]; }
@@ -237,7 +317,7 @@ function coachFactory(sim) {
     else sp = greens.sort((a, b) => b[2] - a[2])[0];
     if (sp) {
       const X = [sp[0], sp[1]], s2 = shot(X, Zb, bestZ.o, goneZ); out.spot = X; if (s2) (inHand ? out.A : out.B).cut = Math.round(s2.cut);
-      if (inHand && s2) out.path = { ghost: s2.G, pts: [], inHand: true };
+      if (inHand && s2) out.path = { ghost: s2.G, pts: [], inHand: true, make: +pMake(s2, bestZ.o).toFixed(2), next: +zv(bestZ, X).toFixed(2) };
       if (Ub && s2) {
         let br = null, bv = -1; for (const r of exits(s2, bestZ.o, goneU)) { if (r.pts.scratch) continue; const v = pathValue(r); if (v > bv) { bv = v; br = r; } }
         if (br) {
@@ -269,9 +349,9 @@ function coachFactory(sim) {
   function pieces(pl, want) {
     const { nx, ny, step, origin, cells } = pl, seen = new Uint8Array(cells.length), out = [];
     for (let k = 0; k < cells.length; k++) {
-      if (seen[k] || cells[k] !== want) continue; const q = [k], ks = []; seen[k] = 1;
+      if (seen[k] || !want.includes(cells[k])) continue; const q = [k], ks = []; seen[k] = 1;
       while (q.length) { const c = q.pop(); ks.push(c); const i = c % nx, j = Math.floor(c / nx);
-        for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const a = i + di, b = j + dj, n = b * nx + a; if (a < 0 || b < 0 || a >= nx || b >= ny || seen[n] || cells[n] !== want) continue; seen[n] = 1; q.push(n); } }
+        for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const a = i + di, b = j + dj, n = b * nx + a; if (a < 0 || b < 0 || a >= nx || b >= ny || seen[n] || !want.includes(cells[n])) continue; seen[n] = 1; q.push(n); } }
       const corners = []; for (const c of ks) { const x = origin[0] + (c % nx) * step, y = origin[1] + Math.floor(c / nx) * step; corners.push([x, y], [x + step, y], [x, y + step], [x + step, y + step]); }
       const cx0 = corners.reduce((a, p) => a + p[0], 0) / corners.length, cy0 = corners.reduce((a, p) => a + p[1], 0) / corners.length;
       out.push({ n: ks.length, ks, poly: hull(corners), c: [cx0, cy0] });
@@ -326,20 +406,20 @@ function coachFactory(sim) {
   function shapes(pl, B) {
     if (!pl.cells) return null;
     const keyOf = p => { const i = Math.floor((p[0] - pl.origin[0]) / pl.step), j = Math.floor((p[1] - pl.origin[1]) / pl.step); return j * pl.nx + i; };
-    const g = pieces(pl, 1).filter(q => q.n >= 3);
+    const g = pieces(pl, [1, 5]).filter(q => q.n >= 3);
     let main = pl.spot ? g.find(q => q.ks.includes(keyOf(pl.spot))) : null; if (!main) main = g.sort((a, b) => b.n - a.n)[0];
     const near = (a, b) => Math.hypot(a.c[0] - b.c[0], a.c[1] - b.c[1]) < 14;
     const gp = main ? g.filter(q => q === main || (q.n >= 6 && near(q, main))) : [], green = gp.length ? [hull([].concat(...gp.map(q => q.poly)))] : []; // one shape
-    const red = pieces(pl, 3).sort((a, b) => b.n - a.n).slice(0, 1).filter(q => q.n >= 6).map(q => q.poly);
-    const blocked = pieces(pl, 4).filter(q => q.n >= 6).map(q => q.poly);
+    const red = pieces(pl, [3]).sort((a, b) => b.n - a.n).slice(0, 2).filter(q => q.n >= 6).map(q => q.poly), yellow = pieces(pl, [2]).sort((a, b) => b.n - a.n).slice(0, 3).filter(q => q.n >= 6).map(q => q.poly);
+    const blocked = pieces(pl, [4]).filter(q => q.n >= 6).map(q => q.poly);
     // how far the green reaches from the next ball (for the fade: strongest near the ball, lighter further away)
     let far = 0; for (const poly of green) for (const p of poly) far = Math.max(far, Math.hypot(p[0] - B.x, p[1] - B.y));
-    return { green, red, blocked, from: [B.x, B.y], far, cone: gp.length ? cone(pl, gp, B, pl.L, pl.W, pl.R) : null };
+    return { green, red, yellow, blocked, from: [B.x, B.y], far, cone: gp.length ? cone(pl, gp, B, pl.L, pl.W, pl.R) : null };
   }
   // the grade of a cue-ball spot in a plan's zone: 'green' | 'amber' | 'red' | 'blocked' | null
   function gradeAt(pl, x, y) {
     if (!pl || !pl.cells) return null; const i = Math.floor((x - pl.origin[0]) / pl.step), j = Math.floor((y - pl.origin[1]) / pl.step);
-    if (i < 0 || j < 0 || i >= pl.nx || j >= pl.ny) return null; return ({ 1: 'green', 2: 'amber', 3: 'red', 4: 'blocked' })[pl.cells[j * pl.nx + i]] || null;
+    if (i < 0 || j < 0 || i >= pl.nx || j >= pl.ny) return null; return ({ 1: 'green', 5: 'lightgreen', 2: 'yellow', 3: 'red', 6: 'low', 4: 'blocked' })[pl.cells[j * pl.nx + i]] || null;
   }
   // the power scale (V3.11): power 1-10 as cue-ball speeds, mph
   const POWER_MPH = [0.9, 1.5, 2.1, 2.8, 3.5, 4.3, 5.3, 6.4, 7.8, 9.5]; // Dr. Dave's speeds (see plan)

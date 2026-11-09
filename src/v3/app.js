@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.11.2';
+const VERSION = 'V3.12.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -543,7 +543,7 @@ function onShotEnd(sh) {
 // the shot's line (no tap to correct it: owner, Nov 3, no buttons while playing; what the app gets wrong is found in the
 // debug files)
 function coachWords(c) { if (!c || !c.compare) return ''; const k = c.compare, w = []; if (Math.abs(k.angle) >= 6) w.push('came off ' + Math.abs(k.angle) + '° off the line'); if (k.travel >= 1.25) w.push(Math.round((k.travel - 1) * 100) + '% further'); else if (k.travel <= 0.8) w.push(Math.round((1 - k.travel) * 100) + '% shorter'); return w.length ? ' · ' + w.join(', ') + ' than planned' : ' · as planned'; }
-function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row) + coachWords(row.coach) + (row.coach && row.coach.landed ? ' · cue ball ' + ({ green: 'in the green', amber: 'at the edge of the zone', red: 'on the wrong side', blocked: 'behind a ball' })[row.coach.landed] : row.coach && row.coach.zone ? ' · cue ball outside the zone' : '')); }
+function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row) + coachWords(row.coach) + (row.coach && row.coach.landed ? ' · cue ball ' + ({ green: 'in the green (90%+)', lightgreen: 'in the light green (80-90%)', yellow: 'in the yellow (60-80%)', red: 'in the red (50-60%)', low: 'where the next shot is under 50%', blocked: 'behind a ball' })[row.coach.landed] : row.coach && row.coach.zone ? ' · cue ball outside the zone' : '')); }
 // Each ball's path in the shot: the tracker's positions from just before the shot started, kept after it ends (and for the
 // balls that went in) until the next shot starts, so a quick look at the phone after the shot shows the whole of it.
 const PATH = new Map(); // ball key -> { num, pts: [{ t, x, y }] }
@@ -1041,7 +1041,7 @@ function coachDone(id, r) {
   if (!r || r.error) { if (r && r.error) dbg('error', { m: 'coach ' + r.error.slice(0, 120) }); CO.plan = null; return; }
   CO.plan = r; CO.balls = CO.pending; CO.poly = null;
   const cnt = { green: 0, red: 0, blocked: 0 }; if (r.cells) for (const v of r.cells) { if (v === 1) cnt.green++; else if (v === 3) cnt.red++; else if (v === 4) cnt.blocked++; }
-  dbg('coach_plan', { order: r.order, A: r.A, B: r.B, C: r.C, inHand: !!r.inHand, spot: r.spot && r.spot.map(r1), path: r.path ? { kind: r.path.kind, cut: r.path.cut, stroke: r.path.stroke || null, zone: r.path.zone, robust: r.path.robust, n: (r.path.pts || []).length, end: r.path.p && r.path.p.map(r1) } : null, route: r.route ? { kind: r.route.kind, s: r.route.s } : null, cells: cnt, ms: r.ms, balls: CO.balls });
+  dbg('coach_plan', { order: r.order, A: r.A, B: r.B, C: r.C, inHand: !!r.inHand, noShot: r.noShot || null, spot: r.spot && r.spot.map(r1), path: r.path ? { shot: r.path.shot, kind: r.path.kind, cut: r.path.cut, stroke: r.path.stroke || null, make: r.path.make, next: r.path.next, legal: r.path.legal, opp: r.path.opp, alt: r.path.alt || null, alts: r.path.alts || null, n: (r.path.pts || []).length, end: r.path.p && r.path.p.map(r1) } : null, route: r.route ? { kind: r.route.kind, s: r.route.s } : null, cells: cnt, ms: r.ms, balls: CO.balls });
 }
 function coachShotStart() { CO.atStart = CO.plan && CO.sig ? { plan: CO.plan, balls: CO.balls } : null; }
 function coachShotEnd(sh, row, row1) {
@@ -1090,11 +1090,13 @@ function drawCoach1(c, S2, F) {
   const now = A.tk.balls(), same = CO.balls && !CO.balls.some(b => b.n < 100 && !now.some(t => t.num === b.n && Math.hypot(t.x - b.x, t.y - b.y) < 1.5));
   const faint = A.tk.S.phase === 'shot' || !same; c.save(); c.globalAlpha = faint ? 0.42 : 1;
   const poly = (q, z = 0) => { c.beginPath(); q.forEach((v, i) => { const a = S2(A.cam.proj(v[0], v[1], z)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.closePath(); };
-  const sh = p.shapes;
-  if (sh) {
+  const sh = p.shapes, safety = p.path && p.path.shot === 'safety';
+  if (sh && !safety) { // (no zone for a safety: the next shot is the other player's)
     // no hard edges (owner, Nov 9). The wrong side faint; the zone a cone from the next ball, green strongest near that
     // ball and lighter further away, the outer tenth on each side yellow, the ideal line down the middle; balls in the way dark
-    for (const q of sh.red) { poly(q); c.fillStyle = 'rgba(231,76,60,.14)'; c.fill(); }
+    // the bands outside the cone (V3.12): yellow 60-80%, red 50-60%
+    for (const q of sh.red || []) { poly(q); c.fillStyle = 'rgba(231,76,60,.14)'; c.fill(); }
+    for (const q of sh.yellow || []) { poly(q); c.fillStyle = 'rgba(241,196,15,.13)'; c.fill(); }
     const cn = sh.cone, fin = q => q.every(v => isFinite(v[0]) && isFinite(v[1]));
     if (cn && fin(cn.core) && cn.sides.every(fin) && isFinite(cn.from[0])) {
       const o = S2(A.cam.proj(cn.from[0], cn.from[1], 0)); let rad = 1;
@@ -1118,13 +1120,17 @@ function drawCoach1(c, S2, F) {
   if (p.inHand && p.spot) {
     const a = S2(A.cam.proj(p.spot[0], p.spot[1], A.P.R));
     if (p.path && p.path.ghost) { const gh = S2(A.cam.proj(p.path.ghost[0], p.path.ghost[1], A.P.R)); c.setLineDash([4, 4]); c.lineWidth = 1.2; c.strokeStyle = 'rgba(244,241,232,.6)'; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(gh[0], gh[1]); c.stroke(); c.setLineDash([]); }
-    c.font = '600 12px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'bottom'; c.lineWidth = 3; c.strokeStyle = 'rgba(11,16,20,.7)'; c.strokeText('Ball in hand: cue ball here', a[0], a[1] - 12); c.fillStyle = '#f4f1e8'; c.fillText('Ball in hand: cue ball here', a[0], a[1] - 12);
+    c.font = '600 12px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'bottom'; c.lineWidth = 3; c.strokeStyle = 'rgba(11,16,20,.7)'; const t = 'Ball in hand: cue ball here' + (p.path && p.path.make != null ? ' (' + Math.round(p.path.make * 100) + '% to make, ' + Math.round(p.path.next * 100) + '% next)' : ''); c.strokeText(t, a[0], a[1] - 12); c.fillStyle = '#f4f1e8'; c.fillText(t, a[0], a[1] - 12);
   }
   // the cue ball's way: dashed to the ghost ball, solid on from there to the spot (drawn from where the cue ball was)
   const cueNow = now.find(t => t.num === 0), cue0 = CO.balls && CO.balls.find(b => b.n === 0), cue = same && cueNow ? cueNow : cue0;
   if (p.path && cue && !p.inHand) {
     const gh = S2(A.cam.proj(p.path.ghost[0], p.path.ghost[1], A.P.R)), cp = S2(A.cam.proj(cue.x, cue.y, A.P.R));
-    c.setLineDash([4, 4]); c.lineWidth = 1.2; c.strokeStyle = 'rgba(244,241,232,.6)'; c.beginPath(); c.moveTo(cp[0], cp[1]); c.lineTo(gh[0], gh[1]); c.stroke(); c.setLineDash([]);
+    c.setLineDash([4, 4]); c.lineWidth = 1.2; c.strokeStyle = 'rgba(244,241,232,.6)'; c.beginPath();
+    if (p.path.pre && p.path.pre.length > 1) p.path.pre.forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); // a kick: off the cushions
+    else { c.moveTo(cp[0], cp[1]); c.lineTo(gh[0], gh[1]); }
+    c.stroke(); c.setLineDash([]);
+    if (p.path.ob && p.path.ob.length > 1) { c.lineWidth = 1.6; c.strokeStyle = BALLCOL[p.A.n] || '#eaf1f4'; c.globalAlpha *= 0.85; c.beginPath(); p.path.ob.forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.stroke(); c.globalAlpha /= 0.85; } // a bank: the object ball's way
     c.lineWidth = 2; c.strokeStyle = 'rgba(244,241,232,.85)'; c.beginPath(); p.path.pts.concat(p.spot ? [p.spot] : []).forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.stroke();
   }
   // the perfect spot: a ball-sized ring with a dot
@@ -1136,7 +1142,7 @@ function drawCoach1(c, S2, F) {
   // (no ring for a pot that is not there)
   for (const b of [p.noShot ? null : p.A, p.B, p.C]) { if (!b || b.pocket == null) continue; const k = used[b.pocket] = (used[b.pocket] == null ? 0 : used[b.pocket] + 1); coachRing(c, S2, A.P.pockets[b.pocket], k, BALLCOL[b.n] || '#eaf1f4', b.n); }
   // the stroke: a cue ball with the tip where it should meet it, and the power (bottom left of the picture)
-  if (p.path && p.path.stroke && F) coachStroke(c, F, p.path.stroke, p.A.n);
+  if (p.path && p.path.stroke && F) coachStroke(c, F, p.path.stroke, p.A.n, p.path);
   else if (p.noShot && F) coachNoShot(c, F, p.noShot);
   c.restore();
 }
@@ -1145,18 +1151,28 @@ function coachNoShot(c, F, ns) {
   c.font = '600 13px system-ui, -apple-system, sans-serif'; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('No clean pot on the ' + ns.n, x + 14, y + 19);
   c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.85)'; c.fillText((ns.why === 'blocked' ? 'Every pocket is blocked' : 'Blocked or too thin') + ': a bank or a safety (not planned yet)', x + 14, y + 40);
 }
-function coachStroke(c, F, st, n) {
-  const R = 24, x = F.x + 20 + R, y = F.y + F.h - 30 - R - 22;
-  c.fillStyle = 'rgba(11,16,20,.55)'; c.beginPath(); c.roundRect ? c.roundRect(x - R - 12, y - R - 12, 2 * R + 24 + 150, 2 * R + 44, 12) : c.rect(x - R - 12, y - R - 12, 2 * R + 24 + 150, 2 * R + 44); c.fill();
+function coachStroke(c, F, st, n, pa) {
+  const R = 24, x = F.x + 20 + R, y = F.y + F.h - 30 - R - 40, w = 2 * R + 24 + 200, h = 2 * R + 80;
+  c.fillStyle = 'rgba(11,16,20,.6)'; c.beginPath(); c.roundRect ? c.roundRect(x - R - 12, y - R - 12, w, h, 12) : c.rect(x - R - 12, y - R - 12, w, h); c.fill();
   c.fillStyle = 'rgba(244,241,232,.95)'; c.beginPath(); c.arc(x, y, R, 0, Math.PI * 2); c.fill();
   c.strokeStyle = 'rgba(11,16,20,.25)'; c.lineWidth = 1; c.beginPath(); c.moveTo(x - R, y); c.lineTo(x + R, y); c.moveTo(x, y - R); c.lineTo(x, y + R); c.stroke();
   const tx = x + (st.side || 0) * R, ty = y - st.tip * R; c.fillStyle = '#d03a2f'; c.beginPath(); c.arc(tx, ty, 4.5, 0, Math.PI * 2); c.fill(); c.strokeStyle = 'rgba(11,16,20,.6)'; c.lineWidth = 1; c.stroke();
-  c.font = '600 12px system-ui, -apple-system, sans-serif'; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillStyle = 'rgba(244,241,232,.95)';
-  const words = ({ follow: 'Follow', stun: 'Stun', draw: 'Draw', center: 'Center ball' }[st.kind] || st.kind) + (st.side > 0.05 ? ', right' : st.side < -0.05 ? ', left' : '');
-  c.fillText(words + ' on the ' + n, x + R + 10, y - 14);
-  c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.8)'; const ps = ptScale(); c.fillText('Power ' + (ps ? Math.max(1, Math.round(st.power / ps.k)) + '/10 (your scale)' : st.power + '/10'), x + R + 10, y + 3);
-  if (st.hard || st.jacked) { c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText(st.jacked ? 'Cue raised: a ball behind' : 'Tough: little room for error', x + R + 10, y + 19); }
+  const shot = pa && pa.shot || 'pot', what = { pot: 'Pot the ' + n, bank: 'Bank the ' + n, kick: 'Kick at the ' + n + ' (1 rail)', kick2: 'Kick at the ' + n + ' (2 rails)', safety: 'Safety on the ' + n }[shot] || 'The ' + n;
+  const tip = ({ follow: 'follow', stun: 'stun', draw: 'draw', center: 'center ball' }[st.kind] || st.kind) + (st.side > 0.05 ? ', right' : st.side < -0.05 ? ', left' : '');
+  const ps = ptScale(), pow = 'power ' + (ps ? Math.max(1, Math.round(st.power / ps.k)) + '/10 (yours)' : st.power + '/10');
+  const X = x + R + 10; c.textAlign = 'left'; c.textBaseline = 'middle';
+  c.font = '600 13px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.97)'; c.fillText(what, X, y - 16);
+  c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.85)'; c.fillText(tip + ' · ' + pow, X, y + 1);
+  const pct = v => Math.round((v || 0) * 100) + '%';
+  const odds = shot === 'safety' ? 'Hit it right ' + pct(pa.legal) + ' · leaves them ' + pct(pa.opp) : 'Make ' + pct(pa && pa.make) + (pa && pa.noShape ? '' : ' · next shot ' + pct(pa && pa.next));
+  const good = shot === 'safety' ? (pa.legal || 0) * (1 - (pa.opp || 0)) : (pa && pa.make || 0) * (pa && pa.noShape ? 1 : pa && pa.next || 0);
+  c.fillStyle = good >= 0.8 ? '#7ee2a0' : good >= 0.6 ? '#f1c40f' : good >= 0.5 ? '#ff8a7a' : 'rgba(244,241,232,.75)'; c.font = '600 12px system-ui, -apple-system, sans-serif'; c.fillText(odds, X, y + 18);
+  if (st.jacked) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('Cue raised: a ball behind', X, y + 34); }
+  else if (pa && pa.alt) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.65)'; c.fillText('Also: ' + ({ pot: 'pot', bank: 'bank', kick: 'kick', kick2: '2-rail kick', safety: 'safety' }[pa.alt.kind] || pa.alt.kind) + (pa.alt.kind === 'safety' ? '' : ' ' + pct(pa.alt.make)), X, y + 34); }
   for (let i = 0; i < 10; i++) { c.fillStyle = i < st.power ? 'rgba(89,214,232,.95)' : 'rgba(244,241,232,.18)'; c.fillRect(x - R + i * 7.2, y + R + 8, 5.4, 6); }
+  // the zone's colours, for reading it (owner's bands)
+  const ly = y + R + 30; let lx = x - R; c.font = '500 10px system-ui, -apple-system, sans-serif';
+  for (const [col, t] of [['rgba(46,204,113,.95)', '90%+'], ['rgba(140,230,170,.95)', '80'], ['rgba(241,196,15,.95)', '60'], ['rgba(231,76,60,.95)', '50']]) { c.fillStyle = col; c.fillRect(lx, ly - 4, 9, 9); c.fillStyle = 'rgba(244,241,232,.8)'; c.fillText(t, lx + 12, ly + 1); lx += 12 + c.measureText(t).width + 10; }
 }
 // ---------- power test (V3.11, owner Nov 9: what the player calls a 3 against what the plan calls a 3) ----------
 // From the Menu in the Coaching test: the cue ball alone, rolled up the table at the power the player is asked for (2, 4,
