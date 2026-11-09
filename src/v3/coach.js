@@ -136,7 +136,9 @@ function coachFactory() {
     // the zone's spot the plan aims for, the shot on B from there and where the cue ball goes on to for C
     const greens = []; for (let k = 0; k < nx * ny; k++) if (bestZ.g[k] === 1) greens.push([cx(k % nx), cy(Math.floor(k / nx)), bestZ.sc[k]]);
     let sp = null;
-    if (pl) { const m = pl.pts[pl.pts.length - 1]; sp = greens.sort((a, b) => Math.hypot(a[0] - m[0], a[1] - m[1]) - Math.hypot(b[0] - m[0], b[1] - m[1]))[0]; }
+    if (pl) { // the best-graded spot within 6 in of where the planned path stops, inside the green
+      const m = pl.pts[pl.pts.length - 1], d = q => Math.hypot(q[0] - m[0], q[1] - m[1]), inner = q => { const i = Math.floor((q[0] - R) / STEP), j = Math.floor((q[1] - R) / STEP); return [[1, 0], [-1, 0], [0, 1], [0, -1]].every(([a, b]) => { const ii = i + a, jj = j + b; return ii >= 0 && jj >= 0 && ii < nx && jj < ny && bestZ.g[jj * nx + ii] === 1; }); };
+      const close = greens.filter(q => d(q) <= 6 && inner(q)); sp = close.length ? close.sort((a, b) => b[2] - a[2])[0] : greens.sort((a, b) => d(a) - d(b))[0]; }
     else sp = greens.sort((a, b) => b[2] - a[2])[0];
     if (sp) {
       const X = [sp[0], sp[1]], s2 = shot(X, B, bestZ.o, [A.n]); out.spot = X; out.B.cut = Math.round(s2.cut);
@@ -152,8 +154,44 @@ function coachFactory() {
       }
     }
     if (C && out.C.pocket == null) { const pC = pocketsFor(C, [A.n, B.n]); if (pC.length) out.C.pocket = pC.sort((a, b) => a.dist - b.dist)[0].pi; }
+    out.shapes = shapes(out, B);
     out.ms = Date.now() - t0;
     return out;
+  }
+  // The zones as straight-edged shapes for drawing (owner, Nov 9: natural straight lines, not squares): each area's connected
+  // pieces of cells, and round them the convex outline of the cells' corners. Green: the piece holding the spot, with the
+  // pieces near it; red: its biggest piece; in the way: each piece. In table inches.
+  function hull(pts) {
+    pts = pts.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]); if (pts.length < 3) return pts;
+    const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]), lo = [], up = [];
+    for (const p of pts) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], p) <= 0) lo.pop(); lo.push(p); }
+    for (let i = pts.length - 1; i >= 0; i--) { const p = pts[i]; while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], p) <= 0) up.pop(); up.push(p); }
+    return lo.slice(0, -1).concat(up.slice(0, -1));
+  }
+  function pieces(pl, want) {
+    const { nx, ny, step, origin, cells } = pl, seen = new Uint8Array(cells.length), out = [];
+    for (let k = 0; k < cells.length; k++) {
+      if (seen[k] || cells[k] !== want) continue; const q = [k], ks = []; seen[k] = 1;
+      while (q.length) { const c = q.pop(); ks.push(c); const i = c % nx, j = Math.floor(c / nx);
+        for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const a = i + di, b = j + dj, n = b * nx + a; if (a < 0 || b < 0 || a >= nx || b >= ny || seen[n] || cells[n] !== want) continue; seen[n] = 1; q.push(n); } }
+      const corners = []; for (const c of ks) { const x = origin[0] + (c % nx) * step, y = origin[1] + Math.floor(c / nx) * step; corners.push([x, y], [x + step, y], [x, y + step], [x + step, y + step]); }
+      const cx0 = corners.reduce((a, p) => a + p[0], 0) / corners.length, cy0 = corners.reduce((a, p) => a + p[1], 0) / corners.length;
+      out.push({ n: ks.length, ks, poly: hull(corners), c: [cx0, cy0] });
+    }
+    return out;
+  }
+  function shapes(pl, B) {
+    if (!pl.cells) return null;
+    const keyOf = p => { const i = Math.floor((p[0] - pl.origin[0]) / pl.step), j = Math.floor((p[1] - pl.origin[1]) / pl.step); return j * pl.nx + i; };
+    const g = pieces(pl, 1).filter(q => q.n >= 3);
+    let main = pl.spot ? g.find(q => q.ks.includes(keyOf(pl.spot))) : null; if (!main) main = g.sort((a, b) => b.n - a.n)[0];
+    const near = (a, b) => Math.hypot(a.c[0] - b.c[0], a.c[1] - b.c[1]) < 14;
+    const gp = main ? g.filter(q => q === main || (q.n >= 6 && near(q, main))) : [], green = gp.length ? [hull([].concat(...gp.map(q => q.poly)))] : []; // one shape
+    const red = pieces(pl, 3).sort((a, b) => b.n - a.n).slice(0, 1).filter(q => q.n >= 6).map(q => q.poly);
+    const blocked = pieces(pl, 4).filter(q => q.n >= 6).map(q => q.poly);
+    // how far the green reaches from the next ball (for the fade: strongest near the ball, lighter further away)
+    let far = 0; for (const poly of green) for (const p of poly) far = Math.max(far, Math.hypot(p[0] - B.x, p[1] - B.y));
+    return { green, red, blocked, from: [B.x, B.y], far };
   }
   // the grade of a cue-ball spot in a plan's zone: 'green' | 'amber' | 'red' | 'blocked' | null
   function gradeAt(pl, x, y) {

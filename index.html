@@ -2968,7 +2968,9 @@ function coachFactory() {
     // the zone's spot the plan aims for, the shot on B from there and where the cue ball goes on to for C
     const greens = []; for (let k = 0; k < nx * ny; k++) if (bestZ.g[k] === 1) greens.push([cx(k % nx), cy(Math.floor(k / nx)), bestZ.sc[k]]);
     let sp = null;
-    if (pl) { const m = pl.pts[pl.pts.length - 1]; sp = greens.sort((a, b) => Math.hypot(a[0] - m[0], a[1] - m[1]) - Math.hypot(b[0] - m[0], b[1] - m[1]))[0]; }
+    if (pl) { // the best-graded spot within 6 in of where the planned path stops, inside the green
+      const m = pl.pts[pl.pts.length - 1], d = q => Math.hypot(q[0] - m[0], q[1] - m[1]), inner = q => { const i = Math.floor((q[0] - R) / STEP), j = Math.floor((q[1] - R) / STEP); return [[1, 0], [-1, 0], [0, 1], [0, -1]].every(([a, b]) => { const ii = i + a, jj = j + b; return ii >= 0 && jj >= 0 && ii < nx && jj < ny && bestZ.g[jj * nx + ii] === 1; }); };
+      const close = greens.filter(q => d(q) <= 6 && inner(q)); sp = close.length ? close.sort((a, b) => b[2] - a[2])[0] : greens.sort((a, b) => d(a) - d(b))[0]; }
     else sp = greens.sort((a, b) => b[2] - a[2])[0];
     if (sp) {
       const X = [sp[0], sp[1]], s2 = shot(X, B, bestZ.o, [A.n]); out.spot = X; out.B.cut = Math.round(s2.cut);
@@ -2984,8 +2986,44 @@ function coachFactory() {
       }
     }
     if (C && out.C.pocket == null) { const pC = pocketsFor(C, [A.n, B.n]); if (pC.length) out.C.pocket = pC.sort((a, b) => a.dist - b.dist)[0].pi; }
+    out.shapes = shapes(out, B);
     out.ms = Date.now() - t0;
     return out;
+  }
+  // The zones as straight-edged shapes for drawing (owner, Nov 9: natural straight lines, not squares): each area's connected
+  // pieces of cells, and round them the convex outline of the cells' corners. Green: the piece holding the spot, with the
+  // pieces near it; red: its biggest piece; in the way: each piece. In table inches.
+  function hull(pts) {
+    pts = pts.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]); if (pts.length < 3) return pts;
+    const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]), lo = [], up = [];
+    for (const p of pts) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], p) <= 0) lo.pop(); lo.push(p); }
+    for (let i = pts.length - 1; i >= 0; i--) { const p = pts[i]; while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], p) <= 0) up.pop(); up.push(p); }
+    return lo.slice(0, -1).concat(up.slice(0, -1));
+  }
+  function pieces(pl, want) {
+    const { nx, ny, step, origin, cells } = pl, seen = new Uint8Array(cells.length), out = [];
+    for (let k = 0; k < cells.length; k++) {
+      if (seen[k] || cells[k] !== want) continue; const q = [k], ks = []; seen[k] = 1;
+      while (q.length) { const c = q.pop(); ks.push(c); const i = c % nx, j = Math.floor(c / nx);
+        for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const a = i + di, b = j + dj, n = b * nx + a; if (a < 0 || b < 0 || a >= nx || b >= ny || seen[n] || cells[n] !== want) continue; seen[n] = 1; q.push(n); } }
+      const corners = []; for (const c of ks) { const x = origin[0] + (c % nx) * step, y = origin[1] + Math.floor(c / nx) * step; corners.push([x, y], [x + step, y], [x, y + step], [x + step, y + step]); }
+      const cx0 = corners.reduce((a, p) => a + p[0], 0) / corners.length, cy0 = corners.reduce((a, p) => a + p[1], 0) / corners.length;
+      out.push({ n: ks.length, ks, poly: hull(corners), c: [cx0, cy0] });
+    }
+    return out;
+  }
+  function shapes(pl, B) {
+    if (!pl.cells) return null;
+    const keyOf = p => { const i = Math.floor((p[0] - pl.origin[0]) / pl.step), j = Math.floor((p[1] - pl.origin[1]) / pl.step); return j * pl.nx + i; };
+    const g = pieces(pl, 1).filter(q => q.n >= 3);
+    let main = pl.spot ? g.find(q => q.ks.includes(keyOf(pl.spot))) : null; if (!main) main = g.sort((a, b) => b.n - a.n)[0];
+    const near = (a, b) => Math.hypot(a.c[0] - b.c[0], a.c[1] - b.c[1]) < 14;
+    const gp = main ? g.filter(q => q === main || (q.n >= 6 && near(q, main))) : [], green = gp.length ? [hull([].concat(...gp.map(q => q.poly)))] : []; // one shape
+    const red = pieces(pl, 3).sort((a, b) => b.n - a.n).slice(0, 1).filter(q => q.n >= 6).map(q => q.poly);
+    const blocked = pieces(pl, 4).filter(q => q.n >= 6).map(q => q.poly);
+    // how far the green reaches from the next ball (for the fade: strongest near the ball, lighter further away)
+    let far = 0; for (const poly of green) for (const p of poly) far = Math.max(far, Math.hypot(p[0] - B.x, p[1] - B.y));
+    return { green, red, blocked, from: [B.x, B.y], far };
   }
   // the grade of a cue-ball spot in a plan's zone: 'green' | 'amber' | 'red' | 'blocked' | null
   function gradeAt(pl, x, y) {
@@ -3002,7 +3040,7 @@ const COACH = coachFactory();
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.10.0';
+const VERSION = 'V3.10.1';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -4054,29 +4092,33 @@ function drawCoach(c, S2) {
   const p = CO.plan; if (!p || A.tk.S.phase === 'shot') return;
   // the plan is for the balls as they were: only while they still are (within 1.5 in)
   const now = A.tk.balls(); if (!CO.balls || CO.balls.some(b => b.n < 100 && !now.some(t => t.num === b.n && Math.hypot(t.x - b.x, t.y - b.y) < 1.5))) return;
-  if (p.cells) {
-    if (!CO.poly || CO.poly.cam !== A.cam) { // the cells on the screen, kept while the camera fix stays
-      const f = { 1: [], 2: [], 3: [], 4: [] }, h = p.step / 2;
-      for (let k = 0; k < p.cells.length; k++) { const g = p.cells[k]; if (!f[g]) continue; const x = p.origin[0] + (k % p.nx + 0.5) * p.step, y = p.origin[1] + (Math.floor(k / p.nx) + 0.5) * p.step;
-        f[g].push([[x - h, y - h], [x + h, y - h], [x + h, y + h], [x - h, y + h]].map(q => A.cam.proj(q[0], q[1], 0))); }
-      // the edges of the green and the red, for a thin outline
-      const e = { 1: [], 3: [] }, gAt = (i, j) => i < 0 || j < 0 || i >= p.nx || j >= p.ny ? 0 : p.cells[j * p.nx + i];
-      for (let k = 0; k < p.cells.length; k++) { const g = p.cells[k]; if (!e[g]) continue; const i = k % p.nx, j = Math.floor(k / p.nx), x0 = p.origin[0] + i * p.step, y0 = p.origin[1] + j * p.step, x1 = x0 + p.step, y1 = y0 + p.step;
-        for (const [di, dj, a, b] of [[-1, 0, [x0, y0], [x0, y1]], [1, 0, [x1, y0], [x1, y1]], [0, -1, [x0, y0], [x1, y0]], [0, 1, [x0, y1], [x1, y1]]]) if (gAt(i + di, j + dj) !== g) e[g].push([A.cam.proj(a[0], a[1], 0), A.cam.proj(b[0], b[1], 0)]); }
-      CO.poly = { cam: A.cam, f, e };
+  // the zones as straight-edged shapes (owner, Nov 9: not squares; the green strongest near the next ball, lighter the further
+  // away, since a shorter shot is an easier one); drawn on the cloth
+  const sh = p.shapes;
+  if (sh) {
+    const poly = (q, z = 0) => { c.beginPath(); q.forEach((v, i) => { const a = S2(A.cam.proj(v[0], v[1], z)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.closePath(); };
+    c.lineJoin = 'round';
+    for (const q of sh.red) { poly(q); c.fillStyle = 'rgba(231,76,60,.16)'; c.fill(); c.lineWidth = 1.2; c.strokeStyle = 'rgba(255,120,110,.55)'; c.stroke(); }
+    if (sh.green.length) {
+      const o = S2(A.cam.proj(sh.from[0], sh.from[1], 0)); let rad = 1;
+      for (const q of sh.green) for (const v of q) { const a = S2(A.cam.proj(v[0], v[1], 0)); rad = Math.max(rad, Math.hypot(a[0] - o[0], a[1] - o[1])); }
+      const gr = c.createRadialGradient(o[0], o[1], 0, o[0], o[1], rad);
+      gr.addColorStop(0, 'rgba(46,204,113,.62)'); gr.addColorStop(0.4, 'rgba(46,204,113,.42)'); gr.addColorStop(1, 'rgba(46,204,113,.07)');
+      for (const q of sh.green) { poly(q); c.fillStyle = gr; c.fill(); c.lineWidth = 1.4; c.strokeStyle = 'rgba(150,255,190,.75)'; c.stroke(); }
     }
-    const fill = { 1: 'rgba(46,204,113,.40)', 2: 'rgba(241,196,15,.14)', 3: 'rgba(231,76,60,.24)', 4: 'rgba(15,20,24,.30)' };
-    for (const g of [4, 3, 2, 1]) { c.fillStyle = fill[g]; c.beginPath(); for (const q of CO.poly.f[g]) { const a = q.map(S2); c.moveTo(a[0][0], a[0][1]); for (let i = 1; i < 4; i++) c.lineTo(a[i][0], a[i][1]); c.closePath(); } c.fill(); }
-    for (const [g, col] of [[3, 'rgba(255,120,110,.7)'], [1, 'rgba(150,255,190,.9)']]) { c.lineWidth = 1.2; c.strokeStyle = col; c.beginPath(); for (const [a, b] of CO.poly.e[g]) { const u = S2(a), v = S2(b); c.moveTo(u[0], u[1]); c.lineTo(v[0], v[1]); } c.stroke(); }
+    for (const q of sh.blocked) { poly(q); c.fillStyle = 'rgba(15,20,24,.26)'; c.fill(); }
   }
   // the cue ball's way into the green, and where it should stop
   const cue = now.find(t => t.num === 0);
   if (p.path && cue) {
     const gh = S2(A.cam.proj(p.path.ghost[0], p.path.ghost[1], A.P.R)), cp = S2(A.cam.proj(cue.x, cue.y, A.P.R));
     c.setLineDash([4, 4]); c.lineWidth = 1.2; c.strokeStyle = 'rgba(244,241,232,.55)'; c.beginPath(); c.moveTo(cp[0], cp[1]); c.lineTo(gh[0], gh[1]); c.stroke(); c.setLineDash([]);
-    c.lineWidth = 2; c.strokeStyle = 'rgba(244,241,232,.8)'; c.beginPath(); p.path.pts.forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.stroke();
+    c.lineWidth = 2; c.strokeStyle = 'rgba(244,241,232,.8)'; c.beginPath(); p.path.pts.concat(p.spot ? [p.spot] : []).forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.stroke();
   }
-  if (p.spot) { const a = S2(A.cam.proj(p.spot[0], p.spot[1], A.P.R)), e = S2(A.cam.proj(p.spot[0] + A.P.R, p.spot[1], A.P.R)), r = Math.max(3, Math.abs(e[0] - a[0])); c.lineWidth = 1.5; c.strokeStyle = 'rgba(244,241,232,.9)'; c.beginPath(); c.arc(a[0], a[1], r, 0, Math.PI * 2); c.stroke(); }
+  // the best spot: a ball-sized ring with a dot
+  if (p.spot) { const a = S2(A.cam.proj(p.spot[0], p.spot[1], A.P.R)), e = S2(A.cam.proj(p.spot[0] + A.P.R, p.spot[1], A.P.R)), r = Math.max(3, Math.abs(e[0] - a[0])); // drawn as a ball resting there
+    c.lineWidth = 3.5; c.strokeStyle = 'rgba(11,16,20,.45)'; c.beginPath(); c.arc(a[0], a[1], r, 0, Math.PI * 2); c.stroke(); c.lineWidth = 2; c.strokeStyle = 'rgba(244,241,232,.95)'; c.stroke();
+    c.fillStyle = 'rgba(244,241,232,.95)'; c.beginPath(); c.arc(a[0], a[1], 1.8, 0, Math.PI * 2); c.fill(); }
   // the pockets: this ball, the next, the one after
   const used = {};
   for (const b of [p.A, p.B, p.C]) { if (!b || b.pocket == null) continue; const k = used[b.pocket] = (used[b.pocket] == null ? 0 : used[b.pocket] + 1); coachRing(c, S2, A.P.pockets[b.pocket], k, BALLCOL[b.n] || '#eaf1f4', b.n); }

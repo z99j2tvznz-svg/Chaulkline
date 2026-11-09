@@ -1531,3 +1531,8 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   ball landed (in the green, at the edge, on the wrong side, behind a ball, outside the zone).
 - Not yet: banks, kicks, safeties, combinations; the physics not checked against the owner's shots (the coach_shot rows
   are for that); some banding in the zone from the strokes tried at fixed steps.
+- V3.10.1 (owner, Nov 9: natural straight lines, not squares; the green strongest near the next ball, lighter further
+  away): the zones drawn as straight-edged shapes (coach.js shapes: the cells' connected pieces, round them the convex
+  outline of their corners; the green as one shape, the piece holding the spot with those near it; red its biggest piece;
+  each piece of "in the way"). The green filled with a fade from the next ball (strong near it, faint at the far end). The
+  spot: the best-graded green spot (inside the zone) within 6 in of where the planned path stops; the path drawn to it.
