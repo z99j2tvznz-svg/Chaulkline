@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.9.0';
+const VERSION = 'V3.10.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -168,6 +168,7 @@ async function renderGate() {
 renderGate();
 $('#goBtn').onclick = () => start('play');
 $('#pracBtn').onclick = () => start('practice');
+$('#coachBtn').onclick = () => start('coach');
 $('#dbgHome').onclick = () => saveDebug($('#dbgHome'));
 function homeMsg(t, bad) { const m = $('#homeMsg'); m.textContent = t || ''; m.classList.toggle('bad', !!bad); }
 
@@ -217,13 +218,14 @@ function smallImg() {
 // mode: 'play' (a rack at a time: racks done by themselves, runs) or 'practice' (balls set out and moved at will; owner Nov 2)
 // practice reads all fifteen balls (V3.9.0); Play a rack is 9-ball, the cue ball and 1-9
 const ALL15 = Array.from({ length: 16 }, (_, i) => i);
-const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false, ids: ALL15 } : A.game === 8 ? { ids: ALL15, eightEnds: true } : {};
+// the coaching test (V3.10): small runouts with the 9 always on, balls set out at will (as practice), the cue ball and 1-9
+const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false, ids: ALL15 } : mode === 'coach' ? { practice: true, autoRack: false, rackNew: false } : A.game === 8 ? { ids: ALL15, eightEnds: true } : {};
 async function start(mode) {
-  homeMsg(''); A.mode = mode === 'practice' ? 'practice' : 'play';
+  homeMsg(''); A.mode = mode === 'practice' || mode === 'coach' ? mode : 'play'; CO.plan = null; CO.sig = ''; CO.atStart = null;
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, game: A.mode === 'play' ? (A.game || 9) : null, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, game: A.mode === 'play' ? (A.game || 9) : null, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode !== 'play'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
@@ -444,6 +446,7 @@ async function look() {
   const read = true; await DET.read(A.fctx, on, tk.O.ids);
   const t2 = performance.now(), before = tk.S.phase;
   tk.update(t, on, { read, empty: emptyAt });
+  if (A.mode === 'coach') coachLook();
   for (const n of tk.S.notes.splice(0)) onLateMade(n);
   pathLook();
   A.looks++;
@@ -489,6 +492,7 @@ function preSave(nm, t0) {
   fr.forEach((f, i) => f.c.toBlob(b => { if (b) b.arrayBuffer().then(a => setPic(nm + '-pre' + (i + 1) + '.jpg', new Uint8Array(a))); }, 'image/jpeg', 0.7));
 }
 function onShotStart() {
+  if (A.mode === 'coach') coachShotStart();
   PATH.clear(); A.pathClearAt = null; pathLook(); const sh = A.tk.S.shot; if (!sh) return; const nm = 'shot' + String(sh.n).padStart(3, '0');
   if (A.stillPic) setPic(nm + '-before.jpg', A.stillPic);
   preSave(nm, sh.t0);
@@ -531,12 +535,13 @@ function onShotEnd(sh) {
     if (!A.drillReadyOf.get(sh.n) || nudge) { row1.notShot = 'setup'; dbg('drill_setup_move', { n: sh.n, ready: A.drillReadyOf.get(sh.n), far: r1(far) }); }
   }
   const dt = (A.sess.drillTries || []).find(x => x.n === sh.n); if (dt) row1.drill = dt;
+  if (A.mode === 'coach') coachShotEnd(sh, row, row1);
   if (row1.notShot !== 'setup' && !dt) shotToast(row1); // (a drill shot scored early has said its result already)
   if (A.sess.shots.length % 3 === 0) { A.lastSess = A.sess; save(); }
 }
 // the shot's line (no tap to correct it: owner, Nov 3, no buttons while playing; what the app gets wrong is found in the
 // debug files)
-function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row)); }
+function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row) + (row.coach && row.coach.landed ? ' · cue ball ' + ({ green: 'in the green', amber: 'at the edge of the zone', red: 'on the wrong side', blocked: 'behind a ball' })[row.coach.landed] : row.coach && row.coach.zone ? ' · cue ball outside the zone' : '')); }
 // Each ball's path in the shot: the tracker's positions from just before the shot started, kept after it ends (and for the
 // balls that went in) until the next shot starts, so a quick look at the phone after the shot shows the whole of it.
 const PATH = new Map(); // ball key -> { num, pts: [{ t, x, y }] }
@@ -979,9 +984,103 @@ function drawLoop() {
   if ((A.phase === 'run' || A.phase === 'load') && A.cam) drawDrill(c, S2);
   if (A.pathClearAt && performance.now() > A.pathClearAt) { PATH.clear(); A.pathClearAt = null; }
   if (A.phase !== 'run' || !A.tk || !A.cam) return;
+  if (A.mode === 'coach') drawCoach(c, S2);
   drawBalls(c, S2, F);
 }
 
+// ---------- coaching test (V3.10, owner Nov 9) ----------
+// Small runouts with the 9 always on; the player shoots the lowest ball first whatever the plan says (the plan is being
+// tested). While the balls rest: the planner (src/v3/coach.js, in a background worker) on the balls named for sure, and on
+// the screen, lightly: a ring round the pocket for the ball to shoot, for the next and for the one after, each in that
+// ball's colour; the zone for the next ball (green: the right side, red: the wrong side, grey: a ball in the way, yellow:
+// harder); the cue ball's way from this shot into the green. After the shot: where the cue ball stopped against that zone,
+// in the shot's row, the log (coach_plan, coach_shot) and the shot's words. No buttons.
+const CO = { sig: '', plan: null, balls: null, busy: false, worker: null, id: 0, atStart: null, poly: null };
+function coachWorker() {
+  if (CO.worker !== null) return CO.worker;
+  try {
+    const src = 'const COACH=(' + coachFactory.toString() + ')();onmessage=e=>{let r=null;try{r=COACH.plan(e.data.balls,e.data.P,e.data.opts);}catch(x){r={error:String(x)};}postMessage({id:e.data.id,r});};';
+    CO.worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+    CO.worker.onmessage = e => coachDone(e.data.id, e.data.r);
+    CO.worker.onerror = e => { dbg('error', { m: 'coach worker ' + String(e && e.message || '').slice(0, 100) }); CO.worker = false; CO.busy = false; };
+  } catch (e) { CO.worker = false; dbg('error', { m: 'coach worker ' + String(e).slice(0, 100) }); }
+  return CO.worker;
+}
+function coachLayout() {
+  // the balls on the table: named for sure (the cue ball and 1-9) at rest; unnamed ones still count as balls in the way
+  const bs = A.tk.balls().filter(b => b.state === 'rest' || b.state === 'hidden');
+  const cue = bs.find(b => b.num === 0 && b.sure); if (!cue) return null;
+  const out = []; for (const b of bs) out.push({ n: b.num != null && b.sure ? b.num : 100 + b.key, x: +b.x.toFixed(1), y: +b.y.toFixed(1) });
+  if (!out.some(b => b.n > 0 && b.n < 100)) return null;
+  const nums = out.filter(b => b.n < 100).map(b => b.n); if (new Set(nums).size !== nums.length) return null; // a number twice: wait
+  return out;
+}
+function coachLook() {
+  const tk = A.tk; if (tk.S.phase !== 'still' || tk.balls().some(b => b.state === 'moving' || b.state === 'pending')) return;
+  const bs = coachLayout(); if (!bs) return;
+  const sig = bs.map(b => b.n + ':' + Math.round(b.x) + ',' + Math.round(b.y)).sort().join(' ');
+  if (sig === CO.sig || CO.busy) return;
+  CO.sig = sig; CO.busy = true; CO.pending = bs; const id = ++CO.id;
+  const P = { R: A.P.R, L: A.P.L, W: A.P.W, pockets: A.P.pockets.map(p => ({ x: p.x, y: p.y, r: p.r, corner: p.corner })) };
+  const w = coachWorker();
+  if (w) w.postMessage({ id, balls: bs, P });
+  else setTimeout(() => { let r = null; try { r = COACH.plan(bs, P, { step: 2 }); } catch (e) { r = { error: String(e) }; } coachDone(id, r); }, 0);
+}
+function coachDone(id, r) {
+  CO.busy = false; if (id !== CO.id) return;
+  if (!r || r.error) { if (r && r.error) dbg('error', { m: 'coach ' + r.error.slice(0, 120) }); CO.plan = null; return; }
+  CO.plan = r; CO.balls = CO.pending; CO.poly = null;
+  const cnt = { green: 0, red: 0, blocked: 0 }; if (r.cells) for (const v of r.cells) { if (v === 1) cnt.green++; else if (v === 3) cnt.red++; else if (v === 4) cnt.blocked++; }
+  dbg('coach_plan', { order: r.order, A: r.A, B: r.B, C: r.C, spot: r.spot && r.spot.map(r1), path: r.path ? { kind: r.path.kind, s: r.path.s, cut: r.path.cut } : null, route: r.route ? { kind: r.route.kind, s: r.route.s } : null, cells: cnt, ms: r.ms, balls: CO.balls });
+}
+function coachShotStart() { CO.atStart = CO.plan && CO.sig ? { plan: CO.plan, balls: CO.balls } : null; }
+function coachShotEnd(sh, row, row1) {
+  const st = CO.atStart; CO.atStart = null; if (!st) return;
+  const p = st.plan, cueAfter = (sh.after || []).find(b => b.key === sh.cueKey) || (sh.after || []).find(b => b.num === 0);
+  const madeA = row.made.find(m => m.num === p.A.n), at = cueAfter ? [cueAfter.rx != null ? cueAfter.rx : cueAfter.x, cueAfter.ry != null ? cueAfter.ry : cueAfter.y] : null;
+  const c = { order: p.order, plan: { A: p.A.pocket, B: p.B && p.B.pocket, C: p.C && p.C.pocket }, lowestFirst: sh.firstNum == null ? null : sh.firstNum === p.A.n, madeA: !!madeA, pocketA: madeA ? madeA.pocket : null,
+    cueAt: at && at.map(r1), zone: !!p.cells, landed: at && p.cells && madeA ? COACH.gradeAt(p, at[0], at[1]) : null, spot: p.spot && p.spot.map(r1), scratch: !!sh.scratch };
+  row1.coach = c; dbg('coach_shot', Object.assign({ n: sh.n }, c));
+}
+// a pocket's ring in a ball's colour (concentric when two plans use the same pocket), on the cloth
+function coachRing(c, S2, pk, k, col, num) {
+  const r = pk.r + 0.9 + 1.1 * k, pts = []; for (let i = 0; i <= 24; i++) { const a = i / 24 * Math.PI * 2; pts.push(S2(A.cam.proj(pk.x + r * Math.cos(a), pk.y + r * Math.sin(a), 0))); }
+  c.lineWidth = 3.5; c.strokeStyle = 'rgba(11,16,20,.55)'; c.beginPath(); pts.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.stroke();
+  c.lineWidth = 2.2; c.strokeStyle = col; c.stroke();
+  const lp = S2(A.cam.proj(pk.x + (pk.x < A.P.L / 2 ? 1 : -1) * (r + 1.6), pk.y + (pk.y < A.P.W / 2 ? 1 : -1) * (r + 1.6), 0));
+  c.font = '600 11px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineWidth = 3; c.strokeStyle = 'rgba(11,16,20,.6)'; c.strokeText(String(num), lp[0], lp[1]); c.fillStyle = col; c.fillText(String(num), lp[0], lp[1]);
+}
+function drawCoach(c, S2) {
+  const p = CO.plan; if (!p || A.tk.S.phase === 'shot') return;
+  // the plan is for the balls as they were: only while they still are (within 1.5 in)
+  const now = A.tk.balls(); if (!CO.balls || CO.balls.some(b => b.n < 100 && !now.some(t => t.num === b.n && Math.hypot(t.x - b.x, t.y - b.y) < 1.5))) return;
+  if (p.cells) {
+    if (!CO.poly || CO.poly.cam !== A.cam) { // the cells on the screen, kept while the camera fix stays
+      const f = { 1: [], 2: [], 3: [], 4: [] }, h = p.step / 2;
+      for (let k = 0; k < p.cells.length; k++) { const g = p.cells[k]; if (!f[g]) continue; const x = p.origin[0] + (k % p.nx + 0.5) * p.step, y = p.origin[1] + (Math.floor(k / p.nx) + 0.5) * p.step;
+        f[g].push([[x - h, y - h], [x + h, y - h], [x + h, y + h], [x - h, y + h]].map(q => A.cam.proj(q[0], q[1], 0))); }
+      // the edges of the green and the red, for a thin outline
+      const e = { 1: [], 3: [] }, gAt = (i, j) => i < 0 || j < 0 || i >= p.nx || j >= p.ny ? 0 : p.cells[j * p.nx + i];
+      for (let k = 0; k < p.cells.length; k++) { const g = p.cells[k]; if (!e[g]) continue; const i = k % p.nx, j = Math.floor(k / p.nx), x0 = p.origin[0] + i * p.step, y0 = p.origin[1] + j * p.step, x1 = x0 + p.step, y1 = y0 + p.step;
+        for (const [di, dj, a, b] of [[-1, 0, [x0, y0], [x0, y1]], [1, 0, [x1, y0], [x1, y1]], [0, -1, [x0, y0], [x1, y0]], [0, 1, [x0, y1], [x1, y1]]]) if (gAt(i + di, j + dj) !== g) e[g].push([A.cam.proj(a[0], a[1], 0), A.cam.proj(b[0], b[1], 0)]); }
+      CO.poly = { cam: A.cam, f, e };
+    }
+    const fill = { 1: 'rgba(46,204,113,.40)', 2: 'rgba(241,196,15,.14)', 3: 'rgba(231,76,60,.24)', 4: 'rgba(15,20,24,.30)' };
+    for (const g of [4, 3, 2, 1]) { c.fillStyle = fill[g]; c.beginPath(); for (const q of CO.poly.f[g]) { const a = q.map(S2); c.moveTo(a[0][0], a[0][1]); for (let i = 1; i < 4; i++) c.lineTo(a[i][0], a[i][1]); c.closePath(); } c.fill(); }
+    for (const [g, col] of [[3, 'rgba(255,120,110,.7)'], [1, 'rgba(150,255,190,.9)']]) { c.lineWidth = 1.2; c.strokeStyle = col; c.beginPath(); for (const [a, b] of CO.poly.e[g]) { const u = S2(a), v = S2(b); c.moveTo(u[0], u[1]); c.lineTo(v[0], v[1]); } c.stroke(); }
+  }
+  // the cue ball's way into the green, and where it should stop
+  const cue = now.find(t => t.num === 0);
+  if (p.path && cue) {
+    const gh = S2(A.cam.proj(p.path.ghost[0], p.path.ghost[1], A.P.R)), cp = S2(A.cam.proj(cue.x, cue.y, A.P.R));
+    c.setLineDash([4, 4]); c.lineWidth = 1.2; c.strokeStyle = 'rgba(244,241,232,.55)'; c.beginPath(); c.moveTo(cp[0], cp[1]); c.lineTo(gh[0], gh[1]); c.stroke(); c.setLineDash([]);
+    c.lineWidth = 2; c.strokeStyle = 'rgba(244,241,232,.8)'; c.beginPath(); p.path.pts.forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.stroke();
+  }
+  if (p.spot) { const a = S2(A.cam.proj(p.spot[0], p.spot[1], A.P.R)), e = S2(A.cam.proj(p.spot[0] + A.P.R, p.spot[1], A.P.R)), r = Math.max(3, Math.abs(e[0] - a[0])); c.lineWidth = 1.5; c.strokeStyle = 'rgba(244,241,232,.9)'; c.beginPath(); c.arc(a[0], a[1], r, 0, Math.PI * 2); c.stroke(); }
+  // the pockets: this ball, the next, the one after
+  const used = {};
+  for (const b of [p.A, p.B, p.C]) { if (!b || b.pocket == null) continue; const k = used[b.pocket] = (used[b.pocket] == null ? 0 : used[b.pocket] + 1); coachRing(c, S2, A.P.pockets[b.pocket], k, BALLCOL[b.n] || '#eaf1f4', b.n); }
+}
 function drawManual(c, S2, F) {
   const m = A.man; if (m.length === 4) { const q = orderQuad(m); c.strokeStyle = 'rgba(255,184,77,.9)'; c.lineWidth = 1.2; c.beginPath(); q.forEach((p, i) => { const s = S2(p); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); }); c.closePath(); c.stroke(); }
   for (const p of m) { const s = S2(p); c.strokeStyle = '#ffb84d'; c.lineWidth = 1.5; c.beginPath(); c.arc(s[0], s[1], 9, 0, Math.PI * 2); c.stroke(); c.beginPath(); c.moveTo(s[0] - 13, s[1]); c.lineTo(s[0] + 13, s[1]); c.moveTo(s[0], s[1] - 13); c.lineTo(s[0], s[1] + 13); c.stroke(); }

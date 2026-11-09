@@ -1507,3 +1507,27 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
 - Practice reads 0-15. Play a rack has a Game choice on the home screen: 9-ball (0-9, as before) or 8-ball (0-15; the
   rack over when the 8 goes in and the balls are still, O.eightEnds, or when only the cue ball is left). Session and
   history keep the game. Check page needs det 6.
+
+## V3.10.0: the coaching test (owner Nov 9)
+- A third choice on the home screen, Coaching test: small runouts with the 9 always on; the player sets out any balls and
+  shoots the lowest first, whatever the plan says (the plan is what is being tested). Tracker as practice (balls set out
+  and moved at will), the cue ball and 1-9.
+- src/v3/coach.js: the planner, three balls ahead (the ball to shoot, the next, the one after). For the next ball every
+  spot (1.5 in grid) is graded as a place to shoot it from, for the pocket with the biggest, best zone: green (makeable
+  with an angle, and the cue ball can be sent on to a good shot on the ball after), red (makeable, the cue ball heads away
+  from the ball after: the wrong side), grey (a ball in the way, unnamed balls included), yellow (harder). The cue ball
+  after contact: 5/7 of the sliding speed along the tangent line plus 2/7 of the follow or draw along the shot line;
+  traced with up to two cushions, stopped at balls, a scratch ruled out. A path counts more coming into the next zone along
+  its line than across it, less the further it goes, the harder the stroke and the harder the hit; spots on a cushion
+  count less. The shot on the lowest ball: the pocket and stroke that bring the cue ball through the green; from the
+  zone's spot nearest that path, the stroke on to the ball after and its pocket. One smoothing pass on the grades.
+  On the Nov 2 rack (the 1, 2, 3): the 1 top-right, the 2 bottom side, the 3 bottom-right; the 6 blocks the upper left.
+- In the app (in a background worker made from the planner's own source; about 0.25 s on a desktop): planned once per
+  layout while the balls rest, all named for sure. Drawn lightly: a ring round the pocket for the ball to shoot, the next
+  and the one after, each in that ball's colour (concentric when two share a pocket), the zone (green and red outlined),
+  the cue ball's way into the green and the spot. Hidden during a shot and when the balls have moved since. Logged:
+  coach_plan (order, pockets, zone counts, ms, balls), coach_shot (the plan's pockets, lowest ball hit first, the pocket
+  the lowest ball went in, where the cue ball stopped and its grade in the zone). The shot's words add where the cue
+  ball landed (in the green, at the edge, on the wrong side, behind a ball, outside the zone).
+- Not yet: banks, kicks, safeties, combinations; the physics not checked against the owner's shots (the coach_shot rows
+  are for that); some banding in the zone from the strokes tried at fixed steps.

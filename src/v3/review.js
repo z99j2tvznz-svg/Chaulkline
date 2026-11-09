@@ -146,7 +146,7 @@ const RV = { sess: null, i: 0, urls: [], play: null, live: false };
 function dateWords(t) { const d = new Date(t); return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }); }
 function renderReview(sess, live) {
   RV.sess = sess; RV.live = live; const sh = sess.shots || [], st = REVIEW.stats(sh), rk = REVIEW.racks(sh);
-  const prac = sess.mode === 'practice'; RV.reps = REVIEW.repeats(sh);
+  const prac = sess.mode === 'practice' || sess.mode === 'coach'; RV.reps = REVIEW.repeats(sh);
   $('#sumTitle').textContent = prac ? (live ? 'Practice over' : 'Last practice') : live ? 'Session over' : 'Last session';
   $('#sumSub').textContent = (live ? '' : dateWords(sess.t0) + ' · ') + (sess.mins ? sess.mins + ' min · ' : '') + (sess.ft || 7) + ' ft table' + (prac ? ' · practice' : ' · ' + rk.length + ' rack' + (rk.length !== 1 ? 's' : '')) + (sess.version ? ' · ' + sess.version : '');
   // (in practice a run means little: the tries of a shot set up again instead)
@@ -238,6 +238,6 @@ function renderHistory() {
   const tot = {}; for (const x of h) for (const d of x.drills || []) { const o = tot[d.id] = tot[d.id] || { name: d.name, tries: 0, made: 0, best: -1 }; o.tries += d.tries; o.made += d.made; o.best = Math.max(o.best, d.best); }
   const tl = Object.keys(tot); $('#histCuts').hidden = !tl.length;
   if (tl.length) $('#histCuts').innerHTML = '<h3>Your drills, all sessions</h3>' + tl.map(k => { const o = tot[k], D = typeof DRILL !== 'undefined' && DRILL.byId(k); return '<div class="brow"><span>' + o.name + (D && o.best >= 0 ? ' · best ' + D.word(D.levels[o.best]) : '') + '</span><b>' + o.made + ' of ' + o.tries + '</b><i><u style="width:' + Math.round(100 * o.made / o.tries) + '%"></u></i></div>'; }).join('');
-  $('#histList').innerHTML = h.slice(0, 8).map(x => '<div class="rrow"><b>' + dateWords(x.t0) + (x.mode === 'practice' ? ' · practice' : x.game === 8 ? ' · 8-ball' : '') + '</b><span>' + x.shots + ' shots · ' + x.ballsIn + ' in · ' + REVIEW.pct(x.tries ? x.potted / x.tries : null) + ' made a ball · best run ' + x.bestRun + '</span></div>').join('');
+  $('#histList').innerHTML = h.slice(0, 8).map(x => '<div class="rrow"><b>' + dateWords(x.t0) + (x.mode === 'practice' ? ' · practice' : x.mode === 'coach' ? ' · coaching test' : x.game === 8 ? ' · 8-ball' : '') + '</b><span>' + x.shots + ' shots · ' + x.ballsIn + ' in · ' + REVIEW.pct(x.tries ? x.potted / x.tries : null) + ' made a ball · best run ' + x.bestRun + '</span></div>').join('');
 }
 renderHistory();

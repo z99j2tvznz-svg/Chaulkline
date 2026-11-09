@@ -114,11 +114,15 @@ a.old { color: var(--muted); font-size: 13px; }
     <button class="btn primary" id="updBtn" hidden></button>
     <button class="go glass" id="goBtn"><b>Play a rack</b><small>A rack at a time: made balls, scratches, the first ball hit, runs; the rack is done by itself when only the cue ball is left.</small><i>›</i></button>
     <button class="go glass" id="pracBtn"><b>Practice</b><small>Set balls where you like and shoot. Moving or picking up balls is fine; tries of the same shot are put together.</small><i>›</i></button>
+    <button class="go glass" id="coachBtn"><b>Coaching test</b><small>Small runouts, the 9 always on: set out any balls and shoot the lowest first. Rings in each ball's colour show the pocket for it, the next ball and the one after; the green is where the cue ball should land for the next one.</small><i>›</i></button>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Game for Play a rack</div><div class="seg" id="segGame"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
+    <div class="card glass"><h2>New in V3.10</h2><ul>
+      <li>Coaching test (above): small runouts with the 9 always on. Set out any balls and shoot the lowest first. Rings in each ball's colour show the pocket for the ball you're on, the next one and the one after. Green is where the cue ball should land for the next ball (red: the wrong side; dark: a ball in the way), with the cue ball's way there. After each shot it says where the cue ball landed.</li>
+    </ul></div>
     <div class="card glass"><h2>New in V3.9</h2><ul>
       <li>All fifteen balls: the 10 to 15 are read now, stripes seen end on too (a white cap with a coloured ring is not the cue ball). Practice reads all fifteen.</li>
       <li>8-ball: pick the game above, then Play a rack. The rack is over when the 8 goes in, or when only the cue ball is left.</li>
@@ -204,6 +208,7 @@ a.old { color: var(--muted); font-size: 13px; }
 <script>
 /*DRILLS*/
 /*POSE*/
+/*COACH*/
 </script>
 <script>
 /*APP*/

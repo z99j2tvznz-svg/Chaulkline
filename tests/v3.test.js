@@ -99,3 +99,24 @@ async function run(rot, viewport, sway, strokeTest) {
 test('V3 sideways: table, balls, names, a tap that sticks, the watcher, the stroke, Save debug', { timeout: 400000 }, async () => { console.log('sideways:', JSON.stringify(await run(0, { width: 956, height: 440 }, 0, true))); });
 test('V3 upright: the same with the phone standing up', { timeout: 400000 }, async () => { console.log('upright:', JSON.stringify(await run(90, { width: 440, height: 956 }))); });
 test('V3 on a swaying phone: the outline follows, the balls stay at rest, no hands or shots', { timeout: 500000 }, async () => { const st = await run(0, { width: 956, height: 440 }, 10); console.log('sway:', JSON.stringify({ steady: st.steady.slice(-6), threads: st.threads })); });
+
+// V3.10: the Coaching test: the table found, the balls named, the plan made in the background worker and drawn
+test('V3 coaching test: the plan for the balls at rest, drawn without errors', { timeout: 400000 }, async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'chalk-v3-')), y4m = path.join(dir, 'cam.y4m');
+  execFileSync('python3', [path.join(ROOT, 'tests/lib/y4m.py'), PHOTO, y4m, '3', '0', '0']);
+  const srv = await serve(ROOT);
+  const browser = await chromium.launch({ args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--use-file-for-fake-video-capture=' + y4m, '--autoplay-policy=no-user-gesture-required'] });
+  try {
+    const page = await (await browser.newContext({ viewport: { width: 956, height: 440 }, permissions: ['camera'] })).newPage(), errors = [];
+    page.on('pageerror', e => errors.push(String(e)));
+    await page.goto(srv.url + '/index.html'); await page.waitForFunction(() => window.crossOriginIsolated === true && window.__v3, null, { timeout: 30000 });
+    await page.click('#coachBtn');
+    await page.waitForFunction(() => window.__v3.A.phase === 'verify', null, { timeout: 60000 }); await page.click('[data-act=accept]');
+    await page.waitForFunction(() => window.__v3.DBG.ev.some(e => e.k === 'coach_plan'), null, { timeout: 250000 });
+    const r = await page.evaluate(() => { const e = window.__v3.DBG.ev.filter(e => e.k === 'coach_plan').pop(); return { e, mode: window.__v3.A.mode, err: window.__v3.DBG.ev.filter(x => x.k === 'error').map(x => x.m) }; });
+    console.log('coach_plan:', JSON.stringify(r.e).slice(0, 400));
+    assert.strictEqual(r.mode, 'coach'); assert.ok(r.e.order.length >= 1 && r.e.A.pocket != null, 'a plan'); assert.deepStrictEqual(r.err, []);
+    await new Promise(res => setTimeout(res, 1500)); // a few frames drawn with the plan
+    assert.deepStrictEqual(errors, []);
+  } finally { await browser.close(); srv.close(); fs.rmSync(dir, { recursive: true, force: true }); }
+});

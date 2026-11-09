@@ -121,11 +121,15 @@ a.old { color: var(--muted); font-size: 13px; }
     <button class="btn primary" id="updBtn" hidden></button>
     <button class="go glass" id="goBtn"><b>Play a rack</b><small>A rack at a time: made balls, scratches, the first ball hit, runs; the rack is done by itself when only the cue ball is left.</small><i>›</i></button>
     <button class="go glass" id="pracBtn"><b>Practice</b><small>Set balls where you like and shoot. Moving or picking up balls is fine; tries of the same shot are put together.</small><i>›</i></button>
+    <button class="go glass" id="coachBtn"><b>Coaching test</b><small>Small runouts, the 9 always on: set out any balls and shoot the lowest first. Rings in each ball's colour show the pocket for it, the next ball and the one after; the green is where the cue ball should land for the next one.</small><i>›</i></button>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Game for Play a rack</div><div class="seg" id="segGame"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
+    <div class="card glass"><h2>New in V3.10</h2><ul>
+      <li>Coaching test (above): small runouts with the 9 always on. Set out any balls and shoot the lowest first. Rings in each ball's colour show the pocket for the ball you're on, the next one and the one after. Green is where the cue ball should land for the next ball (red: the wrong side; dark: a ball in the way), with the cue ball's way there. After each shot it says where the cue ball landed.</li>
+    </ul></div>
     <div class="card glass"><h2>New in V3.9</h2><ul>
       <li>All fifteen balls: the 10 to 15 are read now, stripes seen end on too (a white cap with a coloured ring is not the cue ball). Practice reads all fifteen.</li>
       <li>8-ball: pick the game above, then Play a rack. The rack is over when the 8 goes in, or when only the cue ball is left.</li>
@@ -2826,13 +2830,179 @@ const POSE = (() => {
   return { decode, vec, down, face, stance, M };
 })();
 
+// Coaching test (V3.10): the runout planner, three balls ahead. On the balls at rest (inches, P from core.js makeP): the ball
+// to shoot (the lowest), the next and the one after. For the next ball, every spot of the table is graded as a place for the
+// cue ball to shoot it from, for the pocket a player would choose: green (makeable with an angle, and the cue ball can be
+// sent on to a good shot on the ball after), red (makeable, but the cue ball heads away from the ball after: the wrong side),
+// grey (a ball in the way). The shot on the lowest ball from where the cue ball is, the stroke that brings the cue ball into
+// that green, and from the zone's best spot the stroke on to the ball after. The cue ball after contact: 5/7 of the sliding
+// speed along the tangent line plus 2/7 of the follow or draw along the shot line (standard cue-ball physics; with a natural
+// roll at a half-ball hit, the 30-degree rule). Pure functions; tested in tests/coach.test.js.
+// coachFactory: the whole planner in one function, so the app can also run it in a background worker (its source text)
+function coachFactory() {
+  const D2R = Math.PI / 180;
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1]], len = v => Math.hypot(v[0], v[1]), unit = v => { const l = len(v) || 1; return [v[0] / l, v[1] / l]; }, dot = (a, b) => a[0] * b[0] + a[1] * b[1];
+  function segDist(p, a, b) { const d = sub(b, a), l2 = dot(d, d), t = l2 ? Math.max(0, Math.min(1, dot(sub(p, a), d) / l2)) : 0; return Math.hypot(p[0] - a[0] - t * d[0], p[1] - a[1] - t * d[1]); }
+
+  function plan(balls, P, opts) {
+    const o0 = Object.assign({ step: 1.5, maxLen: 80 }, opts || {}), t0 = Date.now();
+    const R = P.R, L = P.L, W = P.W, STEP = o0.step;
+    // objs: every ball but the cue ball (in the way); ord: the numbered ones in order (an unnamed ball comes as n 100 and up)
+    const cue = balls.find(b => b.n === 0), objs = balls.filter(b => b.n !== 0), ord = objs.filter(b => b.n > 0 && b.n < 100).sort((a, b) => a.n - b.n);
+    if (!cue || !ord.length) return null;
+    const [A, B, C] = ord, pt = b => [b.x, b.y];
+    const blockers = (a, b, skip) => objs.filter(o => !skip.includes(o.n) && segDist(pt(o), a, b) < 2 * R - 0.05);
+    // the pockets a ball can go into: lane clear, and the pocket takes it from that side
+    function pocketsFor(T, gone) {
+      const out = [];
+      P.pockets.forEach((pk, pi) => {
+        const v = sub([pk.x, pk.y], pt(T)), vl = len(v); if (vl < 0.5) return;
+        if (blockers(pt(T), [pk.x, pk.y], [T.n, ...gone]).length) return;
+        const nx = pk.corner ? (pk.x < L / 2 ? -1 : 1) / Math.SQRT2 : 0, ny = pk.corner ? (pk.y < W / 2 ? -1 : 1) / Math.SQRT2 : (pk.y < W / 2 ? -1 : 1);
+        const entry = Math.acos(Math.max(-1, Math.min(1, (v[0] * nx + v[1] * ny) / vl))) / D2R;
+        if (entry > (pk.corner ? 55 : 45)) return;
+        out.push({ pi, pk, u: unit(v), dist: vl });
+      });
+      return out;
+    }
+    // a shot from X on ball T into pocket o: cut, ghost ball, balls in the way, how easy (0..1)
+    function shot(X, T, o, gone) {
+      const G = [T.x - 2 * R * o.u[0], T.y - 2 * R * o.u[1]], aim = sub(G, X), dl = len(aim);
+      if (dl < 2.2 * R) return null;
+      const v = unit(aim), cut = Math.acos(Math.max(-1, Math.min(1, dot(v, o.u)))) / D2R; if (cut > 70) return null;
+      const ease = Math.cos(cut * D2R) ** 1.5 / (1 + (dl / 40) ** 1.3 + (o.dist / 45) ** 1.3) * (o.pk.corner ? 1 : 0.85);
+      return { G, v, cut, dl, ease, blk: blockers(X, G, [T.n, ...gone]) };
+    }
+    function trace(p0, d0, ignore) {
+      let p = p0.slice(), d = d0.slice(), left = o0.maxLen, bounces = 0; const pts = [p.slice()];
+      while (left > 0 && bounces <= 2) {
+        p = [p[0] + d[0], p[1] + d[1]]; left -= 1;
+        if (p[0] < R) { p[0] = 2 * R - p[0]; d[0] = -d[0]; bounces++; left -= 6; } if (p[0] > L - R) { p[0] = 2 * (L - R) - p[0]; d[0] = -d[0]; bounces++; left -= 6; }
+        if (p[1] < R) { p[1] = 2 * R - p[1]; d[1] = -d[1]; bounces++; left -= 6; } if (p[1] > W - R) { p[1] = 2 * (W - R) - p[1]; d[1] = -d[1]; bounces++; left -= 6; }
+        if (P.pockets.some(pk => Math.hypot(pk.x - p[0], pk.y - p[1]) < pk.r + 0.3)) { pts.push(p.slice()); pts.scratch = true; break; }
+        if (objs.some(q => !ignore.includes(q.n) && Math.hypot(q.x - p[0], q.y - p[1]) < 2 * R)) break;
+        pts.push(p.slice());
+      }
+      return pts;
+    }
+    function exits(s, o, ignore) {
+      const sn = Math.sin(s.cut * D2R), t0v = [s.v[0] - dot(s.v, o.u) * o.u[0], s.v[1] - dot(s.v, o.u) * o.u[1]], t = len(t0v) > 1e-6 ? unit(t0v) : [0, 0], out = [];
+      for (let sp = -1.5; sp <= 1.21; sp += 0.225) {
+        const w = [5 / 7 * sn * t[0] + 2 / 7 * sp * s.v[0], 5 / 7 * sn * t[1] + 2 / 7 * sp * s.v[1]], vf = len(w); if (vf < 0.04) continue;
+        out.push({ kind: sp < -0.1 ? 'draw' : sp > 0.1 ? 'follow' : 'stun', s: +sp.toFixed(2), vf, pts: trace(s.G, unit(w), ignore) });
+      }
+      return out;
+    }
+    const spinF = r => r.kind === 'stun' ? 1 : r.kind === 'follow' ? (r.s <= 1.05 ? 0.97 : 0.85) : 1 - Math.abs(r.s) / 3;
+    const speedF = (r, d) => { const q = Math.sqrt(d / 40) / (r.vf / 0.5); return q <= 1.6 ? 1 : Math.exp(-(q - 1.6) * 1.2); };
+    // the grid of cue-ball spots (not on a ball)
+    const nx = Math.floor((L - 2 * R) / STEP), ny = Math.floor((W - 2 * R) / STEP), cx = i => R + (i + 0.5) * STEP, cy = j => R + (j + 0.5) * STEP;
+    const idx = p => { const i = Math.floor((p[0] - R) / STEP), j = Math.floor((p[1] - R) / STEP); return i < 0 || j < 0 || i >= nx || j >= ny ? -1 : j * nx + i; };
+    const free = (x, y) => !objs.some(o => Math.hypot(o.x - x, o.y - y) < 2 * R);
+    // position on C from each spot (A and B gone)
+    let cAt = () => 1, cDir = () => null;
+    if (C) {
+      const pC = pocketsFor(C, [A.n, B.n]), cv = new Float32Array(nx * ny), cu = new Array(nx * ny); let cBest = 1e-6;
+      for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+        const X = [cx(i), cy(j)]; if (!free(X[0], X[1])) continue; let b = 0, u = null;
+        for (const o of pC) { const s = shot(X, C, o, [A.n, B.n]); if (s && !s.blk.length && s.cut <= 60 && s.ease > b) { b = s.ease; u = o.u; } }
+        cv[j * nx + i] = b; cu[j * nx + i] = u; if (b > cBest) cBest = b;
+      }
+      cAt = p => { const k = idx(p); return k < 0 ? 0 : cv[k] / cBest; }; cDir = p => { const k = idx(p); return k < 0 ? null : cu[k]; };
+    }
+    // a cue-ball path's value for the ball after: how much of it runs through good spots for it, more when along that ball's
+    // line than across it (the fat part of the zone), less the further it goes and for a harder stroke; full at 14 in
+    function pathValue(r) {
+      let g = 0;
+      for (let i = 3; i < r.pts.length; i++) {
+        const c = cAt(r.pts[i]); if (c < 0.55) continue;
+        const d = unit(sub(r.pts[i], r.pts[i - 1])), u = cDir(r.pts[i]), along = u ? 0.55 + 0.45 * Math.abs(dot(d, u)) : 0.55;
+        g += c * along * Math.exp(-i / 70) * speedF(r, i);
+      }
+      return Math.min(1, g * spinF(r) / 14);
+    }
+    const out = { order: ord.map(o => o.n), A: { n: A.n, pocket: null }, B: B ? { n: B.n, pocket: null } : null, C: C ? { n: C.n, pocket: null } : null, step: STEP, nx, ny, origin: [R, R], cells: null, path: null, spot: null, route: null };
+    const pA = pocketsFor(A, []);
+    const easiestA = () => { let best = null; for (const o of pA) { const s = shot(pt(cue), A, o, []); if (s && !s.blk.length && s.cut <= 70 && (!best || s.ease > best.e)) best = { e: s.ease, pi: o.pi }; } return best ? best.pi : pA.length ? pA[0].pi : null; };
+    if (!B) { out.A.pocket = easiestA(); out.ms = Date.now() - t0; return out; }
+    // B's zone, for each of its pockets; keep the pocket with the biggest, best zone
+    const pB = pocketsFor(B, [A.n]); let bestZ = null;
+    for (const o of pB) {
+      const g = new Int8Array(nx * ny), sc = new Float32Array(nx * ny); let n = 0;
+      for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+        const X = [cx(i), cy(j)]; if (!free(X[0], X[1])) continue;
+        const s = shot(X, B, o, [A.n]); if (!s) continue;
+        if (s.blk.length) { g[j * nx + i] = 4; continue; } // grey: in the way
+        if (s.cut > 60) continue;
+        let posC = 1; if (C) { posC = 0; for (const r of exits(s, o, [A.n, B.n])) { if (r.pts.scratch) continue; const v = pathValue(r); if (v > posC) posC = v; } }
+        const angle = s.cut < 6 ? 0.55 : s.cut < 12 ? 0.8 : s.cut <= 40 ? 1 : 0.75;
+        const rd = Math.min(X[0], L - X[0], X[1], W - X[1]), rail = rd < 2.5 ? 0.55 : rd < 4.5 ? 0.85 : 1;
+        const v = Math.min(1, s.ease / 0.6) * angle * rail * (0.25 + 0.75 * posC);
+        sc[j * nx + i] = v; g[j * nx + i] = C && posC < 0.12 ? 3 : 9; n++; // 3 red; 9 graded below
+      }
+      const worth = Array.from(sc).sort((a, b) => b - a).slice(0, Math.round(150 / (STEP * STEP))).reduce((a, b) => a + b, 0);
+      if (!bestZ || worth > bestZ.worth) bestZ = { o, g, sc, worth };
+    }
+    if (!bestZ) { out.A.pocket = easiestA(); out.ms = Date.now() - t0; return out; }
+    const top = Math.max(...bestZ.sc) || 1;
+    for (let k = 0; k < nx * ny; k++) if (bestZ.g[k] === 9) { const r = bestZ.sc[k] / top; bestZ.g[k] = r >= 0.62 ? 1 : r >= 0.38 ? 2 : 0; } // 1 green, 2 amber
+    // one smoothing pass (the grid samples the zone's edges unevenly): a yellow spot ringed by green is green, a lone green spot yellow
+    { const g0 = bestZ.g.slice(), at = (i, j) => i < 0 || j < 0 || i >= nx || j >= ny ? 0 : g0[j * nx + i];
+      for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const k = j * nx + i; if (g0[k] !== 1 && g0[k] !== 2) continue; let n1 = 0; for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) if ((di || dj) && at(i + di, j + dj) === 1) n1++;
+        if (g0[k] === 2 && n1 >= 5) bestZ.g[k] = 1; else if (g0[k] === 1 && n1 <= 1) bestZ.g[k] = 2; } }
+    out.cells = bestZ.g; out.B.pocket = bestZ.o.pi;
+    // A: the pocket and stroke that bring the cue ball into the green, rolling through it (room for speed error)
+    let pl = null;
+    for (const o of pA) {
+      const s = shot(pt(cue), A, o, []); if (!s || s.blk.length || s.cut > 60) continue;
+      for (const r of exits(s, o, [A.n])) {
+        if (r.pts.scratch) continue; let inG = 0, first = -1, last = -1;
+        r.pts.forEach((q, i) => { const k = idx(q); if (k >= 0 && bestZ.g[k] === 1) { if (first < 0) first = i; inG++; last = i; } });
+        if (!inG) continue;
+        const val = Math.min(inG * STEP, 16) * (s.ease / 0.6) * spinF(r) * Math.exp(-first / 40) * speedF(r, (first + last) / 2);
+        if (!pl || val > pl.val) pl = { val, pocket: o.pi, cut: Math.round(s.cut), kind: r.kind, s: r.s, ghost: s.G, pts: r.pts.slice(0, Math.round((first + last) / 2) + 1) };
+      }
+    }
+    out.A.pocket = pl ? pl.pocket : easiestA();
+    if (pl) out.path = { ghost: pl.ghost, pts: pl.pts, kind: pl.kind, s: pl.s, cut: pl.cut };
+    // the zone's spot the plan aims for, the shot on B from there and where the cue ball goes on to for C
+    const greens = []; for (let k = 0; k < nx * ny; k++) if (bestZ.g[k] === 1) greens.push([cx(k % nx), cy(Math.floor(k / nx)), bestZ.sc[k]]);
+    let sp = null;
+    if (pl) { const m = pl.pts[pl.pts.length - 1]; sp = greens.sort((a, b) => Math.hypot(a[0] - m[0], a[1] - m[1]) - Math.hypot(b[0] - m[0], b[1] - m[1]))[0]; }
+    else sp = greens.sort((a, b) => b[2] - a[2])[0];
+    if (sp) {
+      const X = [sp[0], sp[1]], s2 = shot(X, B, bestZ.o, [A.n]); out.spot = X; out.B.cut = Math.round(s2.cut);
+      if (C) {
+        let br = null, bv = -1; for (const r of exits(s2, bestZ.o, [A.n, B.n])) { if (r.pts.scratch) continue; const v = pathValue(r); if (v > bv) { bv = v; br = r; } }
+        if (br) {
+          let stop = 3, sv = -1; br.pts.forEach((q, i) => { if (i < 3) return; const v = cAt(q) * Math.exp(-i / 70) * speedF(br, i); if (v > sv) { sv = v; stop = i; } });
+          out.route = { ghost: s2.G, pts: br.pts.slice(0, stop + 1), kind: br.kind, s: br.s };
+          const end = br.pts[stop]; let cl = null;
+          for (const o of pocketsFor(C, [A.n, B.n])) { const s3 = shot(end, C, o, [A.n, B.n]); if (s3 && !s3.blk.length && (!cl || s3.ease > cl.e)) cl = { e: s3.ease, pi: o.pi, cut: Math.round(s3.cut) }; }
+          if (cl) { out.C.pocket = cl.pi; out.C.cut = cl.cut; }
+        }
+      }
+    }
+    if (C && out.C.pocket == null) { const pC = pocketsFor(C, [A.n, B.n]); if (pC.length) out.C.pocket = pC.sort((a, b) => a.dist - b.dist)[0].pi; }
+    out.ms = Date.now() - t0;
+    return out;
+  }
+  // the grade of a cue-ball spot in a plan's zone: 'green' | 'amber' | 'red' | 'blocked' | null
+  function gradeAt(pl, x, y) {
+    if (!pl || !pl.cells) return null; const i = Math.floor((x - pl.origin[0]) / pl.step), j = Math.floor((y - pl.origin[1]) / pl.step);
+    if (i < 0 || j < 0 || i >= pl.nx || j >= pl.ny) return null; return ({ 1: 'green', 2: 'amber', 3: 'red', 4: 'blocked' })[pl.cells[j * pl.nx + i]] || null;
+  }
+  return { plan, gradeAt };
+}
+const COACH = coachFactory();
+
 </script>
 <script>
 // ===== V3 APP =====
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.9.0';
+const VERSION = 'V3.10.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -2998,6 +3168,7 @@ async function renderGate() {
 renderGate();
 $('#goBtn').onclick = () => start('play');
 $('#pracBtn').onclick = () => start('practice');
+$('#coachBtn').onclick = () => start('coach');
 $('#dbgHome').onclick = () => saveDebug($('#dbgHome'));
 function homeMsg(t, bad) { const m = $('#homeMsg'); m.textContent = t || ''; m.classList.toggle('bad', !!bad); }
 
@@ -3047,13 +3218,14 @@ function smallImg() {
 // mode: 'play' (a rack at a time: racks done by themselves, runs) or 'practice' (balls set out and moved at will; owner Nov 2)
 // practice reads all fifteen balls (V3.9.0); Play a rack is 9-ball, the cue ball and 1-9
 const ALL15 = Array.from({ length: 16 }, (_, i) => i);
-const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false, ids: ALL15 } : A.game === 8 ? { ids: ALL15, eightEnds: true } : {};
+// the coaching test (V3.10): small runouts with the 9 always on, balls set out at will (as practice), the cue ball and 1-9
+const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false, ids: ALL15 } : mode === 'coach' ? { practice: true, autoRack: false, rackNew: false } : A.game === 8 ? { ids: ALL15, eightEnds: true } : {};
 async function start(mode) {
-  homeMsg(''); A.mode = mode === 'practice' ? 'practice' : 'play';
+  homeMsg(''); A.mode = mode === 'practice' || mode === 'coach' ? mode : 'play'; CO.plan = null; CO.sig = ''; CO.atStart = null;
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, game: A.mode === 'play' ? (A.game || 9) : null, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode === 'practice'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, game: A.mode === 'play' ? (A.game || 9) : null, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode !== 'play'; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
@@ -3274,6 +3446,7 @@ async function look() {
   const read = true; await DET.read(A.fctx, on, tk.O.ids);
   const t2 = performance.now(), before = tk.S.phase;
   tk.update(t, on, { read, empty: emptyAt });
+  if (A.mode === 'coach') coachLook();
   for (const n of tk.S.notes.splice(0)) onLateMade(n);
   pathLook();
   A.looks++;
@@ -3319,6 +3492,7 @@ function preSave(nm, t0) {
   fr.forEach((f, i) => f.c.toBlob(b => { if (b) b.arrayBuffer().then(a => setPic(nm + '-pre' + (i + 1) + '.jpg', new Uint8Array(a))); }, 'image/jpeg', 0.7));
 }
 function onShotStart() {
+  if (A.mode === 'coach') coachShotStart();
   PATH.clear(); A.pathClearAt = null; pathLook(); const sh = A.tk.S.shot; if (!sh) return; const nm = 'shot' + String(sh.n).padStart(3, '0');
   if (A.stillPic) setPic(nm + '-before.jpg', A.stillPic);
   preSave(nm, sh.t0);
@@ -3361,12 +3535,13 @@ function onShotEnd(sh) {
     if (!A.drillReadyOf.get(sh.n) || nudge) { row1.notShot = 'setup'; dbg('drill_setup_move', { n: sh.n, ready: A.drillReadyOf.get(sh.n), far: r1(far) }); }
   }
   const dt = (A.sess.drillTries || []).find(x => x.n === sh.n); if (dt) row1.drill = dt;
+  if (A.mode === 'coach') coachShotEnd(sh, row, row1);
   if (row1.notShot !== 'setup' && !dt) shotToast(row1); // (a drill shot scored early has said its result already)
   if (A.sess.shots.length % 3 === 0) { A.lastSess = A.sess; save(); }
 }
 // the shot's line (no tap to correct it: owner, Nov 3, no buttons while playing; what the app gets wrong is found in the
 // debug files)
-function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row)); }
+function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row) + (row.coach && row.coach.landed ? ' · cue ball ' + ({ green: 'in the green', amber: 'at the edge of the zone', red: 'on the wrong side', blocked: 'behind a ball' })[row.coach.landed] : row.coach && row.coach.zone ? ' · cue ball outside the zone' : '')); }
 // Each ball's path in the shot: the tracker's positions from just before the shot started, kept after it ends (and for the
 // balls that went in) until the next shot starts, so a quick look at the phone after the shot shows the whole of it.
 const PATH = new Map(); // ball key -> { num, pts: [{ t, x, y }] }
@@ -3809,9 +3984,103 @@ function drawLoop() {
   if ((A.phase === 'run' || A.phase === 'load') && A.cam) drawDrill(c, S2);
   if (A.pathClearAt && performance.now() > A.pathClearAt) { PATH.clear(); A.pathClearAt = null; }
   if (A.phase !== 'run' || !A.tk || !A.cam) return;
+  if (A.mode === 'coach') drawCoach(c, S2);
   drawBalls(c, S2, F);
 }
 
+// ---------- coaching test (V3.10, owner Nov 9) ----------
+// Small runouts with the 9 always on; the player shoots the lowest ball first whatever the plan says (the plan is being
+// tested). While the balls rest: the planner (src/v3/coach.js, in a background worker) on the balls named for sure, and on
+// the screen, lightly: a ring round the pocket for the ball to shoot, for the next and for the one after, each in that
+// ball's colour; the zone for the next ball (green: the right side, red: the wrong side, grey: a ball in the way, yellow:
+// harder); the cue ball's way from this shot into the green. After the shot: where the cue ball stopped against that zone,
+// in the shot's row, the log (coach_plan, coach_shot) and the shot's words. No buttons.
+const CO = { sig: '', plan: null, balls: null, busy: false, worker: null, id: 0, atStart: null, poly: null };
+function coachWorker() {
+  if (CO.worker !== null) return CO.worker;
+  try {
+    const src = 'const COACH=(' + coachFactory.toString() + ')();onmessage=e=>{let r=null;try{r=COACH.plan(e.data.balls,e.data.P,e.data.opts);}catch(x){r={error:String(x)};}postMessage({id:e.data.id,r});};';
+    CO.worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+    CO.worker.onmessage = e => coachDone(e.data.id, e.data.r);
+    CO.worker.onerror = e => { dbg('error', { m: 'coach worker ' + String(e && e.message || '').slice(0, 100) }); CO.worker = false; CO.busy = false; };
+  } catch (e) { CO.worker = false; dbg('error', { m: 'coach worker ' + String(e).slice(0, 100) }); }
+  return CO.worker;
+}
+function coachLayout() {
+  // the balls on the table: named for sure (the cue ball and 1-9) at rest; unnamed ones still count as balls in the way
+  const bs = A.tk.balls().filter(b => b.state === 'rest' || b.state === 'hidden');
+  const cue = bs.find(b => b.num === 0 && b.sure); if (!cue) return null;
+  const out = []; for (const b of bs) out.push({ n: b.num != null && b.sure ? b.num : 100 + b.key, x: +b.x.toFixed(1), y: +b.y.toFixed(1) });
+  if (!out.some(b => b.n > 0 && b.n < 100)) return null;
+  const nums = out.filter(b => b.n < 100).map(b => b.n); if (new Set(nums).size !== nums.length) return null; // a number twice: wait
+  return out;
+}
+function coachLook() {
+  const tk = A.tk; if (tk.S.phase !== 'still' || tk.balls().some(b => b.state === 'moving' || b.state === 'pending')) return;
+  const bs = coachLayout(); if (!bs) return;
+  const sig = bs.map(b => b.n + ':' + Math.round(b.x) + ',' + Math.round(b.y)).sort().join(' ');
+  if (sig === CO.sig || CO.busy) return;
+  CO.sig = sig; CO.busy = true; CO.pending = bs; const id = ++CO.id;
+  const P = { R: A.P.R, L: A.P.L, W: A.P.W, pockets: A.P.pockets.map(p => ({ x: p.x, y: p.y, r: p.r, corner: p.corner })) };
+  const w = coachWorker();
+  if (w) w.postMessage({ id, balls: bs, P });
+  else setTimeout(() => { let r = null; try { r = COACH.plan(bs, P, { step: 2 }); } catch (e) { r = { error: String(e) }; } coachDone(id, r); }, 0);
+}
+function coachDone(id, r) {
+  CO.busy = false; if (id !== CO.id) return;
+  if (!r || r.error) { if (r && r.error) dbg('error', { m: 'coach ' + r.error.slice(0, 120) }); CO.plan = null; return; }
+  CO.plan = r; CO.balls = CO.pending; CO.poly = null;
+  const cnt = { green: 0, red: 0, blocked: 0 }; if (r.cells) for (const v of r.cells) { if (v === 1) cnt.green++; else if (v === 3) cnt.red++; else if (v === 4) cnt.blocked++; }
+  dbg('coach_plan', { order: r.order, A: r.A, B: r.B, C: r.C, spot: r.spot && r.spot.map(r1), path: r.path ? { kind: r.path.kind, s: r.path.s, cut: r.path.cut } : null, route: r.route ? { kind: r.route.kind, s: r.route.s } : null, cells: cnt, ms: r.ms, balls: CO.balls });
+}
+function coachShotStart() { CO.atStart = CO.plan && CO.sig ? { plan: CO.plan, balls: CO.balls } : null; }
+function coachShotEnd(sh, row, row1) {
+  const st = CO.atStart; CO.atStart = null; if (!st) return;
+  const p = st.plan, cueAfter = (sh.after || []).find(b => b.key === sh.cueKey) || (sh.after || []).find(b => b.num === 0);
+  const madeA = row.made.find(m => m.num === p.A.n), at = cueAfter ? [cueAfter.rx != null ? cueAfter.rx : cueAfter.x, cueAfter.ry != null ? cueAfter.ry : cueAfter.y] : null;
+  const c = { order: p.order, plan: { A: p.A.pocket, B: p.B && p.B.pocket, C: p.C && p.C.pocket }, lowestFirst: sh.firstNum == null ? null : sh.firstNum === p.A.n, madeA: !!madeA, pocketA: madeA ? madeA.pocket : null,
+    cueAt: at && at.map(r1), zone: !!p.cells, landed: at && p.cells && madeA ? COACH.gradeAt(p, at[0], at[1]) : null, spot: p.spot && p.spot.map(r1), scratch: !!sh.scratch };
+  row1.coach = c; dbg('coach_shot', Object.assign({ n: sh.n }, c));
+}
+// a pocket's ring in a ball's colour (concentric when two plans use the same pocket), on the cloth
+function coachRing(c, S2, pk, k, col, num) {
+  const r = pk.r + 0.9 + 1.1 * k, pts = []; for (let i = 0; i <= 24; i++) { const a = i / 24 * Math.PI * 2; pts.push(S2(A.cam.proj(pk.x + r * Math.cos(a), pk.y + r * Math.sin(a), 0))); }
+  c.lineWidth = 3.5; c.strokeStyle = 'rgba(11,16,20,.55)'; c.beginPath(); pts.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.stroke();
+  c.lineWidth = 2.2; c.strokeStyle = col; c.stroke();
+  const lp = S2(A.cam.proj(pk.x + (pk.x < A.P.L / 2 ? 1 : -1) * (r + 1.6), pk.y + (pk.y < A.P.W / 2 ? 1 : -1) * (r + 1.6), 0));
+  c.font = '600 11px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineWidth = 3; c.strokeStyle = 'rgba(11,16,20,.6)'; c.strokeText(String(num), lp[0], lp[1]); c.fillStyle = col; c.fillText(String(num), lp[0], lp[1]);
+}
+function drawCoach(c, S2) {
+  const p = CO.plan; if (!p || A.tk.S.phase === 'shot') return;
+  // the plan is for the balls as they were: only while they still are (within 1.5 in)
+  const now = A.tk.balls(); if (!CO.balls || CO.balls.some(b => b.n < 100 && !now.some(t => t.num === b.n && Math.hypot(t.x - b.x, t.y - b.y) < 1.5))) return;
+  if (p.cells) {
+    if (!CO.poly || CO.poly.cam !== A.cam) { // the cells on the screen, kept while the camera fix stays
+      const f = { 1: [], 2: [], 3: [], 4: [] }, h = p.step / 2;
+      for (let k = 0; k < p.cells.length; k++) { const g = p.cells[k]; if (!f[g]) continue; const x = p.origin[0] + (k % p.nx + 0.5) * p.step, y = p.origin[1] + (Math.floor(k / p.nx) + 0.5) * p.step;
+        f[g].push([[x - h, y - h], [x + h, y - h], [x + h, y + h], [x - h, y + h]].map(q => A.cam.proj(q[0], q[1], 0))); }
+      // the edges of the green and the red, for a thin outline
+      const e = { 1: [], 3: [] }, gAt = (i, j) => i < 0 || j < 0 || i >= p.nx || j >= p.ny ? 0 : p.cells[j * p.nx + i];
+      for (let k = 0; k < p.cells.length; k++) { const g = p.cells[k]; if (!e[g]) continue; const i = k % p.nx, j = Math.floor(k / p.nx), x0 = p.origin[0] + i * p.step, y0 = p.origin[1] + j * p.step, x1 = x0 + p.step, y1 = y0 + p.step;
+        for (const [di, dj, a, b] of [[-1, 0, [x0, y0], [x0, y1]], [1, 0, [x1, y0], [x1, y1]], [0, -1, [x0, y0], [x1, y0]], [0, 1, [x0, y1], [x1, y1]]]) if (gAt(i + di, j + dj) !== g) e[g].push([A.cam.proj(a[0], a[1], 0), A.cam.proj(b[0], b[1], 0)]); }
+      CO.poly = { cam: A.cam, f, e };
+    }
+    const fill = { 1: 'rgba(46,204,113,.40)', 2: 'rgba(241,196,15,.14)', 3: 'rgba(231,76,60,.24)', 4: 'rgba(15,20,24,.30)' };
+    for (const g of [4, 3, 2, 1]) { c.fillStyle = fill[g]; c.beginPath(); for (const q of CO.poly.f[g]) { const a = q.map(S2); c.moveTo(a[0][0], a[0][1]); for (let i = 1; i < 4; i++) c.lineTo(a[i][0], a[i][1]); c.closePath(); } c.fill(); }
+    for (const [g, col] of [[3, 'rgba(255,120,110,.7)'], [1, 'rgba(150,255,190,.9)']]) { c.lineWidth = 1.2; c.strokeStyle = col; c.beginPath(); for (const [a, b] of CO.poly.e[g]) { const u = S2(a), v = S2(b); c.moveTo(u[0], u[1]); c.lineTo(v[0], v[1]); } c.stroke(); }
+  }
+  // the cue ball's way into the green, and where it should stop
+  const cue = now.find(t => t.num === 0);
+  if (p.path && cue) {
+    const gh = S2(A.cam.proj(p.path.ghost[0], p.path.ghost[1], A.P.R)), cp = S2(A.cam.proj(cue.x, cue.y, A.P.R));
+    c.setLineDash([4, 4]); c.lineWidth = 1.2; c.strokeStyle = 'rgba(244,241,232,.55)'; c.beginPath(); c.moveTo(cp[0], cp[1]); c.lineTo(gh[0], gh[1]); c.stroke(); c.setLineDash([]);
+    c.lineWidth = 2; c.strokeStyle = 'rgba(244,241,232,.8)'; c.beginPath(); p.path.pts.forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.stroke();
+  }
+  if (p.spot) { const a = S2(A.cam.proj(p.spot[0], p.spot[1], A.P.R)), e = S2(A.cam.proj(p.spot[0] + A.P.R, p.spot[1], A.P.R)), r = Math.max(3, Math.abs(e[0] - a[0])); c.lineWidth = 1.5; c.strokeStyle = 'rgba(244,241,232,.9)'; c.beginPath(); c.arc(a[0], a[1], r, 0, Math.PI * 2); c.stroke(); }
+  // the pockets: this ball, the next, the one after
+  const used = {};
+  for (const b of [p.A, p.B, p.C]) { if (!b || b.pocket == null) continue; const k = used[b.pocket] = (used[b.pocket] == null ? 0 : used[b.pocket] + 1); coachRing(c, S2, A.P.pockets[b.pocket], k, BALLCOL[b.n] || '#eaf1f4', b.n); }
+}
 function drawManual(c, S2, F) {
   const m = A.man; if (m.length === 4) { const q = orderQuad(m); c.strokeStyle = 'rgba(255,184,77,.9)'; c.lineWidth = 1.2; c.beginPath(); q.forEach((p, i) => { const s = S2(p); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); }); c.closePath(); c.stroke(); }
   for (const p of m) { const s = S2(p); c.strokeStyle = '#ffb84d'; c.lineWidth = 1.5; c.beginPath(); c.arc(s[0], s[1], 9, 0, Math.PI * 2); c.stroke(); c.beginPath(); c.moveTo(s[0] - 13, s[1]); c.lineTo(s[0] + 13, s[1]); c.moveTo(s[0], s[1] - 13); c.lineTo(s[0], s[1] + 13); c.stroke(); }
@@ -4195,7 +4464,7 @@ const RV = { sess: null, i: 0, urls: [], play: null, live: false };
 function dateWords(t) { const d = new Date(t); return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }); }
 function renderReview(sess, live) {
   RV.sess = sess; RV.live = live; const sh = sess.shots || [], st = REVIEW.stats(sh), rk = REVIEW.racks(sh);
-  const prac = sess.mode === 'practice'; RV.reps = REVIEW.repeats(sh);
+  const prac = sess.mode === 'practice' || sess.mode === 'coach'; RV.reps = REVIEW.repeats(sh);
   $('#sumTitle').textContent = prac ? (live ? 'Practice over' : 'Last practice') : live ? 'Session over' : 'Last session';
   $('#sumSub').textContent = (live ? '' : dateWords(sess.t0) + ' · ') + (sess.mins ? sess.mins + ' min · ' : '') + (sess.ft || 7) + ' ft table' + (prac ? ' · practice' : ' · ' + rk.length + ' rack' + (rk.length !== 1 ? 's' : '')) + (sess.version ? ' · ' + sess.version : '');
   // (in practice a run means little: the tries of a shot set up again instead)
@@ -4287,7 +4556,7 @@ function renderHistory() {
   const tot = {}; for (const x of h) for (const d of x.drills || []) { const o = tot[d.id] = tot[d.id] || { name: d.name, tries: 0, made: 0, best: -1 }; o.tries += d.tries; o.made += d.made; o.best = Math.max(o.best, d.best); }
   const tl = Object.keys(tot); $('#histCuts').hidden = !tl.length;
   if (tl.length) $('#histCuts').innerHTML = '<h3>Your drills, all sessions</h3>' + tl.map(k => { const o = tot[k], D = typeof DRILL !== 'undefined' && DRILL.byId(k); return '<div class="brow"><span>' + o.name + (D && o.best >= 0 ? ' · best ' + D.word(D.levels[o.best]) : '') + '</span><b>' + o.made + ' of ' + o.tries + '</b><i><u style="width:' + Math.round(100 * o.made / o.tries) + '%"></u></i></div>'; }).join('');
-  $('#histList').innerHTML = h.slice(0, 8).map(x => '<div class="rrow"><b>' + dateWords(x.t0) + (x.mode === 'practice' ? ' · practice' : x.game === 8 ? ' · 8-ball' : '') + '</b><span>' + x.shots + ' shots · ' + x.ballsIn + ' in · ' + REVIEW.pct(x.tries ? x.potted / x.tries : null) + ' made a ball · best run ' + x.bestRun + '</span></div>').join('');
+  $('#histList').innerHTML = h.slice(0, 8).map(x => '<div class="rrow"><b>' + dateWords(x.t0) + (x.mode === 'practice' ? ' · practice' : x.mode === 'coach' ? ' · coaching test' : x.game === 8 ? ' · 8-ball' : '') + '</b><span>' + x.shots + ' shots · ' + x.ballsIn + ' in · ' + REVIEW.pct(x.tries ? x.potted / x.tries : null) + ' made a ball · best run ' + x.bestRun + '</span></div>').join('');
 }
 renderHistory();
 
