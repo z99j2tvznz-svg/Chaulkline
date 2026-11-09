@@ -1536,3 +1536,12 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   outline of their corners; the green as one shape, the piece holding the spot with those near it; red its biggest piece;
   each piece of "in the way"). The green filled with a fade from the next ball (strong near it, faint at the far end). The
   spot: the best-graded green spot (inside the zone) within 6 in of where the planned path stops; the path drawn to it.
+- V3.10.2 (owner, Nov 9): no hard edge round the zone. The zone a cone fanning out from the next ball, as wide as the green
+  seen from that ball (2-degree bins grown from the spot's direction, a one-bin gap allowed) and as far as its reach (95th
+  percentile), from the ball's edge; the outer tenth on each side faint yellow (good, but harder to make and to get on
+  from; to be set from play), the ideal line down the middle through the spot; the green strongest near the ball. The
+  path into the zone scored on running along the zone's line (toward or away from the next ball) rather than across it.
+  The stroke shown bottom left: a cue ball with the tip where it should meet it (a natural roll 2/5 of the radius above
+  the middle, draw below; no side spin planned yet) and the power, 1-10 (4 a medium stroke, about 40 in of travel leaving
+  at half the hit's speed). The plan stays on the screen during the shot and until the next one is made, at 42% (to see
+  the cue ball's real path against the planned one).

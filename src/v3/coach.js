@@ -89,7 +89,7 @@ function coachFactory() {
       }
       return Math.min(1, g * spinF(r) / 14);
     }
-    const out = { order: ord.map(o => o.n), A: { n: A.n, pocket: null }, B: B ? { n: B.n, pocket: null } : null, C: C ? { n: C.n, pocket: null } : null, step: STEP, nx, ny, origin: [R, R], cells: null, path: null, spot: null, route: null };
+    const out = { L, W, R, order: ord.map(o => o.n), A: { n: A.n, pocket: null }, B: B ? { n: B.n, pocket: null } : null, C: C ? { n: C.n, pocket: null } : null, step: STEP, nx, ny, origin: [R, R], cells: null, path: null, spot: null, route: null };
     const pA = pocketsFor(A, []);
     const easiestA = () => { let best = null; for (const o of pA) { const s = shot(pt(cue), A, o, []); if (s && !s.blk.length && s.cut <= 70 && (!best || s.ease > best.e)) best = { e: s.ease, pi: o.pi }; } return best ? best.pi : pA.length ? pA[0].pi : null; };
     if (!B) { out.A.pocket = easiestA(); out.ms = Date.now() - t0; return out; }
@@ -124,15 +124,17 @@ function coachFactory() {
     for (const o of pA) {
       const s = shot(pt(cue), A, o, []); if (!s || s.blk.length || s.cut > 60) continue;
       for (const r of exits(s, o, [A.n])) {
-        if (r.pts.scratch) continue; let inG = 0, first = -1, last = -1;
-        r.pts.forEach((q, i) => { const k = idx(q); if (k >= 0 && bestZ.g[k] === 1) { if (first < 0) first = i; inG++; last = i; } });
+        if (r.pts.scratch) continue; let inG = 0, first = -1, last = -1, along = 0;
+        // into the zone along its line (the zone fans out from B: rolling toward or away from B), not across it (owner, Nov 9)
+        r.pts.forEach((q, i) => { const k = idx(q); if (k >= 0 && bestZ.g[k] === 1) { if (first < 0) first = i; inG++; last = i;
+          if (i) { const d = unit(sub(q, r.pts[i - 1])), rad = unit(sub(q, pt(B))); along += 0.35 + 0.65 * Math.abs(dot(d, rad)); } } });
         if (!inG) continue;
-        const val = Math.min(inG * STEP, 16) * (s.ease / 0.6) * spinF(r) * Math.exp(-first / 40) * speedF(r, (first + last) / 2);
-        if (!pl || val > pl.val) pl = { val, pocket: o.pi, cut: Math.round(s.cut), kind: r.kind, s: r.s, ghost: s.G, pts: r.pts.slice(0, Math.round((first + last) / 2) + 1) };
+        const val = Math.min(along, 16) * (s.ease / 0.6) * spinF(r) * Math.exp(-first / 40) * speedF(r, (first + last) / 2);
+        if (!pl || val > pl.val) pl = { val, pocket: o.pi, cut: Math.round(s.cut), kind: r.kind, s: r.s, vf: r.vf, ghost: s.G, pts: r.pts.slice(0, Math.round((first + last) / 2) + 1) };
       }
     }
     out.A.pocket = pl ? pl.pocket : easiestA();
-    if (pl) out.path = { ghost: pl.ghost, pts: pl.pts, kind: pl.kind, s: pl.s, cut: pl.cut };
+    if (pl) out.path = { ghost: pl.ghost, pts: pl.pts, kind: pl.kind, s: pl.s, cut: pl.cut, stroke: stroke(pl.s, pl.vf, pl.pts.length - 1) };
     // the zone's spot the plan aims for, the shot on B from there and where the cue ball goes on to for C
     const greens = []; for (let k = 0; k < nx * ny; k++) if (bestZ.g[k] === 1) greens.push([cx(k % nx), cy(Math.floor(k / nx)), bestZ.sc[k]]);
     let sp = null;
@@ -180,6 +182,45 @@ function coachFactory() {
     }
     return out;
   }
+  // the stroke for a planned cue-ball path: where the tip meets the cue ball (up for follow, down for draw: a natural roll is
+  // about 2/5 of the radius above the middle) and the power, 1-10 (4: a medium stroke, about 40 in of travel leaving at half
+  // the hit's speed); from the spin s, the speed the cue ball leaves at (vf, of the hit's) and how far it travels (d, in)
+  function stroke(sp, vf, d) {
+    const tip = Math.max(-0.6, Math.min(0.6, sp * 0.4)), q = Math.sqrt(Math.max(4, d) / 40) / (Math.max(0.05, vf) / 0.5);
+    return { tip: +tip.toFixed(2), side: 0, power: Math.max(1, Math.min(10, Math.round(q * 4))), kind: sp < -0.1 ? 'draw' : sp > 0.1 ? 'follow' : 'stun' };
+  }
+  // the zone as a cone fanning out from the next ball (owner, Nov 9): as wide as the green seen from that ball, from its
+  // nearest to its far reach; the outer tenth on each side yellow (still good, but harder to make and to get on from), and
+  // the ideal line down the middle through the spot. Clipped to the table.
+  function clip(poly, x0, y0, x1, y1) {
+    const edges = [[p => p[0] >= x0, (a, b) => [x0, a[1] + (b[1] - a[1]) * (x0 - a[0]) / (b[0] - a[0])]], [p => p[0] <= x1, (a, b) => [x1, a[1] + (b[1] - a[1]) * (x1 - a[0]) / (b[0] - a[0])]],
+      [p => p[1] >= y0, (a, b) => [a[0] + (b[0] - a[0]) * (y0 - a[1]) / (b[1] - a[1]), y0]], [p => p[1] <= y1, (a, b) => [a[0] + (b[0] - a[0]) * (y1 - a[1]) / (b[1] - a[1]), y1]]];
+    for (const [inside, cut] of edges) { const out = []; for (let i = 0; i < poly.length; i++) { const a = poly[i], b = poly[(i + 1) % poly.length], ia = inside(a), ib = inside(b); if (ia) out.push(a); if (ia !== ib) out.push(cut(a, b)); } poly = out; if (!poly.length) break; }
+    return poly;
+  }
+  function sector(c, r0, r1, a0, a1, Lt, Wt, R) {
+    const n = Math.max(2, Math.ceil(Math.abs(a1 - a0) / (4 * D2R))), pts = [];
+    for (let i = 0; i <= n; i++) { const a = a0 + (a1 - a0) * i / n; pts.push([c[0] + r1 * Math.cos(a), c[1] + r1 * Math.sin(a)]); }
+    for (let i = n; i >= 0; i--) { const a = a0 + (a1 - a0) * i / n; pts.push([c[0] + r0 * Math.cos(a), c[1] + r0 * Math.sin(a)]); }
+    return clip(pts, R, R, Lt - R, Wt - R);
+  }
+  function cone(pl, gp, B, Lt, Wt, R) {
+    const c = [B.x, B.y], cells = [].concat(...gp.map(q => q.ks)).map(k => [pl.origin[0] + (k % pl.nx + 0.5) * pl.step, pl.origin[1] + (Math.floor(k / pl.nx) + 0.5) * pl.step]);
+    if (cells.length < 3) return null;
+    const ang = p => Math.atan2(p[1] - c[1], p[0] - c[0]), ref = pl.spot ? ang(pl.spot) : ang(cells[Math.floor(cells.length / 2)]);
+    const rel = p => { let a = ang(p) - ref; while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
+    const BIN = 2 * D2R, NB = 90, cnt = new Array(2 * NB + 1).fill(0), bin = a => Math.round(a / BIN) + NB;
+    const ar = cells.map(p => ({ a: rel(p), r: Math.hypot(p[0] - c[0], p[1] - c[1]) }));
+    for (const q of ar) { const b = bin(q.a); if (b >= 0 && b < cnt.length) cnt[b]++; }
+    let lo = NB, hi = NB; const has = b => b >= 0 && b < cnt.length && cnt[b] > 0;
+    while (has(lo - 1) || has(lo - 2)) lo--; while (has(hi + 1) || has(hi + 2)) hi++;
+    const a0 = (lo - NB - 0.5) * BIN, a1 = (hi - NB + 0.5) * BIN, rs = ar.filter(q => q.a >= a0 && q.a <= a1).map(q => q.r).sort((x, y) => x - y);
+    const r0 = 2 * R + 0.5, r1 = Math.max(r0 + 2, rs[Math.min(rs.length - 1, Math.floor(rs.length * 0.95))]);
+    const w = a1 - a0, e = Math.max(w * 0.1, 1.5 * D2R), A0 = ref + a0, A1 = ref + a1;
+    const core = sector(c, r0, r1, A0 + e, A1 - e, Lt, Wt, R), sides = [sector(c, r0, r1, A0, A0 + e, Lt, Wt, R), sector(c, r0, r1, A1 - e, A1, Lt, Wt, R)];
+    const line = [[c[0] + r0 * Math.cos(ref), c[1] + r0 * Math.sin(ref)], [c[0] + r1 * Math.cos(ref), c[1] + r1 * Math.sin(ref)]];
+    return { core, sides, line, from: c, r0: +r0.toFixed(1), r1: +r1.toFixed(1), width: Math.round(w / D2R) };
+  }
   function shapes(pl, B) {
     if (!pl.cells) return null;
     const keyOf = p => { const i = Math.floor((p[0] - pl.origin[0]) / pl.step), j = Math.floor((p[1] - pl.origin[1]) / pl.step); return j * pl.nx + i; };
@@ -191,7 +232,7 @@ function coachFactory() {
     const blocked = pieces(pl, 4).filter(q => q.n >= 6).map(q => q.poly);
     // how far the green reaches from the next ball (for the fade: strongest near the ball, lighter further away)
     let far = 0; for (const poly of green) for (const p of poly) far = Math.max(far, Math.hypot(p[0] - B.x, p[1] - B.y));
-    return { green, red, blocked, from: [B.x, B.y], far };
+    return { green, red, blocked, from: [B.x, B.y], far, cone: gp.length ? cone(pl, gp, B, pl.L, pl.W, pl.R) : null };
   }
   // the grade of a cue-ball spot in a plan's zone: 'green' | 'amber' | 'red' | 'blocked' | null
   function gradeAt(pl, x, y) {
