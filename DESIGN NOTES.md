@@ -1545,3 +1545,33 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   the middle, draw below; no side spin planned yet) and the power, 1-10 (4 a medium stroke, about 40 in of travel leaving
   at half the hit's speed). The plan stays on the screen during the shot and until the next one is made, at 42% (to see
   the cue ball's real path against the planned one).
+
+## Review: Nov 8 19:32 (V3.10.2, Coaching test) and V3.11.0
+- 12 minutes, 25 moves, 145 plans (the positions' jitter crossing the 1 in rounding of the plan's key: the plan flickered).
+  Owner: the first plan (the 5 rolled in) made sense; the 7 (super hard, a little draw, two rails to get behind the 9) made
+  no sense; after a scratch nothing; the 2 (hard, half a tip of draw to come below the 9) not playable; the straight-in 4
+  with the 7 behind the cue ball gave no shot line; no side spin; the power scale off. Wants: the cue ball's real movement
+  against the plan; the path as a band from cheating the pocket inside to outside, widening; a power scale test.
+- The cause: the A plan used the ray model (any distance along any direction the spin allows), so it took long multi-rail
+  paths with strokes nobody can play, and a one-pocket zone for B (landing for another pocket of B counted nothing).
+- V3.11.0, coach.js: the stroke on A in core.js simulate (the V1 physics: tip, side, speed, throw, cushions with side
+  spin): tips -0.5..0.5, power 1-10 (1.5 to 15 mph), each pocket A can go in, the aim nudged up to 1 degree where throw
+  would miss; kept when A goes in, the first ball hit is A and the cue ball stays up. Value: where the cue ball stops in
+  B's zone (green clearly above yellow: value^1.6; more when it rolls in along the zone's line), and for the best 12 the
+  same stroke with small mistakes (aim 0.35 degrees, speed 12%, tip 0.1 either way): worth mostly that robustness; strokes
+  simple first (power 5 or less, tip within 0.2 of the middle, no side unless it pays: side tried on the best three).
+  Position counts for any pocket of B; B's pocket is then the one the planned stroke leaves best. A ball within 9 in behind
+  the cue ball: the cue raised, no draw below 0.2, no power over 5. The best four strokes kept in the log (alts). The spot
+  is where the planned stroke stops. The last ball: still a line and a stroke. Ball in hand after a scratch: the zone is
+  the lowest ball's (with the next after it), the spot its best place near the ball.
+- The band: the same stroke aimed from the inside to the outside of the pocket (the ball still in), its two cue-ball paths.
+- App: the worker gets the physics (clamp, stepBall, cushion, simulate) and the whole table P; re-plans only when a ball
+  moved over 1.2 in from the plan's layout. The stroke box shows side spin and "Tough: little room for error" (robust under
+  0.3) or "Cue raised: a ball behind". After each shot (coach_compare): the angle the cue ball came off at against the plan
+  (8 in past contact), the travel ratio, the stop's distance from the planned stop and the power seen (the plan's power x
+  the square root of the travel ratio); short in the shot's words.
+- Power test (Menu, Coaching test): the cue ball alone at the player's 2, 4, 6, 8 (three each); each roll's speed from its
+  start, first direction and length in the simulation without pockets (COACH.speedFor); on the plan's scale (powerOf); a
+  line through zero (ours = k x the player's), kept on the phone; the plan's power then shown in the player's numbers.
+- Not yet: the simulation's cloth and cushions measured on the owner's table (the compare rows and the power test are
+  the data for that).
