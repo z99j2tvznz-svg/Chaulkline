@@ -121,12 +121,20 @@ a.old { color: var(--muted); font-size: 13px; }
     <button class="btn primary" id="updBtn" hidden></button>
     <button class="go glass" id="goBtn"><b>Play a rack</b><small>A rack at a time: made balls, scratches, the first ball hit, runs; the rack is done by itself when only the cue ball is left.</small><i>›</i></button>
     <button class="go glass" id="pracBtn"><b>Practice</b><small>Set balls where you like and shoot. Moving or picking up balls is fine; tries of the same shot are put together.</small><i>›</i></button>
-    <button class="go glass" id="coachBtn"><b>Coaching test</b><small>Small runouts, the 9 always on: set out any balls and shoot the lowest first. Rings in each ball's colour show the pocket for it, the next ball and the one after; the green is where the cue ball should land for the next one.</small><i>›</i></button>
+    <button class="go glass" id="coachBtn"><b>Coaching test</b><small>Small runouts, the 9 always on: set out any balls and shoot the lowest first. A dot and a number at each pocket show the pocket for this ball, the next and the one after; the green is where the cue ball should land for the next one.</small><i>›</i></button>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Game for Play a rack</div><div class="seg" id="segGame"></div></div>
+    <div class="card glass"><div class="lbl" style="margin-bottom:8px">Your level, about (Fargo): the coaching plays one level up</div><div class="seg" id="segFargo"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
+    <div class="card glass"><h2>New in V3.17</h2><ul>
+      <li>A ball that went in too fast for the camera to see: the pocket is worked out from where it sat and where the shot was going, marked "⊘ not seen".</li>
+      <li>Shallow pockets: tap "Not a ball" on a ball lying in a pocket once, and that pocket is remembered for your table.</li>
+      <li>"Not a ball" on anything else stays removed for the session.</li>
+      <li>Your level on the home screen (Fargo, about): the coaching plays one level up, billiard theory for the next step, not your own game. The draw test no longer limits the plan.</li>
+      <li>A very hard speed for draws near break speed; "great position" when the cue ball lands in the green.</li>
+    </ul></div>
     <div class="card glass"><h2>New in V3.16</h2><ul>
       <li>Make percentages for a typical Fargo 550 instead of a much weaker player; a stroke with lots of side, a big draw or follow, or a hard hit costs some of its percentage.</li>
       <li>No extra cost for going more cushions to come into the line.</li>
@@ -1906,10 +1914,11 @@ function makeTracker(P, opts) {
     bagDist: 1.5,       // in from the line
     bags: [],
     ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    shallow: {},        // pocket index -> place on its bag line from which a new spot is a ball lying in it (V3.17, see notBall)
   }, opts || {});
   const R = P.R, L = P.L, W = P.W, EPS = 1e-4;
   let keyN = 0;
-  const S = { t: 0, tracks: [], phase: 'still', stillSince: null, shot: null, shots: [], gone: [], events: [], lastNames: '', bagT: {}, bagNew: {}, notes: [], say: [], touchT: -9, rackAt: 0, setup: true }; // notes: made balls found after their shot ended, for the app to tell; say: rack done / not a shot, for the app
+  const S = { t: 0, tracks: [], phase: 'still', stillSince: null, shot: null, shots: [], gone: [], events: [], lastNames: '', bagT: {}, bagNew: {}, notes: [], say: [], touchT: -9, rackAt: 0, setup: true, notAt: [], shallow: Object.assign({}, O.shallow) }; // notes: made balls found after their shot ended, for the app to tell; say: rack done / not a shot, for the app
   const ev = (k, d) => { const e = Object.assign({ t: +S.t.toFixed(2), k }, d); S.events.push(e); if (S.events.length > 30000) S.events.splice(0, 3000); return e; };
   const live = tr => tr.state !== 'gone' && tr.state !== 'dropped';
   const ballsNow = () => S.tracks.filter(tr => tr.ok && live(tr));
@@ -1973,6 +1982,12 @@ function makeTracker(P, opts) {
       if (Math.hypot(sp.x - b.ax - u * dx, sp.y - b.ay - u * dy) <= O.bagDist) return b.i; }
     return null;
   }
+  // where a spot lies on a pocket's bag line: u 0 a ball just below the cloth, 1 four inches down (null when on none)
+  function bagAt(x, y) {
+    let best = null; for (const b of O.bags) { const dx = b.bx - b.ax, dy = b.by - b.ay, l2 = dx * dx + dy * dy || 1, u = ((x - b.ax) * dx + (y - b.ay) * dy) / l2, uc = Math.max(0, Math.min(1, u)), d = Math.hypot(x - b.ax - uc * dx, y - b.ay - uc * dy);
+      if (d <= O.bagDist * 1.5 && (!best || d < best.d)) best = { i: b.i, u, d }; }
+    return best;
+  }
   function pocketNear(x, y) {
     let best = null, bd = 1e9; for (let i = 0; i < P.pockets.length; i++) { const pk = P.pockets[i], d = Math.hypot(x - pk.x, y - pk.y) - pk.r; if (d < bd) { bd = d; best = i; } }
     return { i: best, d: bd };
@@ -2002,6 +2017,14 @@ function makeTracker(P, opts) {
       // a ball lying in a far pocket: not on the table, but a sign that a ball went into that pocket
       const bag = (sp.score == null ? 1 : sp.score) < O.bagScore ? bagOf(sp) : null;
       if (bag != null) { if (!(t - (S.bagT[bag] || -9) < 1.5)) { S.bagNew[bag] = t; ev('in_pocket_seen', { pocket: bag }); } S.bagT[bag] = t; continue; }
+      // a ball lying in a shallow pocket, still seen (V3.17, owner Nov 10: the owner's pockets are shallow and a made ball sits
+      // in view; a tap "not a ball" on it teaches that pocket's depth, kept for the table): in the pocket, not on the table
+      // (a ball the camera sees down in a far pocket maps a few inches out onto the table, along that pocket's bag line; a
+      // ball being followed that came to rest there stays a ball)
+      const bg = bagAt(sp.x, sp.y);
+      if (bg && S.shallow[bg.i] != null && bg.u >= S.shallow[bg.i] - 0.15 && !S.tracks.some(tr => live(tr) && Math.hypot(tr.x - sp.x, tr.y - sp.y) < 2.5)) { if (!(t - (S.bagT[bg.i] || -9) < 1.5)) { S.bagNew[bg.i] = t; ev('in_pocket_seen', { pocket: bg.i, shallow: true }); } S.bagT[bg.i] = t; continue; }
+      // a spot the player said is not a ball (chalk, a mark), unless a ball being followed is there now
+      if (S.notAt.some(q => Math.hypot(q.x - sp.x, q.y - sp.y) < 1.3) && !S.tracks.some(tr => live(tr) && Math.hypot(tr.x - sp.x, tr.y - sp.y) < 3)) continue;
       const m = pocketNear(sp.x, sp.y).d < 3 ? R + 0.6 : R + 1.2; // at a pocket a ball in the mouth can sit right on the line
       if (sp.x < R - m || sp.y < R - m || sp.x > L - R + m || sp.y > W - R + m) continue;
       if (spots.some(q => Math.hypot(q.px - sp.px, q.py - sp.py) < 0.5 * Math.min(q.r, sp.r))) continue;
@@ -2283,7 +2306,7 @@ function makeTracker(P, opts) {
     tr.state = 'gone'; tr.goneT = t; const d = { key: tr.key, num: tr.num, sure: tr.sure, pocket, late: true };
     if (tr.num !== 0 && !S.gone.includes(tr.num)) S.gone.push(tr.num); // the cue ball comes back (see pocketed)
     sh.made.push(d); if (tr.key === sh.cueKey || tr.num === 0) sh.scratch = true; sh.updated = t;
-    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)], v: +(tr.vLost || 0).toFixed(1) }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
+    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)], v: +(tr.vLost || 0).toFixed(1) }); S.notes.push({ n: sh.n, key: tr.key, num: tr.num, pocket, scratch: tr.num === 0 });
   }
 
   // New rack or End session: the last shot's calls are settled now, not left waiting (Oct 30: the 9, the last ball of the
@@ -2570,7 +2593,17 @@ function makeTracker(P, opts) {
     tr.pin = id; tr.num = id; tr.sure = true; tr.ok = true; if (tr.state === 'new') tr.state = 'rest';
     ev('tap', { key: tr.key, num: id }); name(); return true;
   }
-  function notBall(key) { const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.state = 'dropped'; tr.ok = false; ev('not_ball', { key, num: tr.num }); S.tracks = S.tracks.filter(x => x !== tr); name(); return true; }
+  // the player's "not a ball" (V3.17: it used to drop only the track, and the next look found the spot again as a new one):
+  // remembered. On a pocket's bag line (a ball lying in that pocket, seen: the owner's pockets are shallow, Nov 9 22:20 the
+  // 5 in the top side pocket came out 3 in onto the table) the pocket learns where on its line such a ball shows (kept for
+  // the table by the app); elsewhere the spot itself, for the session
+  function notBall(key) {
+    const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.state = 'dropped'; tr.ok = false;
+    const bg = bagAt(tr.x, tr.y);
+    if (bg) S.shallow[bg.i] = Math.max(-0.1, Math.min(S.shallow[bg.i] != null ? S.shallow[bg.i] : 9, bg.u)); else S.notAt.push({ x: tr.x, y: tr.y });
+    ev('not_ball', { key, num: tr.num, pocket: bg ? bg.i : null, u: bg ? +bg.u.toFixed(2) : null });
+    S.tracks = S.tracks.filter(x => x !== tr); name(); return true;
+  }
   function inPocket(key) { const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.pocket = null; ev('tap_pocketed', { key, num: tr.num }); pocketed(tr); name(); return true; }
   function newRack() { finish(); for (const tr of S.tracks) tr.state = 'dropped'; S.tracks = []; S.gone = []; S.rackAt = S.shots.length; S.recon = null; S.setup = true; S.phase = 'hands'; S.stillSince = null; S.shot = null; ev('new_rack', {}); }
 
@@ -2932,7 +2965,10 @@ function coachFactory(sim) {
     // otherwise): 0.09 degrees on the cue ball's line. In the simulation that makes a straight-in with 3 ft each way about
     // 81%, a 30-degree cut 2.5 ft each way 77%, 45 degrees 61%, 4 ft to a ball 2 ft from the pocket at 15 degrees 87%.
     // (Before, 0.2 degrees: those were 44%, 45%, 36% and 47%, a weak player, not a pro.)
-    const AIM_SD = 0.09 * D2R, OB_SD = 0.6 * D2R;
+    // V3.17 (owner, Nov 10: the coaching teaches the next level up, not the player's own game): o0.level is the Fargo the
+    // plan is made for (the app sends the player's own plus 100); 0.09 degrees at 550, halved every 150 points up
+    const LEVEL = o0.level > 150 && o0.level < 950 ? o0.level : 550, AIM_SD = 0.09 * Math.pow(2, (550 - LEVEL) / 150) * D2R, OB_SD = 0.6 * D2R;
+    const DIFF_K = Math.pow(2, (550 - LEVEL) / 300); // (hard strokes cost a weaker player more)
     function erf(x) { const t = 1 / (1 + 0.3275911 * Math.abs(x)), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x >= 0 ? y : -y; }
     function pMake(s, o) {
       const tol = (o.pk.corner ? 1.4 : 1.0) * Math.max(0.35, Math.cos((o.entry || 0) * D2R)), tolA = Math.atan(tol / Math.max(1, o.dist));
@@ -2996,8 +3032,9 @@ function coachFactory(sim) {
     // own hardest draw to their hardest follow (the draw test; half a radius each way until then); side spin in tips, a tip
     // being what the spin test measured (0.17 of the radius until then), up to two tips in the search and three for the best
     const SP = o0.speeds && o0.speeds.length === 3 && o0.speeds.every(v => v > 0.3 && v < 15) ? o0.speeds : [1.6, 3.2, 6];
-    const MPH = [SP[0], Math.sqrt(SP[0] * SP[1]), SP[1], Math.sqrt(SP[1] * SP[2]), SP[2]], TRY = [0, 1, 2, 3, 4];
-    const SPEED_WORD = ['soft', 'soft to medium', 'medium', 'medium to hard', 'hard'];
+    // (V3.17: and very hard, half again the hard roll: a draw near break speed, owner Nov 10)
+    const MPH = [SP[0], Math.sqrt(SP[0] * SP[1]), SP[1], Math.sqrt(SP[1] * SP[2]), SP[2], 1.5 * SP[2]], TRY = [0, 1, 2, 3, 4, 5];
+    const SPEED_WORD = ['soft', 'soft to medium', 'medium', 'medium to hard', 'hard', 'very hard'];
     const TR = o0.tipRange || {}, BD = TR.draw < -0.1 && TR.draw > -0.8 ? TR.draw : -0.45, BF = TR.follow > 0.1 && TR.follow < 0.8 ? TR.follow : 0.45;
     const TIPS = [BD, BD / 2, 0, BF / 2, BF], TIP = o0.spinTip > 0.05 && o0.spinTip < 0.4 ? o0.spinTip : 0.17, SIDES = [-2, -1, 0, 1, 2].map(k => k * TIP);
     const init = () => [{ id: 0, x: cue.x, y: cue.y }].concat(objs.map(o => ({ id: o.n, x: o.x, y: o.y })));
@@ -3050,11 +3087,11 @@ function coachFactory(sim) {
       // simple strokes first: soft to medium, the tip near the middle, no side unless it pays; few cushions (Dr. Dave)
       // (V3.15: side spin and extra cushions cost a little, not a lot: coming into the line with spin or more rails is good
       // position play, owner Nov 9 21:33)
-      const simple = c => (c.p <= 3 ? 1 : 0.95) * (1 - 0.02 * Math.abs(Math.round(c.a / TIP)));
+      const simple = c => (c.p <= 3 ? 1 : c.p === 4 ? 0.95 : 0.9) * (1 - 0.02 * Math.abs(Math.round(c.a / TIP)));
       // a harder stroke is harder to make (V3.16, owner Nov 10: three tips of side with full draw on a thin cut is a hard make
       // even for a pro): the aim error grows with side spin (squirt and swerve the player has to allow for), with the tip far
       // from the middle and with speed past medium
-      const diff = c => 1 + 0.3 * Math.abs(Math.round(c.a / TIP)) + 1.2 * Math.max(0, Math.abs(c.b) - 0.25) + 0.12 * Math.max(0, c.p - 2);
+      const diff = c => 1 + DIFF_K * (0.3 * Math.abs(Math.round(c.a / TIP)) + 1.2 * Math.max(0, Math.abs(c.b) - 0.25) + 0.12 * Math.max(0, c.p - 2));
       const rails = pts => { let n = 0, on = false; for (const p of pts) { const at = p[0] < R + 0.25 || p[0] > L - R - 0.25 || p[1] < R + 0.25 || p[1] > W - R - 0.25; if (at && !on) n++; on = at; } return n; };
       // (V3.16, owner Nov 10: more cushions are good position play when they bring the cue ball into the line; their risk is
       // in the runs with the player's errors already, so no cost of their own)
@@ -3116,6 +3153,7 @@ function coachFactory(sim) {
           let da0 = null;
           for (const b of TIPS) {
             if (jack && (b < 0 || p > 2)) continue; // (cue raised: no draw, medium at most)
+            if (p === 5 && Math.abs(b) < 0.2) continue; // (very hard only for a real draw or follow)
             for (const da of da0 == null ? [0, 0.5, -0.5, 1, -1, 1.5, -1.5] : [da0, da0 + 0.5, da0 - 0.5]) { const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, a, b, ini); if (potted(r)) { da0 = da; direct.push({ kind: 'pot', o, s, ang: ang0 + da * D2R, da: da * D2R, p, a, b, r, init: ini, tight, v0: nextQ(r) * railF(r) * (tight.length ? 0.9 : 1), rf: railF(r) * (tight.length ? 0.9 : 1) }); break; } }
           }
         }
@@ -3471,7 +3509,7 @@ const COACH = coachFactory(typeof simulate !== 'undefined' ? simulate : typeof m
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.16.0';
+const VERSION = 'V3.17.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -3558,7 +3596,7 @@ function header() {
     gpu: !!navigator.gpu, engine: DET.ep, engineSetting: A.engine, threads: DET.threads(), isolated: !!window.crossOriginIsolated, cores: navigator.hardwareConcurrency || null, shape: A.shape, kmax: r2(A.kmax), ft: A.ft, picture: A.tableWH || [A.W, A.H], pictureNow: [A.W, A.H], quad: A.quad && A.quad.map(p => [r1(p[0]), r1(p[1])]), rot: A.rot, box: A.box && A.box.map(Math.round),
     camOk: A.cam ? A.cam.ok : null, cam: A.camInfo, lens: LENS };
 }
-function shotRow(sh) { return { n: sh.n, t0: r2(sh.t0), t1: r2(sh.t1), cue: sh.cueNum, first: sh.firstNum, made: sh.made.map(m => ({ num: m.num, pocket: m.pocket, sure: m.sure })), scratch: sh.scratch, break: sh.break, hidden: sh.hidden, before: sh.before, after: sh.after, paths: sh.paths, test: sh.test }; }
+function shotRow(sh) { return { n: sh.n, t0: r2(sh.t0), t1: r2(sh.t1), cue: sh.cueNum, first: sh.firstNum, made: sh.made.map(m => Object.assign({ num: m.num, pocket: m.pocket, sure: m.sure }, m.seen === false ? { seen: false } : {})), scratch: sh.scratch, break: sh.break, hidden: sh.hidden, before: sh.before, after: sh.after, paths: sh.paths, test: sh.test }; }
 
 // ---------- home ----------
 // A newer version on the site (V3.1.2; Nov 1: the page stayed open in Safari from an earlier test, and Start again and
@@ -3580,6 +3618,7 @@ function renderHome() {
   const sf = $('#segFt'); sf.innerHTML = '';
   for (const f of [7, 8, 9]) { const b = document.createElement('button'); b.textContent = f + ' ft'; b.className = f === A.ft ? 'on' : ''; b.onclick = () => { A.ft = f; save(); renderHome(); }; sf.appendChild(b); }
   // the game for Play a rack (V3.9.0): 9-ball, or 8-ball (all fifteen balls; the rack is over when the 8 goes in)
+  const sfg = $('#segFargo'); if (sfg) { sfg.innerHTML = ''; for (const v of [300, 400, 500, 600, 700]) { const b = document.createElement('button'); b.textContent = String(v); b.className = Math.abs(fargo() - v) < 50 ? 'on' : ''; b.onclick = () => { try { localStorage.setItem(FG_KEY, String(v)); } catch (e) { } renderHome(); }; sfg.appendChild(b); } }
   const sg = $('#segGame'); if (sg) { sg.innerHTML = ''; for (const g of [9, 8]) { const b = document.createElement('button'); b.textContent = g + '-ball'; b.className = g === (A.game || 9) ? 'on' : ''; b.onclick = () => { A.game = g; save(); renderHome(); }; sg.appendChild(b); } }
   const gb = $('#goBtn small'); if (gb) gb.textContent = (A.game === 8 ? '8-ball, all fifteen balls: made balls, scratches, runs; the rack is over when the 8 goes in or only the cue ball is left.' : '9-ball: made balls, scratches, the first ball hit, runs; the rack is done by itself when only the cue ball is left.');
   const se = $('#segEng'); if (se) { se.innerHTML = ''; for (const [v, l] of [['cpu', 'Processor'], ['gpu', 'Graphics chip']]) { const b = document.createElement('button'); b.textContent = l; b.className = v === A.engine ? 'on' : ''; b.onclick = () => { A.engine = v; save(); renderHome(); }; se.appendChild(b); } }
@@ -3592,10 +3631,10 @@ function renderHome() {
 }
 const POCKETS = ['bottom-left', 'bottom side', 'bottom-right', 'top-left', 'top side', 'top-right'];
 function shotWords(s) {
-  const pk = i => i == null ? '' : ' (' + POCKETS[i] + ')';
+  const pk = (i, m) => i == null ? '' : ' (' + POCKETS[i] + (m && m.seen === false ? ', ⊘ not seen' : '') + ')';
   const made = s.made.filter(m => m.num !== s.cue && m.num !== 0);
   if (s.notShot) return 'not counted: ' + (s.notShot === 'move' ? 'the cue ball was pushed with the cue, not struck' : s.notShot === 'setup' ? 'setting up the drill' : 'not a shot');
-  const w = [made.length ? made.map(m => (m.num == null ? 'a ball' : 'the ' + m.num) + pk(m.pocket)).join(', ') + ' in' : 'nothing in'];
+  const w = [made.length ? made.map(m => (m.num == null ? 'a ball' : 'the ' + m.num) + pk(m.pocket, m)).join(', ') + ' in' : 'nothing in'];
   if (s.scratch) w.push('scratch'); if (s.break) w[0] = 'Break: ' + w[0]; else if (s.first != null) w.push('first hit the ' + (s.first === 0 ? 'cue' : s.first));
   return w.join(' · ');
 }
@@ -3688,6 +3727,10 @@ function smallImg() {
 // practice reads all fifteen balls (V3.9.0); Play a rack is 9-ball, the cue ball and 1-9
 const ALL15 = Array.from({ length: 16 }, (_, i) => i);
 // the coaching test (V3.10): small runouts with the 9 always on, balls set out at will (as practice), the cue ball and 1-9
+// the pockets of this table where a made ball lies in view (V3.17): learned from the player's "not a ball" taps, kept
+const SH_KEY = () => KEY + '.shallow.' + A.ft;
+function shallowGet() { try { return JSON.parse(localStorage.getItem(SH_KEY()) || '{}') || {}; } catch (e) { return {}; } }
+function shallowSave() { if (!A.tk) return; try { localStorage.setItem(SH_KEY(), JSON.stringify(A.tk.S.shallow)); } catch (e) { } }
 const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false, ids: ALL15 } : mode === 'coach' ? { practice: true, autoRack: false, rackNew: false } : A.game === 8 ? { ids: ALL15, eightEnds: true } : {};
 async function start(mode) {
   homeMsg(''); A.mode = mode === 'practice' || mode === 'coach' ? mode : 'play'; CO.plan = null; CO.sig = ''; CO.atStart = null;
@@ -3697,7 +3740,7 @@ async function start(mode) {
   // page kept the one from before that: Nov 9 21:33, the power test session went home and its log never came along)
   if (A.sess && DBG.ev.length) dbgPersist(); try { PREV = JSON.parse(localStorage.getItem(KEY + '.dbg') || 'null'); } catch (e) { }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, game: A.mode === 'play' ? (A.game || 9) : null, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode !== 'play'; $('#rejectBtn').hidden = true; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt, shallow: shallowGet() })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, game: A.mode === 'play' ? (A.game || 9) : null, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode !== 'play'; $('#rejectBtn').hidden = true; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
@@ -3989,7 +4032,28 @@ function flushShots() {
   if (tk.S.shots.length > A.nShots) { for (const sh of tk.S.shots.slice(A.nShots)) onShotEnd(sh); A.nShots = tk.S.shots.length; }
   for (const n of tk.S.notes.splice(0)) onLateMade(n);
 }
+// A made ball whose pocket was not seen (V3.17, owner Nov 10: at 2 or 3 looks a second a fast ball is gone between looks):
+// worked out from what was seen. Its way: its own path when it was seen moving, else from the cue ball's start through
+// where it sat (the shot's line), else none. The pocket that way (within 40 degrees), else the nearest one. Marked not
+// seen ("⊘") wherever it is said.
+function guessPockets(sh) {
+  const cue = (sh.paths || []).find(p => p.key === sh.cueKey);
+  for (const m of sh.made) {
+    if (m.pocket != null || m.key === sh.cueKey) continue;
+    const mine = b => (m.key != null && b.key === m.key) || (m.key == null && m.num != null && b.num === m.num);
+    const b0 = (sh.before || []).find(mine); if (!b0) continue; const o = [b0.rx != null ? b0.rx : b0.x, b0.ry != null ? b0.ry : b0.y];
+    const own = (sh.paths || []).find(mine); let d = null;
+    if (own && own.p.length > 1) { const q = own.p[own.p.length - 1]; d = [q[1] - own.p[0][1], q[2] - own.p[0][2]]; }
+    if ((!d || Math.hypot(d[0], d[1]) < 1.5) && cue && cue.p.length && (sh.first === b0.key || (sh.firstNum != null && sh.firstNum === m.num) || (sh.first == null && sh.made.filter(q => q.key !== sh.cueKey).length === 1))) d = [o[0] - cue.p[0][1], o[1] - cue.p[0][2]];
+    let best = null;
+    A.P.pockets.forEach((pk, i) => { const v = [pk.x - o[0], pk.y - o[1]], dist = Math.hypot(v[0], v[1]); let ang = 0;
+      if (d && Math.hypot(d[0], d[1]) > 0.5) ang = Math.acos(Math.max(-1, Math.min(1, (v[0] * d[0] + v[1] * d[1]) / (dist * Math.hypot(d[0], d[1]))))) * 180 / Math.PI;
+      const sc = d ? (ang < 40 ? ang + dist / 20 : 1e3 + dist) : dist; if (!best || sc < best.sc) best = { i, sc }; });
+    if (best) { m.pocket = best.i; m.seen = false; dbg('pocket_guess', { n: sh.n, num: m.num, pocket: best.i, way: !!d }); }
+  }
+}
 function onShotEnd(sh) {
+  guessPockets(sh);
   A.pathClearAt = performance.now() + 1000; // (the shot ends 1.2 s after the balls rest: the paths go about 2 s after; owner, Nov 3)
   sh.paths = pathsRow(sh); const row = shotRow(sh); if (A.sess.rackOpen) { A.sess.rackOpen = false; if (A.sess.shots.length) A.sess.rack++; }
   A.sess.shots.push(Object.assign({ n: sh.n, rack: A.sess.rack, cue: sh.cueNum, first: sh.firstNum, made: row.made, scratch: sh.scratch, break: sh.break, t: Date.now() }, REVIEW.shotDetail(sh), STK.of.has(sh.n) ? { stroke: STK.of.get(sh.n) } : {}));
@@ -4023,7 +4087,7 @@ function coachWords(c) {
     else { const a = Math.round(Math.abs(s.along)), b = Math.round(Math.abs(s.side)), t = []; if (a >= 3) t.push(a + ' in ' + (s.along > 0 ? 'long' : 'short')); if (b >= 3) t.push(b + ' in to the side'); w.push('stopped ' + (t.join(', ') || Math.round(s.off) + ' in off the spot')); } }
   return w.length ? ' · ' + w.join(', ') : '';
 }
-function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row) + coachWords(row.coach) + (row.coach && row.coach.landed ? ' · cue ball ' + ({ green: 'in the green (90%+)', lightgreen: 'in the light green (80-90%)', yellow: 'in the yellow (60-80%)', red: 'in the red (50-60%)', low: 'where the next shot is under 50%', blocked: 'behind a ball' })[row.coach.landed] : row.coach && row.coach.zone ? ' · cue ball outside the zone' : '')); }
+function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row) + coachWords(row.coach) + (row.coach && row.coach.landed ? ' · cue ball ' + ({ green: 'great position: in the green (90%+)', lightgreen: 'good position: in the light green (80-90%)', yellow: 'in the yellow (60-80%)', red: 'in the red (50-60%)', low: 'where the next shot is under 50%', blocked: 'behind a ball' })[row.coach.landed] : row.coach && row.coach.zone ? ' · cue ball outside the zone' : '')); }
 // Each ball's path in the shot: the tracker's positions from just before the shot started, kept after it ends (and for the
 // balls that went in) until the next shot starts, so a quick look at the phone after the shot shows the whole of it.
 const PATH = new Map(); // ball key -> { num, pts: [{ t, x, y }] }
@@ -4046,9 +4110,10 @@ function pathsRow(sh) { const o = []; for (const [key, e] of PATH) if (moved(e.p
 // a ball found to have gone in after its shot ended (its spot is bare cloth now): the shot's line is corrected and said
 function onLateMade(n) {
   const row = A.sess.shots.find(s => s.n === n.n), sh = A.tk.S.shots.find(s => s.n === n.n);
+  if (sh) { guessPockets(sh); const m = sh.made.find(q => q.key === n.key || (n.num != null && q.num === n.num)); if (m && n.pocket == null && m.pocket != null) { n.pocket = m.pocket; n.seen = false; } }
   if (row && sh) { row.made = shotRow(sh).made; row.scratch = sh.scratch; if (row.notShot === 'move' && (row.made.length || row.scratch)) delete row.notShot; } // (something went in: it was a shot)
   dbg('late_made', n); renderDown(); drillLate(n.n);
-  toast('Shot ' + n.n + ': ' + (n.num === 0 ? 'the cue ball went in too (scratch)' : 'the ' + (n.num == null ? 'ball' : n.num) + ' went in too') + (n.pocket != null ? ' (' + POCKETS[n.pocket] + ')' : ''));
+  toast('Shot ' + n.n + ': ' + (n.num === 0 ? 'the cue ball went in too (scratch)' : 'the ' + (n.num == null ? 'ball' : n.num) + ' went in too') + (n.pocket != null ? ' (' + POCKETS[n.pocket] + (n.seen === false ? ', ⊘ not seen' : '') + ')' : ''));
 }
 // Each ball's own colour, read from the picture while it rests (sets differ: a pink 4, a teal 2, a black 9 with a yellow
 // band), for its trail: the median of its coloured pixels, and whether it is mostly white, black or banded (white and a
@@ -4703,7 +4768,7 @@ function coachStroke(c, F, st, n, pa) {
   else if (pa && pa.tight && pa.tight.length) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('Tight past the ' + pa.tight.join(' and the '), X, y + 34); }
   else if (pa && shot !== 'safety' && !pa.noShape && (pa.next || 0) < 0.6) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('No stroke reaches the zone from here', X, y + 34); }
   else if (pa && pa.alt) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.65)'; c.fillText('Also: ' + ({ pot: 'pot', bank: 'bank', kick: 'kick', kick2: '2-rail kick', safety: 'safety' }[pa.alt.kind] || pa.alt.kind) + (pa.alt.kind === 'safety' ? '' : ' ' + pct(pa.alt.make)), X, y + 34); }
-  const lv = st.speed ? st.power : [1, 3, 5][PT_LEVELS.indexOf(pw)] || 3; for (let i = 0; i < 5; i++) { c.fillStyle = i < lv ? 'rgba(89,214,232,.95)' : 'rgba(244,241,232,.18)'; c.fillRect(x - R + i * 10, y + R + 8, 8, 6); }
+  const lv = st.speed ? st.power : [1, 3, 5][PT_LEVELS.indexOf(pw)] || 3; for (let i = 0; i < 6; i++) { c.fillStyle = i < lv ? 'rgba(89,214,232,.95)' : 'rgba(244,241,232,.18)'; c.fillRect(x - R + i * 8.4, y + R + 8, 6.6, 6); }
   // the zone's colours, for reading it (owner's bands)
   const ly = y + R + 30; let lx = x - R; c.font = '500 10px system-ui, -apple-system, sans-serif';
   for (const [col, t] of [['rgba(46,204,113,.95)', '90%+'], ['rgba(140,230,170,.95)', '80'], ['rgba(241,196,15,.95)', '60'], ['rgba(231,76,60,.95)', '50']]) { c.fillStyle = col; c.fillRect(lx, ly - 4, 9, 9); c.fillStyle = 'rgba(244,241,232,.8)'; c.fillText(t, lx + 12, ly + 1); lx += 12 + c.measureText(t).width + 10; }
@@ -4732,9 +4797,13 @@ function coachOpts() {
   if (st.spin && st.spin.res && st.spin.railMu == null) { const f = spinFit(st.spin.res); if (f) { Object.assign(st.spin, f); stSave('spin', st.spin); dbg('stroke_test', { kind: 'spin', refit: f }); } }
   if (st.spin && st.spin.tip > 0.05 && st.spin.tip < 0.4) o.spinTip = st.spin.tip;
   if (st.spin && st.spin.railMu > 0.05 && st.spin.railMu < 0.8) o.railMu = st.spin.railMu;
-  if (st.draw && (st.draw.draw || st.draw.follow)) o.tipRange = { draw: st.draw.draw, follow: st.draw.follow };
+  // (V3.17, owner Nov 10: the coaching is billiard theory one level up, not the player's own game: the draw test no longer
+  // bounds the plan's draw and follow, it is kept for the review; the plan is made for the player's Fargo plus 100)
+  o.level = Math.min(800, fargo() + 100);
   return o;
 }
+const FG_KEY = KEY + '.fargo';
+function fargo() { try { const v = +localStorage.getItem(FG_KEY); return v >= 200 && v <= 800 ? v : 500; } catch (e) { return 500; } }
 const levelMph = L => { const ps = ptScale(); return ps ? ps[L] : { soft: 1.6, medium: 3.2, hard: 6 }[L]; };
 // a draw is hit harder than a roll at the same word (owner, Nov 10: a soft draw is a little more than a stop shot, a medium
 // one a much harder hit that comes back several diamonds, a hard one nearly break speed, to the short cushion and on): the
@@ -4943,7 +5012,7 @@ function pickBall(n) {
   const was = b.num; saveTap(b, n, was); A.tk.pin(b.key, n); dbg('tap', { key: b.key, num: n, was, at: [r1(b.x), r1(b.y)] });
   toast(n === was ? 'Kept: the ' + (n === 0 ? 'cue ball' : n) : 'Renamed: the ' + (n === 0 ? 'cue ball' : n) + (was != null ? ' (was ' + (was === 0 ? 'cue' : was) + ')' : ''));
 }
-$('#pickNot').onclick = () => { const k = A.pick, b = A.tk.S.tracks.find(t => t.key === k); closePick(); if (b) { saveTap(b, 'not', b.num); A.tk.notBall(k); dbg('tap_not', { key: k }); toast('Removed: not a ball'); } };
+$('#pickNot').onclick = () => { const k = A.pick, b = A.tk.S.tracks.find(t => t.key === k); closePick(); if (b) { saveTap(b, 'not', b.num); const was = JSON.stringify(A.tk.S.shallow); A.tk.notBall(k); const learnt = JSON.stringify(A.tk.S.shallow) !== was; if (learnt) shallowSave(); dbg('tap_not', { key: k, shallow: learnt ? A.tk.S.shallow : undefined }); toast(learnt ? 'Removed: a ball lying in the pocket. Remembered for this pocket' : 'Removed: not a ball'); } };
 $('#pickPocket').onclick = () => { const k = A.pick; closePick(); A.tk.inPocket(k); dbg('tap_pocketed', { key: k }); toast('Marked as in a pocket'); };
 $('#pickCancel').onclick = closePick;
 $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closePick(); });
@@ -4963,7 +5032,7 @@ function hideCard() { $('#card').hidden = true; $('#cam').classList.remove('manu
 $('#card').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.drill) { drillStart(b.dataset.drill); return; }
-  if (b.dataset.ft) { A.ft = +b.dataset.ft; save(); A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.nShots = 0; dbg('ft', { ft: A.ft }); refind('Table size ' + A.ft + ' ft: looking again…'); return; }
+  if (b.dataset.ft) { A.ft = +b.dataset.ft; save(); A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt, shallow: shallowGet() })); A.nShots = 0; dbg('ft', { ft: A.ft }); refind('Table size ' + A.ft + ' ft: looking again…'); return; }
   const a = b.dataset.act;
   if (a === 'accept') acceptTable(); else if (a === 'retry') refind(); else if (a === 'manual') beginManual();
   else if (a === 'undo') { if (A.man && A.man.length) A.man.pop(); if (A.man) manualCard(); }

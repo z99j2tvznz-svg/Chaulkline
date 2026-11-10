@@ -1767,3 +1767,29 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
 - On the 19 layouts of Nov 9 21:33, make x next went from 0.38 to 0.67. Planning takes 0.4 to 3.6 s a layout in node.
 - Not done yet: planner speeds stop at the player's hard roll (7.5 mph), so draw shots near break speed are not planned.
   The squirt and swerve the player allows for are not modelled beyond P.squirt.
+
+## V3.17.0 (owner, Nov 10: no vision, shallow pockets, coaching one level up)
+- Unseen pockets: at 2-3 looks a second a fast ball is gone between looks, so the tracker gives a made ball without a
+  pocket (late made, inferred). guessPockets(sh) at the end of a shot and on late-made notes works one out:
+  - the ball's way is its own path if it was seen moving; else the line from the cue ball's start through where the ball
+    sat, when it was the first ball hit, or when the first hit is unknown and it is the only object ball made;
+  - the pocket within 40 degrees of that way scores angle + distance/20; with no way known, the nearest pocket.
+  It sets m.pocket and m.seen = false (kept in shotRow) and logs pocket_guess. The words say "(top-left, ⊘ not seen)".
+  On Nov 9 22:20 the two unseen balls (the hard draws) both came out bottom-left, which is right.
+- Shallow pockets (the owner's table: a made ball lies in view and the far pockets map it about 3 in onto the table along
+  the pocket's bag line, cloth.js pocketBags):
+  - A "not a ball" tap on a spot within 2.25 in of a bag line sets S.shallow[pocket] = max(-0.1, its u on the line).
+  - From then on, a spot on that line with u >= shallow - 0.15 and no live track within 2.5 in is "in_pocket_seen", not a
+    ball. A ball hanging in the jaws sits further forward (u about -0.4 at the top side pocket) and stays a ball.
+  - The app keeps S.shallow per table size (chalkline.v3.shallow.<ft>) and passes it as O.shallow.
+  - A tap anywhere else adds S.notAt (1.3 in, for the session), skipped unless a live track is within 3 in. Before, the
+    tap dropped only the track and the next look made a new one (Nov 9 22:20: the 5 in the top side pocket).
+- Coaching is billiard theory one level up (owner): home screen "Your level, about (Fargo)" 300-700, default 500,
+  chalkline.v3.fargo. The planner gets level = Fargo + 100:
+  - AIM_SD = 0.09 x 2^((550 - level)/150) degrees;
+  - hard strokes cost more below 550: DIFF_K = 2^((550 - level)/300).
+  The draw test no longer bounds the plan's tips (the owner: the measured draws were not their real ones); it is kept for
+  the review.
+- A sixth speed, "very hard" (1.5 x the hard roll), tried only with a real draw or follow (|tip| >= 0.2). The stroke box
+  bar has 6 steps.
+- "great position" and "good position" in the shot's words when the cue ball lands in the green or the light green.

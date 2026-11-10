@@ -648,3 +648,22 @@ test('in the power test (set-up off) a lone cue ball roll is a shot, not the cue
   settle(tk, t, [{ num: 0, x: 36, y: 20 }, ...balls], 3);
   assert.strictEqual(tk.S.shots.length, 1); assert.ok(!tk.S.events.some(e => e.k === 'not_shot'));
 });
+
+test('V3.17: "not a ball" on a ball lying in a shallow pocket teaches that pocket; a ball hanging in its jaws still counts (Nov 9 22:20)', () => {
+  // the camera of Nov 9 22:20: a ball down in the top side pocket maps onto its bag line from (38.6, 35) to (38, 27.6)
+  const tk = makeTracker(P, { practice: true, autoRack: false, rackNew: false }); tk.setBags([{ i: 4, ax: 38.6, ay: 35, bx: 38, by: 27.6 }]);
+  const others = [{ num: 0, x: 20, y: 20 }, { num: 3, x: 60, y: 10 }];
+  let t = settle(tk, 0, [...others, { num: 5, x: 39.3, y: 35.9 }]);
+  const k = tk.S.tracks.find(tr => Math.hypot(tr.x - 39.3, tr.y - 35.9) < 1).key; tk.notBall(k);
+  assert.ok(tk.S.shallow[4] != null, JSON.stringify(tk.S.shallow));
+  t = settle(tk, t, [...others, { num: 5, x: 39.1, y: 35.6, nb: 0 }], 3); // (moved about in the pocket)
+  assert.ok(!tk.S.tracks.some(tr => tr.state !== 'dropped' && Math.hypot(tr.x - 39.2, tr.y - 35.7) < 2), 'in the pocket, not on the table');
+  assert.ok(tk.S.events.some(e => e.k === 'in_pocket_seen' && e.shallow));
+  // a ball hanging in the jaws of that pocket, set there: a ball
+  t = settle(tk, t, [...others, { num: 7, x: 39, y: 37.8 }], 3);
+  assert.ok(tk.S.tracks.some(tr => tr.state !== 'dropped' && Math.hypot(tr.x - 39, tr.y - 37.8) < 1), 'the hanger is a ball');
+  // learned for the table: a new tracker with the app's kept value does the same
+  const tk2 = makeTracker(P, { practice: true, autoRack: false, rackNew: false, shallow: tk.S.shallow }); tk2.setBags([{ i: 4, ax: 38.6, ay: 35, bx: 38, by: 27.6 }]);
+  settle(tk2, 0, [...others, { num: 5, x: 39.3, y: 35.9 }], 3);
+  assert.ok(!tk2.S.tracks.some(tr => tr.state !== 'dropped' && Math.hypot(tr.x - 39.3, tr.y - 35.9) < 2));
+});

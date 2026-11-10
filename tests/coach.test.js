@@ -132,3 +132,11 @@ test('V3.16: a Fargo 550\'s aim, and a hard stroke costs make percentage', () =>
   const r = COACH.plan([{ n: 0, x: cue[0], y: cue[1] }, { n: 9, x: A[0], y: A[1] }], P);
   assert.ok(r.path.make >= 0.55 && r.path.make <= 0.97, 'straight in, 3 ft and 3 ft: ' + r.path.make); // (was 0.44 with 0.2 degrees)
 });
+
+test('V3.17: the plan is made for a level (the player\'s Fargo plus 100): a stronger level makes more; very hard is there for a draw', () => {
+  const pk = P.pockets.reduce((b, q) => (q.x + q.y > b.x + b.y ? q : b)), a = Math.PI + 24 * Math.PI / 180, u = [Math.cos(a), -Math.abs(Math.sin(a))];
+  const A = [pk.x + u[0] * 36, pk.y + u[1] * 36], cue = [A[0] + u[0] * (36 + 2 * P.R), A[1] + u[1] * (36 + 2 * P.R)], lay = [{ n: 0, x: cue[0], y: cue[1] }, { n: 9, x: A[0], y: A[1] }];
+  const hi = COACH.plan(lay, P, { level: 700 }).path.make, lo = COACH.plan(lay, P, { level: 400 }).path.make;
+  assert.ok(hi > lo + 0.15, 'Fargo 700 ' + hi + ' against 400 ' + lo);
+  const r = COACH.plan(lay, P, { level: 600 }); assert.ok(['soft', 'soft to medium', 'medium', 'medium to hard', 'hard', 'very hard'].includes(r.path.stroke.speed));
+});

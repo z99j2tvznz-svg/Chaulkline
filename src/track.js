@@ -71,10 +71,11 @@ function makeTracker(P, opts) {
     bagDist: 1.5,       // in from the line
     bags: [],
     ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    shallow: {},        // pocket index -> place on its bag line from which a new spot is a ball lying in it (V3.17, see notBall)
   }, opts || {});
   const R = P.R, L = P.L, W = P.W, EPS = 1e-4;
   let keyN = 0;
-  const S = { t: 0, tracks: [], phase: 'still', stillSince: null, shot: null, shots: [], gone: [], events: [], lastNames: '', bagT: {}, bagNew: {}, notes: [], say: [], touchT: -9, rackAt: 0, setup: true }; // notes: made balls found after their shot ended, for the app to tell; say: rack done / not a shot, for the app
+  const S = { t: 0, tracks: [], phase: 'still', stillSince: null, shot: null, shots: [], gone: [], events: [], lastNames: '', bagT: {}, bagNew: {}, notes: [], say: [], touchT: -9, rackAt: 0, setup: true, notAt: [], shallow: Object.assign({}, O.shallow) }; // notes: made balls found after their shot ended, for the app to tell; say: rack done / not a shot, for the app
   const ev = (k, d) => { const e = Object.assign({ t: +S.t.toFixed(2), k }, d); S.events.push(e); if (S.events.length > 30000) S.events.splice(0, 3000); return e; };
   const live = tr => tr.state !== 'gone' && tr.state !== 'dropped';
   const ballsNow = () => S.tracks.filter(tr => tr.ok && live(tr));
@@ -138,6 +139,12 @@ function makeTracker(P, opts) {
       if (Math.hypot(sp.x - b.ax - u * dx, sp.y - b.ay - u * dy) <= O.bagDist) return b.i; }
     return null;
   }
+  // where a spot lies on a pocket's bag line: u 0 a ball just below the cloth, 1 four inches down (null when on none)
+  function bagAt(x, y) {
+    let best = null; for (const b of O.bags) { const dx = b.bx - b.ax, dy = b.by - b.ay, l2 = dx * dx + dy * dy || 1, u = ((x - b.ax) * dx + (y - b.ay) * dy) / l2, uc = Math.max(0, Math.min(1, u)), d = Math.hypot(x - b.ax - uc * dx, y - b.ay - uc * dy);
+      if (d <= O.bagDist * 1.5 && (!best || d < best.d)) best = { i: b.i, u, d }; }
+    return best;
+  }
   function pocketNear(x, y) {
     let best = null, bd = 1e9; for (let i = 0; i < P.pockets.length; i++) { const pk = P.pockets[i], d = Math.hypot(x - pk.x, y - pk.y) - pk.r; if (d < bd) { bd = d; best = i; } }
     return { i: best, d: bd };
@@ -167,6 +174,14 @@ function makeTracker(P, opts) {
       // a ball lying in a far pocket: not on the table, but a sign that a ball went into that pocket
       const bag = (sp.score == null ? 1 : sp.score) < O.bagScore ? bagOf(sp) : null;
       if (bag != null) { if (!(t - (S.bagT[bag] || -9) < 1.5)) { S.bagNew[bag] = t; ev('in_pocket_seen', { pocket: bag }); } S.bagT[bag] = t; continue; }
+      // a ball lying in a shallow pocket, still seen (V3.17, owner Nov 10: the owner's pockets are shallow and a made ball sits
+      // in view; a tap "not a ball" on it teaches that pocket's depth, kept for the table): in the pocket, not on the table
+      // (a ball the camera sees down in a far pocket maps a few inches out onto the table, along that pocket's bag line; a
+      // ball being followed that came to rest there stays a ball)
+      const bg = bagAt(sp.x, sp.y);
+      if (bg && S.shallow[bg.i] != null && bg.u >= S.shallow[bg.i] - 0.15 && !S.tracks.some(tr => live(tr) && Math.hypot(tr.x - sp.x, tr.y - sp.y) < 2.5)) { if (!(t - (S.bagT[bg.i] || -9) < 1.5)) { S.bagNew[bg.i] = t; ev('in_pocket_seen', { pocket: bg.i, shallow: true }); } S.bagT[bg.i] = t; continue; }
+      // a spot the player said is not a ball (chalk, a mark), unless a ball being followed is there now
+      if (S.notAt.some(q => Math.hypot(q.x - sp.x, q.y - sp.y) < 1.3) && !S.tracks.some(tr => live(tr) && Math.hypot(tr.x - sp.x, tr.y - sp.y) < 3)) continue;
       const m = pocketNear(sp.x, sp.y).d < 3 ? R + 0.6 : R + 1.2; // at a pocket a ball in the mouth can sit right on the line
       if (sp.x < R - m || sp.y < R - m || sp.x > L - R + m || sp.y > W - R + m) continue;
       if (spots.some(q => Math.hypot(q.px - sp.px, q.py - sp.py) < 0.5 * Math.min(q.r, sp.r))) continue;
@@ -448,7 +463,7 @@ function makeTracker(P, opts) {
     tr.state = 'gone'; tr.goneT = t; const d = { key: tr.key, num: tr.num, sure: tr.sure, pocket, late: true };
     if (tr.num !== 0 && !S.gone.includes(tr.num)) S.gone.push(tr.num); // the cue ball comes back (see pocketed)
     sh.made.push(d); if (tr.key === sh.cueKey || tr.num === 0) sh.scratch = true; sh.updated = t;
-    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)], v: +(tr.vLost || 0).toFixed(1) }); S.notes.push({ n: sh.n, num: tr.num, pocket, scratch: tr.num === 0 });
+    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)], v: +(tr.vLost || 0).toFixed(1) }); S.notes.push({ n: sh.n, key: tr.key, num: tr.num, pocket, scratch: tr.num === 0 });
   }
 
   // New rack or End session: the last shot's calls are settled now, not left waiting (Oct 30: the 9, the last ball of the
@@ -735,7 +750,17 @@ function makeTracker(P, opts) {
     tr.pin = id; tr.num = id; tr.sure = true; tr.ok = true; if (tr.state === 'new') tr.state = 'rest';
     ev('tap', { key: tr.key, num: id }); name(); return true;
   }
-  function notBall(key) { const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.state = 'dropped'; tr.ok = false; ev('not_ball', { key, num: tr.num }); S.tracks = S.tracks.filter(x => x !== tr); name(); return true; }
+  // the player's "not a ball" (V3.17: it used to drop only the track, and the next look found the spot again as a new one):
+  // remembered. On a pocket's bag line (a ball lying in that pocket, seen: the owner's pockets are shallow, Nov 9 22:20 the
+  // 5 in the top side pocket came out 3 in onto the table) the pocket learns where on its line such a ball shows (kept for
+  // the table by the app); elsewhere the spot itself, for the session
+  function notBall(key) {
+    const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.state = 'dropped'; tr.ok = false;
+    const bg = bagAt(tr.x, tr.y);
+    if (bg) S.shallow[bg.i] = Math.max(-0.1, Math.min(S.shallow[bg.i] != null ? S.shallow[bg.i] : 9, bg.u)); else S.notAt.push({ x: tr.x, y: tr.y });
+    ev('not_ball', { key, num: tr.num, pocket: bg ? bg.i : null, u: bg ? +bg.u.toFixed(2) : null });
+    S.tracks = S.tracks.filter(x => x !== tr); name(); return true;
+  }
   function inPocket(key) { const tr = S.tracks.find(x => x.key === key); if (!tr) return false; tr.pocket = null; ev('tap_pocketed', { key, num: tr.num }); pocketed(tr); name(); return true; }
   function newRack() { finish(); for (const tr of S.tracks) tr.state = 'dropped'; S.tracks = []; S.gone = []; S.rackAt = S.shots.length; S.recon = null; S.setup = true; S.phase = 'hands'; S.stillSince = null; S.shot = null; ev('new_rack', {}); }
 

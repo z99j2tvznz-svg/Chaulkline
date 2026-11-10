@@ -57,7 +57,10 @@ function coachFactory(sim) {
     // otherwise): 0.09 degrees on the cue ball's line. In the simulation that makes a straight-in with 3 ft each way about
     // 81%, a 30-degree cut 2.5 ft each way 77%, 45 degrees 61%, 4 ft to a ball 2 ft from the pocket at 15 degrees 87%.
     // (Before, 0.2 degrees: those were 44%, 45%, 36% and 47%, a weak player, not a pro.)
-    const AIM_SD = 0.09 * D2R, OB_SD = 0.6 * D2R;
+    // V3.17 (owner, Nov 10: the coaching teaches the next level up, not the player's own game): o0.level is the Fargo the
+    // plan is made for (the app sends the player's own plus 100); 0.09 degrees at 550, halved every 150 points up
+    const LEVEL = o0.level > 150 && o0.level < 950 ? o0.level : 550, AIM_SD = 0.09 * Math.pow(2, (550 - LEVEL) / 150) * D2R, OB_SD = 0.6 * D2R;
+    const DIFF_K = Math.pow(2, (550 - LEVEL) / 300); // (hard strokes cost a weaker player more)
     function erf(x) { const t = 1 / (1 + 0.3275911 * Math.abs(x)), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x >= 0 ? y : -y; }
     function pMake(s, o) {
       const tol = (o.pk.corner ? 1.4 : 1.0) * Math.max(0.35, Math.cos((o.entry || 0) * D2R)), tolA = Math.atan(tol / Math.max(1, o.dist));
@@ -121,8 +124,9 @@ function coachFactory(sim) {
     // own hardest draw to their hardest follow (the draw test; half a radius each way until then); side spin in tips, a tip
     // being what the spin test measured (0.17 of the radius until then), up to two tips in the search and three for the best
     const SP = o0.speeds && o0.speeds.length === 3 && o0.speeds.every(v => v > 0.3 && v < 15) ? o0.speeds : [1.6, 3.2, 6];
-    const MPH = [SP[0], Math.sqrt(SP[0] * SP[1]), SP[1], Math.sqrt(SP[1] * SP[2]), SP[2]], TRY = [0, 1, 2, 3, 4];
-    const SPEED_WORD = ['soft', 'soft to medium', 'medium', 'medium to hard', 'hard'];
+    // (V3.17: and very hard, half again the hard roll: a draw near break speed, owner Nov 10)
+    const MPH = [SP[0], Math.sqrt(SP[0] * SP[1]), SP[1], Math.sqrt(SP[1] * SP[2]), SP[2], 1.5 * SP[2]], TRY = [0, 1, 2, 3, 4, 5];
+    const SPEED_WORD = ['soft', 'soft to medium', 'medium', 'medium to hard', 'hard', 'very hard'];
     const TR = o0.tipRange || {}, BD = TR.draw < -0.1 && TR.draw > -0.8 ? TR.draw : -0.45, BF = TR.follow > 0.1 && TR.follow < 0.8 ? TR.follow : 0.45;
     const TIPS = [BD, BD / 2, 0, BF / 2, BF], TIP = o0.spinTip > 0.05 && o0.spinTip < 0.4 ? o0.spinTip : 0.17, SIDES = [-2, -1, 0, 1, 2].map(k => k * TIP);
     const init = () => [{ id: 0, x: cue.x, y: cue.y }].concat(objs.map(o => ({ id: o.n, x: o.x, y: o.y })));
@@ -175,11 +179,11 @@ function coachFactory(sim) {
       // simple strokes first: soft to medium, the tip near the middle, no side unless it pays; few cushions (Dr. Dave)
       // (V3.15: side spin and extra cushions cost a little, not a lot: coming into the line with spin or more rails is good
       // position play, owner Nov 9 21:33)
-      const simple = c => (c.p <= 3 ? 1 : 0.95) * (1 - 0.02 * Math.abs(Math.round(c.a / TIP)));
+      const simple = c => (c.p <= 3 ? 1 : c.p === 4 ? 0.95 : 0.9) * (1 - 0.02 * Math.abs(Math.round(c.a / TIP)));
       // a harder stroke is harder to make (V3.16, owner Nov 10: three tips of side with full draw on a thin cut is a hard make
       // even for a pro): the aim error grows with side spin (squirt and swerve the player has to allow for), with the tip far
       // from the middle and with speed past medium
-      const diff = c => 1 + 0.3 * Math.abs(Math.round(c.a / TIP)) + 1.2 * Math.max(0, Math.abs(c.b) - 0.25) + 0.12 * Math.max(0, c.p - 2);
+      const diff = c => 1 + DIFF_K * (0.3 * Math.abs(Math.round(c.a / TIP)) + 1.2 * Math.max(0, Math.abs(c.b) - 0.25) + 0.12 * Math.max(0, c.p - 2));
       const rails = pts => { let n = 0, on = false; for (const p of pts) { const at = p[0] < R + 0.25 || p[0] > L - R - 0.25 || p[1] < R + 0.25 || p[1] > W - R - 0.25; if (at && !on) n++; on = at; } return n; };
       // (V3.16, owner Nov 10: more cushions are good position play when they bring the cue ball into the line; their risk is
       // in the runs with the player's errors already, so no cost of their own)
@@ -241,6 +245,7 @@ function coachFactory(sim) {
           let da0 = null;
           for (const b of TIPS) {
             if (jack && (b < 0 || p > 2)) continue; // (cue raised: no draw, medium at most)
+            if (p === 5 && Math.abs(b) < 0.2) continue; // (very hard only for a real draw or follow)
             for (const da of da0 == null ? [0, 0.5, -0.5, 1, -1, 1.5, -1.5] : [da0, da0 + 0.5, da0 - 0.5]) { const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, a, b, ini); if (potted(r)) { da0 = da; direct.push({ kind: 'pot', o, s, ang: ang0 + da * D2R, da: da * D2R, p, a, b, r, init: ini, tight, v0: nextQ(r) * railF(r) * (tight.length ? 0.9 : 1), rf: railF(r) * (tight.length ? 0.9 : 1) }); break; } }
           }
         }

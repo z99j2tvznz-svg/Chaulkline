@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.16.0';
+const VERSION = 'V3.17.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -89,7 +89,7 @@ function header() {
     gpu: !!navigator.gpu, engine: DET.ep, engineSetting: A.engine, threads: DET.threads(), isolated: !!window.crossOriginIsolated, cores: navigator.hardwareConcurrency || null, shape: A.shape, kmax: r2(A.kmax), ft: A.ft, picture: A.tableWH || [A.W, A.H], pictureNow: [A.W, A.H], quad: A.quad && A.quad.map(p => [r1(p[0]), r1(p[1])]), rot: A.rot, box: A.box && A.box.map(Math.round),
     camOk: A.cam ? A.cam.ok : null, cam: A.camInfo, lens: LENS };
 }
-function shotRow(sh) { return { n: sh.n, t0: r2(sh.t0), t1: r2(sh.t1), cue: sh.cueNum, first: sh.firstNum, made: sh.made.map(m => ({ num: m.num, pocket: m.pocket, sure: m.sure })), scratch: sh.scratch, break: sh.break, hidden: sh.hidden, before: sh.before, after: sh.after, paths: sh.paths, test: sh.test }; }
+function shotRow(sh) { return { n: sh.n, t0: r2(sh.t0), t1: r2(sh.t1), cue: sh.cueNum, first: sh.firstNum, made: sh.made.map(m => Object.assign({ num: m.num, pocket: m.pocket, sure: m.sure }, m.seen === false ? { seen: false } : {})), scratch: sh.scratch, break: sh.break, hidden: sh.hidden, before: sh.before, after: sh.after, paths: sh.paths, test: sh.test }; }
 
 // ---------- home ----------
 // A newer version on the site (V3.1.2; Nov 1: the page stayed open in Safari from an earlier test, and Start again and
@@ -111,6 +111,7 @@ function renderHome() {
   const sf = $('#segFt'); sf.innerHTML = '';
   for (const f of [7, 8, 9]) { const b = document.createElement('button'); b.textContent = f + ' ft'; b.className = f === A.ft ? 'on' : ''; b.onclick = () => { A.ft = f; save(); renderHome(); }; sf.appendChild(b); }
   // the game for Play a rack (V3.9.0): 9-ball, or 8-ball (all fifteen balls; the rack is over when the 8 goes in)
+  const sfg = $('#segFargo'); if (sfg) { sfg.innerHTML = ''; for (const v of [300, 400, 500, 600, 700]) { const b = document.createElement('button'); b.textContent = String(v); b.className = Math.abs(fargo() - v) < 50 ? 'on' : ''; b.onclick = () => { try { localStorage.setItem(FG_KEY, String(v)); } catch (e) { } renderHome(); }; sfg.appendChild(b); } }
   const sg = $('#segGame'); if (sg) { sg.innerHTML = ''; for (const g of [9, 8]) { const b = document.createElement('button'); b.textContent = g + '-ball'; b.className = g === (A.game || 9) ? 'on' : ''; b.onclick = () => { A.game = g; save(); renderHome(); }; sg.appendChild(b); } }
   const gb = $('#goBtn small'); if (gb) gb.textContent = (A.game === 8 ? '8-ball, all fifteen balls: made balls, scratches, runs; the rack is over when the 8 goes in or only the cue ball is left.' : '9-ball: made balls, scratches, the first ball hit, runs; the rack is done by itself when only the cue ball is left.');
   const se = $('#segEng'); if (se) { se.innerHTML = ''; for (const [v, l] of [['cpu', 'Processor'], ['gpu', 'Graphics chip']]) { const b = document.createElement('button'); b.textContent = l; b.className = v === A.engine ? 'on' : ''; b.onclick = () => { A.engine = v; save(); renderHome(); }; se.appendChild(b); } }
@@ -123,10 +124,10 @@ function renderHome() {
 }
 const POCKETS = ['bottom-left', 'bottom side', 'bottom-right', 'top-left', 'top side', 'top-right'];
 function shotWords(s) {
-  const pk = i => i == null ? '' : ' (' + POCKETS[i] + ')';
+  const pk = (i, m) => i == null ? '' : ' (' + POCKETS[i] + (m && m.seen === false ? ', ⊘ not seen' : '') + ')';
   const made = s.made.filter(m => m.num !== s.cue && m.num !== 0);
   if (s.notShot) return 'not counted: ' + (s.notShot === 'move' ? 'the cue ball was pushed with the cue, not struck' : s.notShot === 'setup' ? 'setting up the drill' : 'not a shot');
-  const w = [made.length ? made.map(m => (m.num == null ? 'a ball' : 'the ' + m.num) + pk(m.pocket)).join(', ') + ' in' : 'nothing in'];
+  const w = [made.length ? made.map(m => (m.num == null ? 'a ball' : 'the ' + m.num) + pk(m.pocket, m)).join(', ') + ' in' : 'nothing in'];
   if (s.scratch) w.push('scratch'); if (s.break) w[0] = 'Break: ' + w[0]; else if (s.first != null) w.push('first hit the ' + (s.first === 0 ? 'cue' : s.first));
   return w.join(' · ');
 }
@@ -219,6 +220,10 @@ function smallImg() {
 // practice reads all fifteen balls (V3.9.0); Play a rack is 9-ball, the cue ball and 1-9
 const ALL15 = Array.from({ length: 16 }, (_, i) => i);
 // the coaching test (V3.10): small runouts with the 9 always on, balls set out at will (as practice), the cue ball and 1-9
+// the pockets of this table where a made ball lies in view (V3.17): learned from the player's "not a ball" taps, kept
+const SH_KEY = () => KEY + '.shallow.' + A.ft;
+function shallowGet() { try { return JSON.parse(localStorage.getItem(SH_KEY()) || '{}') || {}; } catch (e) { return {}; } }
+function shallowSave() { if (!A.tk) return; try { localStorage.setItem(SH_KEY(), JSON.stringify(A.tk.S.shallow)); } catch (e) { } }
 const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false, ids: ALL15 } : mode === 'coach' ? { practice: true, autoRack: false, rackNew: false } : A.game === 8 ? { ids: ALL15, eightEnds: true } : {};
 async function start(mode) {
   homeMsg(''); A.mode = mode === 'practice' || mode === 'coach' ? mode : 'play'; CO.plan = null; CO.sig = ''; CO.atStart = null;
@@ -228,7 +233,7 @@ async function start(mode) {
   // page kept the one from before that: Nov 9 21:33, the power test session went home and its log never came along)
   if (A.sess && DBG.ev.length) dbgPersist(); try { PREV = JSON.parse(localStorage.getItem(KEY + '.dbg') || 'null'); } catch (e) { }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
-  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, game: A.mode === 'play' ? (A.game || 9) : null, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode !== 'play'; $('#rejectBtn').hidden = true; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
+  A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt, shallow: shallowGet() })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, game: A.mode === 'play' ? (A.game || 9) : null, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode !== 'play'; $('#rejectBtn').hidden = true; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
@@ -520,7 +525,28 @@ function flushShots() {
   if (tk.S.shots.length > A.nShots) { for (const sh of tk.S.shots.slice(A.nShots)) onShotEnd(sh); A.nShots = tk.S.shots.length; }
   for (const n of tk.S.notes.splice(0)) onLateMade(n);
 }
+// A made ball whose pocket was not seen (V3.17, owner Nov 10: at 2 or 3 looks a second a fast ball is gone between looks):
+// worked out from what was seen. Its way: its own path when it was seen moving, else from the cue ball's start through
+// where it sat (the shot's line), else none. The pocket that way (within 40 degrees), else the nearest one. Marked not
+// seen ("⊘") wherever it is said.
+function guessPockets(sh) {
+  const cue = (sh.paths || []).find(p => p.key === sh.cueKey);
+  for (const m of sh.made) {
+    if (m.pocket != null || m.key === sh.cueKey) continue;
+    const mine = b => (m.key != null && b.key === m.key) || (m.key == null && m.num != null && b.num === m.num);
+    const b0 = (sh.before || []).find(mine); if (!b0) continue; const o = [b0.rx != null ? b0.rx : b0.x, b0.ry != null ? b0.ry : b0.y];
+    const own = (sh.paths || []).find(mine); let d = null;
+    if (own && own.p.length > 1) { const q = own.p[own.p.length - 1]; d = [q[1] - own.p[0][1], q[2] - own.p[0][2]]; }
+    if ((!d || Math.hypot(d[0], d[1]) < 1.5) && cue && cue.p.length && (sh.first === b0.key || (sh.firstNum != null && sh.firstNum === m.num) || (sh.first == null && sh.made.filter(q => q.key !== sh.cueKey).length === 1))) d = [o[0] - cue.p[0][1], o[1] - cue.p[0][2]];
+    let best = null;
+    A.P.pockets.forEach((pk, i) => { const v = [pk.x - o[0], pk.y - o[1]], dist = Math.hypot(v[0], v[1]); let ang = 0;
+      if (d && Math.hypot(d[0], d[1]) > 0.5) ang = Math.acos(Math.max(-1, Math.min(1, (v[0] * d[0] + v[1] * d[1]) / (dist * Math.hypot(d[0], d[1]))))) * 180 / Math.PI;
+      const sc = d ? (ang < 40 ? ang + dist / 20 : 1e3 + dist) : dist; if (!best || sc < best.sc) best = { i, sc }; });
+    if (best) { m.pocket = best.i; m.seen = false; dbg('pocket_guess', { n: sh.n, num: m.num, pocket: best.i, way: !!d }); }
+  }
+}
 function onShotEnd(sh) {
+  guessPockets(sh);
   A.pathClearAt = performance.now() + 1000; // (the shot ends 1.2 s after the balls rest: the paths go about 2 s after; owner, Nov 3)
   sh.paths = pathsRow(sh); const row = shotRow(sh); if (A.sess.rackOpen) { A.sess.rackOpen = false; if (A.sess.shots.length) A.sess.rack++; }
   A.sess.shots.push(Object.assign({ n: sh.n, rack: A.sess.rack, cue: sh.cueNum, first: sh.firstNum, made: row.made, scratch: sh.scratch, break: sh.break, t: Date.now() }, REVIEW.shotDetail(sh), STK.of.has(sh.n) ? { stroke: STK.of.get(sh.n) } : {}));
@@ -554,7 +580,7 @@ function coachWords(c) {
     else { const a = Math.round(Math.abs(s.along)), b = Math.round(Math.abs(s.side)), t = []; if (a >= 3) t.push(a + ' in ' + (s.along > 0 ? 'long' : 'short')); if (b >= 3) t.push(b + ' in to the side'); w.push('stopped ' + (t.join(', ') || Math.round(s.off) + ' in off the spot')); } }
   return w.length ? ' · ' + w.join(', ') : '';
 }
-function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row) + coachWords(row.coach) + (row.coach && row.coach.landed ? ' · cue ball ' + ({ green: 'in the green (90%+)', lightgreen: 'in the light green (80-90%)', yellow: 'in the yellow (60-80%)', red: 'in the red (50-60%)', low: 'where the next shot is under 50%', blocked: 'behind a ball' })[row.coach.landed] : row.coach && row.coach.zone ? ' · cue ball outside the zone' : '')); }
+function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row) + coachWords(row.coach) + (row.coach && row.coach.landed ? ' · cue ball ' + ({ green: 'great position: in the green (90%+)', lightgreen: 'good position: in the light green (80-90%)', yellow: 'in the yellow (60-80%)', red: 'in the red (50-60%)', low: 'where the next shot is under 50%', blocked: 'behind a ball' })[row.coach.landed] : row.coach && row.coach.zone ? ' · cue ball outside the zone' : '')); }
 // Each ball's path in the shot: the tracker's positions from just before the shot started, kept after it ends (and for the
 // balls that went in) until the next shot starts, so a quick look at the phone after the shot shows the whole of it.
 const PATH = new Map(); // ball key -> { num, pts: [{ t, x, y }] }
@@ -577,9 +603,10 @@ function pathsRow(sh) { const o = []; for (const [key, e] of PATH) if (moved(e.p
 // a ball found to have gone in after its shot ended (its spot is bare cloth now): the shot's line is corrected and said
 function onLateMade(n) {
   const row = A.sess.shots.find(s => s.n === n.n), sh = A.tk.S.shots.find(s => s.n === n.n);
+  if (sh) { guessPockets(sh); const m = sh.made.find(q => q.key === n.key || (n.num != null && q.num === n.num)); if (m && n.pocket == null && m.pocket != null) { n.pocket = m.pocket; n.seen = false; } }
   if (row && sh) { row.made = shotRow(sh).made; row.scratch = sh.scratch; if (row.notShot === 'move' && (row.made.length || row.scratch)) delete row.notShot; } // (something went in: it was a shot)
   dbg('late_made', n); renderDown(); drillLate(n.n);
-  toast('Shot ' + n.n + ': ' + (n.num === 0 ? 'the cue ball went in too (scratch)' : 'the ' + (n.num == null ? 'ball' : n.num) + ' went in too') + (n.pocket != null ? ' (' + POCKETS[n.pocket] + ')' : ''));
+  toast('Shot ' + n.n + ': ' + (n.num === 0 ? 'the cue ball went in too (scratch)' : 'the ' + (n.num == null ? 'ball' : n.num) + ' went in too') + (n.pocket != null ? ' (' + POCKETS[n.pocket] + (n.seen === false ? ', ⊘ not seen' : '') + ')' : ''));
 }
 // Each ball's own colour, read from the picture while it rests (sets differ: a pink 4, a teal 2, a black 9 with a yellow
 // band), for its trail: the median of its coloured pixels, and whether it is mostly white, black or banded (white and a
@@ -1234,7 +1261,7 @@ function coachStroke(c, F, st, n, pa) {
   else if (pa && pa.tight && pa.tight.length) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('Tight past the ' + pa.tight.join(' and the '), X, y + 34); }
   else if (pa && shot !== 'safety' && !pa.noShape && (pa.next || 0) < 0.6) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('No stroke reaches the zone from here', X, y + 34); }
   else if (pa && pa.alt) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.65)'; c.fillText('Also: ' + ({ pot: 'pot', bank: 'bank', kick: 'kick', kick2: '2-rail kick', safety: 'safety' }[pa.alt.kind] || pa.alt.kind) + (pa.alt.kind === 'safety' ? '' : ' ' + pct(pa.alt.make)), X, y + 34); }
-  const lv = st.speed ? st.power : [1, 3, 5][PT_LEVELS.indexOf(pw)] || 3; for (let i = 0; i < 5; i++) { c.fillStyle = i < lv ? 'rgba(89,214,232,.95)' : 'rgba(244,241,232,.18)'; c.fillRect(x - R + i * 10, y + R + 8, 8, 6); }
+  const lv = st.speed ? st.power : [1, 3, 5][PT_LEVELS.indexOf(pw)] || 3; for (let i = 0; i < 6; i++) { c.fillStyle = i < lv ? 'rgba(89,214,232,.95)' : 'rgba(244,241,232,.18)'; c.fillRect(x - R + i * 8.4, y + R + 8, 6.6, 6); }
   // the zone's colours, for reading it (owner's bands)
   const ly = y + R + 30; let lx = x - R; c.font = '500 10px system-ui, -apple-system, sans-serif';
   for (const [col, t] of [['rgba(46,204,113,.95)', '90%+'], ['rgba(140,230,170,.95)', '80'], ['rgba(241,196,15,.95)', '60'], ['rgba(231,76,60,.95)', '50']]) { c.fillStyle = col; c.fillRect(lx, ly - 4, 9, 9); c.fillStyle = 'rgba(244,241,232,.8)'; c.fillText(t, lx + 12, ly + 1); lx += 12 + c.measureText(t).width + 10; }
@@ -1263,9 +1290,13 @@ function coachOpts() {
   if (st.spin && st.spin.res && st.spin.railMu == null) { const f = spinFit(st.spin.res); if (f) { Object.assign(st.spin, f); stSave('spin', st.spin); dbg('stroke_test', { kind: 'spin', refit: f }); } }
   if (st.spin && st.spin.tip > 0.05 && st.spin.tip < 0.4) o.spinTip = st.spin.tip;
   if (st.spin && st.spin.railMu > 0.05 && st.spin.railMu < 0.8) o.railMu = st.spin.railMu;
-  if (st.draw && (st.draw.draw || st.draw.follow)) o.tipRange = { draw: st.draw.draw, follow: st.draw.follow };
+  // (V3.17, owner Nov 10: the coaching is billiard theory one level up, not the player's own game: the draw test no longer
+  // bounds the plan's draw and follow, it is kept for the review; the plan is made for the player's Fargo plus 100)
+  o.level = Math.min(800, fargo() + 100);
   return o;
 }
+const FG_KEY = KEY + '.fargo';
+function fargo() { try { const v = +localStorage.getItem(FG_KEY); return v >= 200 && v <= 800 ? v : 500; } catch (e) { return 500; } }
 const levelMph = L => { const ps = ptScale(); return ps ? ps[L] : { soft: 1.6, medium: 3.2, hard: 6 }[L]; };
 // a draw is hit harder than a roll at the same word (owner, Nov 10: a soft draw is a little more than a stop shot, a medium
 // one a much harder hit that comes back several diamonds, a hard one nearly break speed, to the short cushion and on): the
@@ -1474,7 +1505,7 @@ function pickBall(n) {
   const was = b.num; saveTap(b, n, was); A.tk.pin(b.key, n); dbg('tap', { key: b.key, num: n, was, at: [r1(b.x), r1(b.y)] });
   toast(n === was ? 'Kept: the ' + (n === 0 ? 'cue ball' : n) : 'Renamed: the ' + (n === 0 ? 'cue ball' : n) + (was != null ? ' (was ' + (was === 0 ? 'cue' : was) + ')' : ''));
 }
-$('#pickNot').onclick = () => { const k = A.pick, b = A.tk.S.tracks.find(t => t.key === k); closePick(); if (b) { saveTap(b, 'not', b.num); A.tk.notBall(k); dbg('tap_not', { key: k }); toast('Removed: not a ball'); } };
+$('#pickNot').onclick = () => { const k = A.pick, b = A.tk.S.tracks.find(t => t.key === k); closePick(); if (b) { saveTap(b, 'not', b.num); const was = JSON.stringify(A.tk.S.shallow); A.tk.notBall(k); const learnt = JSON.stringify(A.tk.S.shallow) !== was; if (learnt) shallowSave(); dbg('tap_not', { key: k, shallow: learnt ? A.tk.S.shallow : undefined }); toast(learnt ? 'Removed: a ball lying in the pocket. Remembered for this pocket' : 'Removed: not a ball'); } };
 $('#pickPocket').onclick = () => { const k = A.pick; closePick(); A.tk.inPocket(k); dbg('tap_pocketed', { key: k }); toast('Marked as in a pocket'); };
 $('#pickCancel').onclick = closePick;
 $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closePick(); });
@@ -1494,7 +1525,7 @@ function hideCard() { $('#card').hidden = true; $('#cam').classList.remove('manu
 $('#card').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.drill) { drillStart(b.dataset.drill); return; }
-  if (b.dataset.ft) { A.ft = +b.dataset.ft; save(); A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.nShots = 0; dbg('ft', { ft: A.ft }); refind('Table size ' + A.ft + ' ft: looking again…'); return; }
+  if (b.dataset.ft) { A.ft = +b.dataset.ft; save(); A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt, shallow: shallowGet() })); A.nShots = 0; dbg('ft', { ft: A.ft }); refind('Table size ' + A.ft + ' ft: looking again…'); return; }
   const a = b.dataset.act;
   if (a === 'accept') acceptTable(); else if (a === 'retry') refind(); else if (a === 'manual') beginManual();
   else if (a === 'undo') { if (A.man && A.man.length) A.man.pop(); if (A.man) manualCard(); }
