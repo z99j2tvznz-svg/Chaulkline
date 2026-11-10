@@ -6,9 +6,11 @@
   discussion-only messages (owner, Nov 10): that talk goes into the next build's entry. DESIGN NOTES.md holds the
   per-build technical notes.
 - Before that edit (and any write to a Drive document: the log, the plans, the feature list), first copy the live file in
-  Drive (copy_file into the same folder, titled "<name> (backup before last edit)"), check the copy has the content, then
-  trash the previous backup copy, and only then edit the live file (owner, Nov 10). One backup per file. Put all the
-  build's log changes in a single update so the copy-and-trash happens once per build. In the log, edit Current state lines
+  Drive (copy_file into the same folder, titled "<name> (backup before last edit)") and check the copy has the content.
+  Then move the previous backup into the folder "Chalkline log backups" (id 1Ln779GIovH9TjU7-DoB6RAfCi4tUjght, in
+  Chalkline test uploads) with update_file parentId, renamed "<name> backup <date time UTC>". Only then edit the live file.
+  Never trash or delete anything: the owner does not want delete prompts (owner, Nov 10). Put all the build's log changes
+  in a single update, so this happens once per build. The owner may also ask for an entry outside a build; write it then. In the log, edit Current state lines
   by their exact text only: never a pattern that can match older entries (Nov 10: a "Next:" pattern overwrote ten old
   lines).
 - Product plans, the feature list and future ideas are private: Drive folder "Chalkline plans",
