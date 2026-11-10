@@ -1678,3 +1678,12 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   - Band labels sit on the outer side of each line.
   - After the shot: c.stop = {off, along, side} against the perfect spot, along the planned arrival direction. The words are
     "stopped on the spot" (4 in or less) or "N in long/short, N in to the side". The % travel words are gone.
+- V3.14.1 (owner, Nov 10: things drawn on top of each other):
+  - The pocket rings are gone. Each pocket gets a dot (in the ball's colour, white when shared) and a 34 px line pointing
+    away from the table: corners diagonal, sides straight out, found from a point 6 in outside the pocket. The line ends in
+    a disc in the ball's colour with its number.
+  - Several balls on one pocket fan out 34 degrees apart, and the ends are sorted by screen x so they read left to right
+    in shot order. The ends are kept inside the picture.
+  - The band labels are now OC and UC.
+  - Thinner lines: the cue ball's planned path 1 px, the object ball's line to the pocket 1.1 px (2.4 px dark under it),
+    the zone's ideal line 0.9 px.

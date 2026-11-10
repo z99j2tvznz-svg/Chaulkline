@@ -128,10 +128,10 @@ a.old { color: var(--muted); font-size: 13px; }
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
     <div class="card glass"><h2>New in V3.14</h2><ul>
+      <li>V3.14.1: pockets marked with a dot and a short line out to the ball's number, instead of big circles. Band lines say OC (overcut) and UC (undercut). The shot lines are thinner.</li>
       <li>The power test works: no roll is taken for a hand move any more. It asks for your soft, medium and hard, three rolls each.</li>
       <li>The plan says soft, medium or hard instead of a number; after the power test, by your own speeds.</li>
       <li>The zone is a fan round the perfect spot, seen from the next ball: wider on the side that still leaves a good shot, 30 degrees at most. Bright green at the spot, yellow edges, no outlines.</li>
-      <li>The band's lines say "thin (overcut)" and "thick (undercut)": the hit on the object ball.</li>
       <li>A line in the ball's colour from the object ball to its pocket, off the cushions for a bank.</li>
       <li>A ball that only just lets the shot past is "tight", not blocked: the plan says "Tight past the 4". Fewer safeties when a pot is there.</li>
       <li>After the shot: where the cue ball stopped against the spot, in inches long or short and to the side.</li>
@@ -3358,7 +3358,7 @@ const COACH = coachFactory(typeof simulate !== 'undefined' ? simulate : typeof m
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.14.0';
+const VERSION = 'V3.14.1';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -4454,13 +4454,25 @@ function coachShotEnd(sh, row, row1) {
   if (sh.scratch) CO.scratchT = A.tk.S.t; // ball in hand next
   row1.coach = c; dbg('coach_shot', Object.assign({ n: sh.n }, c));
 }
-// a pocket's ring in a ball's colour (concentric when two plans use the same pocket), on the cloth
-function coachRing(c, S2, pk, k, col, num) {
-  const r = pk.r + 0.9 + 1.1 * k, pts = []; for (let i = 0; i <= 24; i++) { const a = i / 24 * Math.PI * 2; pts.push(S2(A.cam.proj(pk.x + r * Math.cos(a), pk.y + r * Math.sin(a), 0))); }
-  c.lineWidth = 3.5; c.strokeStyle = 'rgba(11,16,20,.55)'; c.beginPath(); pts.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.stroke();
-  c.lineWidth = 2.2; c.strokeStyle = col; c.stroke();
-  const lp = S2(A.cam.proj(pk.x + (pk.x < A.P.L / 2 ? 1 : -1) * (r + 1.6), pk.y + (pk.y < A.P.W / 2 ? 1 : -1) * (r + 1.6), 0));
-  c.font = '600 11px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineWidth = 3; c.strokeStyle = 'rgba(11,16,20,.6)'; c.strokeText(String(num), lp[0], lp[1]); c.fillStyle = col; c.fillText(String(num), lp[0], lp[1]);
+// the pockets for this ball, the next and the one after (V3.14.1, owner Nov 10: the rings were big and piled on the rest):
+// a dot on the pocket and a short line out away from the table to the ball's number on its colour. Several balls on one
+// pocket each get their own line, spread out and in shot order from left to right on the screen.
+function coachPockets(c, S2, F, pk, bs) {
+  const L = A.P.L, W = A.P.W, ox = pk.x < L * 0.25 ? -1 : pk.x > L * 0.75 ? 1 : 0, oy = pk.y < W / 2 ? -1 : 1;
+  const o = S2(A.cam.proj(pk.x, pk.y, 0)), q = S2(A.cam.proj(pk.x + ox * 6, pk.y + oy * 6, 0));
+  let ux = q[0] - o[0], uy = q[1] - o[1]; const l = Math.hypot(ux, uy) || 1; ux /= l; uy /= l;
+  const n = bs.length, spread = 34 * Math.PI / 180, len = 34, ends = [];
+  for (let k = 0; k < n; k++) { const a = (k - (n - 1) / 2) * spread, ca = Math.cos(a), sa = Math.sin(a); ends.push([o[0] + (ux * ca - uy * sa) * len, o[1] + (ux * sa + uy * ca) * len]); }
+  ends.sort((a, b) => a[0] - b[0]);
+  if (F) for (const e of ends) { e[0] = Math.max(F.x + 10, Math.min(F.x + F.w - 10, e[0])); e[1] = Math.max(F.y + 10, Math.min(F.y + F.h - 10, e[1])); }
+  bs.forEach((b, k) => {
+    const e = ends[k], col = BALLCOL[b.n] || '#eaf1f4';
+    c.beginPath(); c.moveTo(o[0], o[1]); c.lineTo(e[0], e[1]); c.lineWidth = 3.4; c.strokeStyle = 'rgba(11,16,20,.55)'; c.stroke(); c.lineWidth = 1.8; c.strokeStyle = col; c.stroke();
+    c.beginPath(); c.arc(e[0], e[1], 8, 0, Math.PI * 2); c.fillStyle = col; c.fill(); c.lineWidth = 1.2; c.strokeStyle = 'rgba(11,16,20,.7)'; c.stroke();
+    const h = parseInt(col.slice(1), 16), lum = 0.299 * (h >> 16) + 0.587 * (h >> 8 & 255) + 0.114 * (h & 255);
+    c.font = '700 10px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = lum > 140 ? '#16181b' : '#f4f1e8'; c.fillText(String(b.n), e[0], e[1] + 0.5);
+  });
+  c.beginPath(); c.arc(o[0], o[1], 3.2, 0, Math.PI * 2); c.fillStyle = n === 1 ? (BALLCOL[bs[0].n] || '#eaf1f4') : '#f4f1e8'; c.fill(); c.lineWidth = 1.2; c.strokeStyle = 'rgba(11,16,20,.7)'; c.stroke();
 }
 function drawCoach(c, S2, F) {
   // each part on its own: one bad number must not take the rest of the plan off the screen (Nov 8 20:24: the cone's radius was
@@ -4489,7 +4501,7 @@ function drawCoach1(c, S2, F) {
       poly(fz.core); c.fillStyle = grad('46,204,113', .85, .66, .38); c.fill();
       for (const q of fz.sides) if (fin(q)) { poly(q); c.fillStyle = grad('241,196,15', .7, .55, .32); c.fill(); }
       const l0 = S2(A.cam.proj(fz.line[0][0], fz.line[0][1], 0)), l1 = S2(A.cam.proj(fz.line[1][0], fz.line[1][1], 0));
-      c.lineWidth = 1.3; c.strokeStyle = 'rgba(244,241,232,.6)'; c.beginPath(); c.moveTo(l0[0], l0[1]); c.lineTo(l1[0], l1[1]); c.stroke();
+      c.lineWidth = 0.9; c.strokeStyle = 'rgba(244,241,232,.6)'; c.beginPath(); c.moveTo(l0[0], l0[1]); c.lineTo(l1[0], l1[1]); c.stroke();
     }
   }
   // the band the cue ball's path can take for the same stroke aimed to the inside and to the outside of the pocket (the ball
@@ -4506,7 +4518,7 @@ function drawCoach1(c, S2, F) {
         c.lineWidth = 1.7; c.strokeStyle = 'rgba(244,241,232,.92)'; c.stroke();
         // each line's word on its own outer side (V3.14: the two ends close together put the words on top of each other)
         if (p.path.fanThin != null && f.length > 2 && fo.length > 2) {
-          const e = sc(f[f.length - 1]), o = sc(fo[fo.length - 1]), b = sc(f[Math.max(0, f.length - 3)]), t = k === p.path.fanThin ? 'thin (overcut)' : 'thick (undercut)';
+          const e = sc(f[f.length - 1]), o = sc(fo[fo.length - 1]), b = sc(f[Math.max(0, f.length - 3)]), t = k === p.path.fanThin ? 'OC' : 'UC';
           let dx = e[0] - o[0], dy = e[1] - o[1], l = Math.hypot(dx, dy);
           if (l < 4) { dx = -(e[1] - b[1]); dy = e[0] - b[0]; l = Math.hypot(dx, dy) || 1; if (k) { dx = -dx; dy = -dy; } }
           dx /= l; dy /= l; c.font = '600 10px system-ui, -apple-system, sans-serif'; const tw = c.measureText(t).width;
@@ -4525,7 +4537,7 @@ function drawCoach1(c, S2, F) {
   // the object ball's way to the pocket, off the cushions for a bank (V3.14, owner Nov 9): in its colour, every pot
   if (p.path && p.path.ob && p.path.ob.length > 1 && !safety) {
     c.beginPath(); p.path.ob.forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); });
-    c.lineWidth = 3.6; c.strokeStyle = 'rgba(11,16,20,.45)'; c.stroke(); c.lineWidth = 2; c.strokeStyle = BALLCOL[p.A.n] || '#eaf1f4'; c.stroke();
+    c.lineWidth = 2.4; c.strokeStyle = 'rgba(11,16,20,.4)'; c.stroke(); c.lineWidth = 1.1; c.strokeStyle = BALLCOL[p.A.n] || '#eaf1f4'; c.stroke();
   }
   // the cue ball's way: dashed to the ghost ball, solid on from there to the spot (drawn from where the cue ball was)
   const cueNow = now.find(t => t.num === 0), cue0 = CO.balls && CO.balls.find(b => b.n === 0), cue = same && cueNow ? cueNow : cue0;
@@ -4535,16 +4547,16 @@ function drawCoach1(c, S2, F) {
     if (p.path.pre && p.path.pre.length > 1) p.path.pre.forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); // a kick: off the cushions
     else { c.moveTo(cp[0], cp[1]); c.lineTo(gh[0], gh[1]); }
     c.stroke(); c.setLineDash([]);
-    c.lineWidth = 2; c.strokeStyle = 'rgba(244,241,232,.85)'; c.beginPath(); p.path.pts.concat(p.spot ? [p.spot] : []).forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.stroke();
+    c.lineWidth = 1; c.strokeStyle = 'rgba(244,241,232,.9)'; c.beginPath(); p.path.pts.concat(p.spot ? [p.spot] : []).forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.stroke();
   }
   // the perfect spot: a ball-sized ring with a dot
   if (p.spot) { const a = S2(A.cam.proj(p.spot[0], p.spot[1], A.P.R)), e = S2(A.cam.proj(p.spot[0] + A.P.R, p.spot[1], A.P.R)), r = Math.max(3, Math.abs(e[0] - a[0]));
     c.lineWidth = 3.5; c.strokeStyle = 'rgba(11,16,20,.45)'; c.beginPath(); c.arc(a[0], a[1], r, 0, Math.PI * 2); c.stroke(); c.lineWidth = 2; c.strokeStyle = 'rgba(244,241,232,.95)'; c.stroke();
     c.fillStyle = 'rgba(244,241,232,.95)'; c.beginPath(); c.arc(a[0], a[1], 2.2, 0, Math.PI * 2); c.fill(); }
   // the pockets: this ball, the next, the one after
-  const used = {};
-  // (no ring for a pot that is not there)
-  for (const b of [p.noShot ? null : p.A, p.B, p.C]) { if (!b || b.pocket == null) continue; const k = used[b.pocket] = (used[b.pocket] == null ? 0 : used[b.pocket] + 1); coachRing(c, S2, A.P.pockets[b.pocket], k, BALLCOL[b.n] || '#eaf1f4', b.n); }
+  // (none for a pot that is not there)
+  const byPk = new Map(); for (const b of [p.noShot ? null : p.A, p.B, p.C]) { if (!b || b.pocket == null) continue; if (!byPk.has(b.pocket)) byPk.set(b.pocket, []); byPk.get(b.pocket).push(b); }
+  for (const [pi, bs] of byPk) coachPockets(c, S2, F, A.P.pockets[pi], bs);
   // the stroke: a cue ball with the tip where it should meet it, and the power (bottom left of the picture)
   if (p.path && p.path.stroke && F) coachStroke(c, F, p.path.stroke, p.A.n, p.path);
   else if (p.noShot && F) coachNoShot(c, F, p.noShot);
