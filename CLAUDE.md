@@ -1,13 +1,16 @@
 # Notes for Claude sessions on Chalkline
 
 - Running work log (Google Doc, owner's Drive, folder "Chalkline test uploads"): "Chalkline Work Log",
-  id 1ovBCSvR1TBgGqBpaxbLevIz4LyZMea5VsLk4Gm6h49w. Add an entry for every build, decision and reviewed session, and
-  keep its "Current state" section up to date. DESIGN NOTES.md holds the per-build technical notes.
-- Before ANY write to a Drive document (the work log, the plans, the feature list), first copy the live file in Drive
-  (copy_file into the same folder, titled "<name> (backup before last edit)"), check the copy has the content, then trash
-  the previous backup copy, and only then edit the live file (owner, Nov 10). One backup per file, always refreshed right
-  before each edit. In the log, edit Current state lines by their exact text only: never a pattern that can match older
-  entries (Nov 10: a "Next:" pattern overwrote ten old lines).
+  id 1ovBCSvR1TBgGqBpaxbLevIz4LyZMea5VsLk4Gm6h49w. Update it once per build, in one edit: the build, the session
+  reviewed for it and the discussion and decisions that led to it, plus the "Current state" lines. Do not write to it for
+  discussion-only messages (owner, Nov 10): that talk goes into the next build's entry. DESIGN NOTES.md holds the
+  per-build technical notes.
+- Before that edit (and any write to a Drive document: the log, the plans, the feature list), first copy the live file in
+  Drive (copy_file into the same folder, titled "<name> (backup before last edit)"), check the copy has the content, then
+  trash the previous backup copy, and only then edit the live file (owner, Nov 10). One backup per file. Put all the
+  build's log changes in a single update so the copy-and-trash happens once per build. In the log, edit Current state lines
+  by their exact text only: never a pattern that can match older entries (Nov 10: a "Next:" pattern overwrote ten old
+  lines).
 - Product plans, the feature list and future ideas are private: Drive folder "Chalkline plans",
   id 1tw2Vo7jwafisfyxJqHEul1cG-iS51dcY (feature list sheet 1FUEWdZcUKtbCoYRq3EoC5xgVI0dTP6E5yHRdZDKaS6E). This repo is
   public: do not put plans, business ideas or future features in it.
