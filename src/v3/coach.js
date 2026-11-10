@@ -165,14 +165,14 @@ function coachFactory(sim) {
         let made = 0, q = 0, legal = 0, opp = 0;
         for (let i = 0; i < N; i++) {
           const ea = gauss(R0) * AIM_SD, ev = 1 + gauss(R0) * 0.08, es = gauss(R0) * 0.05, et = gauss(R0) * 0.05;
-          const r = runAll(c.ang + ea, MPH[c.p] * 17.6 * ev, c.a + es, Math.max(-0.55, Math.min(0.55, c.b + et)));
+          const r = runAll(c.ang + ea, MPH[c.p] * 17.6 * ev, c.a + es, Math.max(-0.55, Math.min(0.55, c.b + et)), c.init);
           if (c.kind === 'safety') { const ok = r.firstHit === A.n && !r.pocketed.some(z => z.id === 0) && (r.railAfter || r.pocketed.length); if (ok) { legal++; opp += oppBest(r); } continue; }
           if (!potted(r)) continue; made++;
           // the leave with the balls where they may really be (the make is the player's, who sees the real balls; the cut and
           // so the cue ball's way are what the app may have wrong): the same stroke on the moved balls, aimed at the moved ghost
           let rq = r;
           if ((c.kind === 'pot' || c.kind === 'bank') && c.o && c.o.pk) {
-            const balls = init().map(q => ({ id: q.id, x: q.x + gauss(R0) * POS_SD, y: q.y + gauss(R0) * POS_SD })), a1 = balls.find(q => q.id === A.n), c1 = balls[0];
+            const balls = (c.init || init()).map(q => ({ id: q.id, x: q.x + gauss(R0) * POS_SD, y: q.y + gauss(R0) * POS_SD })), a1 = balls.find(q => q.id === A.n), c1 = balls[0];
             const tgt = c.kind === 'bank' ? mirror([c.o.pk.x, c.o.pk.y], c.cu) : [c.o.pk.x, c.o.pk.y], u = unit(sub(tgt, [a1.x, a1.y])), G = [a1.x - 2 * R * u[0], a1.y - 2 * R * u[1]];
             const r2 = runAll(Math.atan2(G[1] - c1.y, G[0] - c1.x) + (c.da || 0) + ea, MPH[c.p] * 17.6 * ev, c.a + es, Math.max(-0.55, Math.min(0.55, c.b + et)), balls);
             rq = r2.pocketed.some(z => z.id === 0) ? null : r2; // a scratch there: no leave
@@ -188,20 +188,28 @@ function coachFactory(sim) {
       // 1. straight at A: every pocket, tip, speed (the nominal stroke first; the aim nudged up to a degree for throw)
       const direct = [];
       for (const o of pA) {
-        const s = shot(pt(cue), A, o, []); if (!s || s.blk.length || s.cut > 75) continue;
+        const s = shot(pt(cue), A, o, []); if (!s || s.cut > 75) continue;
+        // a ball in the way by less than the doubt about where it is (0.45 in; Nov 9 20:32, the 1 "blocked" by the 4 by a
+        // quarter inch, the player saw it clear): tried with that ball moved just clear, and the plan says "tight"
+        let ini = null, tight = [];
+        if (s.blk.length) {
+          const a0 = pt(cue), b0 = s.G, d = unit(sub(b0, a0)), nrm = [-d[1], d[0]];
+          if (s.blk.some(q => segDist(pt(q), a0, b0) < 2 * R - 0.45)) continue;
+          ini = init(); for (const q of s.blk) { const side = Math.sign(dot(sub(pt(q), a0), nrm)) || 1, need = 2 * R + 0.05 - segDist(pt(q), a0, b0), z = ini.find(t => t.id === q.n); z.x += nrm[0] * side * need; z.y += nrm[1] * side * need; tight.push(q.n); }
+        }
         const ang0 = Math.atan2(s.G[1] - cue.y, s.G[0] - cue.x);
         const back = [-Math.cos(ang0), -Math.sin(ang0)], jack = objs.some(q => { const d = [q.x - cue.x, q.y - cue.y], t = dot(d, back); return t > 0 && t < 9 && Math.abs(d[0] * back[1] - d[1] * back[0]) < 1.9; });
         if (jack) out.jacked = true;
         for (const p of TRY) for (const b of TIPS) {
           if (jack && (b < -0.2 || p > 5)) continue;
-          for (const da of [0, 0.5, -0.5, 1, -1]) { const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, 0, b); if (potted(r)) { direct.push({ kind: 'pot', o, s, ang: ang0 + da * D2R, da: da * D2R, p, a: 0, b, r, v0: nextQ(r) * railF(r), rf: railF(r) }); break; } }
+          for (const da of [0, 0.5, -0.5, 1, -1]) { const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, 0, b, ini); if (potted(r)) { direct.push({ kind: 'pot', o, s, ang: ang0 + da * D2R, da: da * D2R, p, a: 0, b, r, init: ini, tight, v0: nextQ(r) * railF(r) * (tight.length ? 0.9 : 1), rf: railF(r) * (tight.length ? 0.9 : 1) }); break; } }
         }
       }
       const pre = c => c.v0 * simple(c) * (c.p >= 1 && c.p <= 4 ? 1 : 0.9) * (Math.abs(c.b) <= 0.2 ? 1 : 0.95);
       direct.sort((x, y) => pre(y) - pre(x));
       const top = direct.slice(0, 14).map(c => mc(c, 10)); top.sort((x, y) => y.value - x.value);
       for (const c of top.slice(0, 3)) for (const a of [-0.3, 0.3]) { // side spin on the best three
-        for (const da of [0, 0.5, -0.5, 1, -1, 1.5, -1.5]) { const r = runAll(c.ang + da * D2R, MPH[c.p] * 17.6, a, c.b); if (potted(r)) { top.push(mc({ kind: 'pot', o: c.o, s: c.s, ang: c.ang + da * D2R, da: (c.da || 0) + da * D2R, p: c.p, a, b: c.b, r, rf: railF(r) }, 12)); break; } }
+        for (const da of [0, 0.5, -0.5, 1, -1, 1.5, -1.5]) { const r = runAll(c.ang + da * D2R, MPH[c.p] * 17.6, a, c.b, c.init); if (potted(r)) { top.push(mc({ kind: 'pot', o: c.o, s: c.s, ang: c.ang + da * D2R, da: (c.da || 0) + da * D2R, p: c.p, a, b: c.b, r, init: c.init, tight: c.tight, rf: railF(r) * (c.tight && c.tight.length ? 0.9 : 1) }, 12)); break; } }
       }
       all.push(...top);
       const bestPot = () => Math.max(0, ...all.filter(c => c.kind !== 'safety').map(c => c.value));
@@ -235,8 +243,9 @@ function coachFactory(sim) {
         if (!kicks.length) for (const t of targets) for (const [c1, c2] of [[0, 2], [0, 3], [1, 2], [1, 3], [2, 0], [3, 0], [2, 1], [3, 1]]) tryKick(mirror(mirror(t.G, c1), c2), t.o, c1, true);
         all.push(...kicks.map(c => mc(c, 10)));
       }
-      // 4. safety: A hit softly, full or thin either side, straight or off a cushion when A cannot be seen
-      if (bestPot() < 0.5) {
+      // 4. safety: A hit softly, full or thin either side, straight or off a cushion when A cannot be seen; in the Coaching
+      // test (runouts) only when no pot, bank or kick makes 40% (owner, Nov 9 20:32: three safeties rejected, a 70% pot there)
+      if (Math.max(0, ...all.filter(c => c.kind !== 'safety').map(c => c.pMake || 0)) < 0.4) {
         const safe = [], see = !blockers(pt(cue), pt(A), [A.n]).length;
         const aims = see ? [0, 1, -1].map(k => { const d = unit(sub(pt(A), pt(cue))), n = [-d[1], d[0]]; return [A.x + n[0] * k * 1.8, A.y + n[1] * k * 1.8]; }) : [0, 1, 2, 3].map(cu => mirror(pt(A), cu));
         for (const T of aims) { const aim = sub(T, pt(cue)), ang0 = Math.atan2(aim[1], aim[0]);
@@ -249,17 +258,38 @@ function coachFactory(sim) {
       const fin = all.slice(0, 3).map(c => mc(Object.assign({}, c), 24)); fin.sort((x, y) => y.value - x.value);
       const w = fin[0], alt = fin.concat(all).find(c => c.kind !== w.kind);
       // the band of the cue ball's path: the same stroke aimed to the inside and to the outside of the pocket (A still in)
-      let lo = null, hi = null;
-      if (w.kind !== 'safety') for (let d = -2; d <= 2.001; d += 0.25) { const r = runAll(w.ang + d * D2R, MPH[w.p] * 17.6, w.a, w.b); if (!potted(r)) continue; if (!lo) lo = r; hi = r; }
-      // which edge is the thinner hit: the one where the cue ball turns more off its line
-      const turn = r => { const q = after(r); if (q.length < 6) return 0; const d = unit(sub(q[5], q[0])); return Math.acos(Math.max(-1, Math.min(1, dot(d, [Math.cos(w.ang), Math.sin(w.ang)])))); };
-      const fanThin = lo && hi && lo !== hi ? (turn(lo) > turn(hi) ? 0 : 1) : null;
+      let lo = null, hi = null, dlo = 0, dhi = 0;
+      if (w.kind !== 'safety') for (let d = -2; d <= 2.001; d += 0.25) { const r = runAll(w.ang + d * D2R, MPH[w.p] * 17.6, w.a, w.b, w.init); if (!potted(r)) continue; if (!lo) { lo = r; dlo = d; } hi = r; dhi = d; }
+      // which edge is the thinner hit (V3.14, owner Nov 9: the labels read backwards): the run whose object ball leaves at the
+      // bigger angle to the cue ball's line, the cut (thinner = overcut); the cue ball's own turn says nothing (with stun a
+      // thinner hit turns it less)
+      const cutOf = (r, ang) => { const q = pathOf(r, A.n, true); if (q.length < 3) return 0; const d = unit(sub(q[Math.min(q.length - 1, 4)], q[0])); return Math.acos(Math.max(-1, Math.min(1, dot(d, [Math.cos(ang), Math.sin(ang)])))); };
+      const fanThin = lo && hi && lo !== hi ? (cutOf(lo, w.ang + dlo * D2R) > cutOf(hi, w.ang + dhi * D2R) ? 0 : 1) : null;
       const c0 = w.r.final.find(q => q.id === 0);
       const alts = all.slice(0, 4).map(c => ({ kind: c.kind, pocket: c.o ? c.o.pi : null, tip: c.b, side: c.a, power: c.p + 1, make: +c.pMake.toFixed(2), next: +c.pNext.toFixed(2), value: +c.value.toFixed(3) }));
-      return { kind: w.kind, val: w.value, pocket: w.o ? w.o.pi : null, cut: Math.round(w.s.cut || 0), ghost: w.s.G, pts: after(w.r), pre: w.kind === 'kick' || w.kind === 'kick2' ? pathOf(w.r, 0, false) : null, ob: w.kind === 'bank' ? pathOf(w.r, A.n, true) : null,
+      return { kind: w.kind, val: w.value, pocket: w.o ? w.o.pi : null, cut: Math.round(w.s.cut || 0), ghost: w.s.G, pts: after(w.r), pre: w.kind === 'kick' || w.kind === 'kick2' ? pathOf(w.r, 0, false) : null, ob: w.kind !== 'safety' ? pathOf(w.r, A.n, true) : null, tight: w.tight && w.tight.length ? w.tight : null,
         stroke: Object.assign(strokeOf(w.p, w.a, w.b), { hard: w.kind === 'safety' ? false : w.pMake < 0.6 || w.pNext < 0.5, jacked: !!out.jacked }),
         fan: lo && hi && lo !== hi ? [after(lo), after(hi)] : null, fanThin, p: c0 ? [c0.x, c0.y] : null, make: +w.pMake.toFixed(2), next: +w.pNext.toFixed(2), legal: w.legal != null ? +w.legal.toFixed(2) : null, opp: w.opp != null ? +w.opp.toFixed(2) : null,
         zone: +w.pNext.toFixed(2), robust: +w.pMake.toFixed(2), alts, alt: alt ? { kind: alt.kind, make: +alt.pMake.toFixed(2), value: +alt.value.toFixed(2) } : null };
+    }
+    // The zone as a fan round the perfect spot (V3.14, owner Nov 9): seen from the next ball, as wide as the window where the
+    // next shot stays good at the spot's distance (its percentage within 0.2 of the spot's, and 60%+), so it leans to the good
+    // side; at most 30 degrees in all (coach good position, not "anywhere"), at least 2 either side; along the spot's line only
+    // as far as the speed window (short and long, up to 15 in each way, at least 3). The outer seventh each side yellow.
+    function zoneFan(Bb, sp) {
+      if (!sp || !bestZ || !Bb) return null;
+      const c = [Bb.x, Bb.y], d0 = Math.hypot(sp[0] - c[0], sp[1] - c[1]), a0 = Math.atan2(sp[1] - c[1], sp[0] - c[0]); if (d0 < 2 * R + 1) return null;
+      const q = p => zv(bestZ, p), at = (a, r) => [c[0] + r * Math.cos(a), c[1] + r * Math.sin(a)], Q0 = q(sp), T = Q0 >= 0.6 ? Math.max(0.6, Q0 - 0.2) : Q0 * 0.8;
+      let lo = 0, hi = 0;
+      for (let k = 1; k <= 28; k++) { if (q(at(a0 + k * D2R, d0)) >= T) hi = k; else break; }
+      for (let k = 1; k <= 28; k++) { if (q(at(a0 - k * D2R, d0)) >= T) lo = k; else break; }
+      lo = Math.max(lo, 2); hi = Math.max(hi, 2); while (lo + hi > 30) { if (lo > hi) lo--; else hi--; }
+      let r0 = d0, r1 = d0;
+      for (let k = 1; k <= 15; k++) { const r = d0 - k; if (r < 2 * R + 0.5 || q(at(a0, r)) < T) break; r0 = r; }
+      for (let k = 1; k <= 15; k++) { const r = d0 + k; if (q(at(a0, r)) < T) break; r1 = r; }
+      r0 = Math.max(2 * R + 0.5, Math.min(r0, d0 - 3)); r1 = Math.max(r1, d0 + 3);
+      const A0 = a0 - lo * D2R, A1 = a0 + hi * D2R, e = Math.max((A1 - A0) / 7, 0.8 * D2R);
+      return { core: sector(c, r0, r1, A0 + e, A1 - e, L, W, R), sides: [sector(c, r0, r1, A0, A0 + e, L, W, R), sector(c, r0, r1, A1 - e, A1, L, W, R)], line: [at(a0, r0), at(a0, r1)], from: c, spot: sp, lo, hi, r0: +r0.toFixed(1), r1: +r1.toFixed(1), q0: +Q0.toFixed(2) };
     }
     // no clean pot on the lowest ball at all (V3.11.2, Nov 8 20:24: every pocket blocked or the cut too thin; the screen
     // showed nothing and the player could not tell what the plan wanted): said so
@@ -325,7 +355,7 @@ function coachFactory(sim) {
     out.cells = bestZ.g; if (inHand) out.A.pocket = bestZ.o.pi; else out.B.pocket = bestZ.o.pi;
     if (!inHand) {
       out.A.pocket = pl ? pl.pocket : easiestA();
-      if (pl) out.path = { shot: pl.kind, ghost: pl.ghost, pts: pl.pts, pre: pl.pre, ob: pl.ob, kind: pl.stroke.kind, s: pl.stroke.tip, cut: pl.cut, stroke: pl.stroke, fan: pl.fan || null, fanThin: pl.fanThin, p: pl.p, make: pl.make, next: pl.next, legal: pl.legal, opp: pl.opp, zone: pl.zone, robust: pl.robust, alts: pl.alts, alt: pl.alt };
+      if (pl) out.path = { shot: pl.kind, ghost: pl.ghost, pts: pl.pts, pre: pl.pre, ob: pl.ob, kind: pl.stroke.kind, s: pl.stroke.tip, cut: pl.cut, stroke: pl.stroke, fan: pl.fan || null, fanThin: pl.fanThin, tight: pl.tight, p: pl.p, make: pl.make, next: pl.next, legal: pl.legal, opp: pl.opp, zone: pl.zone, robust: pl.robust, alts: pl.alts, alt: pl.alt };
       else finishA(out);
     }
     // the zone's spot the plan aims for, the shot on B from there and where the cue ball goes on to for C
@@ -356,6 +386,7 @@ function coachFactory(sim) {
     if (C && out.C.pocket == null) { const pC = pocketsFor(C, [A.n, B.n]); if (pC.length) out.C.pocket = pC.sort((a, b) => a.dist - b.dist)[0].pi; }
     if (inHand && B && out.B.pocket == null) { const pq = pocketsFor(B, [A.n]); if (pq.length) out.B.pocket = pq.sort((a, b) => a.dist - b.dist)[0].pi; }
     out.shapes = shapes(out, Zb);
+    out.zoneFan = zoneFan(Zb, out.spot);
     noShot(out);
     out.ms = Date.now() - t0;
     return out;

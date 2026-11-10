@@ -127,6 +127,15 @@ a.old { color: var(--muted); font-size: 13px; }
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
+    <div class="card glass"><h2>New in V3.14</h2><ul>
+      <li>The power test works: no roll is taken for a hand move any more. It asks for your soft, medium and hard, three rolls each.</li>
+      <li>The plan says soft, medium or hard instead of a number; after the power test, by your own speeds.</li>
+      <li>The zone is a fan round the perfect spot, seen from the next ball: wider on the side that still leaves a good shot, 30 degrees at most. Bright green at the spot, yellow edges, no outlines.</li>
+      <li>The band's lines say "thin (overcut)" and "thick (undercut)": the hit on the object ball.</li>
+      <li>A line in the ball's colour from the object ball to its pocket, off the cushions for a bank.</li>
+      <li>A ball that only just lets the shot past is "tight", not blocked: the plan says "Tight past the 4". Fewer safeties when a pot is there.</li>
+      <li>After the shot: where the cue ball stopped against the spot, in inches long or short and to the side.</li>
+    </ul></div>
     <div class="card glass"><h2>New in V3.13</h2><ul>
       <li>Coaching test: a Reject plan button. Tap it when a plan makes no sense; it is saved with a picture of the table for the review.</li>
       <li>The plan plays for position first: strokes that leave the cue ball in the zone, coming into the line. When no stroke can reach it, it says so.</li>
@@ -3017,14 +3026,14 @@ function coachFactory(sim) {
         let made = 0, q = 0, legal = 0, opp = 0;
         for (let i = 0; i < N; i++) {
           const ea = gauss(R0) * AIM_SD, ev = 1 + gauss(R0) * 0.08, es = gauss(R0) * 0.05, et = gauss(R0) * 0.05;
-          const r = runAll(c.ang + ea, MPH[c.p] * 17.6 * ev, c.a + es, Math.max(-0.55, Math.min(0.55, c.b + et)));
+          const r = runAll(c.ang + ea, MPH[c.p] * 17.6 * ev, c.a + es, Math.max(-0.55, Math.min(0.55, c.b + et)), c.init);
           if (c.kind === 'safety') { const ok = r.firstHit === A.n && !r.pocketed.some(z => z.id === 0) && (r.railAfter || r.pocketed.length); if (ok) { legal++; opp += oppBest(r); } continue; }
           if (!potted(r)) continue; made++;
           // the leave with the balls where they may really be (the make is the player's, who sees the real balls; the cut and
           // so the cue ball's way are what the app may have wrong): the same stroke on the moved balls, aimed at the moved ghost
           let rq = r;
           if ((c.kind === 'pot' || c.kind === 'bank') && c.o && c.o.pk) {
-            const balls = init().map(q => ({ id: q.id, x: q.x + gauss(R0) * POS_SD, y: q.y + gauss(R0) * POS_SD })), a1 = balls.find(q => q.id === A.n), c1 = balls[0];
+            const balls = (c.init || init()).map(q => ({ id: q.id, x: q.x + gauss(R0) * POS_SD, y: q.y + gauss(R0) * POS_SD })), a1 = balls.find(q => q.id === A.n), c1 = balls[0];
             const tgt = c.kind === 'bank' ? mirror([c.o.pk.x, c.o.pk.y], c.cu) : [c.o.pk.x, c.o.pk.y], u = unit(sub(tgt, [a1.x, a1.y])), G = [a1.x - 2 * R * u[0], a1.y - 2 * R * u[1]];
             const r2 = runAll(Math.atan2(G[1] - c1.y, G[0] - c1.x) + (c.da || 0) + ea, MPH[c.p] * 17.6 * ev, c.a + es, Math.max(-0.55, Math.min(0.55, c.b + et)), balls);
             rq = r2.pocketed.some(z => z.id === 0) ? null : r2; // a scratch there: no leave
@@ -3040,20 +3049,28 @@ function coachFactory(sim) {
       // 1. straight at A: every pocket, tip, speed (the nominal stroke first; the aim nudged up to a degree for throw)
       const direct = [];
       for (const o of pA) {
-        const s = shot(pt(cue), A, o, []); if (!s || s.blk.length || s.cut > 75) continue;
+        const s = shot(pt(cue), A, o, []); if (!s || s.cut > 75) continue;
+        // a ball in the way by less than the doubt about where it is (0.45 in; Nov 9 20:32, the 1 "blocked" by the 4 by a
+        // quarter inch, the player saw it clear): tried with that ball moved just clear, and the plan says "tight"
+        let ini = null, tight = [];
+        if (s.blk.length) {
+          const a0 = pt(cue), b0 = s.G, d = unit(sub(b0, a0)), nrm = [-d[1], d[0]];
+          if (s.blk.some(q => segDist(pt(q), a0, b0) < 2 * R - 0.45)) continue;
+          ini = init(); for (const q of s.blk) { const side = Math.sign(dot(sub(pt(q), a0), nrm)) || 1, need = 2 * R + 0.05 - segDist(pt(q), a0, b0), z = ini.find(t => t.id === q.n); z.x += nrm[0] * side * need; z.y += nrm[1] * side * need; tight.push(q.n); }
+        }
         const ang0 = Math.atan2(s.G[1] - cue.y, s.G[0] - cue.x);
         const back = [-Math.cos(ang0), -Math.sin(ang0)], jack = objs.some(q => { const d = [q.x - cue.x, q.y - cue.y], t = dot(d, back); return t > 0 && t < 9 && Math.abs(d[0] * back[1] - d[1] * back[0]) < 1.9; });
         if (jack) out.jacked = true;
         for (const p of TRY) for (const b of TIPS) {
           if (jack && (b < -0.2 || p > 5)) continue;
-          for (const da of [0, 0.5, -0.5, 1, -1]) { const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, 0, b); if (potted(r)) { direct.push({ kind: 'pot', o, s, ang: ang0 + da * D2R, da: da * D2R, p, a: 0, b, r, v0: nextQ(r) * railF(r), rf: railF(r) }); break; } }
+          for (const da of [0, 0.5, -0.5, 1, -1]) { const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, 0, b, ini); if (potted(r)) { direct.push({ kind: 'pot', o, s, ang: ang0 + da * D2R, da: da * D2R, p, a: 0, b, r, init: ini, tight, v0: nextQ(r) * railF(r) * (tight.length ? 0.9 : 1), rf: railF(r) * (tight.length ? 0.9 : 1) }); break; } }
         }
       }
       const pre = c => c.v0 * simple(c) * (c.p >= 1 && c.p <= 4 ? 1 : 0.9) * (Math.abs(c.b) <= 0.2 ? 1 : 0.95);
       direct.sort((x, y) => pre(y) - pre(x));
       const top = direct.slice(0, 14).map(c => mc(c, 10)); top.sort((x, y) => y.value - x.value);
       for (const c of top.slice(0, 3)) for (const a of [-0.3, 0.3]) { // side spin on the best three
-        for (const da of [0, 0.5, -0.5, 1, -1, 1.5, -1.5]) { const r = runAll(c.ang + da * D2R, MPH[c.p] * 17.6, a, c.b); if (potted(r)) { top.push(mc({ kind: 'pot', o: c.o, s: c.s, ang: c.ang + da * D2R, da: (c.da || 0) + da * D2R, p: c.p, a, b: c.b, r, rf: railF(r) }, 12)); break; } }
+        for (const da of [0, 0.5, -0.5, 1, -1, 1.5, -1.5]) { const r = runAll(c.ang + da * D2R, MPH[c.p] * 17.6, a, c.b, c.init); if (potted(r)) { top.push(mc({ kind: 'pot', o: c.o, s: c.s, ang: c.ang + da * D2R, da: (c.da || 0) + da * D2R, p: c.p, a, b: c.b, r, init: c.init, tight: c.tight, rf: railF(r) * (c.tight && c.tight.length ? 0.9 : 1) }, 12)); break; } }
       }
       all.push(...top);
       const bestPot = () => Math.max(0, ...all.filter(c => c.kind !== 'safety').map(c => c.value));
@@ -3087,8 +3104,9 @@ function coachFactory(sim) {
         if (!kicks.length) for (const t of targets) for (const [c1, c2] of [[0, 2], [0, 3], [1, 2], [1, 3], [2, 0], [3, 0], [2, 1], [3, 1]]) tryKick(mirror(mirror(t.G, c1), c2), t.o, c1, true);
         all.push(...kicks.map(c => mc(c, 10)));
       }
-      // 4. safety: A hit softly, full or thin either side, straight or off a cushion when A cannot be seen
-      if (bestPot() < 0.5) {
+      // 4. safety: A hit softly, full or thin either side, straight or off a cushion when A cannot be seen; in the Coaching
+      // test (runouts) only when no pot, bank or kick makes 40% (owner, Nov 9 20:32: three safeties rejected, a 70% pot there)
+      if (Math.max(0, ...all.filter(c => c.kind !== 'safety').map(c => c.pMake || 0)) < 0.4) {
         const safe = [], see = !blockers(pt(cue), pt(A), [A.n]).length;
         const aims = see ? [0, 1, -1].map(k => { const d = unit(sub(pt(A), pt(cue))), n = [-d[1], d[0]]; return [A.x + n[0] * k * 1.8, A.y + n[1] * k * 1.8]; }) : [0, 1, 2, 3].map(cu => mirror(pt(A), cu));
         for (const T of aims) { const aim = sub(T, pt(cue)), ang0 = Math.atan2(aim[1], aim[0]);
@@ -3101,17 +3119,38 @@ function coachFactory(sim) {
       const fin = all.slice(0, 3).map(c => mc(Object.assign({}, c), 24)); fin.sort((x, y) => y.value - x.value);
       const w = fin[0], alt = fin.concat(all).find(c => c.kind !== w.kind);
       // the band of the cue ball's path: the same stroke aimed to the inside and to the outside of the pocket (A still in)
-      let lo = null, hi = null;
-      if (w.kind !== 'safety') for (let d = -2; d <= 2.001; d += 0.25) { const r = runAll(w.ang + d * D2R, MPH[w.p] * 17.6, w.a, w.b); if (!potted(r)) continue; if (!lo) lo = r; hi = r; }
-      // which edge is the thinner hit: the one where the cue ball turns more off its line
-      const turn = r => { const q = after(r); if (q.length < 6) return 0; const d = unit(sub(q[5], q[0])); return Math.acos(Math.max(-1, Math.min(1, dot(d, [Math.cos(w.ang), Math.sin(w.ang)])))); };
-      const fanThin = lo && hi && lo !== hi ? (turn(lo) > turn(hi) ? 0 : 1) : null;
+      let lo = null, hi = null, dlo = 0, dhi = 0;
+      if (w.kind !== 'safety') for (let d = -2; d <= 2.001; d += 0.25) { const r = runAll(w.ang + d * D2R, MPH[w.p] * 17.6, w.a, w.b, w.init); if (!potted(r)) continue; if (!lo) { lo = r; dlo = d; } hi = r; dhi = d; }
+      // which edge is the thinner hit (V3.14, owner Nov 9: the labels read backwards): the run whose object ball leaves at the
+      // bigger angle to the cue ball's line, the cut (thinner = overcut); the cue ball's own turn says nothing (with stun a
+      // thinner hit turns it less)
+      const cutOf = (r, ang) => { const q = pathOf(r, A.n, true); if (q.length < 3) return 0; const d = unit(sub(q[Math.min(q.length - 1, 4)], q[0])); return Math.acos(Math.max(-1, Math.min(1, dot(d, [Math.cos(ang), Math.sin(ang)])))); };
+      const fanThin = lo && hi && lo !== hi ? (cutOf(lo, w.ang + dlo * D2R) > cutOf(hi, w.ang + dhi * D2R) ? 0 : 1) : null;
       const c0 = w.r.final.find(q => q.id === 0);
       const alts = all.slice(0, 4).map(c => ({ kind: c.kind, pocket: c.o ? c.o.pi : null, tip: c.b, side: c.a, power: c.p + 1, make: +c.pMake.toFixed(2), next: +c.pNext.toFixed(2), value: +c.value.toFixed(3) }));
-      return { kind: w.kind, val: w.value, pocket: w.o ? w.o.pi : null, cut: Math.round(w.s.cut || 0), ghost: w.s.G, pts: after(w.r), pre: w.kind === 'kick' || w.kind === 'kick2' ? pathOf(w.r, 0, false) : null, ob: w.kind === 'bank' ? pathOf(w.r, A.n, true) : null,
+      return { kind: w.kind, val: w.value, pocket: w.o ? w.o.pi : null, cut: Math.round(w.s.cut || 0), ghost: w.s.G, pts: after(w.r), pre: w.kind === 'kick' || w.kind === 'kick2' ? pathOf(w.r, 0, false) : null, ob: w.kind !== 'safety' ? pathOf(w.r, A.n, true) : null, tight: w.tight && w.tight.length ? w.tight : null,
         stroke: Object.assign(strokeOf(w.p, w.a, w.b), { hard: w.kind === 'safety' ? false : w.pMake < 0.6 || w.pNext < 0.5, jacked: !!out.jacked }),
         fan: lo && hi && lo !== hi ? [after(lo), after(hi)] : null, fanThin, p: c0 ? [c0.x, c0.y] : null, make: +w.pMake.toFixed(2), next: +w.pNext.toFixed(2), legal: w.legal != null ? +w.legal.toFixed(2) : null, opp: w.opp != null ? +w.opp.toFixed(2) : null,
         zone: +w.pNext.toFixed(2), robust: +w.pMake.toFixed(2), alts, alt: alt ? { kind: alt.kind, make: +alt.pMake.toFixed(2), value: +alt.value.toFixed(2) } : null };
+    }
+    // The zone as a fan round the perfect spot (V3.14, owner Nov 9): seen from the next ball, as wide as the window where the
+    // next shot stays good at the spot's distance (its percentage within 0.2 of the spot's, and 60%+), so it leans to the good
+    // side; at most 30 degrees in all (coach good position, not "anywhere"), at least 2 either side; along the spot's line only
+    // as far as the speed window (short and long, up to 15 in each way, at least 3). The outer seventh each side yellow.
+    function zoneFan(Bb, sp) {
+      if (!sp || !bestZ || !Bb) return null;
+      const c = [Bb.x, Bb.y], d0 = Math.hypot(sp[0] - c[0], sp[1] - c[1]), a0 = Math.atan2(sp[1] - c[1], sp[0] - c[0]); if (d0 < 2 * R + 1) return null;
+      const q = p => zv(bestZ, p), at = (a, r) => [c[0] + r * Math.cos(a), c[1] + r * Math.sin(a)], Q0 = q(sp), T = Q0 >= 0.6 ? Math.max(0.6, Q0 - 0.2) : Q0 * 0.8;
+      let lo = 0, hi = 0;
+      for (let k = 1; k <= 28; k++) { if (q(at(a0 + k * D2R, d0)) >= T) hi = k; else break; }
+      for (let k = 1; k <= 28; k++) { if (q(at(a0 - k * D2R, d0)) >= T) lo = k; else break; }
+      lo = Math.max(lo, 2); hi = Math.max(hi, 2); while (lo + hi > 30) { if (lo > hi) lo--; else hi--; }
+      let r0 = d0, r1 = d0;
+      for (let k = 1; k <= 15; k++) { const r = d0 - k; if (r < 2 * R + 0.5 || q(at(a0, r)) < T) break; r0 = r; }
+      for (let k = 1; k <= 15; k++) { const r = d0 + k; if (q(at(a0, r)) < T) break; r1 = r; }
+      r0 = Math.max(2 * R + 0.5, Math.min(r0, d0 - 3)); r1 = Math.max(r1, d0 + 3);
+      const A0 = a0 - lo * D2R, A1 = a0 + hi * D2R, e = Math.max((A1 - A0) / 7, 0.8 * D2R);
+      return { core: sector(c, r0, r1, A0 + e, A1 - e, L, W, R), sides: [sector(c, r0, r1, A0, A0 + e, L, W, R), sector(c, r0, r1, A1 - e, A1, L, W, R)], line: [at(a0, r0), at(a0, r1)], from: c, spot: sp, lo, hi, r0: +r0.toFixed(1), r1: +r1.toFixed(1), q0: +Q0.toFixed(2) };
     }
     // no clean pot on the lowest ball at all (V3.11.2, Nov 8 20:24: every pocket blocked or the cut too thin; the screen
     // showed nothing and the player could not tell what the plan wanted): said so
@@ -3177,7 +3216,7 @@ function coachFactory(sim) {
     out.cells = bestZ.g; if (inHand) out.A.pocket = bestZ.o.pi; else out.B.pocket = bestZ.o.pi;
     if (!inHand) {
       out.A.pocket = pl ? pl.pocket : easiestA();
-      if (pl) out.path = { shot: pl.kind, ghost: pl.ghost, pts: pl.pts, pre: pl.pre, ob: pl.ob, kind: pl.stroke.kind, s: pl.stroke.tip, cut: pl.cut, stroke: pl.stroke, fan: pl.fan || null, fanThin: pl.fanThin, p: pl.p, make: pl.make, next: pl.next, legal: pl.legal, opp: pl.opp, zone: pl.zone, robust: pl.robust, alts: pl.alts, alt: pl.alt };
+      if (pl) out.path = { shot: pl.kind, ghost: pl.ghost, pts: pl.pts, pre: pl.pre, ob: pl.ob, kind: pl.stroke.kind, s: pl.stroke.tip, cut: pl.cut, stroke: pl.stroke, fan: pl.fan || null, fanThin: pl.fanThin, tight: pl.tight, p: pl.p, make: pl.make, next: pl.next, legal: pl.legal, opp: pl.opp, zone: pl.zone, robust: pl.robust, alts: pl.alts, alt: pl.alt };
       else finishA(out);
     }
     // the zone's spot the plan aims for, the shot on B from there and where the cue ball goes on to for C
@@ -3208,6 +3247,7 @@ function coachFactory(sim) {
     if (C && out.C.pocket == null) { const pC = pocketsFor(C, [A.n, B.n]); if (pC.length) out.C.pocket = pC.sort((a, b) => a.dist - b.dist)[0].pi; }
     if (inHand && B && out.B.pocket == null) { const pq = pocketsFor(B, [A.n]); if (pq.length) out.B.pocket = pq.sort((a, b) => a.dist - b.dist)[0].pi; }
     out.shapes = shapes(out, Zb);
+    out.zoneFan = zoneFan(Zb, out.spot);
     noShot(out);
     out.ms = Date.now() - t0;
     return out;
@@ -3318,7 +3358,7 @@ const COACH = coachFactory(typeof simulate !== 'undefined' ? simulate : typeof m
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.13.0';
+const VERSION = 'V3.14.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -3858,7 +3898,15 @@ function onShotEnd(sh) {
 }
 // the shot's line (no tap to correct it: owner, Nov 3, no buttons while playing; what the app gets wrong is found in the
 // debug files)
-function coachWords(c) { if (!c || !c.compare) return ''; const k = c.compare, w = []; if (Math.abs(k.angle) >= 6) w.push('came off ' + Math.abs(k.angle) + '° off the line'); if (k.travel >= 1.25) w.push(Math.round((k.travel - 1) * 100) + '% further'); else if (k.travel <= 0.8) w.push(Math.round((1 - k.travel) * 100) + '% shorter'); return w.length ? ' · ' + w.join(', ') + ' than planned' : ' · as planned'; }
+// the shot's words against the plan (V3.14, owner Nov 9: "30% off plan" said nothing): where the cue ball stopped against the
+// perfect spot, long or short along the way it was going and to the side, in inches; and the angle off the object ball
+function coachWords(c) {
+  if (!c) return ''; const w = [], k = c.compare, s = c.stop;
+  if (k && Math.abs(k.angle) >= 6) w.push('came off ' + Math.abs(k.angle) + '° off the line');
+  if (s) { if (s.off <= 4) w.push('stopped on the spot'); else if (s.along == null) w.push('stopped ' + Math.round(s.off) + ' in off the spot');
+    else { const a = Math.round(Math.abs(s.along)), b = Math.round(Math.abs(s.side)), t = []; if (a >= 3) t.push(a + ' in ' + (s.along > 0 ? 'long' : 'short')); if (b >= 3) t.push(b + ' in to the side'); w.push('stopped ' + (t.join(', ') || Math.round(s.off) + ' in off the spot')); } }
+  return w.length ? ' · ' + w.join(', ') : '';
+}
 function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row) + coachWords(row.coach) + (row.coach && row.coach.landed ? ' · cue ball ' + ({ green: 'in the green (90%+)', lightgreen: 'in the light green (80-90%)', yellow: 'in the yellow (60-80%)', red: 'in the red (50-60%)', low: 'where the next shot is under 50%', blocked: 'behind a ball' })[row.coach.landed] : row.coach && row.coach.zone ? ' · cue ball outside the zone' : '')); }
 // Each ball's path in the shot: the tracker's positions from just before the shot started, kept after it ends (and for the
 // balls that went in) until the next shot starts, so a quick look at the phone after the shot shows the whole of it.
@@ -4358,7 +4406,7 @@ function coachDone(id, r) {
   if (!r || r.error) { if (r && r.error) dbg('error', { m: 'coach ' + r.error.slice(0, 120) }); CO.plan = null; return; }
   CO.plan = r; CO.balls = CO.pending; CO.poly = null; $('#rejectBtn').hidden = A.mode !== 'coach';
   const cnt = { green: 0, red: 0, blocked: 0 }; if (r.cells) for (const v of r.cells) { if (v === 1) cnt.green++; else if (v === 3) cnt.red++; else if (v === 4) cnt.blocked++; }
-  dbg('coach_plan', { order: r.order, A: r.A, B: r.B, C: r.C, inHand: !!r.inHand, noShot: r.noShot || null, spot: r.spot && r.spot.map(r1), path: r.path ? { shot: r.path.shot, kind: r.path.kind, cut: r.path.cut, stroke: r.path.stroke || null, make: r.path.make, next: r.path.next, legal: r.path.legal, opp: r.path.opp, alt: r.path.alt || null, alts: r.path.alts || null, n: (r.path.pts || []).length, end: r.path.p && r.path.p.map(r1) } : null, route: r.route ? { kind: r.route.kind, s: r.route.s } : null, cells: cnt, ms: r.ms, balls: CO.balls });
+  dbg('coach_plan', { order: r.order, A: r.A, B: r.B, C: r.C, inHand: !!r.inHand, noShot: r.noShot || null, spot: r.spot && r.spot.map(r1), path: r.path ? { shot: r.path.shot, kind: r.path.kind, cut: r.path.cut, stroke: r.path.stroke || null, make: r.path.make, next: r.path.next, legal: r.path.legal, opp: r.path.opp, alt: r.path.alt || null, alts: r.path.alts || null, n: (r.path.pts || []).length, end: r.path.p && r.path.p.map(r1) } : null, route: r.route ? { kind: r.route.kind, s: r.route.s } : null, fan: r.zoneFan ? { lo: r.zoneFan.lo, hi: r.zoneFan.hi, r0: r.zoneFan.r0, r1: r.zoneFan.r1, q0: r.zoneFan.q0 } : null, tight: r.path && r.path.tight || null, thin: r.path ? r.path.fanThin : null, cells: cnt, ms: r.ms, balls: CO.balls });
 }
 // the player rejects the plan on the screen (owner, Nov 9: "this isn't realistic"): everything the plan was made from and a
 // picture of the table, for the review (was a ball or the table read wrong, or was the plan wrong); the next shot's row says so
@@ -4396,6 +4444,13 @@ function coachShotEnd(sh, row, row1) {
       dbg('coach_compare', Object.assign({ n: sh.n, made: !!madeA }, c.compare));
     }
   }
+  // where it stopped against the perfect spot: long or short along the way the plan had the cue ball going there, and to the side
+  if (at && p.spot && !sh.scratch && p.path && p.path.shot !== 'safety') {
+    const way = (p.path.pts || []).concat([p.spot]); let u = null;
+    for (let i = way.length - 2; i >= 0 && !u; i--) { const d = [p.spot[0] - way[i][0], p.spot[1] - way[i][1]], l = Math.hypot(d[0], d[1]); if (l > 3) u = [d[0] / l, d[1] / l]; }
+    const d = [at[0] - p.spot[0], at[1] - p.spot[1]];
+    c.stop = { off: r1(Math.hypot(d[0], d[1])), along: u ? r1(d[0] * u[0] + d[1] * u[1]) : null, side: u ? r1(d[1] * u[0] - d[0] * u[1]) : null };
+  }
   if (sh.scratch) CO.scratchT = A.tk.S.t; // ball in hand next
   row1.coach = c; dbg('coach_shot', Object.assign({ n: sh.n }, c));
 }
@@ -4421,23 +4476,21 @@ function drawCoach1(c, S2, F) {
   const poly = (q, z = 0) => { c.beginPath(); q.forEach((v, i) => { const a = S2(A.cam.proj(v[0], v[1], z)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.closePath(); };
   const sh = p.shapes, safety = p.path && p.path.shot === 'safety';
   if (sh && !safety) { // (no zone for a safety: the next shot is the other player's)
-    // no hard edges (owner, Nov 9). The wrong side faint; the zone a cone from the next ball, green strongest near that
-    // ball and lighter further away, the outer tenth on each side yellow, the ideal line down the middle; balls in the way dark
-    // the bands outside the cone (V3.12): yellow 60-80%, red 50-60%
-    for (const q of sh.red || []) { poly(q); c.fillStyle = 'rgba(231,76,60,.24)'; c.fill(); }
-    for (const q of sh.yellow || []) { poly(q); c.fillStyle = 'rgba(241,196,15,.24)'; c.fill(); }
-    const cn = sh.cone, fin = q => q.every(v => isFinite(v[0]) && isFinite(v[1]));
-    if (cn && fin(cn.core) && cn.sides.every(fin) && isFinite(cn.from[0])) {
-      const o = S2(A.cam.proj(cn.from[0], cn.from[1], 0)); let rad = 1;
-      for (const q of [cn.core, ...cn.sides]) for (const v of q) { const a = S2(A.cam.proj(v[0], v[1], 0)); rad = Math.max(rad, Math.hypot(a[0] - o[0], a[1] - o[1])); }
+    // the zone (V3.14, owner Nov 9): a fan seen from the next ball round the perfect spot, wider on the side where the next
+    // shot stays good, 30 degrees at most; green strongest at the spot and fading out, the outer seventh each side yellow, the
+    // ideal line through the spot; no outlines. (The 50-60% band and the shadows of balls in the way are gone: they made the
+    // zone look like anywhere.)
+    const fz = p.zoneFan, fin = q => q && q.length > 2 && q.every(v => isFinite(v[0]) && isFinite(v[1]));
+    if (fz && fin(fz.core) && isFinite(fz.spot[0])) {
+      const o = S2(A.cam.proj(fz.spot[0], fz.spot[1], 0)); let rad = 1;
+      for (const q of [fz.core, ...fz.sides]) if (fin(q)) for (const v of q) { const a = S2(A.cam.proj(v[0], v[1], 0)); rad = Math.max(rad, Math.hypot(a[0] - o[0], a[1] - o[1])); }
       if (!isFinite(rad) || !isFinite(o[0]) || !isFinite(o[1])) rad = 1;
-      const grad = (rgb, a0, a1, a2) => { const g = c.createRadialGradient(o[0], o[1], 0, o[0], o[1], rad); g.addColorStop(0, 'rgba(' + rgb + ',' + a0 + ')'); g.addColorStop(0.45, 'rgba(' + rgb + ',' + a1 + ')'); g.addColorStop(1, 'rgba(' + rgb + ',' + a2 + ')'); return g; };
-      if (cn.core.length > 2) { poly(cn.core); c.fillStyle = grad('46,204,113', .78, .58, .2); c.fill(); }
-      for (const q of cn.sides) if (q.length > 2) { poly(q); c.fillStyle = grad('241,196,15', .5, .36, .12); c.fill(); }
-      const l0 = S2(A.cam.proj(cn.line[0][0], cn.line[0][1], 0)), l1 = S2(A.cam.proj(cn.line[1][0], cn.line[1][1], 0));
-      c.lineWidth = 1.2; c.strokeStyle = 'rgba(244,241,232,.55)'; c.beginPath(); c.moveTo(l0[0], l0[1]); c.lineTo(l1[0], l1[1]); c.stroke();
+      const grad = (rgb, a0, a1, a2) => { const g = c.createRadialGradient(o[0], o[1], 0, o[0], o[1], rad); g.addColorStop(0, 'rgba(' + rgb + ',' + a0 + ')'); g.addColorStop(0.5, 'rgba(' + rgb + ',' + a1 + ')'); g.addColorStop(1, 'rgba(' + rgb + ',' + a2 + ')'); return g; };
+      poly(fz.core); c.fillStyle = grad('46,204,113', .85, .66, .38); c.fill();
+      for (const q of fz.sides) if (fin(q)) { poly(q); c.fillStyle = grad('241,196,15', .7, .55, .32); c.fill(); }
+      const l0 = S2(A.cam.proj(fz.line[0][0], fz.line[0][1], 0)), l1 = S2(A.cam.proj(fz.line[1][0], fz.line[1][1], 0));
+      c.lineWidth = 1.3; c.strokeStyle = 'rgba(244,241,232,.6)'; c.beginPath(); c.moveTo(l0[0], l0[1]); c.lineTo(l1[0], l1[1]); c.stroke();
     }
-    for (const q of sh.blocked) { poly(q); c.fillStyle = 'rgba(15,20,24,.26)'; c.fill(); }
   }
   // the band the cue ball's path can take for the same stroke aimed to the inside and to the outside of the pocket (the ball
   // still in): it widens the further the cue ball goes (owner, Nov 9)
@@ -4448,9 +4501,18 @@ function drawCoach1(c, S2, F) {
     if (pts.length > 3) {
       c.beginPath(); pts.forEach((q, i) => { const a = sc(q); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.closePath(); c.fillStyle = 'rgba(244,241,232,.22)'; c.fill();
       [f0, f1].forEach((f, k) => {
+        const fo = k ? f0 : f1;
         c.lineWidth = 3.2; c.strokeStyle = 'rgba(11,16,20,.45)'; c.beginPath(); f.forEach((q, i) => { const a = sc(q); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.stroke();
         c.lineWidth = 1.7; c.strokeStyle = 'rgba(244,241,232,.92)'; c.stroke();
-        if (p.path.fanThin != null && f.length > 2) { const e = sc(f[f.length - 1]), t = k === p.path.fanThin ? 'thin' : 'thick'; c.font = '600 10px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineWidth = 3; c.strokeStyle = 'rgba(11,16,20,.7)'; c.strokeText(t, e[0], e[1] - 9); c.fillStyle = '#f4f1e8'; c.fillText(t, e[0], e[1] - 9); }
+        // each line's word on its own outer side (V3.14: the two ends close together put the words on top of each other)
+        if (p.path.fanThin != null && f.length > 2 && fo.length > 2) {
+          const e = sc(f[f.length - 1]), o = sc(fo[fo.length - 1]), b = sc(f[Math.max(0, f.length - 3)]), t = k === p.path.fanThin ? 'thin (overcut)' : 'thick (undercut)';
+          let dx = e[0] - o[0], dy = e[1] - o[1], l = Math.hypot(dx, dy);
+          if (l < 4) { dx = -(e[1] - b[1]); dy = e[0] - b[0]; l = Math.hypot(dx, dy) || 1; if (k) { dx = -dx; dy = -dy; } }
+          dx /= l; dy /= l; c.font = '600 10px system-ui, -apple-system, sans-serif'; const tw = c.measureText(t).width;
+          const X0 = e[0] + dx * (8 + tw / 2 * Math.abs(dx)), Y0 = e[1] + dy * 11;
+          c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineWidth = 3; c.strokeStyle = 'rgba(11,16,20,.7)'; c.strokeText(t, X0, Y0); c.fillStyle = '#f4f1e8'; c.fillText(t, X0, Y0);
+        }
       });
     }
   }
@@ -4460,6 +4522,11 @@ function drawCoach1(c, S2, F) {
     if (p.path && p.path.ghost) { const gh = S2(A.cam.proj(p.path.ghost[0], p.path.ghost[1], A.P.R)); c.setLineDash([4, 4]); c.lineWidth = 1.2; c.strokeStyle = 'rgba(244,241,232,.6)'; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(gh[0], gh[1]); c.stroke(); c.setLineDash([]); }
     c.font = '600 12px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'bottom'; c.lineWidth = 3; c.strokeStyle = 'rgba(11,16,20,.7)'; const t = 'Ball in hand: cue ball here' + (p.path && p.path.make != null ? ' (' + Math.round(p.path.make * 100) + '% to make, ' + Math.round(p.path.next * 100) + '% next)' : ''); c.strokeText(t, a[0], a[1] - 12); c.fillStyle = '#f4f1e8'; c.fillText(t, a[0], a[1] - 12);
   }
+  // the object ball's way to the pocket, off the cushions for a bank (V3.14, owner Nov 9): in its colour, every pot
+  if (p.path && p.path.ob && p.path.ob.length > 1 && !safety) {
+    c.beginPath(); p.path.ob.forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); });
+    c.lineWidth = 3.6; c.strokeStyle = 'rgba(11,16,20,.45)'; c.stroke(); c.lineWidth = 2; c.strokeStyle = BALLCOL[p.A.n] || '#eaf1f4'; c.stroke();
+  }
   // the cue ball's way: dashed to the ghost ball, solid on from there to the spot (drawn from where the cue ball was)
   const cueNow = now.find(t => t.num === 0), cue0 = CO.balls && CO.balls.find(b => b.n === 0), cue = same && cueNow ? cueNow : cue0;
   if (p.path && cue && !p.inHand) {
@@ -4468,7 +4535,6 @@ function drawCoach1(c, S2, F) {
     if (p.path.pre && p.path.pre.length > 1) p.path.pre.forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); // a kick: off the cushions
     else { c.moveTo(cp[0], cp[1]); c.lineTo(gh[0], gh[1]); }
     c.stroke(); c.setLineDash([]);
-    if (p.path.ob && p.path.ob.length > 1) { c.lineWidth = 1.6; c.strokeStyle = BALLCOL[p.A.n] || '#eaf1f4'; c.globalAlpha *= 0.85; c.beginPath(); p.path.ob.forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.stroke(); c.globalAlpha /= 0.85; } // a bank: the object ball's way
     c.lineWidth = 2; c.strokeStyle = 'rgba(244,241,232,.85)'; c.beginPath(); p.path.pts.concat(p.spot ? [p.spot] : []).forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.stroke();
   }
   // the perfect spot: a ball-sized ring with a dot
@@ -4497,7 +4563,7 @@ function coachStroke(c, F, st, n, pa) {
   const tx = x + (st.side || 0) * R, ty = y - st.tip * R; c.fillStyle = '#d03a2f'; c.beginPath(); c.arc(tx, ty, 4.5, 0, Math.PI * 2); c.fill(); c.strokeStyle = 'rgba(11,16,20,.6)'; c.lineWidth = 1; c.stroke();
   const shot = pa && pa.shot || 'pot', what = { pot: 'Pot the ' + n, bank: 'Bank the ' + n, kick: 'Kick at the ' + n + ' (1 rail)', kick2: 'Kick at the ' + n + ' (2 rails)', safety: 'Safety on the ' + n }[shot] || 'The ' + n;
   const tip = ({ follow: 'follow', stun: 'stun', draw: 'draw', center: 'center ball' }[st.kind] || st.kind) + (st.side > 0.05 ? ', right' : st.side < -0.05 ? ', left' : '');
-  const ps = ptScale(), pow = 'power ' + (ps ? Math.max(1, Math.round(st.power / ps.k)) + '/10 (yours)' : st.power + '/10');
+  const pw = powerWord(st.power), pow = pw + (ptScale() ? ' (yours)' : '');
   const X = x + R + 10; c.textAlign = 'left'; c.textBaseline = 'middle';
   c.font = '600 13px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.97)'; c.fillText(what, X, y - 16);
   c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.85)'; c.fillText(tip + ' · ' + pow, X, y + 1);
@@ -4506,39 +4572,52 @@ function coachStroke(c, F, st, n, pa) {
   const good = shot === 'safety' ? (pa.legal || 0) * (1 - (pa.opp || 0)) : (pa && pa.make || 0) * (pa && pa.noShape ? 1 : pa && pa.next || 0);
   c.fillStyle = good >= 0.8 ? '#7ee2a0' : good >= 0.6 ? '#f1c40f' : good >= 0.5 ? '#ff8a7a' : 'rgba(244,241,232,.75)'; c.font = '600 12px system-ui, -apple-system, sans-serif'; c.fillText(odds, X, y + 18);
   if (st.jacked) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('Cue raised: a ball behind', X, y + 34); }
+  else if (pa && pa.tight && pa.tight.length) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('Tight past the ' + pa.tight.join(' and the '), X, y + 34); }
   else if (pa && shot !== 'safety' && !pa.noShape && (pa.next || 0) < 0.6) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('No stroke reaches the zone from here', X, y + 34); }
   else if (pa && pa.alt) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.65)'; c.fillText('Also: ' + ({ pot: 'pot', bank: 'bank', kick: 'kick', kick2: '2-rail kick', safety: 'safety' }[pa.alt.kind] || pa.alt.kind) + (pa.alt.kind === 'safety' ? '' : ' ' + pct(pa.alt.make)), X, y + 34); }
-  for (let i = 0; i < 10; i++) { c.fillStyle = i < st.power ? 'rgba(89,214,232,.95)' : 'rgba(244,241,232,.18)'; c.fillRect(x - R + i * 7.2, y + R + 8, 5.4, 6); }
+  for (let i = 0; i < 3; i++) { c.fillStyle = i <= PT_LEVELS.indexOf(pw) ? 'rgba(89,214,232,.95)' : 'rgba(244,241,232,.18)'; c.fillRect(x - R + i * 17, y + R + 8, 14, 6); }
   // the zone's colours, for reading it (owner's bands)
   const ly = y + R + 30; let lx = x - R; c.font = '500 10px system-ui, -apple-system, sans-serif';
   for (const [col, t] of [['rgba(46,204,113,.95)', '90%+'], ['rgba(140,230,170,.95)', '80'], ['rgba(241,196,15,.95)', '60'], ['rgba(231,76,60,.95)', '50']]) { c.fillStyle = col; c.fillRect(lx, ly - 4, 9, 9); c.fillStyle = 'rgba(244,241,232,.8)'; c.fillText(t, lx + 12, ly + 1); lx += 12 + c.measureText(t).width + 10; }
 }
-// ---------- power test (V3.11, owner Nov 9: what the player calls a 3 against what the plan calls a 3) ----------
-// From the Menu in the Coaching test: the cue ball alone, rolled up the table at the power the player is asked for (2, 4,
-// 6, 8; three each, by the player's own feel). Each roll's speed from where it started, its first direction and how far it
-// went, in the physics simulation (cushions included), then on the plan's power scale. At the end the player's scale against
-// the plan's (a straight line through zero), kept on the phone: the plan's power is shown in the player's numbers after.
-const PT_KEY = KEY + '.power';
-function ptScale() { try { const d = JSON.parse(localStorage.getItem(PT_KEY) || 'null'); return d && d.k > 0.3 && d.k < 3 ? d : null; } catch (e) { return null; } }
-function ptestStart() { A.ptest = { levels: [2, 4, 6, 8], i: 0, k: 0, res: [] }; ptestTag(); dbg('power_test', { start: true }); }
+// ---------- power test (V3.11; V3.14 soft, medium, hard) ----------
+// From the Menu in the Coaching test: the cue ball alone, rolled up the table at the player's own soft, medium and hard (three
+// each). Each roll's speed from where it started, its first direction and how far it went, in the physics simulation
+// (cushions included). Kept on the phone: the plan then says soft, medium or hard by the player's own three speeds (each
+// plan speed goes to the nearest of the three), and by Dr. Dave's until the test is done (soft to 2.1 mph, medium to 4.3,
+// hard beyond). Owner, Nov 9: numbers meant different things to the plan and the player; the words are what a player uses.
+// V3.14: before the test's rolls the tracker took every lone cue ball roll for the cue ball put in place by hand (the
+// rack's set-up), so no roll ever counted (Nov 9 21:03: five rolls, all "Not counted: hand move").
+const PT_KEY = KEY + '.power2', PT_LEVELS = ['soft', 'medium', 'hard'];
+function ptScale() { try { const d = JSON.parse(localStorage.getItem(PT_KEY) || 'null'); return d && PT_LEVELS.every(L => d[L] > 0.2 && d[L] < 15) && d.soft < d.medium && d.medium < d.hard ? d : null; } catch (e) { return null; } }
+function powerWord(power) {
+  const mph = COACH.POWER_MPH[Math.max(0, Math.min(9, Math.round(power) - 1))], d = ptScale();
+  if (!d) return mph <= 2.1 ? 'soft' : mph <= 4.3 ? 'medium' : 'hard';
+  // nearest of the player's three on a log scale (a speed twice as fast is as far from it as half as fast)
+  return PT_LEVELS.reduce((b, L) => Math.abs(Math.log(mph / d[L])) < Math.abs(Math.log(mph / d[b])) ? L : b, 'soft');
+}
+function ptestArm() { if (A.tk) A.tk.S.setup = false; } // every lone roll is a shot in the test, not the cue ball put in place
+function ptestStart() { A.ptest = { i: 0, k: 0, res: [] }; ptestArm(); ptestTag(); dbg('power_test', { start: true }); }
 function ptestStop() { A.ptest = null; $('#drillTag').hidden = true; dbg('power_test', { stop: true }); }
-function ptestTag() { const t = A.ptest, el = $('#drillTag'); if (!t) return; el.hidden = false; el.textContent = 'Power test: roll the cue ball alone up the table at your power ' + t.levels[t.i] + ' · ' + (t.k + 1) + ' of 3'; }
+function ptestTag() { const t = A.ptest, el = $('#drillTag'); if (!t) return; ptestArm(); el.hidden = false; el.textContent = 'Power test: roll the cue ball alone up the table, your ' + PT_LEVELS[t.i].toUpperCase() + ' · ' + (t.k + 1) + ' of 3'; }
 function ptestShot(sh, row) {
   const t = A.ptest; if (!t) return;
   const real = (sh.paths || []).find(q => q.key === sh.cueKey), others = (sh.paths || []).filter(q => q.key !== sh.cueKey);
-  if (!real || real.p.length < 3 || row.made.length || others.some(q => { const a = q.p[0], b = q.p[q.p.length - 1]; return Math.hypot(b[1] - a[1], b[2] - a[2]) > 1.5; })) { toast('Power test: only the cue ball, please'); return; }
+  if (sh.scratch) { toast('Power test: it went in a pocket, so not measured. Roll that one again'); ptestTag(); return; }
+  if (!real || real.p.length < 3 || row.made.length || others.some(q => { const a = q.p[0], b = q.p[q.p.length - 1]; return Math.hypot(b[1] - a[1], b[2] - a[2]) > 1.5; })) { toast('Power test: only the cue ball, please. Roll that one again'); ptestTag(); return; }
   const pts = real.p.map(q => [q[1], q[2]]); let len = 0; for (let i = 1; i < pts.length; i++) len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
   let j = 1; while (j < pts.length - 1 && Math.hypot(pts[j][0] - pts[0][0], pts[j][1] - pts[0][1]) < 4) j++;
-  const v = COACH.speedFor(pts[0], [pts[j][0] - pts[0][0], pts[j][1] - pts[0][1]], len, A.P); if (!v) return;
-  const mph = v / 17.6, ours = COACH.powerOf(mph), called = t.levels[t.i]; t.res.push({ called, mph: r1(mph), ours: r1(ours), len: Math.round(len) });
-  dbg('power_test', { called, mph: r1(mph), ours: r1(ours), len: Math.round(len) }); toast('Your ' + called + ': ' + r1(ours) + ' on the plan\'s scale (' + r1(mph) + ' mph, ' + Math.round(len) + ' in rolled)');
+  const v = COACH.speedFor(pts[0], [pts[j][0] - pts[0][0], pts[j][1] - pts[0][1]], len, A.P); if (!v) { toast('Power test: could not measure that one. Roll it again'); ptestTag(); return; }
+  const mph = v / 17.6, called = PT_LEVELS[t.i]; t.res.push({ called, mph: r1(mph), ours: r1(COACH.powerOf(mph)), len: Math.round(len) });
+  dbg('power_test', { called, mph: r1(mph), ours: r1(COACH.powerOf(mph)), len: Math.round(len) }); toast('Your ' + called + ': ' + r1(mph) + ' mph (' + Math.round(len / 12) + ' ft rolled)');
   if (++t.k >= 3) { t.k = 0; t.i++; }
-  if (t.i >= t.levels.length) { // the player's numbers against the plan's: ours = k x theirs
-    let sxy = 0, sxx = 0; for (const q of t.res) { sxy += q.called * q.ours; sxx += q.called * q.called; } const k = sxy / sxx;
-    try { localStorage.setItem(PT_KEY, JSON.stringify({ k: r2(k), t: Date.now(), res: t.res })); } catch (e) { }
-    dbg('power_test', { done: true, k: r2(k), res: t.res });
-    const words = t.levels.map(L => { const qs = t.res.filter(q => q.called === L); return 'your ' + L + ' = ' + r1(qs.reduce((a, q) => a + q.ours, 0) / qs.length); }).join(', ');
-    A.ptest = null; $('#drillTag').hidden = true; showCard('<div><b>Power test done</b><p>' + words + ' on the plan\'s scale. The plan now shows its power in your numbers.</p></div><div class="row"><button class="btn" data-act="close">Close</button></div>');
+  if (t.i >= PT_LEVELS.length) { // each word's speed: the middle of its three rolls (one odd roll does not move it)
+    const d = { t: Date.now(), res: t.res }; for (const L of PT_LEVELS) { const m = t.res.filter(q => q.called === L).map(q => q.mph).sort((a, b) => a - b); d[L] = m[Math.floor(m.length / 2)]; }
+    const ok = d.soft < d.medium && d.medium < d.hard;
+    if (ok) try { localStorage.setItem(PT_KEY, JSON.stringify(d)); } catch (e) { }
+    dbg('power_test', { done: true, ok, soft: d.soft, medium: d.medium, hard: d.hard, res: t.res });
+    A.ptest = null; $('#drillTag').hidden = true;
+    showCard('<div><b>Power test done</b><p>' + (ok ? 'Your soft rolls ' + d.soft + ' mph, medium ' + d.medium + ', hard ' + d.hard + '. The plan now says soft, medium or hard by your own speeds.' : 'Your soft, medium and hard came out ' + d.soft + ', ' + d.medium + ' and ' + d.hard + ' mph: not in order, so not kept. Try it again from the Menu.') + '</p></div><div class="row"><button class="btn" data-act="close">Close</button></div>');
   } else ptestTag();
 }
 function drawManual(c, S2, F) {

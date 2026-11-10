@@ -639,3 +639,12 @@ test('8-ball: stripes named, and the 8 in ends the rack with balls still on the 
     assert.strictEqual(tk.S.events.some(e => e.k === 'rack_done'), eight, eight ? '8-ball: rack over' : 'not 8-ball: the rack goes on');
   }
 });
+
+test('in the power test (set-up off) a lone cue ball roll is a shot, not the cue ball put in place (Nov 9 21:03)', () => {
+  const tk = makeTracker(P, { practice: true, autoRack: false, rackNew: false }), balls = [{ num: 3, x: 60, y: 10 }, { num: 6, x: 65, y: 30 }];
+  let t = settle(tk, 0, [{ num: 0, x: 20, y: 20 }, ...balls]);
+  tk.S.setup = false; // the app's ptestArm
+  for (const x of [23, 27, 31, 34, 36]) { look(tk, t, [{ num: 0, x, y: 20, moving: true }, ...balls], false); t += 0.1; }
+  settle(tk, t, [{ num: 0, x: 36, y: 20 }, ...balls], 3);
+  assert.strictEqual(tk.S.shots.length, 1); assert.ok(!tk.S.events.some(e => e.k === 'not_shot'));
+});

@@ -1644,3 +1644,37 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
 - Reject plan (owner, Nov 9): a button in the Coaching test while a plan shows; one tap logs coach_reject (the plan, the
   layout, a picture reject-NNN.jpg) and the next shot's row says rejected. coach_shot also keeps the planned shot's
   geometry (cut, cue ball to object ball, object ball to pocket) for the player's own percentages later.
+
+## Review: Nov 9 20:32 (V3.13.0, 40 shots, 3 rejects) and 21:03 (power test), and V3.14.0
+- 20:32 rejects. 1: the 1 was "blocked" by the 4 by a quarter inch, so the plan played a safety. 2 and 3: a pot was there
+  (54%), but the safety scored higher. Owner: the thin/thick labels were backwards; "30% off plan" said nothing; the zone was
+  too big and too faint; the plan's power numbers did not match the player's.
+- 21:03 power test: five rolls, all "Not counted: hand move". The cause: until the rack's first real shot, the tracker's
+  setupDrop takes a lone cue ball roll (nothing else moved, nothing in) for the cue ball put in place by hand. Every
+  power-test roll is exactly that. The V3.11 test only covered the speed maths, not the tracker. The strokes themselves
+  were seen (back swing 7.5 in, pause, follow-through). The sixth roll scratched and got "only the cue ball".
+- V3.14.0, power: ptestArm sets tk.S.setup = false when the test starts and before each roll. A scratch or a moved ball
+  is "roll it again". The levels are soft, medium and hard, three rolls each; each word keeps the middle of its three
+  speeds (localStorage chalkline.v3.power2; the old 1-10 key is ignored). It is kept only when soft < medium < hard.
+  The stroke box says soft, medium or hard, picked by the nearest of the player's speeds on a log scale. Before the test it
+  uses Dr. Dave's bands: soft to 2.1 mph, medium to 4.3, hard beyond. There is a 3-step bar. Tracker test added at the end
+  of track.test.js. (Note: track.test.js shares one seeded noise stream, so a test added mid-file changed the "frozen line"
+  test's noise and broke it. That test is fragile to its noise; worth hardening.)
+- V3.14.0, planner (coach.js):
+  - A ball in the way by under 0.45 in is a tight pot: it is tried with that ball moved just clear, at 0.9 of its value, and
+    the plan says "Tight past the N".
+  - A safety is tried only when no pot is 40%+.
+  - Thin/thick is labelled by the object ball's cut (thinner = more cut = overcut): "thin (overcut)" / "thick (undercut)".
+  - zoneFan: a sector seen from the next ball at the spot's distance, centred on the spot's direction. Each side widens
+    while the next shot stays within 0.2 of the spot's value (and 60%+), at least 2 degrees and 30 in all, so it leans to
+    the good side. Its depth goes along the line while the value holds, from 3 to 15 in each way. The outer seventh on each
+    side is yellow.
+  - path.ob: the object ball's simulated path for every pot, bank and kick.
+- V3.14.0, app:
+  - The zone is drawn as the fan: a green gradient brightest at the spot, yellow sides, the ideal line, no outlines. The
+    red and yellow hulls and the blocked shadows are no longer drawn.
+  - The object ball's line goes to the pocket in its colour, with a dark edge, for every non-safety plan (ball in hand
+    too).
+  - Band labels sit on the outer side of each line.
+  - After the shot: c.stop = {off, along, side} against the perfect spot, along the planned arrival direction. The words are
+    "stopped on the spot" (4 in or less) or "N in long/short, N in to the side". The % travel words are gone.

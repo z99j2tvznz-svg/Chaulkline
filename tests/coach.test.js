@@ -70,8 +70,17 @@ test('V3.12: there is always a plan: banks, kicks and safeties when no clean pot
     if (r.path.shot === 'safety') assert.ok(r.path.legal > 0.5 && r.path.opp < 0.6, 'a real safety: ' + JSON.stringify({ legal: r.path.legal, opp: r.path.opp }));
     else assert.ok(r.path.make > 0, 'a percentage to make');
   }
-  assert.ok(kinds.has('pot') && kinds.has('safety'), 'pots and safeties: ' + [...kinds]);
+  assert.ok(kinds.has('pot') && [...kinds].some(k => k !== 'pot'), 'pots, and banks, kicks or safeties: ' + [...kinds]); // (V3.14: a safety only when no pot is 40%+)
   // a bank: the 3 hidden from every pocket but one off the top cushion
   const b = COACH.plan([{ n: 0, x: 20, y: 10 }, { n: 3, x: 39, y: 12 }, { n: 9, x: 60, y: 30 }, { n: 101, x: 39, y: 7 }, { n: 102, x: 45, y: 13 }, { n: 103, x: 33, y: 13 }], P);
   assert.ok(b.path && b.path.stroke, 'a plan when the 3 has no straight pot: ' + (b.path && b.path.shot));
+});
+
+test('V3.14: a ball a quarter inch in the way is a tight pot, not a safety; the zone is a fan of 30 degrees at most (Nov 9 20:32 rejects)', () => {
+  const r1 = COACH.plan([{ n: 9, x: 11, y: 24.6 }, { n: 1, x: 60.7, y: 9.5 }, { n: 5, x: 20.5, y: 23.1 }, { n: 7, x: 41.8, y: 32.1 }, { n: 0, x: 26.1, y: 13.7 }, { n: 6, x: 23.6, y: 5.9 }, { n: 2, x: 28.1, y: 18.5 }, { n: 3, x: 57.9, y: 25.3 }, { n: 4, x: 37.5, y: 14.6 }], P);
+  assert.ok(r1.path.shot === 'pot' && r1.path.tight && r1.path.tight.includes(4) && r1.path.make > 0.4, JSON.stringify({ shot: r1.path.shot, tight: r1.path.tight, make: r1.path.make }));
+  assert.ok(r1.path.ob && r1.path.ob.length > 1, 'the object ball\'s line to the pocket');
+  const r2 = COACH.plan([{ n: 9, x: 10.8, y: 24.8 }, { n: 5, x: 20.4, y: 23.2 }, { n: 7, x: 41.9, y: 32.3 }, { n: 0, x: 57.3, y: 27.4 }, { n: 6, x: 23.5, y: 5.9 }, { n: 2, x: 28.1, y: 18.6 }, { n: 4, x: 37.5, y: 14.7 }, { n: 3, x: 57.1, y: 22.4 }], P);
+  assert.notStrictEqual(r2.path.shot, 'safety', 'a pot is there: ' + JSON.stringify({ shot: r2.path.shot, make: r2.path.make }));
+  for (const r of [r1, r2]) if (r.zoneFan) { const z = r.zoneFan; assert.ok(z.lo + z.hi <= 30 && z.lo >= 2 && z.hi >= 2 && z.r1 - z.r0 >= 6, JSON.stringify(z)); }
 });
