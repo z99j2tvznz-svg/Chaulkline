@@ -84,3 +84,29 @@ test('V3.14: a ball a quarter inch in the way is a tight pot, not a safety; the 
   assert.notStrictEqual(r2.path.shot, 'safety', 'a pot is there: ' + JSON.stringify({ shot: r2.path.shot, make: r2.path.make }));
   for (const r of [r1, r2]) if (r.zoneFan) { const z = r.zoneFan; assert.ok(z.lo + z.hi <= 30 && z.lo >= 2 && z.hi >= 2 && z.r1 - z.r0 >= 6, JSON.stringify(z)); }
 });
+
+test('V3.15: the spin and draw tests read the player\'s side spin and tip back from where the cue ball went', () => {
+  const C = require('../src/core.js'), Pn = Object.assign({}, P, { cushionRoll: 0.6, pockets: [] });
+  // a roll from the foot spot at the short cushion with side spin, seen at the tracker's few looks a second
+  for (const a of [0.15, 0.25]) { // (the simulated turn levels off at about 20 degrees by a third of the radius)
+    const r = C.simulate([{ id: 0, x: P.L * 0.75, y: P.W / 2 }], { angle: 0.02, speed: 3.2 * 17.6, a, b: 0 }, Pn, { record: true, maxT: 30 }), q = r.paths[0].filter((z, i) => i % 10 === 0).map(z => [z[1], z[2]]);
+    const f = COACH.fitSpin(q, 3.2, P); assert.ok(f && Math.abs(f.a - a) < 0.06 && f.rail === 'right', a + ' -> ' + JSON.stringify(f));
+  }
+  // a straight draw shot: the tip and the speed back from where the cue ball and the object ball stopped
+  const Pc = Object.assign({}, P, { cushionRoll: 0.6 });
+  const r = C.simulate([{ id: 0, x: 30, y: 19.5 }, { id: 1, x: 50, y: 19.5 }], { angle: 0, speed: 6 * 17.6, a: 0, b: -0.4 }, Pc, { record: true, maxT: 30 });
+  const c = r.final.find(z => z.id === 0), o = r.final.find(z => z.id === 1), oq = r.paths[1].map(z => [z[1], z[2]]); let len = 0; for (let i = 1; i < oq.length; i++) len += Math.hypot(oq[i][0] - oq[i - 1][0], oq[i][1] - oq[i - 1][1]);
+  const d = COACH.fitDraw([30, 19.5], [c.x, c.y], [50, 19.5], [o.x, o.y], len, false, 4, P);
+  assert.ok(d && Math.abs(d.b + 0.4) < 0.06 && Math.abs(d.mph - 6) < 0.6 && d.along < -20, JSON.stringify(d));
+});
+
+test('V3.15: the plan uses the player\'s speeds, tips and draw; side spin is searched with everything else (Nov 9 21:33)', () => {
+  // the 4 cut to the left with the zone back down by the cue ball: before, a follow up and down the table and 35% next
+  const lay = [{ n: 0, x: 57.3, y: 6.9 }, { n: 4, x: 34.1, y: 30.3 }, { n: 7, x: 65.9, y: 18.4 }, { n: 9, x: 27.9, y: 10.1 }];
+  const r = COACH.plan(lay, P);
+  assert.ok(r.path && r.path.stroke && r.path.stroke.speed && r.path.next >= 0.45, JSON.stringify({ st: r.path && r.path.stroke, next: r.path && r.path.next }));
+  const st = r.path.stroke; assert.ok(['soft', 'soft to medium', 'medium', 'medium to hard', 'hard'].includes(st.speed) && Number.isInteger(st.tips));
+  // the player's own: speeds, a tip of side, the draw and follow they have
+  const o = COACH.plan(lay, P, { speeds: [1.2, 2.5, 4.5], spinTip: 0.12, tipRange: { draw: -0.25, follow: 0.3 } }).path.stroke;
+  assert.ok(o.mph <= 4.5 && o.tip >= -0.25 && o.tip <= 0.3 && Math.abs(o.side - o.tips * 0.12) < 0.01, JSON.stringify(o));
+});

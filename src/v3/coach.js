@@ -108,10 +108,18 @@ function coachFactory(sim) {
     }
     // ---- the stroke on A, in the physics simulation (V3.11) ----
     // power 1-10 on Dr. Dave's speed scale (V3.11.1): 1-2 slow (1-2 mph), 3-5 medium (2-4), 6-8 fast (4-7), 9-10 a power shot (7-10)
-    const MPH = [0.9, 1.5, 2.1, 2.8, 3.5, 4.3, 5.3, 6.4, 7.8, 9.5], TRY = [0, 1, 2, 3, 4, 5, 6, 7, 8], TIPS = [-0.5, -0.35, -0.2, 0, 0.2, 0.35, 0.5];
+    // V3.15 (owner, Nov 9 21:33: soft, medium, hard are what a player can repeat): five speeds, the player's own soft, medium
+    // and hard from the power test (Dr. Dave's 1.6, 3.2 and 6 mph until then) and the two between; the tip from the player's
+    // own hardest draw to their hardest follow (the draw test; half a radius each way until then); side spin in tips, a tip
+    // being what the spin test measured (0.17 of the radius until then), up to two tips in the search and three for the best
+    const SP = o0.speeds && o0.speeds.length === 3 && o0.speeds.every(v => v > 0.3 && v < 15) ? o0.speeds : [1.6, 3.2, 6];
+    const MPH = [SP[0], Math.sqrt(SP[0] * SP[1]), SP[1], Math.sqrt(SP[1] * SP[2]), SP[2]], TRY = [0, 1, 2, 3, 4];
+    const SPEED_WORD = ['soft', 'soft to medium', 'medium', 'medium to hard', 'hard'];
+    const TR = o0.tipRange || {}, BD = TR.draw < -0.1 && TR.draw > -0.8 ? TR.draw : -0.45, BF = TR.follow > 0.1 && TR.follow < 0.8 ? TR.follow : 0.45;
+    const TIPS = [BD, BD / 2, 0, BF / 2, BF], TIP = o0.spinTip > 0.05 && o0.spinTip < 0.4 ? o0.spinTip : 0.17, SIDES = [-2, -1, 0, 1, 2].map(k => k * TIP);
     const init = () => [{ id: 0, x: cue.x, y: cue.y }].concat(objs.map(o => ({ id: o.n, x: o.x, y: o.y })));
     const run = (ang, v, a, b) => sim(init(), { angle: ang, speed: v, a, b }, P, { record: true, only: new Set([0]), maxT: 9 });
-    const strokeOf = (p, a, b) => ({ tip: b, side: a, power: p + 1, mph: MPH[p], kind: b < -0.1 ? 'draw' : b > 0.1 ? 'follow' : 'center' });
+    const strokeOf = (p, a, b) => ({ tip: +b.toFixed(2), side: +a.toFixed(2), tips: Math.round(a / TIP), power: p + 1, mph: +MPH[p].toFixed(1), speed: SPEED_WORD[p], kind: b < -0.1 ? 'draw' : b > 0.1 ? 'follow' : 'center' });
     function after(r) { const ht = r.hitAt ? r.hitAt.t : 0, pts = (r.paths[0] || []).filter(q => q[0] >= ht).map(q => [q[1], q[2]]); return pts; }
     // ---- the plan for A (V3.12): every kind of shot, with real percentages ----
     // Strokes run in the simulation; each candidate run again with a good amateur's errors (aim 0.2 degrees, speed 8%, tip
@@ -157,9 +165,11 @@ function coachFactory(sim) {
         const d = unit([q[n - 1][1] - q[n - 3][1], q[n - 1][2] - q[n - 3][2]]), rad = unit([c.x - Zb.x, c.y - Zb.y]); return Math.min(1, z * (0.75 + 0.25 * Math.abs(dot(d, rad)))); // into the line (owner, Nov 9)
       };
       // simple strokes first: soft to medium, the tip near the middle, no side unless it pays; few cushions (Dr. Dave)
-      const simple = c => (c.p <= 5 ? 1 : Math.pow(0.85, c.p - 5)) * (1 - 0.5 * Math.max(0, Math.abs(c.b) - 0.2)) * (c.a ? 0.9 : 1);
+      // (V3.15: side spin and extra cushions cost a little, not a lot: coming into the line with spin or more rails is good
+      // position play, owner Nov 9 21:33)
+      const simple = c => (c.p <= 3 ? 1 : 0.9) * (1 - 0.5 * Math.max(0, Math.abs(c.b) - 0.25)) * (1 - 0.04 * Math.abs(Math.round(c.a / TIP)));
       const rails = pts => { let n = 0, on = false; for (const p of pts) { const at = p[0] < R + 0.25 || p[0] > L - R - 0.25 || p[1] < R + 0.25 || p[1] > W - R - 0.25; if (at && !on) n++; on = at; } return n; };
-      const railF = r => { const n = rails(after(r)); return n <= 1 ? 1 : Math.pow(0.85, n - 1); };
+      const railF = r => { const n = rails(after(r)); return n <= 1 ? 1 : Math.pow(0.94, n - 1); };
       // a candidate's percentages: N runs with the player's errors
       const mc = (c, N) => {
         let made = 0, q = 0, legal = 0, opp = 0;
@@ -179,10 +189,12 @@ function coachFactory(sim) {
           }
           q += rq ? nextQ(rq) : 0;
         }
-        if (c.kind === 'safety') { c.legal = legal / N; c.opp = legal ? opp / legal : 1; c.value = 0.35 * c.legal * (1 - c.opp) * simple(c); c.pMake = 0; c.pNext = 0; return c; }
+        // (V3.15: runs added to the candidate's earlier ones, so the final check pools them rather than replacing them)
+        c.nN = (c.nN || 0) + N; c.nMade = (c.nMade || 0) + made; c.nQ = (c.nQ || 0) + q; c.nLegal = (c.nLegal || 0) + legal; c.nOpp = (c.nOpp || 0) + opp;
+        if (c.kind === 'safety') { c.legal = c.nLegal / c.nN; c.opp = c.nLegal ? c.nOpp / c.nLegal : 1; c.value = 0.35 * c.legal * (1 - c.opp) * simple(c); c.pMake = 0; c.pNext = 0; return c; }
         // offence first: a sure pot with a poor leave (0.6) still beats the best safety (0.5); a 50/50 pot does not
         // (V3.13, Nov 8 20:50: plans made the ball and left the cue ball out of the zone): the leave counts more
-        c.pMake = made / N; c.pNext = made ? q / made : 0; c.value = c.pMake * (0.4 + 0.6 * c.pNext) * simple(c) * (c.rf || 1); return c;
+        c.pMake = c.nMade / c.nN; c.pNext = c.nMade ? c.nQ / c.nMade : 0; c.value = c.pMake * (0.4 + 0.6 * c.pNext) * simple(c) * (c.rf || 1); return c;
       };
       const all = [];
       // 1. straight at A: every pocket, tip, speed (the nominal stroke first; the aim nudged up to a degree for throw)
@@ -200,16 +212,23 @@ function coachFactory(sim) {
         const ang0 = Math.atan2(s.G[1] - cue.y, s.G[0] - cue.x);
         const back = [-Math.cos(ang0), -Math.sin(ang0)], jack = objs.some(q => { const d = [q.x - cue.x, q.y - cue.y], t = dot(d, back); return t > 0 && t < 9 && Math.abs(d[0] * back[1] - d[1] * back[0]) < 1.9; });
         if (jack) out.jacked = true;
-        for (const p of TRY) for (const b of TIPS) {
-          if (jack && (b < -0.2 || p > 5)) continue;
-          for (const da of [0, 0.5, -0.5, 1, -1]) { const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, 0, b, ini); if (potted(r)) { direct.push({ kind: 'pot', o, s, ang: ang0 + da * D2R, da: da * D2R, p, a: 0, b, r, init: ini, tight, v0: nextQ(r) * railF(r) * (tight.length ? 0.9 : 1), rf: railF(r) * (tight.length ? 0.9 : 1) }); break; } }
+        // every speed, tip and side together (V3.15: side spin was tried only on the best three after the rest was chosen, so
+        // spin to come into the line was hardly ever found). The aim that pots it (throw) found once for each speed and side
+        // and tried first for the other tips
+        for (const p of TRY) for (const a of SIDES) {
+          let da0 = null;
+          for (const b of TIPS) {
+            if (jack && (b < 0 || p > 2)) continue; // (cue raised: no draw, medium at most)
+            for (const da of da0 == null ? [0, 0.5, -0.5, 1, -1, 1.5, -1.5] : [da0, da0 + 0.5, da0 - 0.5]) { const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, a, b, ini); if (potted(r)) { da0 = da; direct.push({ kind: 'pot', o, s, ang: ang0 + da * D2R, da: da * D2R, p, a, b, r, init: ini, tight, v0: nextQ(r) * railF(r) * (tight.length ? 0.9 : 1), rf: railF(r) * (tight.length ? 0.9 : 1) }); break; } }
+          }
         }
       }
-      const pre = c => c.v0 * simple(c) * (c.p >= 1 && c.p <= 4 ? 1 : 0.9) * (Math.abs(c.b) <= 0.2 ? 1 : 0.95);
+      const pre = c => c.v0 * simple(c);
       direct.sort((x, y) => pre(y) - pre(x));
-      const top = direct.slice(0, 14).map(c => mc(c, 10)); top.sort((x, y) => y.value - x.value);
-      for (const c of top.slice(0, 3)) for (const a of [-0.3, 0.3]) { // side spin on the best three
-        for (const da of [0, 0.5, -0.5, 1, -1, 1.5, -1.5]) { const r = runAll(c.ang + da * D2R, MPH[c.p] * 17.6, a, c.b, c.init); if (potted(r)) { top.push(mc({ kind: 'pot', o: c.o, s: c.s, ang: c.ang + da * D2R, da: (c.da || 0) + da * D2R, p: c.p, a, b: c.b, r, init: c.init, tight: c.tight, rf: railF(r) * (c.tight && c.tight.length ? 0.9 : 1) }, 12)); break; } }
+      const top = direct.slice(0, 18).map(c => mc(c, 10)); top.sort((x, y) => y.value - x.value);
+      // the best three tried with a tip more side spin (three tips at most)
+      for (const c of top.slice(0, 3)) { const k = Math.round(c.a / TIP); if (Math.abs(k) !== 2) continue; const a = Math.sign(k) * 3 * TIP;
+        for (const da of [c.da / D2R, c.da / D2R + 0.5, c.da / D2R - 0.5, c.da / D2R + 1, c.da / D2R - 1]) { const ang = c.ang - c.da + da * D2R, r = runAll(ang, MPH[c.p] * 17.6, a, c.b, c.init); if (potted(r)) { top.push(mc({ kind: 'pot', o: c.o, s: c.s, ang, da: da * D2R, p: c.p, a, b: c.b, r, init: c.init, tight: c.tight, rf: railF(r) * (c.tight && c.tight.length ? 0.9 : 1) }, 12)); break; } }
       }
       all.push(...top);
       const bestPot = () => Math.max(0, ...all.filter(c => c.kind !== 'safety').map(c => c.value));
@@ -224,7 +243,7 @@ function coachFactory(sim) {
           const aim = sub(G, pt(cue)); if (len(aim) < 2.5 * R || blockers(pt(cue), G, [A.n]).length) continue;
           if (Math.acos(Math.max(-1, Math.min(1, dot(unit(aim), u)))) / D2R > 60) continue;
           const ang0 = Math.atan2(aim[1], aim[0]);
-          for (const p of [3, 5, 7]) for (const da of [0, 0.7, -0.7, 1.4, -1.4, 2.1, -2.1]) { const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, 0, 0); if (potted(r)) { banks.push({ kind: 'bank', o: { pi, pk }, cu, s: { G, cut: 0 }, ang: ang0 + da * D2R, da: da * D2R, p, a: 0, b: 0, r, rf: railF(r) }); break; } }
+          for (const p of [1, 2, 4]) for (const da of [0, 0.7, -0.7, 1.4, -1.4, 2.1, -2.1]) { const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, 0, 0); if (potted(r)) { banks.push({ kind: 'bank', o: { pi, pk }, cu, s: { G, cut: 0 }, ang: ang0 + da * D2R, da: da * D2R, p, a: 0, b: 0, r, rf: railF(r) }); break; } }
         } });
         all.push(...banks.map(c => mc(c, 10)));
       }
@@ -233,7 +252,7 @@ function coachFactory(sim) {
         const targets = pA.map(o => ({ o, G: [A.x - 2 * R * o.u[0], A.y - 2 * R * o.u[1]] }));
         const kicks = [], tryKick = (Gm, o, k, rails2) => {
           const aim = sub(Gm, pt(cue)), ang0 = Math.atan2(aim[1], aim[0]);
-          for (const p of [3, 5, 7]) for (const da of [0, 0.6, -0.6, 1.2, -1.2]) {
+          for (const p of [1, 2, 4]) for (const da of [0, 0.6, -0.6, 1.2, -1.2]) {
             const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, 0, 0);
             if (potted(r)) { kicks.push({ kind: rails2 ? 'kick2' : 'kick', o, s: { G: Gm, cut: 0 }, ang: ang0 + da * D2R, p, a: 0, b: 0, r, rf: 1 }); return true; }
           }
@@ -249,13 +268,13 @@ function coachFactory(sim) {
         const safe = [], see = !blockers(pt(cue), pt(A), [A.n]).length;
         const aims = see ? [0, 1, -1].map(k => { const d = unit(sub(pt(A), pt(cue))), n = [-d[1], d[0]]; return [A.x + n[0] * k * 1.8, A.y + n[1] * k * 1.8]; }) : [0, 1, 2, 3].map(cu => mirror(pt(A), cu));
         for (const T of aims) { const aim = sub(T, pt(cue)), ang0 = Math.atan2(aim[1], aim[0]);
-          for (const p of [0, 1, 2, 3]) for (const b of [-0.2, 0, 0.2]) { const r = runAll(ang0, MPH[p] * 17.6, 0, b); if (r.firstHit === A.n && !r.pocketed.some(z => z.id === 0) && (r.railAfter || r.pocketed.length)) safe.push({ kind: 'safety', o: null, s: { G: T, cut: 0 }, ang: ang0, p, a: 0, b, r, v0: 1 - oppBest(r) }); } }
+          for (const p of [0, 1, 2]) for (const b of [-0.2, 0, 0.2]) { const r = runAll(ang0, MPH[p] * 17.6, 0, b); if (r.firstHit === A.n && !r.pocketed.some(z => z.id === 0) && (r.railAfter || r.pocketed.length)) safe.push({ kind: 'safety', o: null, s: { G: T, cut: 0 }, ang: ang0, p, a: 0, b, r, v0: 1 - oppBest(r) }); } }
         safe.sort((x, y) => y.v0 - x.v0); all.push(...safe.slice(0, 4).map(c => mc(c, 8)));
       }
       if (!all.length) return null;
       all.sort((x, y) => y.value - x.value);
       // the best three again with more runs before one is picked (a small sample flatters the lucky one)
-      const fin = all.slice(0, 3).map(c => mc(Object.assign({}, c), 24)); fin.sort((x, y) => y.value - x.value);
+      const fin = all.slice(0, 3).map(c => mc(c, 24)); fin.sort((x, y) => y.value - x.value); all.sort((x, y) => y.value - x.value);
       const w = fin[0], alt = fin.concat(all).find(c => c.kind !== w.kind);
       // the band of the cue ball's path: the same stroke aimed to the inside and to the outside of the pocket (A still in)
       let lo = null, hi = null, dlo = 0, dhi = 0;
@@ -266,7 +285,7 @@ function coachFactory(sim) {
       const cutOf = (r, ang) => { const q = pathOf(r, A.n, true); if (q.length < 3) return 0; const d = unit(sub(q[Math.min(q.length - 1, 4)], q[0])); return Math.acos(Math.max(-1, Math.min(1, dot(d, [Math.cos(ang), Math.sin(ang)])))); };
       const fanThin = lo && hi && lo !== hi ? (cutOf(lo, w.ang + dlo * D2R) > cutOf(hi, w.ang + dhi * D2R) ? 0 : 1) : null;
       const c0 = w.r.final.find(q => q.id === 0);
-      const alts = all.slice(0, 4).map(c => ({ kind: c.kind, pocket: c.o ? c.o.pi : null, tip: c.b, side: c.a, power: c.p + 1, make: +c.pMake.toFixed(2), next: +c.pNext.toFixed(2), value: +c.value.toFixed(3) }));
+      const alts = all.slice(0, 4).map(c => ({ kind: c.kind, pocket: c.o ? c.o.pi : null, tip: +c.b.toFixed(2), side: +c.a.toFixed(2), tips: Math.round(c.a / TIP), power: c.p + 1, speed: SPEED_WORD[c.p], make: +c.pMake.toFixed(2), next: +c.pNext.toFixed(2), value: +c.value.toFixed(3) }));
       return { kind: w.kind, val: w.value, pocket: w.o ? w.o.pi : null, cut: Math.round(w.s.cut || 0), ghost: w.s.G, pts: after(w.r), pre: w.kind === 'kick' || w.kind === 'kick2' ? pathOf(w.r, 0, false) : null, ob: w.kind !== 'safety' ? pathOf(w.r, A.n, true) : null, tight: w.tight && w.tight.length ? w.tight : null,
         stroke: Object.assign(strokeOf(w.p, w.a, w.b), { hard: w.kind === 'safety' ? false : w.pMake < 0.6 || w.pNext < 0.5, jacked: !!out.jacked }),
         fan: lo && hi && lo !== hi ? [after(lo), after(hi)] : null, fanThin, p: c0 ? [c0.x, c0.y] : null, make: +w.pMake.toFixed(2), next: +w.pNext.toFixed(2), legal: w.legal != null ? +w.legal.toFixed(2) : null, opp: w.opp != null ? +w.opp.toFixed(2) : null,
@@ -487,7 +506,48 @@ function coachFactory(sim) {
     for (let i = 0; i < 18; i++) { const m = (lo + hi) / 2; if (len(m) < dist) lo = m; else hi = m; }
     return (lo + hi) / 2;
   }
-  return { plan, gradeAt, POWER_MPH, powerOf, speedFor };
+  // ---- the stroke tests (V3.15, owner Nov 9 21:33): what the player's spin and draw do on their table, in the simulation's
+  // own terms, so the plan asks for strokes the player has ----
+  const pathLen = q => { let s0 = 0; for (let i = 1; i < q.length; i++) s0 += Math.hypot(q[i][0] - q[i - 1][0], q[i][1] - q[i - 1][1]); return s0; };
+  // a direction from point i of a path to the first point at least d further along (null when there is none)
+  const dirFrom = (q, i, d) => { for (let j = i + 1; j < q.length; j++) { const v = [q[j][0] - q[i][0], q[j][1] - q[i][1]], l = Math.hypot(v[0], v[1]); if (l >= d) return [v[0] / l, v[1] / l]; } return null; };
+  // where a lone cue ball rolled up the table met the short cushion: its way in and its way out (pts [[x, y]...])
+  function railBounce(q, P) {
+    if (q.length < 3) return null; const din = dirFrom(q, 0, 4); if (!din || Math.abs(din[0]) < 0.8) return null; // up the table, not across
+    let k = 0; for (let i = 1; i < q.length; i++) if (din[0] > 0 ? q[i][0] > q[k][0] : q[i][0] < q[k][0]) k = i;
+    const rail = din[0] > 0 ? P.L - P.R : P.R; if (Math.abs(q[k][0] - rail) > 4 || k === q.length - 1) return null; // never reached it
+    let j0 = 0; for (let i = 0; i < k; i++) if (Math.abs(q[i][0] - rail) > 5) j0 = i; // the last point clear of the cushion on the way in
+    const vin = [q[j0][0] - q[0][0], q[j0][1] - q[0][1]], li = Math.hypot(vin[0], vin[1]), dout = dirFrom(q, k, 8);
+    if (li < 6 || !dout) return null;
+    const ain = Math.atan2(vin[1] / li, Math.abs(vin[0] / li)) / D2R, aout = Math.atan2(dout[1], Math.abs(dout[0])) / D2R;
+    return { k, ain, aout, turn: aout - ain, rail: din[0] > 0 ? 'right' : 'left' };
+  }
+  // the spin test: the side spin (fraction of the radius, signed) that turns the simulated roll off the cushion as the real one
+  // turned, at the player's speed for that roll
+  function fitSpin(q, mph, P) {
+    if (!sim) return null; const real = railBounce(q, P); if (!real) return null; P = Object.assign({}, P, { pockets: [], cushionRoll: P.cushionRoll == null ? 0.6 : P.cushionRoll });
+    const ang = Math.atan2(q[Math.max(1, real.k - 1)][1] - q[0][1], q[Math.max(1, real.k - 1)][0] - q[0][0]); let best = null;
+    for (let a = -0.8; a <= 0.801; a += 0.02) {
+      const r = sim([{ id: 0, x: q[0][0], y: q[0][1] }], { angle: ang, speed: mph * 17.6, a, b: 0 }, P, { record: true, maxT: 20 }), sq = (r.paths[0] || []).map(z => [z[1], z[2]]), sb = railBounce(sq, P);
+      if (!sb) continue; const e = Math.abs(sb.turn - real.turn); if (!best || e < best.e - 0.05) best = { a: +a.toFixed(2), e };
+    }
+    return best ? { a: best.a, err: +best.e.toFixed(1), ain: +real.ain.toFixed(1), aout: +real.aout.toFixed(1), turn: +real.turn.toFixed(1), rail: real.rail } : null;
+  }
+  // the draw test: a straight shot (cue ball at c0 to the object ball at o0); the tip (fraction of the radius, + follow, - draw)
+  // that leaves the simulated cue ball where the real one stopped. The speed: from how far the object ball went when it
+  // stayed on the table, else the player's speed for that stroke
+  function fitDraw(c0, cEnd, o0, oEnd, oLen, oIn, mph, P) {
+    if (!sim) return null; P = Object.assign({}, P, { cushionRoll: P.cushionRoll == null ? 0.6 : P.cushionRoll });
+    const ang = Math.atan2(o0[1] - c0[1], o0[0] - c0[0]), run = (v, b) => sim([{ id: 0, x: c0[0], y: c0[1] }, { id: 1, x: o0[0], y: o0[1] }], { angle: ang, speed: v, a: 0, b }, P, { record: true, maxT: 30 });
+    // (for each tip the speed that sends the object ball as far as it went: a drawn ball slides and slows more on its way)
+    const speedAt = b => { if (oIn || !(oLen > 6)) return mph * 17.6; let lo = 10, hi = 500; for (let i = 0; i < 14; i++) { const m = (lo + hi) / 2, r = run(m, b), q = (r.paths[1] || []).map(z => [z[1], z[2]]); if (r.pocketed.some(z => z.id === 1) || pathLen(q) > oLen) hi = m; else lo = m; } return (lo + hi) / 2; };
+    let best = null;
+    for (let b = -0.8; b <= 0.801; b += 0.04) { const v = speedAt(b), r = run(v, b), c = r.final.find(z => z.id === 0); if (!c) continue; const e = Math.hypot(c.x - cEnd[0], c.y - cEnd[1]); if (!best || e < best.e - 0.05) best = { b: +b.toFixed(2), e, v }; }
+    const v = best ? best.v : mph * 17.6;
+    const u = [Math.cos(ang), Math.sin(ang)], hit = [o0[0] - 2 * P.R * u[0], o0[1] - 2 * P.R * u[1]];
+    return best ? { b: best.b, err: +best.e.toFixed(1), mph: +(v / 17.6).toFixed(1), along: +((cEnd[0] - hit[0]) * u[0] + (cEnd[1] - hit[1]) * u[1]).toFixed(1) } : null;
+  }
+  return { plan, gradeAt, POWER_MPH, powerOf, speedFor, railBounce, fitSpin, fitDraw };
 }
 const COACH = coachFactory(typeof simulate !== 'undefined' ? simulate : typeof module !== 'undefined' ? require('../core.js').simulate : null);
 if (typeof module !== 'undefined') module.exports = COACH;

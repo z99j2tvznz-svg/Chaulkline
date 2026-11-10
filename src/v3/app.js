@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.14.1';
+const VERSION = 'V3.15.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -224,6 +224,9 @@ async function start(mode) {
   homeMsg(''); A.mode = mode === 'practice' || mode === 'coach' ? mode : 'play'; CO.plan = null; CO.sig = ''; CO.atStart = null;
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
+  // the session before this one, for the debug file (V3.15: read only when the page loaded, so a second session in the same
+  // page kept the one from before that: Nov 9 21:33, the power test session went home and its log never came along)
+  if (A.sess && DBG.ev.length) dbgPersist(); try { PREV = JSON.parse(localStorage.getItem(KEY + '.dbg') || 'null'); } catch (e) { }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
   A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, game: A.mode === 'play' ? (A.game || 9) : null, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode !== 'play'; $('#rejectBtn').hidden = true; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
   STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
@@ -535,9 +538,9 @@ function onShotEnd(sh) {
     if (!A.drillReadyOf.get(sh.n) || nudge) { row1.notShot = 'setup'; dbg('drill_setup_move', { n: sh.n, ready: A.drillReadyOf.get(sh.n), far: r1(far) }); }
   }
   const dt = (A.sess.drillTries || []).find(x => x.n === sh.n); if (dt) row1.drill = dt;
-  if (A.mode === 'coach') coachShotEnd(sh, row, row1);
-  if (A.ptest) ptestShot(sh, row);
-  if (row1.notShot !== 'setup' && !dt) shotToast(row1); // (a drill shot scored early has said its result already)
+  if (A.mode === 'coach' && !A.stest) coachShotEnd(sh, row, row1);
+  const inTest = !!A.stest; if (inTest) stShot(sh, row);
+  if (row1.notShot !== 'setup' && !dt && !inTest) shotToast(row1); // (a stroke test says its own words) // (a drill shot scored early has said its result already)
   if (A.sess.shots.length % 3 === 0) { A.lastSess = A.sess; save(); }
 }
 // the shot's line (no tap to correct it: owner, Nov 3, no buttons while playing; what the app gets wrong is found in the
@@ -1041,7 +1044,7 @@ function coachLook() {
   CO.sig = sig; CO.busy = true; CO.pending = bs; const id = ++CO.id;
   const P = JSON.parse(JSON.stringify(A.P)); // the whole table: size, pockets, cloth and cushions (the physics needs them)
   const w = coachWorker();
-  const opts = { inHand: !bs.some(b => b.n === 0) };
+  const opts = Object.assign({ inHand: !bs.some(b => b.n === 0) }, coachOpts());
   if (w) w.postMessage({ id, balls: bs, P, opts });
   else setTimeout(() => { let r = null; try { r = COACH.plan(bs, P, Object.assign({ step: 2 }, opts)); } catch (e) { r = { error: String(e) }; } coachDone(id, r); }, 0);
 }
@@ -1124,7 +1127,7 @@ function drawCoach(c, S2, F) {
   try { drawCoach1(c, S2, F); } catch (e) { c.restore(); if (!CO.drawErr) { CO.drawErr = 1; dbg('error', { m: 'coach draw ' + String(e && e.message || e).slice(0, 120) }); } }
 }
 function drawCoach1(c, S2, F) {
-  const p = CO.plan; if (!p) return;
+  const p = CO.plan; if (!p || A.stest) return; // (a stroke test: nothing planned on the screen)
   // the plan stays on the screen through the shot and until the next one is made, faint (owner, Nov 9: to see the cue ball's
   // real path against the planned one and the zone): full while the balls are still where the plan had them
   const now = A.tk.balls(), same = CO.balls && !CO.balls.some(b => b.n < 100 && !now.some(t => t.num === b.n && Math.hypot(t.x - b.x, t.y - b.y) < 1.5));
@@ -1218,8 +1221,8 @@ function coachStroke(c, F, st, n, pa) {
   c.strokeStyle = 'rgba(11,16,20,.25)'; c.lineWidth = 1; c.beginPath(); c.moveTo(x - R, y); c.lineTo(x + R, y); c.moveTo(x, y - R); c.lineTo(x, y + R); c.stroke();
   const tx = x + (st.side || 0) * R, ty = y - st.tip * R; c.fillStyle = '#d03a2f'; c.beginPath(); c.arc(tx, ty, 4.5, 0, Math.PI * 2); c.fill(); c.strokeStyle = 'rgba(11,16,20,.6)'; c.lineWidth = 1; c.stroke();
   const shot = pa && pa.shot || 'pot', what = { pot: 'Pot the ' + n, bank: 'Bank the ' + n, kick: 'Kick at the ' + n + ' (1 rail)', kick2: 'Kick at the ' + n + ' (2 rails)', safety: 'Safety on the ' + n }[shot] || 'The ' + n;
-  const tip = ({ follow: 'follow', stun: 'stun', draw: 'draw', center: 'center ball' }[st.kind] || st.kind) + (st.side > 0.05 ? ', right' : st.side < -0.05 ? ', left' : '');
-  const pw = powerWord(st.power), pow = pw + (ptScale() ? ' (yours)' : '');
+  const tk = st.tips != null ? st.tips : st.side > 0.05 ? 1 : st.side < -0.05 ? -1 : 0, tip = ({ follow: 'follow', stun: 'stun', draw: 'draw', center: 'center ball' }[st.kind] || st.kind) + (tk ? ', ' + Math.abs(tk) + ' tip' + (Math.abs(tk) > 1 ? 's' : '') + ' ' + (tk > 0 ? 'right' : 'left') : '');
+  const pw = powerWord(st), pow = pw + (ptScale() ? ' (yours)' : '');
   const X = x + R + 10; c.textAlign = 'left'; c.textBaseline = 'middle';
   c.font = '600 13px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.97)'; c.fillText(what, X, y - 16);
   c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.85)'; c.fillText(tip + ' · ' + pow, X, y + 1);
@@ -1231,50 +1234,110 @@ function coachStroke(c, F, st, n, pa) {
   else if (pa && pa.tight && pa.tight.length) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('Tight past the ' + pa.tight.join(' and the '), X, y + 34); }
   else if (pa && shot !== 'safety' && !pa.noShape && (pa.next || 0) < 0.6) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('No stroke reaches the zone from here', X, y + 34); }
   else if (pa && pa.alt) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.65)'; c.fillText('Also: ' + ({ pot: 'pot', bank: 'bank', kick: 'kick', kick2: '2-rail kick', safety: 'safety' }[pa.alt.kind] || pa.alt.kind) + (pa.alt.kind === 'safety' ? '' : ' ' + pct(pa.alt.make)), X, y + 34); }
-  for (let i = 0; i < 3; i++) { c.fillStyle = i <= PT_LEVELS.indexOf(pw) ? 'rgba(89,214,232,.95)' : 'rgba(244,241,232,.18)'; c.fillRect(x - R + i * 17, y + R + 8, 14, 6); }
+  const lv = st.speed ? st.power : [1, 3, 5][PT_LEVELS.indexOf(pw)] || 3; for (let i = 0; i < 5; i++) { c.fillStyle = i < lv ? 'rgba(89,214,232,.95)' : 'rgba(244,241,232,.18)'; c.fillRect(x - R + i * 10, y + R + 8, 8, 6); }
   // the zone's colours, for reading it (owner's bands)
   const ly = y + R + 30; let lx = x - R; c.font = '500 10px system-ui, -apple-system, sans-serif';
   for (const [col, t] of [['rgba(46,204,113,.95)', '90%+'], ['rgba(140,230,170,.95)', '80'], ['rgba(241,196,15,.95)', '60'], ['rgba(231,76,60,.95)', '50']]) { c.fillStyle = col; c.fillRect(lx, ly - 4, 9, 9); c.fillStyle = 'rgba(244,241,232,.8)'; c.fillText(t, lx + 12, ly + 1); lx += 12 + c.measureText(t).width + 10; }
 }
-// ---------- power test (V3.11; V3.14 soft, medium, hard) ----------
-// From the Menu in the Coaching test: the cue ball alone, rolled up the table at the player's own soft, medium and hard (three
-// each). Each roll's speed from where it started, its first direction and how far it went, in the physics simulation
-// (cushions included). Kept on the phone: the plan then says soft, medium or hard by the player's own three speeds (each
-// plan speed goes to the nearest of the three), and by Dr. Dave's until the test is done (soft to 2.1 mph, medium to 4.3,
-// hard beyond). Owner, Nov 9: numbers meant different things to the plan and the player; the words are what a player uses.
-// V3.14: before the test's rolls the tracker took every lone cue ball roll for the cue ball put in place by hand (the
-// rack's set-up), so no roll ever counted (Nov 9 21:03: five rolls, all "Not counted: hand move").
-const PT_KEY = KEY + '.power2', PT_LEVELS = ['soft', 'medium', 'hard'];
+// ---------- the stroke tests (V3.11 power; V3.14 soft, medium, hard; V3.15 spin and draw/follow) ----------
+// From the Menu in the Coaching test, the cue ball (and for the draw test one object ball) on the player's own table:
+//  - power: the cue ball alone rolled up the table at the player's soft, medium and hard, three each; each roll's speed from
+//    where it started, its first direction and how far it went, in the simulation (cushions included). Each word keeps the
+//    middle of its three, so one odd roll does not move it.
+//  - spin (owner, Nov 9 21:33): the cue ball from the foot spot (either end) straight at the middle diamond of the short
+//    cushion with 1, 2 and 3 tips of left at soft, medium and hard; how far it turns off the cushion against no spin gives
+//    the side spin the player's tips put on, in the simulation's terms (and how far it swerved on the way in).
+//  - draw/follow: a straight shot at one object ball about 2 diamonds away, soft, medium and hard draw, then follow; where the
+//    cue ball stopped gives the tip the player really gets (the hardest draw and follow bound the plan's tips).
+// The plan then plans with the player's speeds, spin and draw (planner opts speeds, spinTip, tipRange) and says soft,
+// medium or hard, and the side in tips. A move into place is not a roll: one that ends where the rolls start (the foot
+// spot, or the first roll's start), one under 2 ft in the power test, one standing (the tracker's hand rule).
+const PT_KEY = KEY + '.power2', ST_KEY = KEY + '.stroke', PT_LEVELS = ['soft', 'medium', 'hard'];
 function ptScale() { try { const d = JSON.parse(localStorage.getItem(PT_KEY) || 'null'); return d && PT_LEVELS.every(L => d[L] > 0.2 && d[L] < 15) && d.soft < d.medium && d.medium < d.hard ? d : null; } catch (e) { return null; } }
-function powerWord(power) {
-  const mph = COACH.POWER_MPH[Math.max(0, Math.min(9, Math.round(power) - 1))], d = ptScale();
-  if (!d) return mph <= 2.1 ? 'soft' : mph <= 4.3 ? 'medium' : 'hard';
-  // nearest of the player's three on a log scale (a speed twice as fast is as far from it as half as fast)
+function stStore() { try { return JSON.parse(localStorage.getItem(ST_KEY) || 'null') || {}; } catch (e) { return {}; } }
+function stSave(k, v) { const d = stStore(); d[k] = v; try { localStorage.setItem(ST_KEY, JSON.stringify(d)); } catch (e) { } }
+// the planner's options from the tests done so far
+function coachOpts() {
+  const o = {}, ps = ptScale(), st = stStore(); if (ps) o.speeds = [ps.soft, ps.medium, ps.hard];
+  if (st.spin && st.spin.tip > 0.05 && st.spin.tip < 0.4) o.spinTip = st.spin.tip;
+  if (st.draw && (st.draw.draw || st.draw.follow)) o.tipRange = { draw: st.draw.draw, follow: st.draw.follow };
+  return o;
+}
+const levelMph = L => { const ps = ptScale(); return ps ? ps[L] : { soft: 1.6, medium: 3.2, hard: 6 }[L]; };
+// the plan's speed in words (before V3.15 plans gave power 1-10: nearest of the player's three)
+function powerWord(st) {
+  if (st.speed) return st.speed;
+  const mph = st.mph || COACH.POWER_MPH[Math.max(0, Math.min(9, Math.round(st.power) - 1))], d = ptScale() || { soft: 1.6, medium: 3.2, hard: 6 };
   return PT_LEVELS.reduce((b, L) => Math.abs(Math.log(mph / d[L])) < Math.abs(Math.log(mph / d[b])) ? L : b, 'soft');
 }
-function ptestArm() { if (A.tk) A.tk.S.setup = false; } // every lone roll is a shot in the test, not the cue ball put in place
-function ptestStart() { A.ptest = { i: 0, k: 0, res: [] }; ptestArm(); ptestTag(); dbg('power_test', { start: true }); }
-function ptestStop() { A.ptest = null; $('#drillTag').hidden = true; dbg('power_test', { stop: true }); }
-function ptestTag() { const t = A.ptest, el = $('#drillTag'); if (!t) return; ptestArm(); el.hidden = false; el.textContent = 'Power test: roll the cue ball alone up the table, your ' + PT_LEVELS[t.i].toUpperCase() + ' · ' + (t.k + 1) + ' of 3'; }
-function ptestShot(sh, row) {
-  const t = A.ptest; if (!t) return;
-  const real = (sh.paths || []).find(q => q.key === sh.cueKey), others = (sh.paths || []).filter(q => q.key !== sh.cueKey);
-  if (sh.scratch) { toast('Power test: it went in a pocket, so not measured. Roll that one again'); ptestTag(); return; }
-  if (!real || real.p.length < 3 || row.made.length || others.some(q => { const a = q.p[0], b = q.p[q.p.length - 1]; return Math.hypot(b[1] - a[1], b[2] - a[2]) > 1.5; })) { toast('Power test: only the cue ball, please. Roll that one again'); ptestTag(); return; }
-  const pts = real.p.map(q => [q[1], q[2]]); let len = 0; for (let i = 1; i < pts.length; i++) len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
-  let j = 1; while (j < pts.length - 1 && Math.hypot(pts[j][0] - pts[0][0], pts[j][1] - pts[0][1]) < 4) j++;
-  const v = COACH.speedFor(pts[0], [pts[j][0] - pts[0][0], pts[j][1] - pts[0][1]], len, A.P); if (!v) { toast('Power test: could not measure that one. Roll it again'); ptestTag(); return; }
-  const mph = v / 17.6, called = PT_LEVELS[t.i]; t.res.push({ called, mph: r1(mph), ours: r1(COACH.powerOf(mph)), len: Math.round(len) });
-  dbg('power_test', { called, mph: r1(mph), ours: r1(COACH.powerOf(mph)), len: Math.round(len) }); toast('Your ' + called + ': ' + r1(mph) + ' mph (' + Math.round(len / 12) + ' ft rolled)');
-  if (++t.k >= 3) { t.k = 0; t.i++; }
-  if (t.i >= PT_LEVELS.length) { // each word's speed: the middle of its three rolls (one odd roll does not move it)
-    const d = { t: Date.now(), res: t.res }; for (const L of PT_LEVELS) { const m = t.res.filter(q => q.called === L).map(q => q.mph).sort((a, b) => a - b); d[L] = m[Math.floor(m.length / 2)]; }
-    const ok = d.soft < d.medium && d.medium < d.hard;
-    if (ok) try { localStorage.setItem(PT_KEY, JSON.stringify(d)); } catch (e) { }
-    dbg('power_test', { done: true, ok, soft: d.soft, medium: d.medium, hard: d.hard, res: t.res });
-    A.ptest = null; $('#drillTag').hidden = true;
-    showCard('<div><b>Power test done</b><p>' + (ok ? 'Your soft rolls ' + d.soft + ' mph, medium ' + d.medium + ', hard ' + d.hard + '. The plan now says soft, medium or hard by your own speeds.' : 'Your soft, medium and hard came out ' + d.soft + ', ' + d.medium + ' and ' + d.hard + ' mph: not in order, so not kept. Try it again from the Menu.') + '</p></div><div class="row"><button class="btn" data-act="close">Close</button></div>');
-  } else ptestTag();
+const TESTS = {
+  power: { name: 'Power test', steps: [].concat(...PT_LEVELS.map(L => [L, L, L])).map(L => ({ L })), say: s => 'roll the cue ball alone up the table, your ' + s.L.toUpperCase() },
+  spin: { name: 'Spin test', steps: [].concat(...[1, 2, 3].map(k => PT_LEVELS.map(L => ({ k, L })))), say: s => 'cue ball on the foot spot, aim at the middle diamond of the short cushion: ' + s.k + ' tip' + (s.k > 1 ? 's' : '') + ' LEFT, your ' + s.L.toUpperCase() },
+  draw: { name: 'Draw test', steps: [].concat(...['draw', 'follow'].map(d => PT_LEVELS.map(L => ({ d, L })))), say: s => 'a ball about 2 diamonds straight ahead, hit it full: your ' + s.L.toUpperCase() + ' ' + s.d.toUpperCase() }
+};
+function stArm() { if (A.tk) A.tk.S.setup = false; } // every lone roll is a shot in the test, not the cue ball put in place
+function stStart(kind) { A.stest = { kind, i: 0, res: [], start: null }; stArm(); stTag(); dbg('stroke_test', { kind, start: true }); }
+function stStop() { const t = A.stest; A.stest = null; $('#drillTag').hidden = true; if (t) dbg('stroke_test', { kind: t.kind, stop: true }); }
+function stTag() { const t = A.stest, el = $('#drillTag'); if (!t) return; stArm(); const T = TESTS[t.kind]; el.hidden = false; el.textContent = T.name + ': ' + T.say(T.steps[t.i]) + ' · ' + (t.i + 1) + ' of ' + T.steps.length; }
+const footSpots = () => [[A.P.L / 4, A.P.W / 2], [A.P.L * 3 / 4, A.P.W / 2]];
+function stShot(sh, row) {
+  const t = A.stest; if (!t) return; const T = TESTS[t.kind], step = T.steps[t.i], nm = T.name;
+  const real = (sh.paths || []).find(q => q.key === sh.cueKey), moved = (sh.paths || []).filter(q => q.key !== sh.cueKey && Math.hypot(q.p[q.p.length - 1][1] - q.p[0][1], q.p[q.p.length - 1][2] - q.p[0][2]) > 1.5);
+  const again = m => { toast(nm + ': ' + m + '. Again, please'); dbg('stroke_test', { kind: t.kind, i: t.i, skip: m }); stTag(); };
+  const pts = real ? real.p.map(q => [q[1], q[2]]) : [], len = (() => { let s0 = 0; for (let i = 1; i < pts.length; i++) s0 += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); return s0; })();
+  // the cue ball hardly moved (an object ball put back by hand): setting up
+  if (pts.length < 3 || len < 3) { dbg('stroke_test', { kind: t.kind, i: t.i, setup: true, len: r1(len) }); stTag(); return; }
+  const p0 = pts[0], pe = pts[pts.length - 1], near = (a, b, d) => Math.hypot(a[0] - b[0], a[1] - b[1]) < d;
+  // a move into place: it ends where the rolls start (and did not start there)
+  const home = t.kind === 'spin' ? footSpots() : t.start ? [t.start] : [];
+  if (home.some(h => near(pe, h, 8) && !near(p0, h, 8))) { toast(nm + ': set up, not counted'); dbg('stroke_test', { kind: t.kind, i: t.i, setup: true }); stTag(); return; }
+  if (sh.scratch) return again('it went in a pocket, so it could not be measured');
+  let res = null;
+  if (t.kind === 'power' || t.kind === 'spin') {
+    if (moved.length || row.made.length) return again('only the cue ball, please');
+    if (t.kind === 'power' && len < 24) return again('too short to be a roll (under 2 ft)');
+    if (t.kind === 'power') {
+      let j = 1; while (j < pts.length - 1 && Math.hypot(pts[j][0] - p0[0], pts[j][1] - p0[1]) < 4) j++;
+      const v = COACH.speedFor(p0, [pts[j][0] - p0[0], pts[j][1] - p0[1]], len, A.P); if (!v) return again('could not measure that one');
+      res = { L: step.L, mph: r1(v / 17.6), len: Math.round(len) }; toast(nm + ': your ' + step.L + ' ' + res.mph + ' mph (' + Math.round(len / 12) + ' ft rolled)');
+    } else {
+      if (!footSpots().some(h => near(p0, h, 8))) return again('start from the foot spot');
+      const f = COACH.fitSpin(pts, levelMph(step.L), A.P); if (!f) return again('it did not come straight back off the short cushion');
+      // the swerve on the way in: how far the cue ball's way in is off straight at the middle diamond
+      res = Object.assign({ k: step.k, L: step.L }, f); toast(nm + ': ' + step.k + ' tip' + (step.k > 1 ? 's' : '') + ' left, ' + step.L + ': came off ' + Math.abs(Math.round(f.turn)) + '° to the ' + ((f.rail === 'right') === (f.turn > 0) ? 'left' : 'right') + ' (' + Math.abs(Math.round(f.ain)) + '° in)');
+    }
+  } else {
+    const ob = moved.sort((a, b) => b.p.length - a.p.length)[0]; if (!ob || moved.length > 1) return again('hit one object ball, straight');
+    const oq = ob.p.map(q => [q[1], q[2]]); let oLen = 0; for (let i = 1; i < oq.length; i++) oLen += Math.hypot(oq[i][0] - oq[i - 1][0], oq[i][1] - oq[i - 1][1]);
+    const oIn = row.made.some(m => m.key === ob.key) || row.made.length > 0;
+    const f = COACH.fitDraw(p0, pe, oq[0], oq[oq.length - 1], oLen, oIn, levelMph(step.L), A.P); if (!f) return again('could not measure that one');
+    res = Object.assign({ d: step.d, L: step.L }, f); toast(nm + ': your ' + step.L + ' ' + step.d + ': the cue ball ' + (f.along < 0 ? 'came back ' + Math.round(-f.along) : 'went on ' + Math.round(f.along)) + ' in');
+  }
+  if (!t.start) t.start = p0;
+  t.res.push(res); dbg('stroke_test', Object.assign({ kind: t.kind, i: t.i }, res));
+  if (++t.i < T.steps.length) return stTag();
+  // done: what is kept
+  const mid = xs => { const m = xs.slice().sort((a, b) => a - b); return m.length ? m[Math.floor(m.length / 2)] : null; };
+  let words = '', kept = null;
+  if (t.kind === 'power') {
+    const d = { t: Date.now(), res: t.res }; for (const L of PT_LEVELS) d[L] = mid(t.res.filter(q => q.L === L).map(q => q.mph));
+    const ok = d.soft < d.medium && d.medium < d.hard; if (ok) try { localStorage.setItem(PT_KEY, JSON.stringify(d)); } catch (e) { }
+    kept = d; words = ok ? 'Your soft rolls ' + d.soft + ' mph, medium ' + d.medium + ', hard ' + d.hard + '. The plan now plans with your speeds.' : 'Your soft, medium and hard came out ' + d.soft + ', ' + d.medium + ' and ' + d.hard + ' mph: not in order, so not kept. Try it again from the Menu.';
+  } else if (t.kind === 'spin') {
+    // one tip in the simulation's side spin: the middle of each roll's spin over its tips (rolls that turned under 3 degrees
+    // say little: left out)
+    const per = t.res.filter(q => Math.abs(q.turn) >= 3).map(q => Math.abs(q.a) / q.k), tip = mid(per);
+    kept = { t: Date.now(), tip: tip != null ? r2(tip) : null, res: t.res }; if (tip > 0.05 && tip < 0.4) stSave('spin', kept);
+    words = t.res.map(q => q.k + ' tip' + (q.k > 1 ? 's' : '') + ' ' + q.L + ': ' + Math.abs(Math.round(q.turn)) + '°').join(', ') + '. ' + (tip > 0.05 && tip < 0.4 ? 'The plan now counts your tips.' : 'Too little turn to measure your tips: not kept.');
+  } else {
+    const dr = t.res.filter(q => q.d === 'draw'), fo = t.res.filter(q => q.d === 'follow'), hd = dr.find(q => q.L === 'hard'), hf = fo.find(q => q.L === 'hard');
+    const draw = hd && hd.err < 8 ? Math.min(-0.15, hd.b) : null, follow = hf && hf.err < 8 ? Math.max(0.15, hf.b) : null;
+    kept = { t: Date.now(), draw, follow, res: t.res }; stSave('draw', kept);
+    words = t.res.map(q => q.L + ' ' + q.d + ': ' + (q.along < 0 ? Math.round(-q.along) + ' in back' : Math.round(q.along) + ' in on')).join(', ') + '. The plan now keeps to the draw and follow you have.';
+  }
+  dbg('stroke_test', { kind: t.kind, done: true, kept });
+  A.stest = null; $('#drillTag').hidden = true;
+  showCard('<div><b>' + nm + ' done</b><p>' + words + '</p></div><div class="row"><button class="btn" data-act="close">Close</button></div>');
 }
 function drawManual(c, S2, F) {
   const m = A.man; if (m.length === 4) { const q = orderQuad(m); c.strokeStyle = 'rgba(255,184,77,.9)'; c.lineWidth = 1.2; c.beginPath(); q.forEach((p, i) => { const s = S2(p); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); }); c.closePath(); c.stroke(); }
@@ -1417,12 +1480,12 @@ $('#card').addEventListener('click', e => {
   else if (a === 'home') goHome(); else if (a === 'close') hideCard(); else if (a === 'refind') { hideCard(); refind(); }
   else if (a === 'dbg') saveDebug(b); else if (a === 'useman') useManual();
   else if (a === 'drills') drillMenu(); else if (a === 'drill_stop') drillStop();
-  else if (a === 'ptest') { hideCard(); A.ptest ? ptestStop() : ptestStart(); }
+  else if (a && a.startsWith('st_')) { hideCard(); const k = a.slice(3); if (A.stest) stStop(); else stStart(k); }
   // (Check my stroke taken out, V3.8.9, owner Nov 8: the stroke is read on every shot anyway, shown in the review; the
   // full-rate close-up clips it added were for checking the measure, done on Nov 2, and its message after each shot asked
   // the player to look at the phone. A.strokeCheck stays false.)
 });
-$('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row">' + (A.mode === 'coach' ? '<button class="btn" data-act="ptest">' + (A.ptest ? 'Stop the power test' : 'Power test') + '</button>' : '') + '<button class="btn" data-act="drills">' + (A.drill ? 'Drill: ' + DRILL.byId(A.drill.id).name : 'Drills') + '</button><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="dbg">Save debug</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
+$('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row">' + (A.mode === 'coach' ? (A.stest ? '<button class="btn" data-act="st_stop">Stop the ' + TESTS[A.stest.kind].name.toLowerCase() + '</button>' : ['power', 'spin', 'draw'].map(k => '<button class="btn" data-act="st_' + k + '">' + TESTS[k].name + '</button>').join('')) : '') + '<button class="btn" data-act="drills">' + (A.drill ? 'Drill: ' + DRILL.byId(A.drill.id).name : 'Drills') + '</button><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="dbg">Save debug</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
 // (pressed again after the rack was done by itself, or twice: no shot since, so it is not another rack)
 $('#rackBtn').onclick = () => { if (!A.tk) return; const dup = A.tk.S.setup && A.tk.S.shots.length === A.tk.S.rackAt; A.tk.newRack(); flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', dup ? { dup: true } : {}); toast('New rack. Names come once the break spreads the balls.'); };
 let toastT = 0;

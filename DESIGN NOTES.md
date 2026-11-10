@@ -1687,3 +1687,45 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   - The band labels are now OC and UC.
   - Thinner lines: the cue ball's planned path 1 px, the object ball's line to the pocket 1.1 px (2.4 px dark under it),
     the zone's ideal line 0.9 px.
+
+## Review: Nov 9 21:33 (V3.14.1, Coaching test, 12 shots) and V3.15.0
+- The owner ran the power test (it worked) in a session before this one, but it never reached a debug file. The app read
+  the "previous session" backup (localStorage .dbg) only when the page loaded, so a second session in the same page carried
+  the one before that (21:03). V3.15: at each session start, the last session is saved and read back as previous.
+- The owner moved a ball by hand during the power test and it counted as a soft roll (no log to check). V3.15 rules for
+  all stroke tests:
+  - A move that ends where the rolls start (the first counted roll's start; the foot spots in the spin test) is set-up.
+  - A cue ball that moved under 3 in is set-up.
+  - In the power test, a roll under 2 ft is "again".
+  - The tracker's standing-hand rule still applies.
+  - Each level keeps its median, so one bad roll does not move it.
+- Coaching: "hit soft and barely come across, not near the next ball". On the 19 plans, several chose soft rolls that left
+  the next shot under 50%, with a good zone 30 to 50 in away. The cause: side spin was tried only on the best three
+  strokes after the rest was picked, as ±0.3; extra cushions cost 15% each; and the final check of the best three
+  replaced their earlier runs, so luck picked between them.
+- V3.15.0 planner:
+  - Five speeds: the player's soft, medium and hard from the power test (default 1.6, 3.2 and 6 mph) and their geometric
+    middles, named soft / soft to medium / medium / medium to hard / hard.
+  - Tips from the draw test's hardest draw to its hardest follow (default ±0.45), at 5 levels.
+  - Side spin of -2..2 tips in the main search with every speed and tip. A tip is the spin test's value (default 0.17 R).
+    The best three are tried with 3 tips when they used 2.
+  - The throw aim is found once per speed and side and reused for the other tips.
+  - The cost of extra cushions is down to 6% each, side 4% a tip, speeds over medium 10%.
+  - Cue raised (jacked): no draw, medium at most.
+  - Monte Carlo runs are pooled across the screening and the final check.
+  - stroke = {tip, side, tips, power 1-5, mph, speed, kind}.
+  - On the 19 layouts the average of make x next went from 0.376 to 0.430; the worst plans gained most (3: 0.15 to 0.51;
+    13: 0.20 to 0.42). Planning time is about 1.3x (20 s to 26 s for the 19 in node).
+- V3.15.0 stroke tests (Menu, Coaching test):
+  - Power: soft, medium, hard x3.
+  - Spin: 1, 2, 3 tips left x soft, medium, hard from a foot spot into the short cushion. COACH.fitSpin finds the cushion
+    contact, the way in and the way out, and fits the simulation's side a so the simulated turn off the cushion matches;
+    tip = the median of |a|/k over rolls that turned at least 3 degrees. The way-in angle is logged (swerve).
+  - Draw: soft, medium, hard draw then follow on a straight shot. COACH.fitDraw fits tip b (and the speed from how far the
+    object ball went, when it stayed on the table) so the simulated cue ball stops where the real one did. The hard draw
+    and the hard follow bound the plan's tips.
+  - Stored in localStorage chalkline.v3.stroke {spin, draw}; power in chalkline.v3.power2. The planner gets
+    {speeds, spinTip, tipRange} (coachOpts).
+- Found while testing: the simulation's cushion turn with side spin levels off at about 20 degrees by a third of the
+  radius, and at soft speed with 1 tip it hardly turns at all. The spin test will show how the real table differs; the
+  cushion model may need work after it.
