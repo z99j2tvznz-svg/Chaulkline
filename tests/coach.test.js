@@ -110,3 +110,25 @@ test('V3.15: the plan uses the player\'s speeds, tips and draw; side spin is sea
   const o = COACH.plan(lay, P, { speeds: [1.2, 2.5, 4.5], spinTip: 0.12, tipRange: { draw: -0.25, follow: 0.3 } }).path.stroke;
   assert.ok(o.mph <= 4.5 && o.tip >= -0.25 && o.tip <= 0.3 && Math.abs(o.side - o.tips * 0.12) < 0.01, JSON.stringify(o));
 });
+
+test('V3.16: the owner\'s spin and draw tests (Nov 9 22:20) give the cushion\'s grip, a tip, and the draw; a ball read into the cushion is on it', () => {
+  const F = require('./fixtures/v3/stroke-tests-20261109-2220.json');
+  const s = COACH.fitSpinAll(F.spin.map(q => ({ k: q.k, mph: F.power[q.L], turn: q.turn })), P);
+  assert.ok(s.railMu >= 0.2 && s.railMu <= 0.3 && s.tip >= 0.11 && s.tip <= 0.17 && s.err < 7, JSON.stringify(s));
+  // the draws: the soft and medium ones stopped dead (from 21 and 26 in away), the hard ones came back 3 and 4 ft; the object
+  // ball of a hard draw is never seen moving (in the pocket before the next look): taken from where it was
+  const mph = { soft: F.power.medium, medium: F.power.hard, hard: 1.5 * F.power.hard }, res = {};
+  for (const d of F.draws) { const c = d.cue; res[d.n] = COACH.fitDraw(c[0], c[c.length - 1], d.ob, null, 0, true, mph[d.L], P, 'draw'); }
+  assert.ok(res[63].b <= 0 && res[63].along > -4 && res[64].b <= 0 && res[64].along > -4, JSON.stringify(res));
+  assert.ok(res[65].b < -0.4 && res[65].along < -30 && res[66].along < -30, JSON.stringify(res));
+  // the 9 frozen on the rail read 0.3 in into the cushion: a pot along the rail, not a kick
+  const r = COACH.plan([{ n: 0, x: 60.7, y: 15.7 }, { n: 9, x: 66.7, y: 0.8 }], P);
+  assert.ok(r.path.shot === 'pot' && r.path.make > 0.6, JSON.stringify({ shot: r.path.shot, make: r.path.make }));
+});
+
+test('V3.16: a Fargo 550\'s aim, and a hard stroke costs make percentage', () => {
+  const pk = P.pockets.reduce((b, q) => (q.x + q.y > b.x + b.y ? q : b)), a = Math.PI + 24 * Math.PI / 180, u = [Math.cos(a), -Math.abs(Math.sin(a))];
+  const A = [pk.x + u[0] * 36, pk.y + u[1] * 36], cue = [A[0] + u[0] * (36 + 2 * P.R), A[1] + u[1] * (36 + 2 * P.R)];
+  const r = COACH.plan([{ n: 0, x: cue[0], y: cue[1] }, { n: 9, x: A[0], y: A[1] }], P);
+  assert.ok(r.path.make >= 0.55 && r.path.make <= 0.97, 'straight in, 3 ft and 3 ft: ' + r.path.make); // (was 0.44 with 0.2 degrees)
+});

@@ -16,6 +16,11 @@ function coachFactory(sim) {
     const o0 = Object.assign({ step: 1.5, maxLen: 80 }, opts || {}), t0 = Date.now();
     P = Object.assign({}, P, { cushionRoll: P.cushionRoll == null ? 0.6 : P.cushionRoll }); // livelier cushions (see core.js cushion)
     const R = P.R, L = P.L, W = P.W, STEP = o0.step;
+    // a ball read a little into the cushion (Nov 9 22:20: the 9 frozen on the rail read 0.3 in into it, so no pot along the
+    // rail was found and the plan was a kick) is on the cloth, against the cushion
+    balls = balls.map(b => Object.assign({}, b, { x: Math.max(R + 0.02, Math.min(L - R - 0.02, b.x)), y: Math.max(R + 0.02, Math.min(W - R - 0.02, b.y)) }));
+    // the cushion's grip, from the player's spin test (V3.16; 0.25 measured on the owner's table, Nov 9 22:20)
+    P = Object.assign({}, P, { railMu: o0.railMu > 0.05 && o0.railMu < 0.8 ? o0.railMu : P.railMu != null ? P.railMu : 0.25 });
     // objs: every ball but the cue ball (in the way); ord: the numbered ones in order (an unnamed ball comes as n 100 and up)
     const cue0 = balls.find(b => b.n === 0), objs = balls.filter(b => b.n !== 0), ord = objs.filter(b => b.n > 0 && b.n < 100).sort((a, b) => a.n - b.n);
     // ball in hand (after a scratch, V3.11): no cue ball on the table; the plan puts it where the shot on the lowest ball
@@ -46,10 +51,13 @@ function coachFactory(sim) {
       return { G, v, cut, dl, ease, blk: blockers(X, G, [T.n, ...gone]) };
     }
     // the chance of making a shot (V3.12, owner Nov 9: percentages, not scores): the cue ball's line off by a good amateur's
-    // aim error (about 0.2 degrees, plus 0.6 degrees on the object ball for stroke and throw), turned into the object ball's
-    // error through the cut (a thinner cut magnifies it) and set against the pocket's width seen from the ball (corner about
-    // 2.8 in wide, side 2 in, narrower from a steep entry). To be tuned from the owner's sessions.
-    const AIM_SD = 0.2 * D2R, OB_SD = 0.6 * D2R;
+    // aim error, turned into the object ball's error through the cut (a thinner cut magnifies it) and set against the
+    // pocket's width seen from the ball (corner about 2.8 in wide, side 2 in, narrower from a steep entry), plus 0.6 degrees
+    // on the object ball for stroke and throw. V3.16 (owner, Nov 10: a typical Fargo 550 until the player's own misses say
+    // otherwise): 0.09 degrees on the cue ball's line. In the simulation that makes a straight-in with 3 ft each way about
+    // 81%, a 30-degree cut 2.5 ft each way 77%, 45 degrees 61%, 4 ft to a ball 2 ft from the pocket at 15 degrees 87%.
+    // (Before, 0.2 degrees: those were 44%, 45%, 36% and 47%, a weak player, not a pro.)
+    const AIM_SD = 0.09 * D2R, OB_SD = 0.6 * D2R;
     function erf(x) { const t = 1 / (1 + 0.3275911 * Math.abs(x)), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return x >= 0 ? y : -y; }
     function pMake(s, o) {
       const tol = (o.pk.corner ? 1.4 : 1.0) * Math.max(0.35, Math.cos((o.entry || 0) * D2R)), tolA = Math.atan(tol / Math.max(1, o.dist));
@@ -167,14 +175,20 @@ function coachFactory(sim) {
       // simple strokes first: soft to medium, the tip near the middle, no side unless it pays; few cushions (Dr. Dave)
       // (V3.15: side spin and extra cushions cost a little, not a lot: coming into the line with spin or more rails is good
       // position play, owner Nov 9 21:33)
-      const simple = c => (c.p <= 3 ? 1 : 0.9) * (1 - 0.5 * Math.max(0, Math.abs(c.b) - 0.25)) * (1 - 0.04 * Math.abs(Math.round(c.a / TIP)));
+      const simple = c => (c.p <= 3 ? 1 : 0.95) * (1 - 0.02 * Math.abs(Math.round(c.a / TIP)));
+      // a harder stroke is harder to make (V3.16, owner Nov 10: three tips of side with full draw on a thin cut is a hard make
+      // even for a pro): the aim error grows with side spin (squirt and swerve the player has to allow for), with the tip far
+      // from the middle and with speed past medium
+      const diff = c => 1 + 0.3 * Math.abs(Math.round(c.a / TIP)) + 1.2 * Math.max(0, Math.abs(c.b) - 0.25) + 0.12 * Math.max(0, c.p - 2);
       const rails = pts => { let n = 0, on = false; for (const p of pts) { const at = p[0] < R + 0.25 || p[0] > L - R - 0.25 || p[1] < R + 0.25 || p[1] > W - R - 0.25; if (at && !on) n++; on = at; } return n; };
-      const railF = r => { const n = rails(after(r)); return n <= 1 ? 1 : Math.pow(0.94, n - 1); };
+      // (V3.16, owner Nov 10: more cushions are good position play when they bring the cue ball into the line; their risk is
+      // in the runs with the player's errors already, so no cost of their own)
+      const railF = r => 1;
       // a candidate's percentages: N runs with the player's errors
       const mc = (c, N) => {
         let made = 0, q = 0, legal = 0, opp = 0;
         for (let i = 0; i < N; i++) {
-          const ea = gauss(R0) * AIM_SD, ev = 1 + gauss(R0) * 0.08, es = gauss(R0) * 0.05, et = gauss(R0) * 0.05;
+          const ea = gauss(R0) * AIM_SD * diff(c), ev = 1 + gauss(R0) * 0.08, es = gauss(R0) * 0.05, et = gauss(R0) * 0.05;
           const r = runAll(c.ang + ea, MPH[c.p] * 17.6 * ev, c.a + es, Math.max(-0.55, Math.min(0.55, c.b + et)), c.init);
           if (c.kind === 'safety') { const ok = r.firstHit === A.n && !r.pocketed.some(z => z.id === 0) && (r.railAfter || r.pocketed.length); if (ok) { legal++; opp += oppBest(r); } continue; }
           if (!potted(r)) continue; made++;
@@ -195,6 +209,14 @@ function coachFactory(sim) {
         // offence first: a sure pot with a poor leave (0.6) still beats the best safety (0.5); a 50/50 pot does not
         // (V3.13, Nov 8 20:50: plans made the ball and left the cue ball out of the zone): the leave counts more
         c.pMake = c.nMade / c.nN; c.pNext = c.nMade ? c.nQ / c.nMade : 0; c.value = c.pMake * (0.4 + 0.6 * c.pNext) * simple(c) * (c.rf || 1); return c;
+      };
+      // the aim in the middle of the angles that pot it (V3.16: the first angle found that pots can sit at the edge, where
+      // half the player's small errors miss; a player allows for throw by feel and aims at the middle)
+      const centre = c => {
+        const go = d => { const r = runAll(c.ang + d * D2R, MPH[c.p] * 17.6, c.a, c.b, c.init); return potted(r) ? r : null; };
+        let lo = 0, hi = 0; for (let d = -0.05; d >= -0.8; d -= 0.05) { if (!go(d)) break; lo = d; } for (let d = 0.05; d <= 0.8; d += 0.05) { if (!go(d)) break; hi = d; }
+        const m = (lo + hi) / 2; if (Math.abs(m) < 0.015) return c; const r = go(m); if (!r) return c;
+        return Object.assign(c, { ang: c.ang + m * D2R, da: (c.da || 0) + m * D2R, r });
       };
       const all = [];
       // 1. straight at A: every pocket, tip, speed (the nominal stroke first; the aim nudged up to a degree for throw)
@@ -225,7 +247,7 @@ function coachFactory(sim) {
       }
       const pre = c => c.v0 * simple(c);
       direct.sort((x, y) => pre(y) - pre(x));
-      const top = direct.slice(0, 18).map(c => mc(c, 10)); top.sort((x, y) => y.value - x.value);
+      const top = direct.slice(0, 18).map(c => mc(centre(c), 10)); top.sort((x, y) => y.value - x.value);
       // the best three tried with a tip more side spin (three tips at most)
       for (const c of top.slice(0, 3)) { const k = Math.round(c.a / TIP); if (Math.abs(k) !== 2) continue; const a = Math.sign(k) * 3 * TIP;
         for (const da of [c.da / D2R, c.da / D2R + 0.5, c.da / D2R - 0.5, c.da / D2R + 1, c.da / D2R - 1]) { const ang = c.ang - c.da + da * D2R, r = runAll(ang, MPH[c.p] * 17.6, a, c.b, c.init); if (potted(r)) { top.push(mc({ kind: 'pot', o: c.o, s: c.s, ang, da: da * D2R, p: c.p, a, b: c.b, r, init: c.init, tight: c.tight, rf: railF(r) * (c.tight && c.tight.length ? 0.9 : 1) }, 12)); break; } }
@@ -245,7 +267,7 @@ function coachFactory(sim) {
           const ang0 = Math.atan2(aim[1], aim[0]);
           for (const p of [1, 2, 4]) for (const da of [0, 0.7, -0.7, 1.4, -1.4, 2.1, -2.1]) { const r = runAll(ang0 + da * D2R, MPH[p] * 17.6, 0, 0); if (potted(r)) { banks.push({ kind: 'bank', o: { pi, pk }, cu, s: { G, cut: 0 }, ang: ang0 + da * D2R, da: da * D2R, p, a: 0, b: 0, r, rf: railF(r) }); break; } }
         } });
-        all.push(...banks.map(c => mc(c, 10)));
+        all.push(...banks.map(c => mc(centre(c), 10)));
       }
       // 3. kicks: the cue ball off one or two cushions to A's ghost (to pot it), or to A itself (to hit it)
       if (bestPot() < 0.4) {
@@ -260,7 +282,7 @@ function coachFactory(sim) {
         };
         for (const t of targets) for (let cu = 0; cu < 4; cu++) tryKick(mirror(t.G, cu), t.o, cu, false);
         if (!kicks.length) for (const t of targets) for (const [c1, c2] of [[0, 2], [0, 3], [1, 2], [1, 3], [2, 0], [3, 0], [2, 1], [3, 1]]) tryKick(mirror(mirror(t.G, c1), c2), t.o, c1, true);
-        all.push(...kicks.map(c => mc(c, 10)));
+        all.push(...kicks.map(c => mc(centre(c), 10)));
       }
       // 4. safety: A hit softly, full or thin either side, straight or off a cushion when A cannot be seen; in the Coaching
       // test (runouts) only when no pot, bank or kick makes 40% (owner, Nov 9 20:32: three safeties rejected, a 70% pot there)
@@ -514,7 +536,8 @@ function coachFactory(sim) {
   // where a lone cue ball rolled up the table met the short cushion: its way in and its way out (pts [[x, y]...])
   function railBounce(q, P) {
     if (q.length < 3) return null; const din = dirFrom(q, 0, 4); if (!din || Math.abs(din[0]) < 0.8) return null; // up the table, not across
-    let k = 0; for (let i = 1; i < q.length; i++) if (din[0] > 0 ? q[i][0] > q[k][0] : q[i][0] < q[k][0]) k = i;
+    // the first time it comes back off that cushion (a hard roll goes round the table and meets it again)
+    let k = 0; for (let i = 1; i < q.length; i++) { const f = din[0] > 0 ? q[i][0] - q[k][0] : q[k][0] - q[i][0]; if (f > 0) k = i; else if (f < -2) break; }
     const rail = din[0] > 0 ? P.L - P.R : P.R; if (Math.abs(q[k][0] - rail) > 4 || k === q.length - 1) return null; // never reached it
     let j0 = 0; for (let i = 0; i < k; i++) if (Math.abs(q[i][0] - rail) > 5) j0 = i; // the last point clear of the cushion on the way in
     const vin = [q[j0][0] - q[0][0], q[j0][1] - q[0][1]], li = Math.hypot(vin[0], vin[1]), dout = dirFrom(q, k, 8);
@@ -536,18 +559,34 @@ function coachFactory(sim) {
   // the draw test: a straight shot (cue ball at c0 to the object ball at o0); the tip (fraction of the radius, + follow, - draw)
   // that leaves the simulated cue ball where the real one stopped. The speed: from how far the object ball went when it
   // stayed on the table, else the player's speed for that stroke
-  function fitDraw(c0, cEnd, o0, oEnd, oLen, oIn, mph, P) {
+  function fitDraw(c0, cEnd, o0, oEnd, oLen, oIn, mph, P, side) {
     if (!sim) return null; P = Object.assign({}, P, { cushionRoll: P.cushionRoll == null ? 0.6 : P.cushionRoll });
     const ang = Math.atan2(o0[1] - c0[1], o0[0] - c0[0]), run = (v, b) => sim([{ id: 0, x: c0[0], y: c0[1] }, { id: 1, x: o0[0], y: o0[1] }], { angle: ang, speed: v, a: 0, b }, P, { record: true, maxT: 30 });
     // (for each tip the speed that sends the object ball as far as it went: a drawn ball slides and slows more on its way)
     const speedAt = b => { if (oIn || !(oLen > 6)) return mph * 17.6; let lo = 10, hi = 500; for (let i = 0; i < 14; i++) { const m = (lo + hi) / 2, r = run(m, b), q = (r.paths[1] || []).map(z => [z[1], z[2]]); if (r.pocketed.some(z => z.id === 1) || pathLen(q) > oLen) hi = m; else lo = m; } return (lo + hi) / 2; };
     let best = null;
-    for (let b = -0.8; b <= 0.801; b += 0.04) { const v = speedAt(b), r = run(v, b), c = r.final.find(z => z.id === 0); if (!c) continue; const e = Math.hypot(c.x - cEnd[0], c.y - cEnd[1]); if (!best || e < best.e - 0.05) best = { b: +b.toFixed(2), e, v }; }
+    // (V3.16: compared along the shot's line only: the real shot is never quite straight, so the cue ball ends a little to
+    // one side, which no tip on a straight shot reproduces)
+    const u = [Math.cos(ang), Math.sin(ang)], hit = [o0[0] - 2 * P.R * u[0], o0[1] - 2 * P.R * u[1]], alongOf = p => (p[0] - hit[0]) * u[0] + (p[1] - hit[1]) * u[1], want = alongOf(cEnd);
+    // (side: 'draw' or 'follow', the stroke asked: a follow that comes back off a cushion can end where a stop shot does)
+    for (let b = side === 'follow' ? -0.04 : -0.8; b <= (side === 'draw' ? 0.041 : 0.801); b += 0.04) { const v = speedAt(b), r = run(v, b), c = r.final.find(z => z.id === 0); if (!c) continue; const e = Math.abs(alongOf([c.x, c.y]) - want); if (!best || e < best.e - 0.05) best = { b: +b.toFixed(2), e, v }; }
     const v = best ? best.v : mph * 17.6;
-    const u = [Math.cos(ang), Math.sin(ang)], hit = [o0[0] - 2 * P.R * u[0], o0[1] - 2 * P.R * u[1]];
     return best ? { b: best.b, err: +best.e.toFixed(1), mph: +(v / 17.6).toFixed(1), along: +((cEnd[0] - hit[0]) * u[0] + (cEnd[1] - hit[1]) * u[1]).toFixed(1) } : null;
   }
-  return { plan, gradeAt, POWER_MPH, powerOf, speedFor, railBounce, fitSpin, fitDraw };
+  // the spin test's rolls together (V3.16): the cushion's grip (railMu) and one tip's side spin that turn simulated rolls
+  // off the cushion as the real ones turned (rolls: [{k tips, mph, turn degrees}]). On the owner's table (Nov 9 22:20,
+  // 18 rolls): grip 0.25 and a tip 0.13 of the radius, within 6 degrees a roll on average, about the scatter between the
+  // owner's own repeats
+  function fitSpinAll(rolls, P) {
+    if (!sim || !rolls || rolls.length < 3) return null; let best = null;
+    const turnOf = (a, mph, mu) => { const Q = Object.assign({}, P, { pockets: [], cushionRoll: 0.6, railMu: mu }); const r = sim([{ id: 0, x: Q.L * 0.75, y: Q.W / 2 }], { angle: 0, speed: mph * 17.6, a, b: 0 }, Q, { record: true, maxT: 6 }); const b = railBounce((r.paths[0] || []).map(z => [z[1], z[2]]), Q); return b ? Math.abs(b.turn) : null; };
+    for (const mu of [0.15, 0.2, 0.25, 0.3, 0.4]) for (let T = 0.08; T <= 0.241; T += 0.02) {
+      let e = 0; for (const q of rolls) { const t = turnOf(T * q.k, q.mph, mu); e += t == null ? 15 : Math.min(15, Math.abs(t - Math.abs(q.turn))); }
+      if (!best || e < best.e) best = { railMu: mu, tip: +T.toFixed(2), e };
+    }
+    return { railMu: best.railMu, tip: best.tip, err: +(best.e / rolls.length).toFixed(1) };
+  }
+  return { plan, gradeAt, POWER_MPH, powerOf, speedFor, railBounce, fitSpin, fitSpinAll, fitDraw };
 }
 const COACH = coachFactory(typeof simulate !== 'undefined' ? simulate : typeof module !== 'undefined' ? require('../core.js').simulate : null);
 if (typeof module !== 'undefined') module.exports = COACH;

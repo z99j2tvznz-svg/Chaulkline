@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.15.0';
+const VERSION = 'V3.16.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -1259,11 +1259,19 @@ function stSave(k, v) { const d = stStore(); d[k] = v; try { localStorage.setIte
 // the planner's options from the tests done so far
 function coachOpts() {
   const o = {}, ps = ptScale(), st = stStore(); if (ps) o.speeds = [ps.soft, ps.medium, ps.hard];
+  // (V3.16: the cushion's grip and the tip from all the spin test's rolls together; a test kept before V3.16 is fitted once)
+  if (st.spin && st.spin.res && st.spin.railMu == null) { const f = spinFit(st.spin.res); if (f) { Object.assign(st.spin, f); stSave('spin', st.spin); dbg('stroke_test', { kind: 'spin', refit: f }); } }
   if (st.spin && st.spin.tip > 0.05 && st.spin.tip < 0.4) o.spinTip = st.spin.tip;
+  if (st.spin && st.spin.railMu > 0.05 && st.spin.railMu < 0.8) o.railMu = st.spin.railMu;
   if (st.draw && (st.draw.draw || st.draw.follow)) o.tipRange = { draw: st.draw.draw, follow: st.draw.follow };
   return o;
 }
 const levelMph = L => { const ps = ptScale(); return ps ? ps[L] : { soft: 1.6, medium: 3.2, hard: 6 }[L]; };
+// a draw is hit harder than a roll at the same word (owner, Nov 10: a soft draw is a little more than a stop shot, a medium
+// one a much harder hit that comes back several diamonds, a hard one nearly break speed, to the short cushion and on): the
+// draw test's speeds are the player's medium roll, hard roll and half again; follow is the rolls' own
+const drawMph = (d, L) => d === 'draw' ? { soft: levelMph('medium'), medium: levelMph('hard'), hard: 1.5 * levelMph('hard') }[L] : levelMph(L);
+const spinFit = res => { const f = COACH.fitSpinAll((res || []).filter(q => q.turn != null).map(q => ({ k: q.k, mph: levelMph(q.L), turn: q.turn })), A.P || makeP(A.ft)); return f && f.tip > 0.05 && f.tip < 0.4 ? f : null; };
 // the plan's speed in words (before V3.15 plans gave power 1-10: nearest of the player's three)
 function powerWord(st) {
   if (st.speed) return st.speed;
@@ -1307,10 +1315,21 @@ function stShot(sh, row) {
       res = Object.assign({ k: step.k, L: step.L }, f); toast(nm + ': ' + step.k + ' tip' + (step.k > 1 ? 's' : '') + ' left, ' + step.L + ': came off ' + Math.abs(Math.round(f.turn)) + '° to the ' + ((f.rail === 'right') === (f.turn > 0) ? 'left' : 'right') + ' (' + Math.abs(Math.round(f.ain)) + '° in)');
     }
   } else {
-    const ob = moved.sort((a, b) => b.p.length - a.p.length)[0]; if (!ob || moved.length > 1) return again('hit one object ball, straight');
-    const oq = ob.p.map(q => [q[1], q[2]]); let oLen = 0; for (let i = 1; i < oq.length; i++) oLen += Math.hypot(oq[i][0] - oq[i - 1][0], oq[i][1] - oq[i - 1][1]);
-    const oIn = row.made.some(m => m.key === ob.key) || row.made.length > 0;
-    const f = COACH.fitDraw(p0, pe, oq[0], oq[oq.length - 1], oLen, oIn, levelMph(step.L), A.P); if (!f) return again('could not measure that one');
+    // the object ball: the one that moved; at a hard draw it is in the pocket before the next look and never seen moving
+    // (Nov 9 22:20: both hard draws thrown out), so the ball that sat on the cue ball's line before the shot, taken as gone
+    let ob = moved.length === 1 ? moved[0] : null, o0 = null, oEnd = null, oLen = 0, oIn = row.made.length > 0;
+    if (moved.length > 1) return again('hit one object ball, straight');
+    if (ob) { const oq = ob.p.map(q => [q[1], q[2]]); for (let i = 1; i < oq.length; i++) oLen += Math.hypot(oq[i][0] - oq[i - 1][0], oq[i][1] - oq[i - 1][1]); o0 = oq[0]; oEnd = oq[oq.length - 1]; }
+    else {
+      let j = 1; while (j < pts.length - 1 && Math.hypot(pts[j][0] - p0[0], pts[j][1] - p0[1]) < 2) j++;
+      const d = [pts[j][0] - p0[0], pts[j][1] - p0[1]], dl = Math.hypot(d[0], d[1]) || 1, u = [d[0] / dl, d[1] / dl];
+      // (the cue ball's first seen move can already be on its way back from the hit, so either way along that line: the
+      // ball nearest the line, within 7 in of it)
+      const cands = (sh.before || []).filter(b => b.key !== sh.cueKey).map(b => { const v = [b.x - p0[0], b.y - p0[1]], t = v[0] * u[0] + v[1] * u[1]; return { b, t: Math.abs(t), off: Math.abs(v[0] * u[1] - v[1] * u[0]) }; }).filter(q => q.t > 2 * A.P.R && q.off < 7).sort((a, b) => a.off - b.off);
+      if (!cands.length) return again('hit one object ball, straight');
+      o0 = [cands[0].b.x, cands[0].b.y]; oIn = true;
+    }
+    const f = COACH.fitDraw(p0, pe, o0, oEnd, oLen, oIn, drawMph(step.d, step.L), A.P, step.d); if (!f) return again('could not measure that one');
     res = Object.assign({ d: step.d, L: step.L }, f); toast(nm + ': your ' + step.L + ' ' + step.d + ': the cue ball ' + (f.along < 0 ? 'came back ' + Math.round(-f.along) : 'went on ' + Math.round(f.along)) + ' in');
   }
   if (!t.start) t.start = p0;
@@ -1326,12 +1345,14 @@ function stShot(sh, row) {
   } else if (t.kind === 'spin') {
     // one tip in the simulation's side spin: the middle of each roll's spin over its tips (rolls that turned under 3 degrees
     // say little: left out)
-    const per = t.res.filter(q => Math.abs(q.turn) >= 3).map(q => Math.abs(q.a) / q.k), tip = mid(per);
-    kept = { t: Date.now(), tip: tip != null ? r2(tip) : null, res: t.res }; if (tip > 0.05 && tip < 0.4) stSave('spin', kept);
-    words = t.res.map(q => q.k + ' tip' + (q.k > 1 ? 's' : '') + ' ' + q.L + ': ' + Math.abs(Math.round(q.turn)) + '°').join(', ') + '. ' + (tip > 0.05 && tip < 0.4 ? 'The plan now counts your tips.' : 'Too little turn to measure your tips: not kept.');
+    // (V3.16: the cushion's grip and one tip fitted to all the rolls together)
+    const f = spinFit(t.res), tip = f ? f.tip : null;
+    kept = Object.assign({ t: Date.now(), tip, res: t.res }, f || {}); if (f) stSave('spin', kept);
+    words = t.res.map(q => q.k + ' tip' + (q.k > 1 ? 's' : '') + ' ' + q.L + ': ' + Math.abs(Math.round(q.turn)) + '°').join(', ') + '. ' + (f ? 'The plan now counts your tips and your cushions.' : 'Too little turn to measure your tips: not kept.');
   } else {
-    const dr = t.res.filter(q => q.d === 'draw'), fo = t.res.filter(q => q.d === 'follow'), hd = dr.find(q => q.L === 'hard'), hf = fo.find(q => q.L === 'hard');
-    const draw = hd && hd.err < 8 ? Math.min(-0.15, hd.b) : null, follow = hf && hf.err < 8 ? Math.max(0.15, hf.b) : null;
+    // the most draw and the most follow measured (V3.16: any level, not only the hard one)
+    const dr = t.res.filter(q => q.d === 'draw' && q.err < 8), fo = t.res.filter(q => q.d === 'follow' && q.err < 8);
+    const draw = dr.length ? Math.min(-0.15, ...dr.map(q => q.b)) : null, follow = fo.length ? Math.max(0.15, ...fo.map(q => q.b)) : null;
     kept = { t: Date.now(), draw, follow, res: t.res }; stSave('draw', kept);
     words = t.res.map(q => q.L + ' ' + q.d + ': ' + (q.along < 0 ? Math.round(-q.along) + ' in back' : Math.round(q.along) + ' in on')).join(', ') + '. The plan now keeps to the draw and follow you have.';
   }

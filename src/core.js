@@ -129,7 +129,7 @@ function cushion(b, nx, ny, P, res, t) {
   const tx = -ny, ty = nx, vt = b.vx * tx + b.vy * ty;
   const e = clamp(P.eRail - 0.0006 * vn, 0.5, 0.78);
   const s = vt + P.R * b.wz;
-  const cap = 0.15 * (1 + e) * vn;
+  const cap = (P.railMu != null ? P.railMu : 0.15) * (1 + e) * vn; // (P.railMu: the cushion's grip, from the spin test, V3.16)
   const dvt = clamp(-s / 3.5, -cap, cap);
   const nvt = vt + dvt, nvn = -e * vn;
   b.vx = nvn * nx + nvt * tx; b.vy = nvn * ny + nvt * ty;

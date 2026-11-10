@@ -1729,3 +1729,41 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
 - Found while testing: the simulation's cushion turn with side spin levels off at about 20 degrees by a third of the
   radius, and at soft speed with 1 tip it hardly turns at all. The spin test will show how the real table differs; the
   cushion model may need work after it.
+
+## Review: Nov 9 22:20 (V3.15.0: power, spin x2, coaching, draw tests; 66 moves) and V3.16.0
+- Power test kept: soft 3.1, medium 5, hard 7.5 mph. The soft rolls spread from 1.4 to 4.1 (the median is kept).
+- Spin test, run twice (18 rolls), turn off the short cushion in degrees:
+  - 1 tip: 3-16;
+  - 2 tips: 10-29;
+  - 3 tips: 29-45.
+  The same roll varied by 6-11 degrees between runs. The simulation could not pass about 22 degrees, because the
+  cushion's tangential impulse was capped at 0.15(1+e)vn. core.js now takes P.railMu (default 0.15, unchanged elsewhere).
+  COACH.fitSpinAll fits railMu and one tip together. On the owner's rolls: railMu 0.25, tip 0.14, mean error 5.7 degrees,
+  and each run alone gives the same. The planner now defaults to railMu 0.25. An older stored spin test is refitted once in
+  coachOpts.
+- railBounce took the farthest point toward the cushion. A hard roll goes round the table and meets the same cushion again,
+  so it now takes the first contact.
+- Draw test: soft and medium were measured (both stopped dead, from 21 and 26 in away; the pictures confirm it). Both hard
+  draws were thrown out, "hit one object ball": the ball was in the pocket before the next look (0.4 s), so it had no path.
+  - Now the object ball is taken from the before-snapshot: the ball nearest the line through the cue ball's start, either
+    way (the first seen move can already be on the way back), within 7 in.
+  - The fit compares along the line only, and only on the side asked for: a follow that comes back off the cushion near the
+    pocket ends where a stop shot does.
+  - Speeds follow the owner's definitions: a soft draw at the medium roll, a medium draw at the hard roll, a hard draw at
+    1.5x the hard roll (near break speed); follow at the roll speeds.
+  - On the four shots: soft -0.28 (stop), medium -0.16 (stop), hard -0.56 (back 47 in) and -0.32 (back 36 in). The plan's
+    draw limit is the most draw measured.
+- Coaching (10 shots) "seemed better" (owner). One reject: the 9 frozen on the rail, read 0.3 in into the cushion
+  (y 0.8 < R). No pot was found, so the plan was a kick. Now every ball is clamped onto the cloth before planning.
+- Aim (owner, Nov 10: a typical Fargo 550 until the player's own data). Benchmarks found the old 0.2 degree aim gave a
+  straight-in with 3 ft each way 44%, a 30-degree cut at 2.5 ft each way 45%, 45 degrees 36%: a weak player. I had told
+  the owner it was near pro; that was wrong. The pure simulation's potting window for 3/3 straight-in is 0.22 degrees
+  (Dr. Dave's margins agree). AIM_SD is now 0.09 degrees: 81%, 77%, 61%, and 87% for 4 ft to a ball 2 ft out at 15 degrees.
+- The planner's make came out lower than that, because the first potting aim can sit at the window's edge. centre() now
+  moves each top candidate's aim to the middle of its window (steps of 0.05 degrees, up to 0.8). Banks and kicks too.
+- Stroke difficulty: the aim SD in the runs is multiplied by
+  1 + 0.3 x |tips| + 1.2 x max(0, |tip| - 0.25) + 0.12 x max(0, speed index - 2).
+- No cushion cost (railF = 1). simple() keeps a small preference: 5% past medium, 2% a tip.
+- On the 19 layouts of Nov 9 21:33, make x next went from 0.38 to 0.67. Planning takes 0.4 to 3.6 s a layout in node.
+- Not done yet: planner speeds stop at the player's hard roll (7.5 mph), so draw shots near break speed are not planned.
+  The squirt and swerve the player allows for are not modelled beyond P.squirt.
