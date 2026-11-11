@@ -1793,3 +1793,27 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
 - A sixth speed, "very hard" (1.5 x the hard roll), tried only with a real draw or follow (|tip| >= 0.2). The stroke box
   bar has 6 steps.
 - "great position" and "good position" in the shot's words when the cue ball lands in the green or the light green.
+
+## Review: Nov 10 22:54 (V3.17.0, Coaching test, 18 shots) and V3.18.0
+- Owner: the plans went back to easy pots with long leaves, instead of shape with spin. Ideally closer, if position allows.
+  The zone should be longer, to show how good it is further out and how it narrows near the ball, with the target in its
+  middle. Of 46 plans, several left the cue ball 38-60 in from the next ball (fan r0 38-43). At level 600 a 4-5 ft shot is
+  a ~90% make in the model, so near and far leaves looked alike.
+- Zone values get a comfort factor:
+  - cue to ghost distance dl: up to 30 in = 1, falling to 0.5 at 72 in; under 5 in = 0.85 (cramped);
+  - the object ball's run o.dist: past 36 in, down to 0.85.
+  On 9 of the session's long-leave layouts the average leave went from 45 to 35 in (the 5 then the 7: 58 to 32 in, with
+  2 tips of side). Over all 33 distinct layouts: 27 to 25 in with the gentler first version.
+- lineRun(c, a0, q): the zone's value every inch along a line from the next ball to the cushion; the run of good values
+  holding the best one (T = max(0.6, best - 0.25), or 0.8 x best under 0.6); its middle.
+- zoneFan is now rings along the good stretch of the planned leave's line (3-10 rings of about 4 in). Each ring is as wide
+  as the good window at its distance (at most 30 degrees, at least 1.5 a side), with q = the next shot's value on the line.
+  It returns rings, line, ideal (the middle), r0, r1, rm, qmax. out.target = ideal: the perfect spot and the after-shot
+  stop words use it.
+- searchA: among strokes within 5% of the best, of the same kind, stopping within 14 in of its stop, the one stopping
+  nearest the middle of the good stretch, on the zone of the pocket that leave is best for. Without that last condition the
+  next ball's pocket switched to a long cut down the rail (Nov 2 test).
+- App: rings coloured by the owner's bands (alpha .6); the planned path ends at its own stop; coach errors log the layout
+  and options (Nov 10 22:54: "undefined is not a function (near '...[A, B, C]...')" in the worker, not reproduced in node
+  on any of the session's layouts).
+- Not done: ball in hand with no next ball gives a spot but no stroke.

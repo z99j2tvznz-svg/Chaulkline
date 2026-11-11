@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.17.0';
+const VERSION = 'V3.18.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -1077,10 +1077,10 @@ function coachLook() {
 }
 function coachDone(id, r) {
   CO.busy = false; if (id !== CO.id) return;
-  if (!r || r.error) { if (r && r.error) dbg('error', { m: 'coach ' + r.error.slice(0, 120) }); CO.plan = null; return; }
+  if (!r || r.error) { if (r && r.error) dbg('error', { m: 'coach ' + r.error.slice(0, 120), balls: CO.pending, opts: coachOpts() }); CO.plan = null; return; }
   CO.plan = r; CO.balls = CO.pending; CO.poly = null; $('#rejectBtn').hidden = A.mode !== 'coach';
   const cnt = { green: 0, red: 0, blocked: 0 }; if (r.cells) for (const v of r.cells) { if (v === 1) cnt.green++; else if (v === 3) cnt.red++; else if (v === 4) cnt.blocked++; }
-  dbg('coach_plan', { order: r.order, A: r.A, B: r.B, C: r.C, inHand: !!r.inHand, noShot: r.noShot || null, spot: r.spot && r.spot.map(r1), path: r.path ? { shot: r.path.shot, kind: r.path.kind, cut: r.path.cut, stroke: r.path.stroke || null, make: r.path.make, next: r.path.next, legal: r.path.legal, opp: r.path.opp, alt: r.path.alt || null, alts: r.path.alts || null, n: (r.path.pts || []).length, end: r.path.p && r.path.p.map(r1) } : null, route: r.route ? { kind: r.route.kind, s: r.route.s } : null, fan: r.zoneFan ? { lo: r.zoneFan.lo, hi: r.zoneFan.hi, r0: r.zoneFan.r0, r1: r.zoneFan.r1, q0: r.zoneFan.q0 } : null, tight: r.path && r.path.tight || null, thin: r.path ? r.path.fanThin : null, cells: cnt, ms: r.ms, balls: CO.balls });
+  dbg('coach_plan', { order: r.order, A: r.A, B: r.B, C: r.C, inHand: !!r.inHand, noShot: r.noShot || null, spot: r.spot && r.spot.map(r1), path: r.path ? { shot: r.path.shot, kind: r.path.kind, cut: r.path.cut, stroke: r.path.stroke || null, make: r.path.make, next: r.path.next, legal: r.path.legal, opp: r.path.opp, alt: r.path.alt || null, alts: r.path.alts || null, n: (r.path.pts || []).length, end: r.path.p && r.path.p.map(r1) } : null, route: r.route ? { kind: r.route.kind, s: r.route.s } : null, fan: r.zoneFan ? { lo: r.zoneFan.lo, hi: r.zoneFan.hi, r0: r.zoneFan.r0, r1: r.zoneFan.r1, rm: r.zoneFan.rm, q0: r.zoneFan.q0, qmax: r.zoneFan.qmax } : null, target: r.target ? r.target.map(r1) : null, tight: r.path && r.path.tight || null, thin: r.path ? r.path.fanThin : null, cells: cnt, ms: r.ms, balls: CO.balls });
 }
 // the player rejects the plan on the screen (owner, Nov 9: "this isn't realistic"): everything the plan was made from and a
 // picture of the table, for the review (was a ball or the table read wrong, or was the plan wrong); the next shot's row says so
@@ -1119,10 +1119,11 @@ function coachShotEnd(sh, row, row1) {
     }
   }
   // where it stopped against the perfect spot: long or short along the way the plan had the cue ball going there, and to the side
-  if (at && p.spot && !sh.scratch && p.path && p.path.shot !== 'safety') {
-    const way = (p.path.pts || []).concat([p.spot]); let u = null;
-    for (let i = way.length - 2; i >= 0 && !u; i--) { const d = [p.spot[0] - way[i][0], p.spot[1] - way[i][1]], l = Math.hypot(d[0], d[1]); if (l > 3) u = [d[0] / l, d[1] / l]; }
-    const d = [at[0] - p.spot[0], at[1] - p.spot[1]];
+  const tgt = p.target || p.spot;
+  if (at && tgt && !sh.scratch && p.path && p.path.shot !== 'safety') {
+    const way = (p.path.pts || []).concat([tgt]); let u = null;
+    for (let i = way.length - 2; i >= 0 && !u; i--) { const d = [tgt[0] - way[i][0], tgt[1] - way[i][1]], l = Math.hypot(d[0], d[1]); if (l > 3) u = [d[0] / l, d[1] / l]; }
+    const d = [at[0] - tgt[0], at[1] - tgt[1]];
     c.stop = { off: r1(Math.hypot(d[0], d[1])), along: u ? r1(d[0] * u[0] + d[1] * u[1]) : null, side: u ? r1(d[1] * u[0] - d[0] * u[1]) : null };
   }
   if (sh.scratch) CO.scratchT = A.tk.S.t; // ball in hand next
@@ -1162,18 +1163,14 @@ function drawCoach1(c, S2, F) {
   const poly = (q, z = 0) => { c.beginPath(); q.forEach((v, i) => { const a = S2(A.cam.proj(v[0], v[1], z)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.closePath(); };
   const sh = p.shapes, safety = p.path && p.path.shot === 'safety';
   if (sh && !safety) { // (no zone for a safety: the next shot is the other player's)
-    // the zone (V3.14, owner Nov 9): a fan seen from the next ball round the perfect spot, wider on the side where the next
-    // shot stays good, 30 degrees at most; green strongest at the spot and fading out, the outer seventh each side yellow, the
-    // ideal line through the spot; no outlines. (The 50-60% band and the shadows of balls in the way are gone: they made the
-    // zone look like anywhere.)
+    // the zone (V3.18, owner Nov 10: longer, to show how good it is further out and how it narrows nearer the ball): along
+    // the planned leave's line from the next ball, the good stretch in rings, each as wide as the good window at its
+    // distance and coloured by the next shot's percentage there (the owner's bands); a thin line down the middle; no
+    // outlines. The target is the middle of the stretch (drawn as the perfect spot below).
     const fz = p.zoneFan, fin = q => q && q.length > 2 && q.every(v => isFinite(v[0]) && isFinite(v[1]));
-    if (fz && fin(fz.core) && isFinite(fz.spot[0])) {
-      const o = S2(A.cam.proj(fz.spot[0], fz.spot[1], 0)); let rad = 1;
-      for (const q of [fz.core, ...fz.sides]) if (fin(q)) for (const v of q) { const a = S2(A.cam.proj(v[0], v[1], 0)); rad = Math.max(rad, Math.hypot(a[0] - o[0], a[1] - o[1])); }
-      if (!isFinite(rad) || !isFinite(o[0]) || !isFinite(o[1])) rad = 1;
-      const grad = (rgb, a0, a1, a2) => { const g = c.createRadialGradient(o[0], o[1], 0, o[0], o[1], rad); g.addColorStop(0, 'rgba(' + rgb + ',' + a0 + ')'); g.addColorStop(0.5, 'rgba(' + rgb + ',' + a1 + ')'); g.addColorStop(1, 'rgba(' + rgb + ',' + a2 + ')'); return g; };
-      poly(fz.core); c.fillStyle = grad('46,204,113', .85, .66, .38); c.fill();
-      for (const q of fz.sides) if (fin(q)) { poly(q); c.fillStyle = grad('241,196,15', .7, .55, .32); c.fill(); }
+    if (fz && fz.rings) {
+      const col = q => q >= 0.9 ? '46,204,113' : q >= 0.8 ? '140,230,170' : q >= 0.6 ? '241,196,15' : '231,76,60';
+      for (const g of fz.rings) if (fin(g.poly)) { poly(g.poly); c.fillStyle = 'rgba(' + col(g.q) + ',.6)'; c.fill(); }
       const l0 = S2(A.cam.proj(fz.line[0][0], fz.line[0][1], 0)), l1 = S2(A.cam.proj(fz.line[1][0], fz.line[1][1], 0));
       c.lineWidth = 0.9; c.strokeStyle = 'rgba(244,241,232,.6)'; c.beginPath(); c.moveTo(l0[0], l0[1]); c.lineTo(l1[0], l1[1]); c.stroke();
     }
@@ -1221,10 +1218,12 @@ function drawCoach1(c, S2, F) {
     if (p.path.pre && p.path.pre.length > 1) p.path.pre.forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); // a kick: off the cushions
     else { c.moveTo(cp[0], cp[1]); c.lineTo(gh[0], gh[1]); }
     c.stroke(); c.setLineDash([]);
-    c.lineWidth = 1; c.strokeStyle = 'rgba(244,241,232,.9)'; c.beginPath(); p.path.pts.concat(p.spot ? [p.spot] : []).forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.stroke();
+    c.lineWidth = 1; c.strokeStyle = 'rgba(244,241,232,.9)'; c.beginPath(); p.path.pts.forEach((q, i) => { const a = S2(A.cam.proj(q[0], q[1], A.P.R)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.stroke();
   }
-  // the perfect spot: a ball-sized ring with a dot
-  if (p.spot) { const a = S2(A.cam.proj(p.spot[0], p.spot[1], A.P.R)), e = S2(A.cam.proj(p.spot[0] + A.P.R, p.spot[1], A.P.R)), r = Math.max(3, Math.abs(e[0] - a[0]));
+  // the perfect spot: a ball-sized ring with a dot (V3.18: the middle of the zone's good stretch, where a little long or short
+  // still leaves the cue ball good)
+  const tg = p.target || p.spot;
+  if (tg) { const a = S2(A.cam.proj(tg[0], tg[1], A.P.R)), e = S2(A.cam.proj(tg[0] + A.P.R, tg[1], A.P.R)), r = Math.max(3, Math.abs(e[0] - a[0]));
     c.lineWidth = 3.5; c.strokeStyle = 'rgba(11,16,20,.45)'; c.beginPath(); c.arc(a[0], a[1], r, 0, Math.PI * 2); c.stroke(); c.lineWidth = 2; c.strokeStyle = 'rgba(244,241,232,.95)'; c.stroke();
     c.fillStyle = 'rgba(244,241,232,.95)'; c.beginPath(); c.arc(a[0], a[1], 2.2, 0, Math.PI * 2); c.fill(); }
   // the pockets: this ball, the next, the one after

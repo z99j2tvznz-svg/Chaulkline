@@ -302,7 +302,18 @@ function coachFactory(sim) {
       all.sort((x, y) => y.value - x.value);
       // the best three again with more runs before one is picked (a small sample flatters the lucky one)
       const fin = all.slice(0, 3).map(c => mc(c, 24)); fin.sort((x, y) => y.value - x.value); all.sort((x, y) => y.value - x.value);
-      const w = fin[0], alt = fin.concat(all).find(c => c.kind !== w.kind);
+      let w = fin[0];
+      // (V3.18: of the strokes within 5% of the best, of its kind, the one whose stop is nearest the middle of the good stretch
+      // of its line from the next ball: speed a little off either way still leaves it good)
+      // (only strokes stopping within 14 in of the best one's stop: the same leave at a better speed, not another plan)
+      if (zoneAt && w.kind !== 'safety') {
+        const stopOf = c => { const z = c.r.final.find(q => q.id === 0); return z ? [z.x, z.y] : null; }, s0 = stopOf(w);
+        // (along the zone of the pocket that leave is best for: the next ball's pocket stays the same)
+        const zb = s0 ? zones.reduce((b, z) => (zv(z, s0) > zv(b, s0) ? z : b), zones[0]) : null;
+        if (s0 && zb) { const cB = [Zb.x, Zb.y], run = lineRun(cB, Math.atan2(s0[1] - cB[1], s0[0] - cB[0]), p => zv(zb, p));
+          if (run) { let bd = 1e9; for (const c of fin.concat(all)) { if (c.kind !== w.kind || c.value < 0.95 * fin[0].value) continue; const p = stopOf(c); if (!p || Math.hypot(p[0] - s0[0], p[1] - s0[1]) > 14) continue; const d = Math.hypot(p[0] - run.mid[0], p[1] - run.mid[1]); if (d < bd) { bd = d; w = c; } } } }
+      }
+      const alt = fin.concat(all).find(c => c.kind !== w.kind);
       // the band of the cue ball's path: the same stroke aimed to the inside and to the outside of the pocket (A still in)
       let lo = null, hi = null, dlo = 0, dhi = 0;
       if (w.kind !== 'safety') for (let d = -2; d <= 2.001; d += 0.25) { const r = runAll(w.ang + d * D2R, MPH[w.p] * 17.6, w.a, w.b, w.init); if (!potted(r)) continue; if (!lo) { lo = r; dlo = d; } hi = r; dhi = d; }
@@ -318,24 +329,39 @@ function coachFactory(sim) {
         fan: lo && hi && lo !== hi ? [after(lo), after(hi)] : null, fanThin, p: c0 ? [c0.x, c0.y] : null, make: +w.pMake.toFixed(2), next: +w.pNext.toFixed(2), legal: w.legal != null ? +w.legal.toFixed(2) : null, opp: w.opp != null ? +w.opp.toFixed(2) : null,
         zone: +w.pNext.toFixed(2), robust: +w.pMake.toFixed(2), alts, alt: alt ? { kind: alt.kind, make: +alt.pMake.toFixed(2), value: +alt.value.toFixed(2) } : null };
     }
-    // The zone as a fan round the perfect spot (V3.14, owner Nov 9): seen from the next ball, as wide as the window where the
-    // next shot stays good at the spot's distance (its percentage within 0.2 of the spot's, and 60%+), so it leans to the good
-    // side; at most 30 degrees in all (coach good position, not "anywhere"), at least 2 either side; along the spot's line only
-    // as far as the speed window (short and long, up to 15 in each way, at least 3). The outer seventh each side yellow.
+    // The good stretch of a line from the next ball (V3.18): every inch out from the ball to the cushion, the zone's value;
+    // the run of good values (within 0.25 of the line's best and 60%+, or 80% of the best when that is under 60%) holding
+    // the best one, and its middle: where to send the cue ball, so a little long or short still leaves it good (owner, Nov 10:
+    // "pick the median")
+    function lineRun(c, a0, q) {
+      const at = r => [c[0] + r * Math.cos(a0), c[1] + r * Math.sin(a0)], rs = [];
+      for (let r = 2 * R + 0.5; r <= 80; r += 1) { const p = at(r); if (p[0] < R || p[0] > L - R || p[1] < R || p[1] > W - R) break; rs.push([r, q(p)]); }
+      if (!rs.length) return null; let bi = 0; rs.forEach((v, k) => { if (v[1] > rs[bi][1]) bi = k; }); const Qm = rs[bi][1]; if (Qm <= 0) return null;
+      const T = Qm >= 0.6 ? Math.max(0.6, Qm - 0.25) : Qm * 0.8; let k0 = bi, k1 = bi;
+      while (k0 > 0 && rs[k0 - 1][1] >= T) k0--; while (k1 < rs.length - 1 && rs[k1 + 1][1] >= T) k1++;
+      const r0 = rs[k0][0], r1 = rs[k1][0], rm = (r0 + r1) / 2;
+      return { r0, r1, rm, T, Qm, mid: at(rm), at };
+    }
+    // The zone as a fan along the planned leave's line from the next ball (V3.18, owner Nov 10: longer, so it shows how good
+    // it is further out and how it narrows nearer the ball): the good stretch of that line in rings, each as wide as the
+    // window where the next shot stays good at its distance (at most 30 degrees in all, leaning to the good side) and
+    // coloured by the next shot's percentage there; the middle of the stretch is the target
     function zoneFan(Bb, sp) {
       if (!sp || !bestZ || !Bb) return null;
       const c = [Bb.x, Bb.y], d0 = Math.hypot(sp[0] - c[0], sp[1] - c[1]), a0 = Math.atan2(sp[1] - c[1], sp[0] - c[0]); if (d0 < 2 * R + 1) return null;
-      const q = p => zv(bestZ, p), at = (a, r) => [c[0] + r * Math.cos(a), c[1] + r * Math.sin(a)], Q0 = q(sp), T = Q0 >= 0.6 ? Math.max(0.6, Q0 - 0.2) : Q0 * 0.8;
-      let lo = 0, hi = 0;
-      for (let k = 1; k <= 28; k++) { if (q(at(a0 + k * D2R, d0)) >= T) hi = k; else break; }
-      for (let k = 1; k <= 28; k++) { if (q(at(a0 - k * D2R, d0)) >= T) lo = k; else break; }
-      lo = Math.max(lo, 2); hi = Math.max(hi, 2); while (lo + hi > 30) { if (lo > hi) lo--; else hi--; }
-      let r0 = d0, r1 = d0;
-      for (let k = 1; k <= 15; k++) { const r = d0 - k; if (r < 2 * R + 0.5 || q(at(a0, r)) < T) break; r0 = r; }
-      for (let k = 1; k <= 15; k++) { const r = d0 + k; if (q(at(a0, r)) < T) break; r1 = r; }
-      r0 = Math.max(2 * R + 0.5, Math.min(r0, d0 - 3)); r1 = Math.max(r1, d0 + 3);
-      const A0 = a0 - lo * D2R, A1 = a0 + hi * D2R, e = Math.max((A1 - A0) / 7, 0.8 * D2R);
-      return { core: sector(c, r0, r1, A0 + e, A1 - e, L, W, R), sides: [sector(c, r0, r1, A0, A0 + e, L, W, R), sector(c, r0, r1, A1 - e, A1, L, W, R)], line: [at(a0, r0), at(a0, r1)], from: c, spot: sp, lo, hi, r0: +r0.toFixed(1), r1: +r1.toFixed(1), q0: +Q0.toFixed(2) };
+      const q = p => zv(bestZ, p), run = lineRun(c, a0, q); if (!run) return null;
+      let { r0, r1 } = run; if (r1 - r0 < 4) { r0 = Math.max(2 * R + 0.5, r0 - 2); r1 += 2; }
+      const pAt = (a, r) => [c[0] + r * Math.cos(a), c[1] + r * Math.sin(a)], N = Math.max(3, Math.min(10, Math.round((r1 - r0) / 4))), rings = [];
+      let LO = 0, HI = 0;
+      for (let k = 0; k < N; k++) {
+        const ra = r0 + (r1 - r0) * k / N, rb = r0 + (r1 - r0) * (k + 1) / N, rm = (ra + rb) / 2; let lo = 0, hi = 0;
+        for (let d = 1; d <= 28; d++) { if (q(pAt(a0 + d * D2R, rm)) >= run.T) hi = d; else break; }
+        for (let d = 1; d <= 28; d++) { if (q(pAt(a0 - d * D2R, rm)) >= run.T) lo = d; else break; }
+        lo = Math.max(lo, 1.5); hi = Math.max(hi, 1.5); while (lo + hi > 30) { if (lo > hi) lo--; else hi--; }
+        LO = Math.max(LO, lo); HI = Math.max(HI, hi);
+        rings.push({ poly: sector(c, ra, rb, a0 - lo * D2R, a0 + hi * D2R, L, W, R), q: +q(pAt(a0, rm)).toFixed(2), lo, hi, r: +rm.toFixed(1) });
+      }
+      return { rings, line: [pAt(a0, r0), pAt(a0, r1)], from: c, spot: sp, ideal: run.mid, lo: LO, hi: HI, r0: +r0.toFixed(1), r1: +r1.toFixed(1), rm: +run.rm.toFixed(1), q0: +q(sp).toFixed(2), qmax: +run.Qm.toFixed(2) };
     }
     // no clean pot on the lowest ball at all (V3.11.2, Nov 8 20:24: every pocket blocked or the cut too thin; the screen
     // showed nothing and the player could not tell what the plan wanted): said so
@@ -365,7 +391,12 @@ function coachFactory(sim) {
         // the chance of making it and being on the next one: the make, times how well it leaves the ball after (the wrong side
         // about half), less straight in (no control of the cue ball) and on a cushion (the cue raised)
         const rd = Math.min(X[0], L - X[0], X[1], W - X[1]), rail = rd < 2.5 ? 0.8 : rd < 4.5 ? 0.93 : 1;
-        const v = pMake(s, o) * (Ub ? 0.55 + 0.45 * posC : 1) * (s.cut < 6 ? 0.9 : 1) * rail;
+        // and closer is better (V3.18, owner Nov 10: plans left the cue ball 4-5 ft away, a 90% make at the coached level, so
+        // near and far looked alike): up to 30 in from the ball is best, 6 ft away counts half (the next speed is harder to
+        // judge from far), under 5 in is cramped
+        // (and the object ball's own run: past 3 ft to the pocket the speed for the next position is harder to judge too)
+        const comfort = (s.dl < 5 ? 0.85 : s.dl <= 30 ? 1 : Math.max(0.5, 1 - 0.5 * (s.dl - 30) / 42)) * (o.dist <= 36 ? 1 : Math.max(0.85, 1 - 0.15 * (o.dist - 36) / 36));
+        const v = pMake(s, o) * (Ub ? 0.55 + 0.45 * posC : 1) * (s.cut < 6 ? 0.9 : 1) * rail * comfort;
         sc[j * nx + i] = v; g[j * nx + i] = 9; n++; // graded below
       }
       const worth = Array.from(sc).sort((a, b) => b - a).slice(0, Math.round(150 / (STEP * STEP))).reduce((a, b) => a + b, 0);
@@ -432,7 +463,7 @@ function coachFactory(sim) {
     if (C && out.C.pocket == null) { const pC = pocketsFor(C, [A.n, B.n]); if (pC.length) out.C.pocket = pC.sort((a, b) => a.dist - b.dist)[0].pi; }
     if (inHand && B && out.B.pocket == null) { const pq = pocketsFor(B, [A.n]); if (pq.length) out.B.pocket = pq.sort((a, b) => a.dist - b.dist)[0].pi; }
     out.shapes = shapes(out, Zb);
-    out.zoneFan = zoneFan(Zb, out.spot);
+    out.zoneFan = zoneFan(Zb, out.spot); out.target = out.zoneFan ? out.zoneFan.ideal : out.spot;
     noShot(out);
     out.ms = Date.now() - t0;
     return out;

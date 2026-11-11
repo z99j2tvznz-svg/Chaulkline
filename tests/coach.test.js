@@ -82,7 +82,8 @@ test('V3.14: a ball a quarter inch in the way is a tight pot, not a safety; the 
   assert.ok(r1.path.ob && r1.path.ob.length > 1, 'the object ball\'s line to the pocket');
   const r2 = COACH.plan([{ n: 9, x: 10.8, y: 24.8 }, { n: 5, x: 20.4, y: 23.2 }, { n: 7, x: 41.9, y: 32.3 }, { n: 0, x: 57.3, y: 27.4 }, { n: 6, x: 23.5, y: 5.9 }, { n: 2, x: 28.1, y: 18.6 }, { n: 4, x: 37.5, y: 14.7 }, { n: 3, x: 57.1, y: 22.4 }], P);
   assert.notStrictEqual(r2.path.shot, 'safety', 'a pot is there: ' + JSON.stringify({ shot: r2.path.shot, make: r2.path.make }));
-  for (const r of [r1, r2]) if (r.zoneFan) { const z = r.zoneFan; assert.ok(z.lo + z.hi <= 30 && z.lo >= 2 && z.hi >= 2 && z.r1 - z.r0 >= 6, JSON.stringify(z)); }
+  // (V3.18: the fan in rings along the good stretch of its line, each at most 30 degrees, the target its middle)
+  for (const r of [r1, r2]) if (r.zoneFan) { const z = r.zoneFan; assert.ok(z.rings.length >= 3 && z.rings.every(g => g.lo + g.hi <= 30 && g.lo >= 1.5 && g.hi >= 1.5) && z.r1 - z.r0 >= 4 && z.rm > z.r0 && z.rm < z.r1, JSON.stringify({ r0: z.r0, r1: z.r1, rm: z.rm, rings: z.rings.map(g => [g.lo, g.hi, g.q]) })); }
 });
 
 test('V3.15: the spin and draw tests read the player\'s side spin and tip back from where the cue ball went', () => {
@@ -139,4 +140,14 @@ test('V3.17: the plan is made for a level (the player\'s Fargo plus 100): a stro
   const hi = COACH.plan(lay, P, { level: 700 }).path.make, lo = COACH.plan(lay, P, { level: 400 }).path.make;
   assert.ok(hi > lo + 0.15, 'Fargo 700 ' + hi + ' against 400 ' + lo);
   const r = COACH.plan(lay, P, { level: 600 }); assert.ok(['soft', 'soft to medium', 'medium', 'medium to hard', 'hard', 'very hard'].includes(r.path.stroke.speed));
+});
+
+test('V3.18: closer leaves; the zone a long fan of graded rings along the leave\'s line, its middle the target (Nov 10 22:54)', () => {
+  // the 5 then the 7: V3.17 left the cue ball 58 in from the 7 for an easy pot; now it plays for shape nearer it
+  const lay = [{ n: 9, x: 22.8, y: 0.9 }, { n: 7, x: 62.7, y: 27.9 }, { n: 5, x: 13.6, y: 8.3 }, { n: 0, x: 55.1, y: 16 }];
+  const r = COACH.plan(lay, P, { speeds: [3.1, 5, 7.5], spinTip: 0.14, railMu: 0.25, level: 600 });
+  assert.ok(r.zoneFan && r.zoneFan.rings.length >= 3 && r.target, 'a fan and a target');
+  const seven = lay.find(b => b.n === 7); assert.ok(Math.hypot(r.spot[0] - seven.x, r.spot[1] - seven.y) < 44, 'the leave nearer the 7 (V3.17: 58 in): ' + JSON.stringify(r.spot));
+  const z = r.zoneFan, B = lay.find(b => b.n === r.B.n), dT = Math.hypot(r.target[0] - B.x, r.target[1] - B.y);
+  assert.ok(Math.abs(dT - z.rm) < 1.5 && z.rm > z.r0 && z.rm < z.r1, 'the target is the middle of the good stretch: ' + JSON.stringify({ dT, r0: z.r0, r1: z.r1, rm: z.rm }));
 });
