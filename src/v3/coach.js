@@ -190,8 +190,14 @@ function coachFactory(sim) {
       // simple strokes first: soft to medium, the tip near the middle, no side unless it pays; few cushions (Dr. Dave)
       // (V3.15: side spin and extra cushions cost a little, not a lot: coming into the line with spin or more rails is good
       // position play, owner Nov 9 21:33)
-      // (V3.19, owner Nov 11: get the shape with spin so the ball can be played softer: softer wins a near tie)
-      const simple = c => [1, 1, 0.98, 0.95, 0.9, 0.82][c.p] * (1 - 0.02 * Math.abs(Math.round(c.a / TIP)));
+      // keep it simple (Dr. Dave's first pattern-play principle, BD Feb 2021: stop shots and natural roll first; avoid side
+      // spin and extra cushions if you don't need them): a draw 3% less, each tip of side 3% less; extra cushions in railF.
+      // Only a tie-breaker: when side, draw or cushions get better shape, the runs show it. (V3.19's own preference for soft
+      // speeds is gone: the reason to play softer is that the pocket is bigger, which is in the make, see diff)
+      // and minimize the cue ball's travel (Dr. Dave, BD June 2020: the further it goes, the harder it is to be accurate with
+      // direction and distance): 3% less for every 4 ft it travels after the hit
+      const travel = r => { const q = after(r); let d = 0; for (let i = 1; i < q.length; i++) d += Math.hypot(q[i][0] - q[i - 1][0], q[i][1] - q[i - 1][1]); return d; };
+      const simple = c => (c.b < -0.1 ? 0.97 : 1) * Math.pow(0.97, Math.abs(Math.round(c.a / TIP))) * (c.r ? Math.pow(0.97, travel(c.r) / 48) : 1);
       // a harder stroke is harder to make (V3.16, owner Nov 10: three tips of side with full draw on a thin cut is a hard make
       // even for a pro): the aim error grows with side spin (squirt and swerve the player has to allow for), with the tip far
       // from the middle and with speed past medium
@@ -200,12 +206,16 @@ function coachFactory(sim) {
       const rails = pts => { let n = 0, on = false; for (const p of pts) { const at = p[0] < R + 0.25 || p[0] > L - R - 0.25 || p[1] < R + 0.25 || p[1] > W - R - 0.25; if (at && !on) n++; on = at; } return n; };
       // (V3.16, owner Nov 10: more cushions are good position play when they bring the cue ball into the line; their risk is
       // in the runs with the player's errors already, so no cost of their own)
-      const railF = r => 1;
+      // (V3.20: extra cushions 3% each past the first, as a tie-breaker only: Dr. Dave, avoid extra rails if you don't need
+      // them; Tom Ross, the best way to avoid a rail is often to hit it, and the cushion brakes the cue ball, which the runs
+      // with the player's speed error reward)
+      const railF = r => { const n = rails(after(r)); return n <= 1 ? 1 : Math.pow(0.97, n - 1); };
       // a candidate's percentages: N runs with the player's errors
       const mc = (c, N) => {
         let made = 0, q = 0, legal = 0, opp = 0;
         for (let i = 0; i < N; i++) {
-          const ea = gauss(R0) * AIM_SD * diff(c), ev = 1 + gauss(R0) * 0.08, es = gauss(R0) * 0.05, et = gauss(R0) * 0.05;
+          // (the speed error grows past medium: shots near the top of the speed range are harder to control, Tom Ross)
+          const ea = gauss(R0) * AIM_SD * diff(c), ev = 1 + gauss(R0) * 0.08 * (1 + 0.15 * Math.max(0, c.p - 2)), es = gauss(R0) * 0.05, et = gauss(R0) * 0.05;
           const r = runAll(c.ang + ea, MPH[c.p] * 17.6 * ev, c.a + es, Math.max(-0.55, Math.min(0.55, c.b + et)), c.init);
           if (c.kind === 'safety') { const ok = r.firstHit === A.n && !r.pocketed.some(z => z.id === 0) && (r.railAfter || r.pocketed.length); if (ok) { legal++; opp += oppBest(r); } continue; }
           if (!potted(r)) continue; made++;
@@ -420,10 +430,10 @@ function coachFactory(sim) {
         // near and far looked alike): up to 30 in from the ball is best, 6 ft away counts half (the next speed is harder to
         // judge from far), under 5 in is cramped
         // (and the object ball's own run: past 3 ft to the pocket the speed for the next position is harder to judge too)
-        // (V3.19, owner Nov 11: closer is better within reason: a foot away in the right place is always easier, an inch away
-        // is far worse than 3 ft): best 10-18 in from the ball, 0.85 at 3 ft, 0.55 at 6 ft and beyond, cramped under 10 in
-        // (0.6 at 3 in). In inches, so on a 9 ft table, where leaves run longer, long ones cost more often
-        const dl = s.dl, comfort = (dl < 3 ? 0.6 : dl < 10 ? 0.6 + 0.4 * (dl - 3) / 7 : dl <= 18 ? 1 : dl <= 36 ? 1 - 0.15 * (dl - 18) / 18 : Math.max(0.55, 0.85 - 0.3 * (dl - 36) / 36)) * (o.dist <= 36 ? 1 : Math.max(0.85, 1 - 0.15 * (o.dist - 36) / 36));
+        // (V3.20, from the sources, see DESIGN NOTES: no source gives a best distance; the next shot's margin shrinks with its
+        // distances, which the make percentage carries (Dr. Dave, BD Nov 2004). Only a cue ball almost touching the next ball
+        // is cramped: no room to stroke through, a double hit)
+        const comfort = s.dl < 5 ? 0.8 : 1;
         const v = pMake(s, o) * (Ub ? 0.55 + 0.45 * posC : 1) * (s.cut < 6 ? 0.9 : 1) * rail * comfort;
         sc[j * nx + i] = v; g[j * nx + i] = 9; n++; // graded below
       }

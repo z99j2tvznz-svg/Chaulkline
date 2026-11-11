@@ -1840,3 +1840,44 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   follow 45 in away once the closer curve went in, which led to the reweighting). Over the 33 layouts of Nov 10 22:54 most
   leaves are 10-35 in; the long ones are banks and one layout with nothing good in reach. Planning time is about +15%, at
   most 4.1 s in node.
+
+## V3.20.0: coaching rules from the sources, not from guesses (owner, Nov 11)
+- The owner objected: V3.19 turned ideas they were thinking out loud into rules. The coaching has to rest on established
+  billiard theory. Sources read in full (Dr. Dave's site, via the shell; the web fetcher cannot reach it):
+  - Dr. Dave Alciatore, Billiards Digest Feb 2021, "Pattern Play Principles" (top 10, video NV J.46): keep it simple
+    (stop shots and natural roll; avoid side spin and extra rails if not needed; avoid banks); leave correct angles (a
+    straight leave limits the cue ball to roll, stop or draw); plan three balls ahead (probably the most important);
+    come into the line (cross the line only through a fat part of the shape zone); cushions as brakes; groups;
+    solve problems early; the 45-degree rule and the table centre; corners over sides unless the side is natural; long-side
+    shape; stay off the cushions; reachable position; hangers.
+  - Dr. Dave, BD June 2020, "Speed Control": avoid crossing the next shot's line; minimize cue ball motion (the further it
+    travels, the harder to be accurate); a cushion roughly halves the speed, doubling the margin for speed error; best tip
+    height for distance control is about 0.2R above centre.
+  - Dr. Dave, BD Dec 2004, "Just How Big are the Pockets, Anyway? II": slower speed, bigger pockets; shallow angles along
+    the rail into a corner have the largest effective pocket; side pockets fall off fast with angle.
+  - Tom Ross columns (CueTimes / Billiards Digest, on Dr. Dave's site): pick an exact spot before shooting; the best way
+    to avoid a rail is to hit it; the cue ball through the table centre cannot scratch; play onto the position line rather
+    than across it; the stop shot is the most reliable tool; choose the angle so the speed stays in the controllable range
+    (extremes of power and bunt are hard); short-side shape is not a hard rule; leave the cue ball within reach.
+  - Dr. Dave FAQ, pocket cheating: aim the object ball off the pocket centre to create small angles for position (at a
+    cost in margin).
+  - Not read: Phil Capelle's "Play Your Best Pool" (21-22 principles of position play), whose text is not online. Dr. Dave's
+    FAQ pages behind a bot check (coming into the line) were covered by his BD columns instead.
+- Against V3.19:
+  - Kept, now cited: into the line and the crossing cost; a straight leave costs; the rail factor; cheating the pocket
+    (its margin cost is in the runs).
+  - Removed: the 10-18 in comfort curve (no source gives a best distance; the next shot's margin shrinks with distance and
+    is in pMake), the object-ball-run factor, and the soft-speed preference list.
+- New:
+  - Keep it simple, as tie-breakers in simple(): draw 0.97; each tip of side 0.97; 0.97 per 4 ft of cue ball travel after
+    the hit; railF 0.97 per cushion past the first.
+  - Speed: the speed error grows past medium (8% x (1 + 0.15 per level over medium)); the aim term in diff already makes
+    harder hits miss more (smaller pockets).
+  - Only a cue ball within 5 in of the ghost ball is cramped (0.8).
+  - Kept as a design choice, not a cited rule: the leave weighs 0.7 against 0.3 (Dr. Dave: planning ahead is the most
+    important principle).
+- Result on the 33 layouts of Nov 10 22:54: average leave 29 in (V3.19 25), 7 over 3.5 ft (V3.19 3). How far is too far
+  is now decided by the make model at the coached level. If the leaves read long, the fix is the make percentages from the
+  player's real racks (the profile build), not a made-up curve.
+- Tests: the Nov 2 layout allows the 2 in the far corner down the rail (a big pocket at that angle, BD Dec 2004); the
+  Nov 10 22:54 test no longer asserts a leave distance.
