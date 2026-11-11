@@ -128,6 +128,12 @@ a.old { color: var(--muted); font-size: 13px; }
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
+    <div class="card glass"><h2>New in V3.19</h2><ul>
+      <li>Coaching plays position first: closer is better (about a foot from the next ball in the right place is best; very close or far away costs), and the leave counts more than before.</li>
+      <li>The cue ball stays on its side of the next shot's line: a plan that crosses it counts for less.</li>
+      <li>Softer when it can: the shape with a little side spin rather than a harder hit.</li>
+      <li>Cheating the pocket: the plan can say to hit the ball a little thinner or fuller for shape.</li>
+    </ul></div>
     <div class="card glass"><h2>New in V3.18</h2><ul>
       <li>Position closer to the next ball: a leave 4 or 5 feet away now counts for less, so the plan plays for shape instead of the easy shot with a long leave.</li>
       <li>The zone is a long fan from the next ball along the planned line, coloured by how good the next shot is at each distance: you can see it get better nearer the ball and worse further out.</li>
@@ -3087,16 +3093,29 @@ function coachFactory(sim) {
         const c = r.final.find(q => q.id === 0); if (!c) return 0;
         if (!zoneAt) { const rd = Math.min(c.x, L - c.x, c.y, W - c.y); return rd < 3 ? 0.9 : 1; }
         const z = zoneAt([c.x, c.y]), q = r.paths[0] || [], n = q.length; if (!z || n < 3) return z;
-        const d = unit([q[n - 1][1] - q[n - 3][1], q[n - 1][2] - q[n - 3][2]]), rad = unit([c.x - Zb.x, c.y - Zb.y]); return Math.min(1, z * (0.75 + 0.25 * Math.abs(dot(d, rad)))); // into the line (owner, Nov 9)
+        const d = unit([q[n - 1][1] - q[n - 3][1], q[n - 1][2] - q[n - 3][2]]), rad = unit([c.x - Zb.x, c.y - Zb.y]);
+        // into the line (owner, Nov 9), and not across it (V3.19, owner Nov 11: the pros rarely cross the next shot's line, even
+        // on a hard shot; across it, the speed has to be exact)
+        return Math.min(1, z * (0.75 + 0.25 * Math.abs(dot(d, rad))) * (crosses(r, [c.x, c.y]) ? 0.85 : 1));
+      };
+      // the cue ball's way after the hit goes from one side of the next shot's line (its pocket through the next ball and on
+      // back) to the other, more than 1.5 in each side
+      const crosses = (r, stop) => {
+        let zb = null, bv = 0; for (const z of zones) { const v = zv(z, stop); if (v > bv) { bv = v; zb = z; } } if (!zb) return false;
+        const u = unit(sub([Zb.x, Zb.y], [zb.o.pk.x, zb.o.pk.y])), nn = [-u[1], u[0]], ht = r.hitAt ? r.hitAt.t : 0; let s0 = 0;
+        for (const z of r.paths[0] || []) { if (z[0] < ht) continue; const v = [z[1] - Zb.x, z[2] - Zb.y]; if (dot(v, u) < -R) continue; const sd = dot(v, nn); if (Math.abs(sd) < 1.5) continue; const sg = Math.sign(sd); if (s0 && sg !== s0) return true; s0 = sg; }
+        return false;
       };
       // simple strokes first: soft to medium, the tip near the middle, no side unless it pays; few cushions (Dr. Dave)
       // (V3.15: side spin and extra cushions cost a little, not a lot: coming into the line with spin or more rails is good
       // position play, owner Nov 9 21:33)
-      const simple = c => (c.p <= 3 ? 1 : c.p === 4 ? 0.95 : 0.9) * (1 - 0.02 * Math.abs(Math.round(c.a / TIP)));
+      // (V3.19, owner Nov 11: get the shape with spin so the ball can be played softer: softer wins a near tie)
+      const simple = c => [1, 1, 0.98, 0.95, 0.9, 0.82][c.p] * (1 - 0.02 * Math.abs(Math.round(c.a / TIP)));
       // a harder stroke is harder to make (V3.16, owner Nov 10: three tips of side with full draw on a thin cut is a hard make
       // even for a pro): the aim error grows with side spin (squirt and swerve the player has to allow for), with the tip far
       // from the middle and with speed past medium
-      const diff = c => 1 + DIFF_K * (0.3 * Math.abs(Math.round(c.a / TIP)) + 1.2 * Math.max(0, Math.abs(c.b) - 0.25) + 0.12 * Math.max(0, c.p - 2));
+      // (V3.19: a tip of side 0.18, was 0.3: the coached level uses some side for shape without it costing much of the make)
+      const diff = c => 1 + DIFF_K * (0.18 * Math.abs(Math.round(c.a / TIP)) + 1.2 * Math.max(0, Math.abs(c.b) - 0.25) + 0.12 * Math.max(0, c.p - 2));
       const rails = pts => { let n = 0, on = false; for (const p of pts) { const at = p[0] < R + 0.25 || p[0] > L - R - 0.25 || p[1] < R + 0.25 || p[1] > W - R - 0.25; if (at && !on) n++; on = at; } return n; };
       // (V3.16, owner Nov 10: more cushions are good position play when they bring the cue ball into the line; their risk is
       // in the runs with the player's errors already, so no cost of their own)
@@ -3125,14 +3144,16 @@ function coachFactory(sim) {
         if (c.kind === 'safety') { c.legal = c.nLegal / c.nN; c.opp = c.nLegal ? c.nOpp / c.nLegal : 1; c.value = 0.35 * c.legal * (1 - c.opp) * simple(c); c.pMake = 0; c.pNext = 0; return c; }
         // offence first: a sure pot with a poor leave (0.6) still beats the best safety (0.5); a 50/50 pot does not
         // (V3.13, Nov 8 20:50: plans made the ball and left the cue ball out of the zone): the leave counts more
-        c.pMake = c.nMade / c.nN; c.pNext = c.nMade ? c.nQ / c.nMade : 0; c.value = c.pMake * (0.4 + 0.6 * c.pNext) * simple(c) * (c.rf || 1); return c;
+        // (V3.19, owner Nov 11: this is coaching, position first: the leave weighs 0.7, was 0.6; the make still multiplies all
+        // of it, so a long shot at a low make is not taken for a good leave)
+        c.pMake = c.nMade / c.nN; c.pNext = c.nMade ? c.nQ / c.nMade : 0; c.value = c.pMake * (0.3 + 0.7 * c.pNext) * simple(c) * (c.rf || 1); return c;
       };
       // the aim in the middle of the angles that pot it (V3.16: the first angle found that pots can sit at the edge, where
       // half the player's small errors miss; a player allows for throw by feel and aims at the middle)
       const centre = c => {
         const go = d => { const r = runAll(c.ang + d * D2R, MPH[c.p] * 17.6, c.a, c.b, c.init); return potted(r) ? r : null; };
         let lo = 0, hi = 0; for (let d = -0.05; d >= -0.8; d -= 0.05) { if (!go(d)) break; lo = d; } for (let d = 0.05; d <= 0.8; d += 0.05) { if (!go(d)) break; hi = d; }
-        const m = (lo + hi) / 2; if (Math.abs(m) < 0.015) return c; const r = go(m); if (!r) return c;
+        const m = (lo + hi) / 2; c.win = { lo: lo - m, hi: hi - m }; if (Math.abs(m) < 0.015) return c; const r = go(m); if (!r) return c;
         return Object.assign(c, { ang: c.ang + m * D2R, da: (c.da || 0) + m * D2R, r });
       };
       const all = [];
@@ -3166,6 +3187,16 @@ function coachFactory(sim) {
       const pre = c => c.v0 * simple(c);
       direct.sort((x, y) => pre(y) - pre(x));
       const top = direct.slice(0, 18).map(c => mc(centre(c), 10)); top.sort((x, y) => y.value - x.value);
+      // cheating the pocket (V3.19, owner Nov 11): the best six also aimed at either side of the pocket, a quarter of the
+      // window in from its edge: the cut a little thinner or fuller, the cue ball's way turned, less margin to make it
+      const cutOfR = (r, ang) => { const q = pathOf(r, A.n, true); if (q.length < 2) return 0; const d = unit(sub(q[Math.min(q.length - 1, 3)], q[0])); return Math.acos(Math.max(-1, Math.min(1, dot(d, [Math.cos(ang), Math.sin(ang)])))); };
+      for (const c of top.slice(0, 6)) {
+        if (c.kind !== 'pot' || !c.win || c.win.hi - c.win.lo < 0.2) continue; const c0 = cutOfR(c.r, c.ang);
+        for (const f of [0.25, 0.75]) {
+          const d = c.win.lo + (c.win.hi - c.win.lo) * f, ang = c.ang + d * D2R, r = runAll(ang, MPH[c.p] * 17.6, c.a, c.b, c.init); if (!potted(r)) continue;
+          top.push(mc({ kind: 'pot', o: c.o, s: c.s, ang, da: (c.da || 0) + d * D2R, p: c.p, a: c.a, b: c.b, r, init: c.init, tight: c.tight, rf: c.rf, cheat: cutOfR(r, ang) > c0 ? 'thinner' : 'fuller' }, 10));
+        }
+      }
       // the best three tried with a tip more side spin (three tips at most)
       for (const c of top.slice(0, 3)) { const k = Math.round(c.a / TIP); if (Math.abs(k) !== 2) continue; const a = Math.sign(k) * 3 * TIP;
         for (const da of [c.da / D2R, c.da / D2R + 0.5, c.da / D2R - 0.5, c.da / D2R + 1, c.da / D2R - 1]) { const ang = c.ang - c.da + da * D2R, r = runAll(ang, MPH[c.p] * 17.6, a, c.b, c.init); if (potted(r)) { top.push(mc({ kind: 'pot', o: c.o, s: c.s, ang, da: da * D2R, p: c.p, a, b: c.b, r, init: c.init, tight: c.tight, rf: railF(r) * (c.tight && c.tight.length ? 0.9 : 1) }, 12)); break; } }
@@ -3238,7 +3269,7 @@ function coachFactory(sim) {
       const c0 = w.r.final.find(q => q.id === 0);
       const alts = all.slice(0, 4).map(c => ({ kind: c.kind, pocket: c.o ? c.o.pi : null, tip: +c.b.toFixed(2), side: +c.a.toFixed(2), tips: Math.round(c.a / TIP), power: c.p + 1, speed: SPEED_WORD[c.p], make: +c.pMake.toFixed(2), next: +c.pNext.toFixed(2), value: +c.value.toFixed(3) }));
       return { kind: w.kind, val: w.value, pocket: w.o ? w.o.pi : null, cut: Math.round(w.s.cut || 0), ghost: w.s.G, pts: after(w.r), pre: w.kind === 'kick' || w.kind === 'kick2' ? pathOf(w.r, 0, false) : null, ob: w.kind !== 'safety' ? pathOf(w.r, A.n, true) : null, tight: w.tight && w.tight.length ? w.tight : null,
-        stroke: Object.assign(strokeOf(w.p, w.a, w.b), { hard: w.kind === 'safety' ? false : w.pMake < 0.6 || w.pNext < 0.5, jacked: !!out.jacked }),
+        stroke: Object.assign(strokeOf(w.p, w.a, w.b), { hard: w.kind === 'safety' ? false : w.pMake < 0.6 || w.pNext < 0.5, jacked: !!out.jacked }, w.cheat ? { cheat: w.cheat } : {}),
         fan: lo && hi && lo !== hi ? [after(lo), after(hi)] : null, fanThin, p: c0 ? [c0.x, c0.y] : null, make: +w.pMake.toFixed(2), next: +w.pNext.toFixed(2), legal: w.legal != null ? +w.legal.toFixed(2) : null, opp: w.opp != null ? +w.opp.toFixed(2) : null,
         zone: +w.pNext.toFixed(2), robust: +w.pMake.toFixed(2), alts, alt: alt ? { kind: alt.kind, make: +alt.pMake.toFixed(2), value: +alt.value.toFixed(2) } : null };
     }
@@ -3308,7 +3339,10 @@ function coachFactory(sim) {
         // near and far looked alike): up to 30 in from the ball is best, 6 ft away counts half (the next speed is harder to
         // judge from far), under 5 in is cramped
         // (and the object ball's own run: past 3 ft to the pocket the speed for the next position is harder to judge too)
-        const comfort = (s.dl < 5 ? 0.85 : s.dl <= 30 ? 1 : Math.max(0.5, 1 - 0.5 * (s.dl - 30) / 42)) * (o.dist <= 36 ? 1 : Math.max(0.85, 1 - 0.15 * (o.dist - 36) / 36));
+        // (V3.19, owner Nov 11: closer is better within reason: a foot away in the right place is always easier, an inch away
+        // is far worse than 3 ft): best 10-18 in from the ball, 0.85 at 3 ft, 0.55 at 6 ft and beyond, cramped under 10 in
+        // (0.6 at 3 in). In inches, so on a 9 ft table, where leaves run longer, long ones cost more often
+        const dl = s.dl, comfort = (dl < 3 ? 0.6 : dl < 10 ? 0.6 + 0.4 * (dl - 3) / 7 : dl <= 18 ? 1 : dl <= 36 ? 1 - 0.15 * (dl - 18) / 18 : Math.max(0.55, 0.85 - 0.3 * (dl - 36) / 36)) * (o.dist <= 36 ? 1 : Math.max(0.85, 1 - 0.15 * (o.dist - 36) / 36));
         const v = pMake(s, o) * (Ub ? 0.55 + 0.45 * posC : 1) * (s.cut < 6 ? 0.9 : 1) * rail * comfort;
         sc[j * nx + i] = v; g[j * nx + i] = 9; n++; // graded below
       }
@@ -3545,7 +3579,7 @@ const COACH = coachFactory(typeof simulate !== 'undefined' ? simulate : typeof m
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.18.0';
+const VERSION = 'V3.19.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -4800,6 +4834,7 @@ function coachStroke(c, F, st, n, pa) {
   const good = shot === 'safety' ? (pa.legal || 0) * (1 - (pa.opp || 0)) : (pa && pa.make || 0) * (pa && pa.noShape ? 1 : pa && pa.next || 0);
   c.fillStyle = good >= 0.8 ? '#7ee2a0' : good >= 0.6 ? '#f1c40f' : good >= 0.5 ? '#ff8a7a' : 'rgba(244,241,232,.75)'; c.font = '600 12px system-ui, -apple-system, sans-serif'; c.fillText(odds, X, y + 18);
   if (st.jacked) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('Cue raised: a ball behind', X, y + 34); }
+  else if (st.cheat) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(126,226,160,.95)'; c.fillText('Cheat the pocket: hit it a little ' + st.cheat, X, y + 34); }
   else if (pa && pa.tight && pa.tight.length) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('Tight past the ' + pa.tight.join(' and the '), X, y + 34); }
   else if (pa && shot !== 'safety' && !pa.noShape && (pa.next || 0) < 0.6) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('No stroke reaches the zone from here', X, y + 34); }
   else if (pa && pa.alt) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.65)'; c.fillText('Also: ' + ({ pot: 'pot', bank: 'bank', kick: 'kick', kick2: '2-rail kick', safety: 'safety' }[pa.alt.kind] || pa.alt.kind) + (pa.alt.kind === 'safety' ? '' : ' ' + pct(pa.alt.make)), X, y + 34); }

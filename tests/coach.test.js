@@ -147,7 +147,7 @@ test('V3.18: closer leaves; the zone a long fan of graded rings along the leave\
   const lay = [{ n: 9, x: 22.8, y: 0.9 }, { n: 7, x: 62.7, y: 27.9 }, { n: 5, x: 13.6, y: 8.3 }, { n: 0, x: 55.1, y: 16 }];
   const r = COACH.plan(lay, P, { speeds: [3.1, 5, 7.5], spinTip: 0.14, railMu: 0.25, level: 600 });
   assert.ok(r.zoneFan && r.zoneFan.rings.length >= 3 && r.target, 'a fan and a target');
-  const seven = lay.find(b => b.n === 7); assert.ok(Math.hypot(r.spot[0] - seven.x, r.spot[1] - seven.y) < 44, 'the leave nearer the 7 (V3.17: 58 in): ' + JSON.stringify(r.spot));
+  const seven = lay.find(b => b.n === 7); assert.ok(Math.hypot(r.spot[0] - seven.x, r.spot[1] - seven.y) < 40, 'the leave nearer the 7 (V3.17: 58 in; V3.19: 31): ' + JSON.stringify(r.spot));
   const z = r.zoneFan, B = lay.find(b => b.n === r.B.n), dT = Math.hypot(r.target[0] - B.x, r.target[1] - B.y);
   assert.ok(Math.abs(dT - z.rm) < 1.5 && z.rm > z.r0 && z.rm < z.r1, 'the target is the middle of the good stretch: ' + JSON.stringify({ dT, r0: z.r0, r1: z.r1, rm: z.rm }));
 });

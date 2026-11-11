@@ -1817,3 +1817,26 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   and options (Nov 10 22:54: "undefined is not a function (near '...[A, B, C]...')" in the worker, not reproduced in node
   on any of the session's layouts).
 - Not done: ball in hand with no next ball gives a spot but no stroke.
+
+## V3.19.0 (owner, Nov 11: coaching is good position principles, not "you can make it from here")
+- Owner's points:
+  - closer is better within reason: a foot away in the right position is always easier, an inch away far worse than 3 ft;
+  - the extra 2 ft of a 9-ft table makes distance matter much more;
+  - a 500 coached as a 600 uses more side spin for better shape, so it can play softer, and cheats the pocket to get in
+    the line;
+  - pros rarely cross the next shot's line, even on a hard shot.
+- Zone comfort by cue-to-ghost distance: 0.6 at 3 in rising to 1 at 10 in; 1 for 10-18 in; 0.85 at 36 in; 0.55 at 72 in
+  and beyond. It stays in inches, so longer leaves on a 9-ft table cost more often. The object-ball run factor is
+  unchanged.
+- nextQ x 0.85 when the cue ball's way after the hit crosses the next shot's line: the line runs from the pocket of the
+  zone best at the stop through the next ball and on back; it counts as a crossing when the cue ball is more than 1.5 in
+  from the line on both sides. This is on top of the into-the-line factor.
+- Value = make x (0.3 + 0.7 x leave), was 0.4 + 0.6. Speed preference [1, 1, 0.98, 0.95, 0.9, 0.82] (soft to very hard).
+  The side term in diff is 0.18 a tip (was 0.3).
+- Cheating the pocket: centre() keeps each candidate's potting window. The best six pots also run aimed a quarter of the
+  window in from either edge (when it is at least 0.2 degrees wide). The object ball's cut against the centred aim's gives
+  "thinner" or "fuller", stroke.cheat, and the stroke box says "Cheat the pocket: hit it a little thinner/fuller".
+- On the owner's 5-then-7 layout: medium follow with a tip of right, 31 in from the 7, make 97% (V3.18 picked a soft
+  follow 45 in away once the closer curve went in, which led to the reweighting). Over the 33 layouts of Nov 10 22:54 most
+  leaves are 10-35 in; the long ones are banks and one layout with nothing good in reach. Planning time is about +15%, at
+  most 4.1 s in node.
