@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b1014">
+<title>Chalkline Aim</title>
+<!-- Chalkline aim trainer: practise aiming away from the table. The shot is seen from behind the cue ball, the player
+     swings the cue, shoots, and sees where the ghost ball really was. Hand-written, not built from src/. -->
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0b1014; --fg: #eaf1f4; --muted: #8fa0aa; --line: rgba(255,255,255,.10);
+  --accent: #59d6e8; --amber: #ffb84d; --good: #5be3a0; --bad: #ff7a70;
+  --glass: rgba(16,24,30,.72); --glass2: rgba(255,255,255,.08); --glass-line: rgba(255,255,255,.13);
+  --f: system-ui, -apple-system, "Segoe UI", sans-serif; --f-mono: ui-monospace, Menlo, monospace;
+  --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px); --sar: env(safe-area-inset-right, 0px);
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--fg); font: 400 15px/1.45 var(--f); overflow: hidden; -webkit-text-size-adjust: 100%;
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+* { box-sizing: border-box; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.glass { background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2); border-radius: 14px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 12px;
+  border: 1px solid var(--glass-line); background: var(--glass2); font-weight: 500; cursor: pointer; text-decoration: none; color: var(--fg); }
+.btn.primary { background: rgba(89,214,232,.26); border-color: rgba(89,214,232,.6); color: #eafcff; }
+.lbl { font: 500 13px var(--f); color: var(--muted); }
+.seg { display: inline-flex; flex-wrap: wrap; background: var(--glass2); border-radius: 10px; padding: 3px; gap: 2px; }
+.seg button { border: 0; background: none; color: var(--muted); font: 500 14px var(--f); padding: 8px 12px; border-radius: 8px; min-height: 38px; cursor: pointer; }
+.seg button.on { background: rgba(89,214,232,.22); color: var(--fg); box-shadow: inset 0 0 0 1px rgba(89,214,232,.5); }
+
+#view { position: fixed; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: ew-resize; }
+.top { position: fixed; top: calc(var(--sat) + 10px); left: calc(var(--sal) + 10px); right: calc(var(--sar) + 10px);
+  display: flex; gap: 8px; align-items: flex-start; pointer-events: none; }
+.top > * { pointer-events: auto; }
+.pill { min-height: 40px; padding: 0 14px; border-radius: 20px; font-size: 14px; }
+.brand { font-weight: 300; font-size: 18px; letter-spacing: -.01em; }
+.brand span { color: var(--accent); font-weight: 500; }
+.call { padding: 8px 12px; font-size: 13px; color: var(--muted); line-height: 1.3; }
+.call b { color: var(--fg); font-weight: 600; }
+.sp { flex: 1; }
+#mini { position: fixed; right: calc(var(--sar) + 10px); top: calc(var(--sat) + 60px); border-radius: 10px; pointer-events: none; }
+
+.bottom { position: fixed; left: calc(var(--sal) + 10px); right: calc(var(--sar) + 10px); bottom: calc(var(--sab) + 10px);
+  display: flex; gap: 8px; align-items: stretch; }
+#fine { flex: 1; min-width: 0; height: 56px; padding: 0; touch-action: none; cursor: ew-resize; overflow: hidden; position: relative; }
+#fine canvas { width: 100%; height: 100%; display: block; }
+#fine .hint { position: absolute; left: 12px; top: 4px; font: 500 11px var(--f); color: var(--muted); pointer-events: none; }
+#shoot { min-width: 104px; font-size: 17px; font-weight: 600; border-radius: 14px; }
+.nudge { width: 48px; padding: 0; font-size: 20px; }
+
+/* result card */
+#res { position: fixed; right: calc(var(--sar) + 10px); top: calc(var(--sat) + 60px); bottom: calc(var(--sab) + 10px);
+  width: min(340px, 46vw); padding: 14px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+#res h2 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+#res h2.ok { color: var(--good); } #res h2.no { color: var(--bad); }
+#res .why { color: var(--fg); font-size: 14px; }
+#res canvas { width: 100%; border-radius: 8px; background: rgba(0,0,0,.25); align-self: center; }
+@media (max-height: 520px) { #res { gap: 7px; padding: 12px; } #res h2 { font-size: 19px; } #res .why, .nums { font-size: 12.5px; } #res .btn { min-height: 40px; } }
+.nums { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; font-size: 13px; }
+.nums span:nth-child(odd) { color: var(--muted); } .nums span:nth-child(even) { font-family: var(--f-mono); text-align: right; }
+.key { display: flex; gap: 14px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+.key i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.row .btn { flex: 1; }
+
+/* sheets */
+.sheet { position: fixed; inset: 0; background: rgba(5,8,10,.55); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 5; }
+.sheet > div { width: min(560px, 100%); max-height: 100%; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.sheet h2 { margin: 0; font-size: 18px; font-weight: 600; }
+.sheet p { margin: 0; color: var(--muted); font-size: 14px; }
+table.st { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.st th { text-align: left; color: var(--muted); font-weight: 500; padding: 4px 6px 6px 0; }
+table.st td { padding: 7px 6px 7px 0; border-top: 1px solid var(--line); }
+table.st td.n { font-family: var(--f-mono); white-space: nowrap; }
+.bar { height: 5px; border-radius: 3px; background: rgba(255,255,255,.1); overflow: hidden; margin-top: 4px; min-width: 50px; }
+.bar i { display: block; height: 100%; background: var(--accent); }
+.dots { display: flex; flex-wrap: wrap; gap: 4px; }
+.dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--bad); }
+.dots i.ok { background: var(--good); }
+#portraitHint { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--sab) + 76px); padding: 6px 12px; font-size: 12px; color: var(--muted); white-space: nowrap; pointer-events: none; }
+
+@media (max-aspect-ratio: 1/1) {
+  #res { top: auto; left: calc(var(--sal) + 10px); width: auto; max-height: 58vh; }
+  #mini { top: calc(var(--sat) + 104px); }
+  .top { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+<canvas id="view" aria-label="The shot seen from behind the cue ball. Drag sideways to aim."></canvas>
+<canvas id="mini" width="10" height="10" aria-hidden="true"></canvas>
+
+<div class="top">
+  <a class="btn pill glass" href="../" title="Back to Chalkline">‹ <span class="brand">Chalk<span>line</span></span></a>
+  <div class="glass call" id="call"></div>
+  <div class="sp"></div>
+  <button class="btn pill glass" id="statsBtn">Stats</button>
+  <button class="btn pill glass" id="setBtn">Shots</button>
+</div>
+
+<div class="bottom" id="aimBar">
+  <button class="btn glass nudge" id="nl" aria-label="Aim a little left">‹</button>
+  <div class="glass" id="fine"><canvas id="fineC"></canvas><div class="hint">Fine aim: drag here</div></div>
+  <button class="btn glass nudge" id="nr" aria-label="Aim a little right">›</button>
+  <button class="btn primary" id="shoot">Shoot</button>
+</div>
+<div class="glass" id="portraitHint" hidden>Turn the phone sideways for a wider view</div>
+
+<div class="glass" id="res" hidden>
+  <h2 id="resH"></h2>
+  <div class="why" id="resWhy"></div>
+  <canvas id="resC" width="10" height="10"></canvas>
+  <div class="key"><span><i style="background:var(--accent)"></i>Right aim (ghost ball)</span><span><i style="background:var(--amber)"></i>Your aim</span></div>
+  <div class="nums" id="resNums"></div>
+  <div class="row"><button class="btn" id="again">Same shot again</button><button class="btn primary" id="next">Next shot</button></div>
+</div>
+
+<div class="sheet" id="setSheet" hidden><div class="glass">
+  <h2>Shots</h2>
+  <div><div class="lbl" style="margin-bottom:8px">Cut</div><div class="seg" id="segBand"></div></div>
+  <div><div class="lbl" style="margin-bottom:8px">Pockets</div><div class="seg" id="segPocket"></div>
+    <p style="margin-top:8px">Pro: tight pockets on a 9 ft table. Amateur: average 9 ft pockets. Bar box: a 7 ft table with generous pockets. Pocket sizes are approximate.</p></div>
+  <div><div class="lbl" style="margin-bottom:8px">Pocket called</div><div class="seg" id="segKind"></div></div>
+  <p>Drag anywhere on the table to swing the cue, then use the strip at the bottom for fine aim. On a keyboard: the arrow keys aim (hold Shift for fine aim), and Space shoots.
+     Every shot is a stop shot hit at medium speed with no side spin. Throw is left out, so the ghost ball is exactly right.</p>
+  <div class="row"><button class="btn primary" id="setClose">Done</button></div>
+</div></div>
+
+<div class="sheet" id="statSheet" hidden><div class="glass">
+  <h2>Your aim</h2>
+  <p id="statLead"></p>
+  <table class="st"><thead><tr><th>Cut</th><th>Shots</th><th>Made</th><th>Off by</th><th>Misses</th></tr></thead><tbody id="statRows"></tbody></table>
+  <div><div class="lbl" style="margin-bottom:6px">Last 40 shots</div><div class="dots" id="statDots"></div></div>
+  <p>"Off by" is how far your aim was from the ghost ball, on average, in degrees of cue swing. Thin means you cut the ball too much (overcut); thick means too little (undercut). Saved on this phone only.</p>
+  <div class="row"><button class="btn" id="statClear">Clear stats</button><button class="btn primary" id="statClose">Done</button></div>
+</div></div>
+
+<script>
+'use strict';
+// ---------- constants ----------
+const R = 1.125;                    // ball radius, inches
+const DEG = Math.PI / 180;
+const PRESETS = {
+  pro: { name: 'Pro', L: 100, W: 50, corner: 1.0, side: 0.85 },
+  am:  { name: 'Amateur', L: 100, W: 50, corner: 1.35, side: 1.15 },
+  bar: { name: 'Bar box', L: 78, W: 39, corner: 1.5, side: 1.3 },
+};
+// Cut names by ball coverage, the same bands as Chalkline's shot list.
+const BANDS = [
+  { id: 'straight', name: 'Straight', lo: 0, hi: 7 },
+  { id: 'tq', name: 'Three-quarter', lo: 7, hi: 22 },
+  { id: 'half', name: 'Half ball', lo: 22, hi: 39 },
+  { id: 'quarter', name: 'Quarter ball', lo: 39, hi: 56 },
+  { id: 'sliver', name: 'Sliver', lo: 56, hi: 68 },
+];
+const BALL_COLORS = { 1: '#f2c31b', 2: '#1f4fd1', 3: '#d4271f', 4: '#5b2a8f', 5: '#f07a1a', 6: '#1c8a45', 7: '#7a1f22' };
+const EYE = 12, BACK = 28, NEAR = 1.5; // eye height above the cloth and distance behind the cue ball, inches
+const KEY = 'chalkline-aim-v1';
+
+// ---------- small vector helpers ----------
+const v2 = (x, y) => ({ x, y });
+const add = (a, b) => v2(a.x + b.x, a.y + b.y), sub = (a, b) => v2(a.x - b.x, a.y - b.y), mul = (a, k) => v2(a.x * k, a.y * k);
+const dot = (a, b) => a.x * b.x + a.y * b.y, cross = (a, b) => a.x * b.y - a.y * b.x;
+const len = a => Math.hypot(a.x, a.y), unit = a => { const l = len(a) || 1; return v2(a.x / l, a.y / l); };
+const dirOf = th => v2(Math.cos(th), Math.sin(th));
+const rot = (a, t) => v2(a.x * Math.cos(t) - a.y * Math.sin(t), a.x * Math.sin(t) + a.y * Math.cos(t));
+const wrap = t => { while (t > Math.PI) t -= 2 * Math.PI; while (t < -Math.PI) t += 2 * Math.PI; return t; };
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const rnd = (a, b) => a + Math.random() * (b - a);
+const bandOf = c => BANDS.find(b => c < b.hi) || BANDS[BANDS.length - 1];
+
+// ---------- state ----------
+const S = {
+  set: { band: 'mixed', pocket: 'am', kind: 'any' },
+  shots: [],        // saved results
+  shot: null,       // the current layout
+  aim: 0,           // cue direction, radians
+  phase: 'aim',     // aim | roll | done
+  anim: null, result: null,
+};
+function load() {
+  try { const d = JSON.parse(localStorage.getItem(KEY) || 'null'); if (d) { Object.assign(S.set, d.set || {}); S.shots = Array.isArray(d.shots) ? d.shots : []; } } catch (e) {}
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify({ set: S.set, shots: S.shots.slice(-2000) })); } catch (e) {}
+}
+
+// ---------- table and pockets ----------
+function table() { return PRESETS[S.set.pocket] || PRESETS.am; }
+function pockets(T) {
+  const { L, W } = T, s = Math.SQRT1_2;
+  const P = (id, kind, x, y, nx, ny, name) => ({ id, kind, T: v2(x, y), n: v2(nx, ny), name,
+    draw: kind === 'corner' ? v2(x + nx * 1.7, y + ny * 1.7) : v2(x, y + ny * 1.3), r: kind === 'corner' ? 2.6 : 2.5 });
+  return [
+    P('bl', 'corner', 0, 0, -s, -s, 'bottom left corner'), P('br', 'corner', L, 0, s, -s, 'bottom right corner'),
+    P('tl', 'corner', 0, W, -s, s, 'top left corner'), P('tr', 'corner', L, W, s, s, 'top right corner'),
+    P('bs', 'side', L / 2, -0.6, 0, -1, 'bottom side'), P('ts', 'side', L / 2, W + 0.6, 0, 1, 'top side'),
+  ];
+}
+// How far (in inches) the ball's centre may pass from the pocket's target point and still drop, for a ball rolling in
+// direction v. Approximate: corners lose a little until about 30 degrees off straight-in and get it back along the rail;
+// side pockets fall off fast with angle.
+function tolerance(p, v) {
+  const T = table(), off = Math.acos(clamp(dot(v, p.n), -1, 1)) / DEG;
+  if (p.kind === 'corner') {
+    if (off > 47) return 0;
+    return T.corner * (off <= 30 ? 1 - 0.2 * off / 30 : 0.8 + 0.2 * (off - 30) / 15);
+  }
+  return Math.max(0, T.side * (1 - off / 55));
+}
+// Where a ball at `o` rolling along `v` ends up: the pocket it drops in (or null) and where it stops.
+function rollTo(o, v) {
+  const T = table();
+  let best = null;
+  for (const p of pockets(T)) {
+    const d = sub(p.T, o), along = dot(d, v);
+    if (along <= 0) continue;
+    const lat = Math.abs(cross(v, d)), tol = tolerance(p, v);
+    if (lat <= tol && (!best || along < best.along)) best = { p, along, lat };
+  }
+  if (best) return { pocket: best.p, end: best.p.T, dist: best.along };
+  const s = toCushion(o, v, R);
+  return { pocket: null, end: add(o, mul(v, s)), dist: s };
+}
+function toCushion(o, v, m) {
+  const T = table(); let s = 1e9;
+  if (v.x > 1e-9) s = Math.min(s, (T.L - m - o.x) / v.x); if (v.x < -1e-9) s = Math.min(s, (m - o.x) / v.x);
+  if (v.y > 1e-9) s = Math.min(s, (T.W - m - o.y) / v.y); if (v.y < -1e-9) s = Math.min(s, (m - o.y) / v.y);
+  return Math.max(0, s);
+}
+// Signed sideways miss at the called pocket (inches, + = to the left of the pocket seen from the ball).
+function missAt(o, v, p) { const d = sub(p.T, o); return dot(d, v) > 0 ? -cross(v, d) : NaN; }
+
+// ---------- shot physics (geometry only, no throw) ----------
+function simulate(shot, th) {
+  const a = dirOf(th), d = sub(shot.ob, shot.cb), b = dot(d, a), c = dot(d, d) - 4 * R * R, disc = b * b - c;
+  if (disc < 0 || b - Math.sqrt(disc) <= 0) {
+    const s = toCushion(shot.cb, a, R);
+    return { hit: false, a, cbEnd: add(shot.cb, mul(a, s)), contact: null, made: false };
+  }
+  const t = b - Math.sqrt(disc), contact = add(shot.cb, mul(a, t)), v = unit(sub(shot.ob, contact));
+  const cut = Math.acos(clamp(dot(a, v), -1, 1)) / DEG, roll = rollTo(shot.ob, v);
+  const tang = sub(a, mul(v, dot(a, v))), tl = len(tang);
+  let cbEnd = contact;
+  if (tl > 1e-4) { const w = mul(tang, 1 / tl); cbEnd = add(contact, mul(w, Math.min(toCushion(contact, w, R), 3 + 34 * Math.sin(cut * DEG)))); }
+  return { hit: true, a, contact, v, cut, roll, cbEnd, made: !!roll.pocket && roll.pocket.id === shot.pocket.id,
+    wrongPocket: !!roll.pocket && roll.pocket.id !== shot.pocket.id, miss: missAt(shot.ob, v, shot.pocket) };
+}
+
+// ---------- making a shot ----------
+function makeShot() {
+  const T = table(), ps = pockets(T).filter(p => S.set.kind === 'any' || p.kind === S.set.kind);
+  const bands = S.set.band === 'mixed' ? BANDS : BANDS.filter(b => b.id === S.set.band);
+  for (let tries = 0; tries < 4000; tries++) {
+    const p = ps[Math.floor(Math.random() * ps.length)];
+    const maxOff = p.kind === 'corner' ? 38 : 28, off = rnd(-maxOff, maxOff) * DEG;
+    const u = rot(p.n, off);                                  // the object ball's way into the pocket
+    const ob = sub(p.T, mul(u, rnd(10, Math.min(60, T.L * 0.55))));
+    if (ob.x < 3 || ob.x > T.L - 3 || ob.y < 3 || ob.y > T.W - 3) continue;
+    if (tolerance(p, u) < 0.3) continue;
+    const band = bands[Math.floor(Math.random() * bands.length)], cut = rnd(band.lo, band.hi) * (Math.random() < 0.5 ? -1 : 1);
+    const ghost = sub(ob, mul(u, 2 * R)), dir = rot(u, cut * DEG);
+    const cb = sub(ghost, mul(dir, rnd(10, 46)));
+    if (cb.x < R + 1 || cb.x > T.L - R - 1 || cb.y < R + 1 || cb.y > T.W - R - 1) continue;
+    // the cue ball must not sit in the object ball's way to the pocket
+    const rel = sub(cb, ob), along = dot(rel, u);
+    if (along > 0 && along < len(sub(p.T, ob)) && Math.abs(cross(u, rel)) < 2 * R + 0.5) continue;
+    if (len(rel) < 3 * R) continue;
+    const shot = { cb, ob, pocket: p, ghost, need: Math.abs(cut), num: 1 + Math.floor(Math.random() * 7), preset: S.set.pocket };
+    shot.right = Math.atan2(ghost.y - cb.y, ghost.x - cb.x);
+    if (!simulate(shot, shot.right).made) continue;
+    shot.window = windowOf(shot);
+    return shot;
+  }
+  return null;
+}
+// The range of cue directions that still make the ball, around the right aim (degrees, lo < 0 < hi).
+function windowOf(shot) {
+  let lo = 0, hi = 0;
+  for (let d = 0; d < 8; d += 0.005) { if (simulate(shot, shot.right + d * DEG).made) hi = d; else break; }
+  for (let d = 0; d < 8; d += 0.005) { if (simulate(shot, shot.right - d * DEG).made) lo = -d; else break; }
+  return { lo, hi };
+}
+function newShot() {
+  S.shot = makeShot() || S.shot;
+  startAim();
+}
+function startAim() {
+  const s = S.shot;
+  // start on the object ball's centre (full ball), nudged a little so a straight-in shot still needs a look
+  S.aim = Math.atan2(s.ob.y - s.cb.y, s.ob.x - s.cb.x) + rnd(1, 2.5) * DEG * (Math.random() < 0.5 ? -1 : 1);
+  S.phase = 'aim'; S.anim = null; S.result = null;
+  $('#res').hidden = true; $('#aimBar').hidden = false;
+  const p = s.pocket, b = s.num;
+  $('#call').innerHTML = `<b>${b}-ball</b> in the <b>${p.name}</b>`;
+  draw();
+}
+
+// ---------- shooting and scoring ----------
+function shoot() {
+  if (S.phase !== 'aim') return;
+  const s = S.shot, sim = simulate(s, S.aim), err = wrap(S.aim - s.right) / DEG;
+  let side;
+  if (!sim.hit) side = 'miss';
+  else if (s.need < 1.5) side = err > 0 ? 'left' : 'right';
+  else side = sim.cut > s.need ? 'thin' : 'thick';
+  const rec = { t: Date.now(), band: bandOf(s.need).id, need: +s.need.toFixed(1), made: sim.made, err: +err.toFixed(2),
+    side: sim.made ? '' : side, kind: s.pocket.kind, preset: s.preset, dist: +len(sub(s.ghost, s.cb)).toFixed(1) };
+  S.shots.push(rec); save();
+  S.result = { sim, err, side, rec };
+  S.phase = 'roll';
+  const d1 = sim.hit ? len(sub(sim.contact, s.cb)) : len(sub(sim.cbEnd, s.cb));
+  S.anim = { t0: performance.now(), d1, t1: 250 + d1 * 9, t2: sim.hit ? 500 + sim.roll.dist * 13 : 0 };
+  $('#aimBar').hidden = true;
+  requestAnimationFrame(tick);
+}
+function tick(now) {
+  if (S.phase !== 'roll') return;
+  const A = S.anim, el = now - A.t0;
+  if (el >= A.t1 + A.t2 + 250) { finish(); return; }
+  draw(el);
+  requestAnimationFrame(tick);
+}
+function finish() {
+  S.phase = 'done';
+  showResult();
+  draw();
+}
+const easeOut = x => 1 - (1 - x) * (1 - x);
+// Ball positions during the roll: elapsed ms -> { cb, ob, obGone, obScale }
+function posAt(el) {
+  const s = S.shot, A = S.anim, sim = S.result.sim;
+  if (el < A.t1) {
+    const k = el / A.t1, end = sim.hit ? sim.contact : sim.cbEnd;
+    return { cb: add(s.cb, mul(sub(end, s.cb), sim.hit ? k : easeOut(k))), ob: s.ob, obScale: 1 };
+  }
+  if (!sim.hit) return { cb: sim.cbEnd, ob: s.ob, obScale: 1 };
+  const k = Math.min(1, (el - A.t1) / A.t2), e = easeOut(k);
+  const ob = add(s.ob, mul(sub(sim.roll.end, s.ob), sim.roll.pocket ? k : e));
+  const cb = add(sim.contact, mul(sub(sim.cbEnd, sim.contact), e));
+  return { cb, ob, obScale: sim.roll.pocket ? clamp((1 - k) * 6, 0, 1) : 1 };
+}
+function sideWords(side) {
+  return { thin: 'too thin (you cut it too much)', thick: 'too thick (you did not cut it enough)', left: 'to the left', right: 'to the right' }[side];
+}
+function showResult() {
+  const s = S.shot, { sim, err, side } = S.result, w = s.window;
+  const h = $('#resH'); h.className = sim.made ? 'ok' : 'no';
+  h.textContent = sim.made ? 'Made it' : sim.wrongPocket ? 'Wrong pocket' : 'Missed';
+  const dist = len(sub(s.ghost, s.cb)), offIn = Math.abs(dist * Math.tan(err * DEG));
+  const band = bandOf(s.need).name.toLowerCase();
+  let why;
+  const spare = Math.max(0, (err > 0 ? w.hi : -w.lo) - Math.abs(err));
+  if (sim.made) why = Math.abs(err) < 0.15 ? 'Right on the ghost ball.' : `In. You were ${Math.abs(err).toFixed(1)}° ${err > 0 ? 'left' : 'right'} of the ghost ball, with ${spare.toFixed(1)}° more before it would have missed.`;
+  else if (side === 'miss') why = `You missed the object ball: ${Math.abs(err).toFixed(1)}° too thin. At the ghost ball that is ${offIn.toFixed(1)} in ${err > 0 ? 'left' : 'right'} of where the cue ball needed to be.`;
+  else why = `You were ${Math.abs(err).toFixed(1)}° ${sideWords(side)}. At the ghost ball that is ${offIn.toFixed(1)} in ${err > 0 ? 'left' : 'right'} of where the cue ball needed to be.`;
+  $('#resWhy').textContent = why;
+  const row = (k, v) => `<span>${k}</span><span>${v}</span>`;
+  let nums = row('Cut needed', `${s.need.toFixed(0)}° (${band})`);
+  if (sim.hit) nums += row('Your cut', `${sim.cut.toFixed(1)}°`);
+  nums += row('Room to make it', `${(w.hi - w.lo).toFixed(1)}° of cue swing`);
+  if (!sim.made && sim.hit && isFinite(sim.miss)) nums += row('Ball missed the pocket by', `${Math.max(0, Math.abs(sim.miss) - tolerance(s.pocket, sim.v)).toFixed(1)} in`);
+  nums += row('Cue ball to ghost ball', `${(dist / 12).toFixed(1)} ft`);
+  $('#resNums').innerHTML = nums;
+  $('#res').hidden = false; $('#res').scrollTop = 0;
+  drawDiagram();
+}
+
+// ---------- 3D view from behind the cue ball ----------
+const view = document.getElementById('view'), ctx = view.getContext('2d');
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  view.width = Math.round(W * DPR); view.height = Math.round(H * DPR);
+  $('#portraitHint').hidden = W >= H;
+  sizeFine(); sizeMini(); draw();
+  if (S.phase === 'done') drawDiagram();
+}
+function camera(th, cb) {
+  const a = dirOf(th), E = { x: cb.x - a.x * BACK, y: cb.y - a.y * BACK, z: EYE };
+  const p = Math.atan2(EYE, BACK + 32), cp = Math.cos(p), sp = Math.sin(p);
+  const f = { x: a.x * cp, y: a.y * cp, z: -sp }, r = { x: a.y, y: -a.x, z: 0 }, u = { x: a.x * sp, y: a.y * sp, z: cp };
+  // sideways: about 72 degrees across; upright: a little narrower so the far balls are not tiny
+  const F = W > H ? Math.min((W / 2) / Math.tan(36 * DEG), (H / 2) / Math.tan(21 * DEG)) : (W / 2) / Math.tan(29 * DEG);
+  // after the shot the result card covers the right side (or the bottom when upright): keep the balls in the open part
+  const done = S.phase === 'done', cx = done && W > H ? (W - Math.min(340, W * 0.46) - 20) / 2 : W / 2;
+  return { E, f, r, u, F, cx, cy: done && W <= H ? H * 0.3 : H * 0.46 };
+}
+function toCam(C, p) {
+  const d = { x: p.x - C.E.x, y: p.y - C.E.y, z: (p.z || 0) - C.E.z };
+  return [d.x * C.r.x + d.y * C.r.y, d.x * C.u.x + d.y * C.u.y + d.z * C.u.z, d.x * C.f.x + d.y * C.f.y + d.z * C.f.z];
+}
+const scr = (C, c) => [C.cx + C.F * c[0] / c[2], C.cy - C.F * c[1] / c[2]];
+function clipPoly(pts) { // camera-space polygon clipped to depth >= NEAR
+  const out = [];
+  for (let i = 0; i < pts.length; i++) {
+    const a = pts[i], b = pts[(i + 1) % pts.length], ia = a[2] >= NEAR, ib = b[2] >= NEAR;
+    if (ia) out.push(a);
+    if (ia !== ib) { const t = (NEAR - a[2]) / (b[2] - a[2]); out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, NEAR]); }
+  }
+  return out;
+}
+function poly(C, world, fill, stroke) {
+  const c = clipPoly(world.map(p => toCam(C, p)));
+  if (c.length < 3) return;
+  ctx.beginPath();
+  c.forEach((q, i) => { const s = scr(C, q); i ? ctx.lineTo(s[0], s[1]) : ctx.moveTo(s[0], s[1]); });
+  ctx.closePath();
+  if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+  if (stroke) { ctx.strokeStyle = stroke; ctx.stroke(); }
+}
+function circle3(cx, cy, r, z, n = 28) { const o = []; for (let i = 0; i < n; i++) { const t = i / n * 2 * Math.PI; o.push({ x: cx + r * Math.cos(t), y: cy + r * Math.sin(t), z }); } return o; }
+function line3(C, a, b, color, width, dash) {
+  let ca = toCam(C, a), cb = toCam(C, b);
+  if (ca[2] < NEAR && cb[2] < NEAR) return;
+  const cl = (p, q) => { const t = (NEAR - p[2]) / (q[2] - p[2]); return [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t, NEAR]; };
+  if (ca[2] < NEAR) ca = cl(ca, cb); else if (cb[2] < NEAR) cb = cl(cb, ca);
+  const sa = scr(C, ca), sb = scr(C, cb);
+  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = width; ctx.lineCap = 'round'; ctx.setLineDash(dash || []);
+  ctx.beginPath(); ctx.moveTo(sa[0], sa[1]); ctx.lineTo(sb[0], sb[1]); ctx.stroke(); ctx.restore();
+}
+function ball(C, p, color, num, scale = 1) {
+  const c = toCam(C, { x: p.x, y: p.y, z: R });
+  if (c[2] < NEAR + R) return;
+  const s = scr(C, c), r = C.F * R / c[2] * scale;
+  const g = ctx.createRadialGradient(s[0] - r * 0.35, s[1] - r * 0.4, r * 0.08, s[0], s[1], r);
+  g.addColorStop(0, '#ffffff'); g.addColorStop(0.18, color); g.addColorStop(0.85, shade(color, 0.55)); g.addColorStop(1, shade(color, 0.35));
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(s[0], s[1], r, 0, 2 * Math.PI); ctx.fill();
+  if (num && r > 5) {
+    ctx.fillStyle = '#f7f3e8'; ctx.beginPath(); ctx.arc(s[0], s[1] + r * 0.05, r * 0.42, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = '#111'; ctx.font = `600 ${Math.max(6, r * 0.5)}px ${getComputedStyle(document.body).fontFamily}`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(num), s[0], s[1] + r * 0.07);
+  }
+}
+function shade(hex, k) {
+  const n = parseInt(hex.slice(1), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  return `rgb(${Math.round(r * k)},${Math.round(g * k)},${Math.round(b * k)})`;
+}
+function ghost3(C, p, color) {
+  const c = toCam(C, { x: p.x, y: p.y, z: R }); if (c[2] < NEAR + R) return;
+  const s = scr(C, c), r = C.F * R / c[2];
+  ctx.save(); ctx.setLineDash([5, 4]); ctx.lineWidth = 2; ctx.strokeStyle = color;
+  ctx.beginPath(); ctx.arc(s[0], s[1], r, 0, 2 * Math.PI); ctx.stroke(); ctx.restore();
+}
+function cue(C, cb, th) {
+  const a = dirOf(th), tilt = Math.tan(4 * DEG);
+  const P = k => ({ x: cb.x - a.x * (R + 0.8 + k), y: cb.y - a.y * (R + 0.8 + k), z: R + 0.15 + k * tilt });
+  const seg = [];
+  for (let k = 0; k <= 60; k += 2) seg.push([toCam(C, P(k)), 0.26 + k * 0.006]);
+  const pts = seg.filter(q => q[0][2] >= NEAR);
+  if (pts.length < 2) return;
+  const L = [], Rr = [];
+  for (let i = 0; i < pts.length; i++) {
+    const s = scr(C, pts[i][0]), w = C.F * pts[i][1] / pts[i][0][2];
+    const nb = scr(C, pts[Math.min(i + 1, pts.length - 1)][0]), pb = scr(C, pts[Math.max(i - 1, 0)][0]);
+    let dx = nb[0] - pb[0], dy = nb[1] - pb[1]; const l = Math.hypot(dx, dy) || 1; dx /= l; dy /= l;
+    L.push([s[0] - dy * w, s[1] + dx * w]); Rr.push([s[0] + dy * w, s[1] - dx * w]);
+  }
+  const g = ctx.createLinearGradient(0, H * 0.5, 0, H);
+  g.addColorStop(0, '#e8d7b0'); g.addColorStop(1, '#b07a43');
+  ctx.beginPath(); L.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]));
+  for (let i = Rr.length - 1; i >= 0; i--) ctx.lineTo(Rr[i][0], Rr[i][1]);
+  ctx.closePath(); ctx.fillStyle = g; ctx.fill();
+  // the tip
+  const t = scr(C, pts[0][0]), tw = C.F * pts[0][1] / pts[0][0][2];
+  ctx.fillStyle = '#3d6fb0'; ctx.beginPath(); ctx.arc(t[0], t[1], tw, 0, 2 * Math.PI); ctx.fill();
+}
+
+function draw(el) {
+  if (!S.shot || !W) return;
+  const T = table(), s = S.shot, { L, W: Wt } = T;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const bg = ctx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#121a20'); bg.addColorStop(1, '#070a0c');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  const C = camera(S.aim, s.cb);
+  // rails: wood frame, cushion tops, cushion faces, then the cloth
+  poly(C, [{ x: -7, y: -7, z: 1.9 }, { x: L + 7, y: -7, z: 1.9 }, { x: L + 7, y: Wt + 7, z: 1.9 }, { x: -7, y: Wt + 7, z: 1.9 }], '#4a2c1a');
+  const sides = [[0, 0, L, 0, 0, -1], [L, 0, L, Wt, 1, 0], [L, Wt, 0, Wt, 0, 1], [0, Wt, 0, 0, -1, 0]];
+  for (const [x1, y1, x2, y2, nx, ny] of sides) {
+    poly(C, [{ x: x1, y: y1, z: 1.4 }, { x: x2, y: y2, z: 1.4 }, { x: x2 + nx * 2, y: y2 + ny * 2, z: 1.9 }, { x: x1 + nx * 2, y: y1 + ny * 2, z: 1.9 }], '#1a6646');
+  }
+  for (const [x1, y1, x2, y2] of sides) poly(C, [{ x: x1, y: y1, z: 0 }, { x: x2, y: y2, z: 0 }, { x: x2, y: y2, z: 1.4 }, { x: x1, y: y1, z: 1.4 }], '#124d34');
+  poly(C, [{ x: 0, y: 0, z: 0 }, { x: L, y: 0, z: 0 }, { x: L, y: Wt, z: 0 }, { x: 0, y: Wt, z: 0 }], '#1e7a52');
+  // diamonds
+  for (let k = 1; k < 8; k++) if (k !== 4) { diamond(C, L * k / 8, -4.5); diamond(C, L * k / 8, Wt + 4.5); }
+  for (let k = 1; k < 4; k++) { diamond(C, -4.5, Wt * k / 4); diamond(C, L + 4.5, Wt * k / 4); }
+  // pockets
+  for (const p of pockets(T)) {
+    poly(C, circle3(p.draw.x, p.draw.y, p.r, 0.02), '#050607');
+    if (p.id === s.pocket.id && S.phase === 'aim') { ctx.lineWidth = 2; poly(C, circle3(p.draw.x, p.draw.y, p.r + 0.9, 0.03), null, 'rgba(89,214,232,.85)'); }
+  }
+  // what happens after the shot
+  let cbP = s.cb, obP = s.ob, obScale = 1;
+  if (S.phase === 'roll' && el != null) { const q = posAt(el); cbP = q.cb; obP = q.ob; obScale = q.obScale; }
+  if (S.phase === 'done') {
+    const { sim } = S.result;
+    line3(C, { x: s.ob.x, y: s.ob.y, z: 0.05 }, { x: s.pocket.T.x, y: s.pocket.T.y, z: 0.05 }, 'rgba(89,214,232,.55)', 2, [6, 5]);
+    line3(C, { x: s.cb.x, y: s.cb.y, z: 0.05 }, { x: s.ghost.x, y: s.ghost.y, z: 0.05 }, 'rgba(89,214,232,.9)', 2.5);
+    if (sim.hit) {
+      line3(C, { x: s.cb.x, y: s.cb.y, z: 0.06 }, { x: sim.contact.x, y: sim.contact.y, z: 0.06 }, 'rgba(255,184,77,.95)', 2.5);
+      line3(C, { x: s.ob.x, y: s.ob.y, z: 0.06 }, { x: sim.roll.end.x, y: sim.roll.end.y, z: 0.06 }, 'rgba(255,184,77,.6)', 2, [6, 5]);
+    } else line3(C, { x: s.cb.x, y: s.cb.y, z: 0.06 }, { x: sim.cbEnd.x, y: sim.cbEnd.y, z: 0.06 }, 'rgba(255,184,77,.95)', 2.5);
+  }
+  // shadows and balls, far first
+  const balls = [{ p: cbP, c: '#f4f1e8', n: 0, k: 1 }];
+  if (obScale > 0) balls.push({ p: obP, c: BALL_COLORS[s.num], n: s.num, k: obScale });
+  for (const b of balls) poly(C, circle3(b.p.x + 0.25, b.p.y + 0.25, R * 0.95 * b.k, 0.01, 20), 'rgba(0,0,0,.35)');
+  balls.sort((a, b) => toCam(C, { ...b.p, z: R })[2] - toCam(C, { ...a.p, z: R })[2]);
+  for (const b of balls) ball(C, b.p, b.c, b.n, b.k);
+  if (S.phase === 'done') { ghost3(C, s.ghost, '#59d6e8'); if (S.result.sim.hit) ghost3(C, S.result.sim.contact, '#ffb84d'); }
+  if (S.phase === 'aim') cue(C, s.cb, S.aim);
+  drawMini(); drawFine();
+}
+function diamond(C, x, y) {
+  const c = toCam(C, { x, y, z: 1.92 }); if (c[2] < NEAR) return;
+  const s = scr(C, c), r = Math.max(0.8, C.F * 0.35 / c[2]);
+  ctx.fillStyle = 'rgba(240,235,220,.85)'; ctx.beginPath(); ctx.ellipse(s[0], s[1], r, r * 0.5, 0, 0, 2 * Math.PI); ctx.fill();
+}
+
+// ---------- top-down drawings ----------
+const mini = document.getElementById('mini'), mctx = mini.getContext('2d');
+function sizeMini() {
+  const T = table(), w = Math.round(Math.min(W * 0.26, 220)), h = Math.round(w * (T.W + 10) / (T.L + 10));
+  mini.style.width = w + 'px'; mini.style.height = h + 'px'; mini.width = w * DPR; mini.height = h * DPR;
+}
+function topDown(c, g, w, h, opts) {
+  const T = table(), k = Math.min(w / (T.L + 10), h / (T.W + 10)), ox = (w - (T.L + 10) * k) / 2 + 5 * k, oy = (h - (T.W + 10) * k) / 2 + 5 * k;
+  const X = x => ox + x * k, Y = y => oy + (T.W - y) * k;     // y = 0 at the bottom
+  g.fillStyle = '#4a2c1a'; g.fillRect(X(-5), Y(T.W + 5), (T.L + 10) * k, (T.W + 10) * k);
+  g.fillStyle = '#1e7a52'; g.fillRect(X(0), Y(T.W), T.L * k, T.W * k);
+  for (const p of pockets(T)) { g.fillStyle = '#050607'; g.beginPath(); g.arc(X(p.draw.x), Y(p.draw.y), p.r * k, 0, 2 * Math.PI); g.fill(); }
+  const s = S.shot;
+  if (opts.callRing) { g.strokeStyle = 'rgba(89,214,232,.9)'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(s.pocket.draw.x), Y(s.pocket.draw.y), (s.pocket.r + 1.2) * k, 0, 2 * Math.PI); g.stroke(); }
+  const ln = (a, b, col, wd, dash) => { g.save(); g.strokeStyle = col; g.lineWidth = wd; g.setLineDash(dash || []); g.beginPath(); g.moveTo(X(a.x), Y(a.y)); g.lineTo(X(b.x), Y(b.y)); g.stroke(); g.restore(); };
+  const bl = (p, col, ring) => { g.beginPath(); g.arc(X(p.x), Y(p.y), Math.max(2.5, R * k), 0, 2 * Math.PI); if (ring) { g.save(); g.setLineDash([3, 2]); g.strokeStyle = col; g.lineWidth = 1.5; g.stroke(); g.restore(); } else { g.fillStyle = col; g.fill(); } };
+  if (opts.lines) {
+    const { sim } = S.result;
+    ln(s.ob, s.pocket.T, 'rgba(89,214,232,.6)', 1.5, [4, 3]);
+    ln(s.cb, s.ghost, '#59d6e8', 2);
+    if (sim.hit) { ln(s.cb, sim.contact, '#ffb84d', 2); ln(s.ob, sim.roll.end, 'rgba(255,184,77,.7)', 1.5, [4, 3]); ln(sim.contact, sim.cbEnd, 'rgba(255,255,255,.35)', 1, [2, 3]); }
+    else ln(s.cb, sim.cbEnd, '#ffb84d', 2);
+    bl(s.ghost, '#59d6e8', true); if (sim.hit) bl(sim.contact, '#ffb84d', true);
+  }
+  if (opts.aimLine) { const a = dirOf(S.aim); ln(s.cb, add(s.cb, mul(a, 8)), 'rgba(255,255,255,.7)', 1.2); }
+  bl(s.ob, BALL_COLORS[s.num]); bl(s.cb, '#f4f1e8');
+}
+function drawMini() {
+  mini.hidden = S.phase !== 'aim' || W < 360;
+  if (mini.hidden) return;
+  mctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const w = mini.width / DPR, h = mini.height / DPR;
+  mctx.clearRect(0, 0, w, h);
+  topDown(mini, mctx, w, h, { callRing: true, aimLine: true });
+}
+function drawDiagram() {
+  const c = $('#resC'), T = table(), asp = (T.W + 10) / (T.L + 10);
+  c.style.width = ''; let w = c.clientWidth || 300;
+  if (W > H) { w = Math.min(w, H * 0.26 / asp); c.style.width = w + 'px'; }  // short screens: keep the card's text in view
+  const h = Math.round(w * asp);
+  c.style.height = h + 'px'; c.width = w * DPR; c.height = h * DPR;
+  const g = c.getContext('2d'); g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  topDown(c, g, w, h, { lines: true, callRing: true });
+}
+
+// ---------- fine-aim strip ----------
+const fineC = document.getElementById('fineC'), fctx = fineC.getContext('2d');
+function sizeFine() { const r = fineC.parentElement.getBoundingClientRect(); fineC.width = Math.max(1, r.width * DPR); fineC.height = Math.max(1, r.height * DPR); }
+function drawFine() {
+  const w = fineC.width / DPR, h = fineC.height / DPR; if (!w) return;
+  fctx.setTransform(DPR, 0, 0, DPR, 0, 0); fctx.clearRect(0, 0, w, h);
+  const pxPerDeg = 1 / FINE, deg = S.aim / DEG;
+  for (let i = Math.floor(deg - w / 2 / pxPerDeg * 1.05); i <= deg + w / 2 / pxPerDeg; i += 0.1) {
+    const d = Math.round(i * 10) / 10, x = w / 2 + (deg - d) * pxPerDeg, big = Math.abs(d - Math.round(d)) < 1e-6;
+    fctx.fillStyle = big ? 'rgba(234,241,244,.55)' : 'rgba(234,241,244,.22)';
+    fctx.fillRect(x, big ? h * 0.42 : h * 0.6, 1, big ? h * 0.45 : h * 0.25);
+  }
+  fctx.fillStyle = '#59d6e8'; fctx.fillRect(w / 2 - 1, h * 0.3, 2, h * 0.65);
+}
+
+// ---------- input ----------
+const COARSE = 0.12, FINE = 0.012; // degrees of cue swing per pixel dragged
+function dragger(el, perPx) {
+  let last = null;
+  el.addEventListener('pointerdown', e => { if (S.phase !== 'aim') return; last = e.clientX; el.setPointerCapture(e.pointerId); e.preventDefault(); });
+  el.addEventListener('pointermove', e => { if (last == null) return; const dx = e.clientX - last; last = e.clientX; turn(-dx * perPx); });
+  const end = () => { last = null; };
+  el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+}
+// dragging to the right swings the cue to the right (clockwise seen from above)
+function turn(deg) { if (S.phase !== 'aim') return; S.aim = wrap(S.aim + deg * DEG); draw(); }
+function $(q) { return document.querySelector(q); }
+
+function seg(el, items, cur, onPick) {
+  el.innerHTML = '';
+  for (const [id, label] of items) {
+    const b = document.createElement('button'); b.textContent = label; b.className = id === cur ? 'on' : '';
+    b.onclick = () => { onPick(id); [...el.children].forEach(x => x.className = x === b ? 'on' : ''); };
+    el.appendChild(b);
+  }
+}
+function openSettings() {
+  seg($('#segBand'), [['mixed', 'Mixed'], ...BANDS.map(b => [b.id, b.name])], S.set.band, id => { S.set.band = id; save(); });
+  seg($('#segPocket'), Object.entries(PRESETS).map(([k, p]) => [k, p.name]), S.set.pocket, id => { S.set.pocket = id; save(); });
+  seg($('#segKind'), [['any', 'Any'], ['corner', 'Corners'], ['side', 'Sides']], S.set.kind, id => { S.set.kind = id; save(); });
+  S.setBefore = JSON.stringify(S.set);
+  $('#setSheet').hidden = false;
+}
+function closeSettings() {
+  $('#setSheet').hidden = true;
+  if (JSON.stringify(S.set) !== S.setBefore) { sizeMini(); newShot(); }
+}
+function openStats() {
+  const list = S.shots, rows = [];
+  for (const b of BANDS) {
+    const xs = list.filter(r => r.band === b.id);
+    if (!xs.length) { rows.push(`<tr><td>${b.name}</td><td class="n" colspan="4" style="color:var(--muted)">no shots yet</td></tr>`); continue; }
+    const made = xs.filter(r => r.made).length, misses = xs.filter(r => !r.made);
+    const off = xs.reduce((a, r) => a + Math.abs(r.err), 0) / xs.length;
+    const thin = misses.filter(r => r.side === 'thin' || r.side === 'miss').length, thick = misses.filter(r => r.side === 'thick').length;
+    let lean = '–';
+    if (misses.length) lean = thin > thick * 1.5 ? `mostly thin (${thin} of ${misses.length})` : thick > thin * 1.5 ? `mostly thick (${thick} of ${misses.length})` : b.id === 'straight' ? `${misses.length} left or right` : 'both ways';
+    rows.push(`<tr><td>${b.name}</td><td class="n">${xs.length}</td><td class="n">${Math.round(100 * made / xs.length)}%<div class="bar"><i style="width:${100 * made / xs.length}%"></i></div></td><td class="n">${off.toFixed(1)}°</td><td>${lean}</td></tr>`);
+  }
+  $('#statRows').innerHTML = rows.join('');
+  const made = list.filter(r => r.made).length;
+  $('#statLead').textContent = list.length ? `${list.length} shots, ${made} made (${Math.round(100 * made / list.length)}%).` : 'No shots yet. Your results show here as you play.';
+  $('#statDots').innerHTML = list.slice(-40).map(r => `<i class="${r.made ? 'ok' : ''}" title="${r.need}° ${r.made ? 'made' : r.side}"></i>`).join('');
+  $('#statSheet').hidden = false;
+}
+
+function init() {
+  load();
+  dragger(view, COARSE); dragger($('#fine'), FINE);
+  $('#nl').onclick = () => turn(0.05); $('#nr').onclick = () => turn(-0.05);
+  $('#shoot').onclick = shoot;
+  $('#again').onclick = startAim; $('#next').onclick = newShot;
+  $('#setBtn').onclick = openSettings; $('#setClose').onclick = closeSettings;
+  $('#statsBtn').onclick = openStats; $('#statClose').onclick = () => { $('#statSheet').hidden = true; };
+  $('#statClear').onclick = () => { if (confirm('Clear all your aim stats on this phone?')) { S.shots = []; save(); openStats(); } };
+  window.addEventListener('keydown', e => {
+    if (!$('#setSheet').hidden || !$('#statSheet').hidden) return;
+    const step = e.shiftKey ? 0.02 : 0.25;
+    if (e.key === 'ArrowLeft') { turn(step); e.preventDefault(); }
+    else if (e.key === 'ArrowRight') { turn(-step); e.preventDefault(); }
+    else if (e.key === ' ' || e.key === 'Enter') { if (S.phase === 'aim') shoot(); else if (S.phase === 'done') newShot(); e.preventDefault(); }
+    else if (e.key === 'n' && S.phase === 'done') newShot();
+  });
+  window.addEventListener('resize', resize);
+  S.shot = makeShot();
+  resize();
+  startAim();
+}
+// hooks for the browser test
+window.__aim = { S, simulate, makeShot, startAim, shoot, newShot, windowOf, tolerance, pockets, table, finish, bandOf };
+init();
+</script>
+</body>
+</html>

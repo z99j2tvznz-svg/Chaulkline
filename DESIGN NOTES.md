@@ -1881,3 +1881,32 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   player's real racks (the profile build), not a made-up curve.
 - Tests: the Nov 2 layout allows the 2 in the far corner down the rail (a big pocket at that angle, BD Dec 2004); the
   Nov 10 22:54 test no longer asserts a leave distance.
+
+## V3.21.0: aim trainer (owner, Nov 13: "a web app that could help me with my aiming")
+- Chalkline already draws the ghost ball and aim line at the table; what it could not do is train the eye away from the
+  table. New page `aim/index.html` (hand-written like the recorder, linked from the home screen as "Aim trainer").
+- The view is from where the player's eyes are when down on the shot: 28 in behind the cue ball, 12 in above the cloth,
+  looking along the cue, about 72 degrees across when sideways. Dragging on the table swings the cue (0.12 deg per point
+  dragged), the strip at the bottom is fine aim (0.012 deg per point), the arrows 0.05 deg. The aim starts 1-2.5 deg off
+  the object ball's centre so even a straight shot needs a look. A small table from above in the corner shows where the
+  balls are and the pocket called, as a player at the table would know; it never shows the aim line to the ghost ball.
+- Shots: the pocket, the object ball's way in (within 38 deg of straight in for a corner, 28 for a side), the cut picked
+  from the chosen band (Chalkline's names: Straight 0-7, Three-quarter 7-22, Half ball 22-39, Quarter ball 39-56, Sliver
+  56-68) and the cue ball 10-46 in from the ghost ball, kept off the cushions and out of the object ball's path.
+- Physics is geometry only: a stop shot at medium speed, no throw, no side spin, so the ghost ball is exactly right and
+  the score is about seeing the line, not about compensating. The object ball leaves along the line of centres; the cue
+  ball takes the tangent line. A ball drops when its centre passes within a pocket's allowance of the target point:
+  corners 1.0 / 1.35 / 1.5 in (Pro / Amateur / Bar box), a little less up to 30 deg off straight in and back to full
+  along the rail (BD Dec 2004); sides 0.85 / 1.15 / 1.3 in, falling off fast with angle. Bar box is a 7 ft table. These
+  sizes are approximate and say so on the page.
+- After the shot: made or missed, how many degrees off and which side (thin = overcut, thick = undercut; left or right
+  for a straight shot; a hit so thin it misses the ball counts as thin), the same miss in inches at the ghost ball, the
+  cut needed and the cut played, and the room the shot gave (the range of cue directions that make it, found by trying
+  every 0.005 deg). The view keeps the player's angle and shows the ghost ball (teal) and the ball actually hit (amber),
+  plus a drawing from above.
+- Long, near-straight shots give only about 0.1 deg each way, which matches the game: at 4 ft the object ball's line moves
+  about 20 times the cue's.
+- Stats by cut band (shots, made, average degrees off, whether the misses lean thin or thick) are kept in the browser's
+  storage on the phone only.
+- Test: tests/aim.test.js (every band makes its shots at the ghost ball, misses on either side are named thin and thick
+  correctly, results saved, the page draws sideways and upright without errors).

@@ -63,6 +63,7 @@ button { font: inherit; color: inherit; }
 .grow.ok .gb i { background: #5fd38d; } .grow.ok .gl span:first-child::after { content: ' ✓'; color: #5fd38d; }
 #homeMsg { color: var(--muted); min-height: 1.2em; } #homeMsg.bad { color: var(--bad); }
 a.old { color: var(--muted); font-size: 13px; }
+a.go { color: inherit; text-decoration: none; }
 
 /* ---------- camera ---------- */
 #cam { position: fixed; inset: 0; background: #000; }
@@ -122,12 +123,18 @@ a.old { color: var(--muted); font-size: 13px; }
     <button class="go glass" id="goBtn"><b>Play a rack</b><small>A rack at a time: made balls, scratches, the first ball hit, runs; the rack is done by itself when only the cue ball is left.</small><i>›</i></button>
     <button class="go glass" id="pracBtn"><b>Practice</b><small>Set balls where you like and shoot. Moving or picking up balls is fine; tries of the same shot are put together.</small><i>›</i></button>
     <button class="go glass" id="coachBtn"><b>Coaching test</b><small>Small runouts, the 9 always on: set out any balls and shoot the lowest first. A dot and a number at each pocket show the pocket for this ball, the next and the one after; the green is where the cue ball should land for the next one.</small><i>›</i></button>
+    <a class="go glass" id="aimLink" href="aim/"><b>Aim trainer</b><small>Away from the table: see the shot from behind the cue ball, swing the cue and shoot, then see where the ghost ball really was and whether you cut it thin or thick.</small><i>›</i></a>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Game for Play a rack</div><div class="seg" id="segGame"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Your level, about (Fargo): the coaching plays one level up</div><div class="seg" id="segFargo"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Table size</div><div class="seg" id="segFt"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
+    <div class="card glass"><h2>New in V3.21</h2><ul>
+      <li>Aim trainer (button above): practise aiming anywhere. The shot is seen from where your eyes are when you are down on it; drag to swing the cue, use the strip at the bottom for fine aim, and shoot.</li>
+      <li>After each shot: the ghost ball you should have hit, your aim beside it, how many degrees off you were and whether it was thin or thick, and how much room the shot gave you.</li>
+      <li>Pick the cut to work on (straight, three-quarter, half ball, quarter ball, sliver) and the pockets (Pro, Amateur, Bar box). Stats by cut show which cuts you miss and on which side.</li>
+    </ul></div>
     <div class="card glass"><h2>New in V3.20</h2><ul>
       <li>The coaching rules now come from published pool instruction (Dr. Dave Alciatore, Tom Ross), not guesses: keep it simple (stop shots and natural roll first; side spin, draw, extra cushions and long cue ball travel only when they get better shape), come into the line instead of crossing it, leave an angle, stay off the cushions, slower speed for a bigger pocket.</li>
       <li>No fixed "best distance" any more: no source gives one. Distance counts through how hard the next shot is to make.</li>
@@ -3593,7 +3600,7 @@ const COACH = coachFactory(typeof simulate !== 'undefined' ? simulate : typeof m
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.20.0';
+const VERSION = 'V3.21.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
