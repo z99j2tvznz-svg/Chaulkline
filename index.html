@@ -154,6 +154,7 @@ a.go { color: inherit; text-decoration: none; }
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
     <div class="card glass"><h2>New in V3.24</h2><ul>
+      <li>V3.24.2: your table check from 7 spots worked: every spot agrees this table's diamonds sit about 2½ in out from the outline and 1½ in above the cloth, and the app now fits with that. Ball positions are read to match (V3.24.0's reading height went with the old, too-low diamond height and would have been 2 in off with the new one).</li>
       <li>V3.24.1: drill and exam results as a big picture you can read from the TV: a green check with sparkles for a make, a red X for a miss, a yellow question mark when the app can't tell (shoot that one again). And the exam's scoring checked against your Nov 16 corrections: the made stop shots that were set aside count, and a real miss stays a miss.</li>
       <li>Table check (button above): set the phone, find the table and tap Use this spot. The outline is fine-tuned on the rail diamonds and you see how well each rail sits and where the phone is. Optional: freeze four balls against the cushions at the rings to see how true ball positions read; that spot's reading is corrected at once. Save the spot, move or turn the phone, Next spot. With two or more spots, Put the spots together works out this table's diamonds for every session after.</li>
       <li>Ball positions are truer: they had read 1 to 3½ inches toward the phone, most at the far rail (the four rail balls of BU F7 on Nov 16 read up to 3.4 in off, two of them on or past the near cushion). Now within about half an inch. This is also why the drill and exam marks seemed hard to hit.</li>
@@ -3951,7 +3952,7 @@ const COACH = coachFactory(typeof simulate !== 'undefined' ? simulate : typeof m
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.24.1';
+const VERSION = 'V3.24.2';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -3966,9 +3967,22 @@ const BALL_PX_MAX = 23;     // the finder learned balls up to about this radius:
 // past the near cushion, which no ball can be; taken at the cloth they are within half an inch (0.54 rms), at any lens
 // setting. The X marks are drawn on the cloth and stay where they were. A table check with balls measures it again (see
 // TCHK) and keeps what the checks agree on.
-const BALL_Z0 = 0;
+// (V3.24.2) That height goes with the height the outline was fitted at on the rail diamonds: the two trade off, both moving a
+// ball along the line to the phone. Nov 16 20:57's rail balls come out just as true with the outline refitted with the diamonds
+// 1.6 in up and read 0.8 in up (0.54 in rms) as with the diamonds 0.8 up and read at the cloth. The seven table-check spots of
+// Nov 16 22:23, each held to the outline found on the cloth's colour, all put this table's diamonds 1.4 to 1.6 in up (the
+// spots put together: 2.5 out, 1.6 up). So with the diamonds at 1.6 a ball is read 0.8 in up, a little under its middle: the
+// finder's centre sits a third of an inch low, not a whole radius; the Nov 16 offsets were mostly the outline, fitted with the
+// diamonds too low. An outline fitted with them lower is read lower by as much; one not fitted on them (too few seen, corners
+// set by hand) is taken as right, 0.8.
+const BALL_ZH = 0.8, DIA_Z0 = 1.6, BALL_Z0 = BALL_ZH;
 const BZ_KEY = KEY + '.ballz';
-function ballZ() { try { const v = JSON.parse(localStorage.getItem(BZ_KEY) || 'null'); if (v && isFinite(v.z) && v.n >= 2) return Math.max(-1, Math.min(1.2, v.z)); } catch (e) { } return BALL_Z0; }
+function ballZ() {
+  const z = A.diaFit && A.diaFit.d && A.diaFit.d.n >= 8 && isFinite(A.diaFit.d.z) ? A.diaFit.d.z : DIA_Z0; let h = BALL_ZH;
+  // (ball checks from two or more spots, each turned to what it would be with the diamonds at 1.6)
+  try { const v = JSON.parse(localStorage.getItem(BZ_KEY) || 'null'); if (v && isFinite(v.h16) && v.n >= 2) h = v.h16; } catch (e) { }
+  return Math.max(-0.5, Math.min(1.2, h + z - DIA_Z0));
+}
 const A = { ft: 7, engine: 'cpu', live: false, stream: null, phase: 'home', W: 0, H: 0, quad: null, rot: 0, cam: null, P: null, tk: null, box: null, kmax: 1.5, shape: null,
   frame: document.createElement('canvas'), small: document.createElement('canvas'), fctx: null, looks: 0, errs: 0, nShots: 0, sess: null, lastSess: null,
   pics: new Map(), taps: [], stillPic: null, stillPicT: 0, pick: null, timing: [], camInfo: null, man: null, cand: null };
@@ -4193,7 +4207,7 @@ async function start(mode) {
   if (A.sess && DBG.ev.length) dbgPersist(); try { PREV = JSON.parse(localStorage.getItem(KEY + '.dbg') || 'null'); } catch (e) { }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
   A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt, shallow: shallowGet() })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, game: A.mode === 'play' ? (A.game || 9) : null, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode !== 'play'; $('#rejectBtn').hidden = true; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
-  STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0; A.ballZ = ballZ();
+  STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0; A.diaFit = null; A.ballZ = ballZ();
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
   dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated, ballZ: A.ballZ }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
   // the weights (10 MB) download while the table is found
@@ -4323,6 +4337,7 @@ function diamondFit() {
 async function acceptTable() {
   const my = A.acceptN = (A.acceptN || 0) + 1; // (the table found again while the finder starts: only the latest goes on)
   const c = A.cand; A.quad = c.quad; A.rot = c.rot; if (!c.manual) diamondFit(); else { A.dia = null; A.diaFit = null; }
+  A.ballZ = ballZ(); dbg('ball_z', { z: r2(A.ballZ), dia: A.diaFit && A.diaFit.d ? A.diaFit.d.z : null });
   const { L, Wd } = tableDims(A.ft), f = LENS * Math.max(A.W, A.H);
   A.cam = makeCam(tableCornersFor(A.rot, L, Wd), A.quad, A.W, A.H, f, [A.W / 2, A.H / 2]);
   if (A.drill) drillSetup(); // (the rings follow the table found again)
@@ -4988,14 +5003,14 @@ function tcLook() {
   const sgn = i => (B.targets[i].at[B.targets[i].ax] < (B.targets[i].ax ? A.P.W : A.P.L) / 2 ? -1 : 1);
   let best = null; for (let h = -1; h <= 1.5001; h += 0.05) { let s = 0; for (let i = 0; i < 4; i++) s += perp(i, h) ** 2; if (!best || s < best.s) best = { h, s }; }
   const res = B.targets.map((g, i) => ({ w: g.w, at: g.at.map(r1), read: [r1(pick[i].x), r1(pick[i].y)], now: r2(sgn(i) * perp(i, bz)), atFit: r2(sgn(i) * perp(i, best.h)) }));
-  res.forEach((x, i) => { x.img = img[i].map(r1); });
+  res.forEach((x, i) => { x.img = img[i].map(r1); }); res.zDia = A.diaFit && A.diaFit.d && A.diaFit.d.n >= 8 ? A.diaFit.d.z : DIA_Z0;
   // (what the four balls say is used at once for the rest of the session: the phone stays where it was checked)
   res.hFit = r2(best.h); T.cur.balls = res; T.balls = null; $('#drillTag').hidden = true; A.ballZ = res.hFit; if (A.tk) A.tk.setBags(pocketBags(A.cam, A.P, A.ballZ));
   dbg('tchk_balls', { n: T.cur.n, res, hFit: res.hFit, bz }); tcCard();
 }
 function tcSave() {
   const T = A.tchk, c = T.cur; if (!c) return;
-  const rec = { t: c.t, v: VERSION, n: c.n, ft: A.ft, quad: c.quad, rot: c.rot, wh: c.wh, lens: LENS, rep: c.rep, balls: c.balls ? { res: c.balls, hFit: c.balls.hFit } : null, pic: c.pic };
+  const rec = { t: c.t, v: VERSION, n: c.n, ft: A.ft, quad: c.quad, rot: c.rot, wh: c.wh, lens: LENS, rep: c.rep, balls: c.balls ? { res: c.balls, hFit: c.balls.hFit, zDia: c.balls.zDia } : null, pic: c.pic };
   T.spots.push(rec); const h = tcHist(); h.push(rec); try { localStorage.setItem(TC_KEY(), JSON.stringify(h.slice(-30))); } catch (e) { }
   dbg('tchk_spot', rec); T.cur = null;
   const all = tcHist(), withDia = all.filter(r => r.rep && r.rep.n >= 8).length;
@@ -5018,18 +5033,18 @@ async function tcCombine() {
   showCard('<div><b>Putting the spots together</b><p>Working through ' + recs.length + ' spots…</p></div>');
   const c1 = await tryAll([1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5], [0, 0.8, 1.6]);
   const c2 = await tryAll([-0.5, -0.25, 0, 0.25, 0.5].map(v => c1.D + v).filter(v => v >= 1), [c1.z]);
-  const own = recs.map(r => r.rep.D + '/' + r.rep.z).join(', '), hs = tcHist().filter(r => r.balls && isFinite(r.balls.hFit)).map(r => r.balls.hFit).sort((a, b) => a - b);
+  const own = recs.map(r => r.rep.D + '/' + r.rep.z).join(', '), hs = tcHist().filter(r => r.balls && isFinite(r.balls.hFit)).map(r => r2(r.balls.hFit - ((r.balls.zDia != null ? r.balls.zDia : 0.8) - DIA_Z0))).sort((a, b) => a - b);
   const out = { D: c2.D, z: r2(c2.z), n: recs.length, rms: r2(c2.m), each: c2.e.map(r2), t: Date.now() }; try { localStorage.setItem(DIA_KEY(), JSON.stringify(out)); } catch (e) { }
-  let hz = null; if (hs.length >= 2) { hz = { z: hs[hs.length >> 1], n: hs.length, all: hs }; try { localStorage.setItem(BZ_KEY, JSON.stringify(hz)); } catch (e) { } A.ballZ = ballZ(); }
+  let hz = null; if (hs.length >= 2) { hz = { h16: hs[hs.length >> 1], z: hs[hs.length >> 1], n: hs.length, all: hs }; try { localStorage.setItem(BZ_KEY, JSON.stringify(hz)); } catch (e) { } A.ballZ = ballZ(); }
   dbg('tchk_combine', { dia: out, own, ballz: hz });
   showCard('<div><b>' + recs.length + ' spots put together</b><p>The rail diamonds sit ' + out.D + ' in out from the cushion on this table (each spot alone said ' + own + ', offset/height). With that, each spot\'s outline sits within ' + out.each.join(', ') + ' in of its diamonds. From now on the outline is fitted with it.' +
-    (hz ? '<br><br>The ball checks agree on reading ball centres ' + hz.z + ' in above the cloth (each: ' + hs.join(', ') + '); used from now on.' : hs.length === 1 ? '<br><br>One ball check so far: a second from another spot sets the reading height.' : '') + '</p></div><div class="row"><button class="btn primary" data-act="tc_next">Next spot</button><button class="btn" data-act="tc_done">Done</button></div>');
+    (hz ? '<br><br>The ball checks agree on reading ball centres ' + hz.h16 + ' in above the cloth with the diamonds ' + DIA_Z0 + ' in up (each: ' + hs.join(', ') + '); used from now on.' : hs.length === 1 ? '<br><br>One ball check so far: a second from another spot sets the reading height.' : '') + '</p></div><div class="row"><button class="btn primary" data-act="tc_next">Next spot</button><button class="btn" data-act="tc_done">Done</button></div>');
   setStatus('Table check');
 }
 function tcDone() {
   const all = tcHist(), dia = diaGet(); let bz = null; try { bz = JSON.parse(localStorage.getItem(BZ_KEY) || 'null'); } catch (e) { }
   const rows = all.slice(-8).map(r => 'Spot ' + r.n + ' (' + new Date(r.t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + '): ' + (r.rep.n ? r.rep.n + ' diamonds, rails ' + RAILS.map(k => r.rep.rails[k] && r.rep.rails[k].med != null ? r.rep.rails[k].med : '-').join(' / ') + ' in' : 'no diamonds') + '; phone ' + Math.round(r.rep.phone.back) + ' in back, ' + Math.round(r.rep.phone.up) + ' in up' + (r.balls ? '; balls ' + r.balls.res.map(x => Math.abs(x.now).toFixed(1)).join(' / ') + ' in' : ''));
-  showCard('<div><b>Table check</b><p>' + (rows.join('<br>') || 'No spots saved.') + '<br><br>' + (dia ? 'Diamonds: ' + dia.D + ' in out, ' + dia.z + ' in up (from ' + dia.n + ' spots).' : 'Diamonds: not put together yet (needs 2 spots).') + ' Reading height: ' + r2(A.ballZ != null ? A.ballZ : BALL_Z0) + ' in' + (bz && bz.n >= 2 ? ' (from ' + bz.n + ' ball checks)' : ' (from the Nov 16 rail balls)') + '.<br>Rails in the list: far / near / left end / right end.</p></div><div class="row"><button class="btn" data-act="tc_next">Next spot</button><button class="btn primary" data-act="home">Home</button></div>');
+  showCard('<div><b>Table check</b><p>' + (rows.join('<br>') || 'No spots saved.') + '<br><br>' + (dia ? 'Diamonds: ' + dia.D + ' in out, ' + dia.z + ' in up (from ' + dia.n + ' spots).' : 'Diamonds: not put together yet (needs 2 spots).') + ' Reading height: ' + r2(A.ballZ != null ? A.ballZ : BALL_Z0) + ' in' + (bz && bz.n >= 2 ? ' (from ' + bz.n + ' ball checks)' : ' (from the Nov 16 rail balls and the Nov 16 spots)') + '.<br>Rails in the list: far / near / left end / right end.</p></div><div class="row"><button class="btn" data-act="tc_next">Next spot</button><button class="btn primary" data-act="home">Home</button></div>');
 }
 // on the live view: the outline at the cushion noses, each rail diamond where the model puts it (ring) and where it was seen
 // (dot, joined), green within 0.3 in, yellow within 0.7, red past; the four balls' rings

@@ -25,6 +25,8 @@ test('V3.24 table check: two spots, the ball check, put together', { timeout: 40
     const card1 = await page.textContent('#card'); console.log('spot 1:', card1.replace(/\s+/g, ' ').slice(0, 400));
     assert.match(card1, /Fine-tuned on \d+ of 18 rail diamonds/); assert.match(card1, /far rail: /); assert.match(card1, /behind the near rail/);
     const fit = await page.evaluate(() => window.__v3.DBG.ev.find(e => e.k === 'diamonds')); assert.ok(fit.D >= 1.5 && fit.D <= 6.5 && [0, 0.8, 1.6].includes(fit.z), JSON.stringify(fit));
+    // (V3.24.2: balls are read 0.8 in up with the diamonds 1.6 in up, and lower by as much as the outline was fitted lower)
+    const bz = await page.evaluate(() => window.__v3.A.ballZ); assert.ok(Math.abs(bz - Math.max(-0.5, Math.min(1.2, 0.8 + fit.z - 1.6))) < 0.011, bz + ' ' + fit.z);
     // the ball check: four balls frozen at the rings, as the finder sees them (its centre where the ball meets the cloth) and
     // read at the old height (a ball's radius up), so each reads toward the phone; the fit finds the cloth again
     await page.click('[data-act=tc_balls]'); assert.match(await page.textContent('#drillTag'), /Freeze a ball against each cushion/);

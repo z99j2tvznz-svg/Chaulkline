@@ -2083,3 +2083,19 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
     question mark and "shoot it again"; nudges say nothing.
   - Owner: every fix made for Safari's slow look rate (2-3 looks a second) must be checked again when a native app runs
     the camera and the finder faster. Noted in the work log's standing rules.
+- V3.24.2 (Nov 16 22:20 and 22:23 table checks):
+  - Seven spots were saved at 22:23 (sideways and upright, from the near side, both ends and the far corners), 12-18
+    diamonds each, and put together: D 2.5, z 1.6, each spot within 0.07-0.37 in. No ball checks were done.
+  - Every spot picked z 1.6, the top of the coarse grid. Offline, holding each spot's felt outline (the last table_find
+    before its diamonds) and searching D 1.5-6 and z 0-3.6: all seven together give D 2.5, z 1.6; each alone gives D
+    2.25-2.75, z 1.4-1.6. With the felt outline as an anchor, z is seen after all (the simulation had no anchor).
+  - Ball height and diamond height trade off. Refitting Nov 16 20:57's outline with z 1.6 (its marks rebuilt from its
+    z 0.8 fit) moves the corners 9-13 px. The four rail balls are then best read at 0.8 in (0.54 in rms, as good as 0.0
+    with the old outline); read at 0.0 under the new outline they would be about 2 in off. The owner's phone stored the
+    combined D/z at 22:26, so V3.24.1 would have read positions about 2 in off.
+  - So the finder's centre is about 0.3 in below the ball's middle, not a whole radius; Nov 16's 2-3.4 in offsets were
+    mostly the outline being fitted with z 0.8.
+  - ballZ() = 0.8 + (z used - 1.6), clamped to -0.5..1.2. It is set at each accept from A.diaFit (1.6 when no diamond
+    fit). A ball check records its zDia, and putting spots together stores h16 (each check turned to z 1.6).
+  - Spots 1 and 7 had the right end rail 2.4 and 1.4 in off: three diamonds seen steeply from the near-right side. The
+    other rails at those spots were within 0.55 in.
