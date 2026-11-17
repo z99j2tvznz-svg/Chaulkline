@@ -1910,3 +1910,55 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   storage on the phone only.
 - Test: tests/aim.test.js (every band makes its shots at the ghost ball, misses on either side are named thin and thick
   correctly, results saved, the page draws sideways and upright without errors).
+
+## V3.22.0: BU Exam I, drill fixes, cleaner coaching, simplest stroke first (owner, Nov 16-17)
+- BU Exam I (src/v3/bu.js, tests/bu.test.js), from the official document (BU_Exam-I_Fundamentals.pdf; billiarduniversity.org
+  added to the environment's allowed hosts). The layouts are read off the eight diagrams, in diamonds (x 0-8 from the
+  left end, y 0-4 from the near rail, through viewXY); the document's inch lengths stay in inches (the ball gaps; the
+  8.5x11 paper targets, judged on screen, so no paper is needed). Per drill:
+  - F1: cue ball at (8 - pos, 3); object ball a ball's gap off the right end rail at y 1; near right corner; scratches allowed.
+  - F2, F4: along the far rail 3R off it (straight in, the drill's "pure stop shot"); object ball at 7.5. F2: the cue ball
+    within 2R + 0.3 in of the ghost ball. F4: its centre in the box x 4-6, y 3-4 (diamonds).
+  - F3: object ball a diamond ahead of the cue ball (at position 1 just short of the corner); paper against the end rail,
+    1 in off the far rail.
+  - F5: object ball 2R short of the table's middle into the near side pocket; cue ball in hand. Targets at 5, 6 and 7
+    diamonds along the middle, 4 against the end rail, 5-7 back at 7, 6 and 5. Positions 1-3: no cushion; 5-7: the cue
+    ball's path within R + 1.5 in of the end rail.
+  - F6: the ten diagram shots (cue balls at (2,3) and (2,1); balls at (3,3), (4,2), (6,2), (3,1)).
+  - F7: object ball at (4,3) into the far side pocket; ten rail balls at the far rail's 5, 6, 7, the corner, the end
+    rail's 3, 2, 1, the near corner, the near rail's 7, 6; hit = the ball nearest the mark moved over 1 in or has a path.
+  - F8: object ball (1,3) into the far left corner, cue ball (1.5, 2); five paper targets.
+  Scoring follows the document: F1-F4 progressive (start at 4, ±1, a success at 7 = bonus, 10 shots or stop once 10 is
+  certain: max(1, pos - left) + bonus >= 10); F5 the same without the early stop; F6/F7/F8 a point each. Exam II level:
+  under 50 Bachelors, 50-69 Masters, 70 and up Doctorate.
+- App:
+  - A.bu's results per drill are replayed into the state each time, so "Change last" (a button in the line at the
+    bottom, and on the finished sheet) flips the last result and everything after follows.
+  - Ready: the object ball on its X within 1.2 in (the cue ball too unless in hand), all still, 1.5 s.
+  - The result is said 2.5 s after the shot (after the late check); a late call from the object ball's spot re-judges the
+    last shot.
+  - The history is kept in localStorage chalkline.v3.bu (best per drill in the menu).
+- Drill fixes (Nov 16 18:11):
+  - X marks on the cloth (drawX) instead of the dashed outline at ball height plus rail lines (balls were set 1-2.7 in
+    off; checked on the before pictures: the tracker was right).
+  - drillTaken within 1.2 in (was 4).
+  - The words give the real cut when the balls were set 3 or more degrees off.
+  - No shot words or late-call words during a drill or the exam (the drill's Made/Missed comes after the late check).
+  - A late call whose last place (the tracker's notes now carry at) was within 3.5 in of the drill's spot is the drill's
+    ball (shot 32: a stale track on the spot took the call).
+- Pop-ups (#card) are at most the screen's height and scroll inside; the drills list ran off the top sideways.
+- Coaching:
+  - The OC/UC band is gone. Drawn: the aim line, the object ball's line, the cue ball's line (solid with a dark edge),
+    and path.others, every other ball the chosen stroke moves (one full simulation with all paths), dashed in its colour.
+  - Simplest stroke first: tiers. 0: no side, up to medium-hard, tip at least -0.26, at most 2 cushions. 1: any draw or
+    follow, up to hard. 2: side, 3 cushions. 3: anything. The simplest tier whose best (re-run to 34 runs) is within 10%
+    of the best is played (Dr. Dave's first principle; Tom Ross). On Nov 16 18:02 the 1 went from break speed round 3
+    rails to a simple draw. The 2's four-cushion route stays: the simple strokes leave the 3 at 25% against 50% (the 3
+    is half-blocked from both left corners), so it is needed.
+  - The "middle of the stretch" refinement keeps to the chosen tier.
+  - Banks x1.4, kicks x1.8, 2-rail kicks x2.5 on the aim error (a 2-rail kick at a rail-frozen ball had been 76%; now 65%).
+- core.js:
+  - Only a moving ball drops: a ball resting inside the capture radius (a hanger read a fraction inside the pocket's edge)
+    stays until hit. The Nov 16 hanger got no plan.
+  - Optional P.pocketSpeed: the capture radius shrinks by 0.012 in per in/s over 3 mph, at most 0.8 in. Slower speed,
+    bigger pockets (Dr. Dave BD Dec 2004); the coaching planner sets it, V2 and the rest are unchanged.

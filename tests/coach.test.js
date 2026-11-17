@@ -153,3 +153,18 @@ test('V3.18: closer leaves; the zone a long fan of graded rings along the leave\
   const z = r.zoneFan, B = lay.find(b => b.n === r.B.n), dT = Math.hypot(r.target[0] - B.x, r.target[1] - B.y);
   assert.ok(Math.abs(dT - z.rm) < 1.5 && z.rm > z.r0 && z.rm < z.r1, 'the target is the middle of the good stretch: ' + JSON.stringify({ dT, r0: z.r0, r1: z.r1, rm: z.rm }));
 });
+
+test('V3.22: a hanger read inside the pocket\'s edge is a pot; other balls the stroke moves come with their paths; routine pots are simple', () => {
+  // Nov 16 18:02: the 6 in the jaws of the top-right corner read at (76.1, 38.9); no plan at all
+  const h = COACH.plan([{ n: 8, x: 44.1, y: 2.3 }, { n: 9, x: 67.3, y: 30.4 }, { n: 6, x: 76.1, y: 38.9 }, { n: 7, x: 9, y: 32.9 }, { n: 0, x: 34.9, y: 33.6 }], P);
+  assert.ok(h.path && h.path.shot === 'pot' && h.path.make > 0.8, JSON.stringify(h.path && { shot: h.path.shot, make: h.path.make }));
+  // a ball resting in the jaws does not drop by itself in the simulation; struck, it does
+  const C = require('../src/core.js'), still = C.simulate([{ id: 0, x: 20, y: 20 }, { id: 6, x: 76.1, y: 37.855 }], { angle: Math.PI, speed: 30, a: 0, b: 0 }, P, { maxT: 4 });
+  assert.ok(!still.pocketed.some(q => q.id === 6), 'a hanger stays until it is hit');
+  // the cue ball straight into the 5 behind the 1: the 5's path is in the plan
+  const o = COACH.plan([{ n: 0, x: 20, y: 19.5 }, { n: 1, x: 50, y: 30 }, { n: 5, x: 30, y: 19.5 }, { n: 9, x: 60, y: 8 }], P);
+  assert.ok(o.path && Array.isArray(o.path.others), 'others listed');
+  // Nov 16 18:02: the 1 into the top-left corner was played at break speed round three cushions; now a simple stroke
+  const s = COACH.plan([{ n: 0, x: 22.5, y: 6.6 }, { n: 8, x: 44.1, y: 2.1 }, { n: 4, x: 41.4, y: 35.5 }, { n: 9, x: 67.3, y: 30.1 }, { n: 3, x: 29.9, y: 19.5 }, { n: 6, x: 22.2, y: 20.6 }, { n: 1, x: 10.8, y: 21.5 }, { n: 7, x: 9.3, y: 32.7 }, { n: 2, x: 47.1, y: 13.4 }, { n: 5, x: 8.7, y: 8 }], P);
+  assert.ok(s.path.stroke.speed !== 'very hard' && s.path.tier <= 1, JSON.stringify({ st: s.path.stroke, tier: s.path.tier }));
+});

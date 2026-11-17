@@ -463,7 +463,7 @@ function makeTracker(P, opts) {
     tr.state = 'gone'; tr.goneT = t; const d = { key: tr.key, num: tr.num, sure: tr.sure, pocket, late: true };
     if (tr.num !== 0 && !S.gone.includes(tr.num)) S.gone.push(tr.num); // the cue ball comes back (see pocketed)
     sh.made.push(d); if (tr.key === sh.cueKey || tr.num === 0) sh.scratch = true; sh.updated = t;
-    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)], v: +(tr.vLost || 0).toFixed(1) }); S.notes.push({ n: sh.n, key: tr.key, num: tr.num, pocket, scratch: tr.num === 0 });
+    ev('made_late', { n: sh.n, key: tr.key, num: tr.num, pocket, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)], v: +(tr.vLost || 0).toFixed(1) }); S.notes.push({ n: sh.n, key: tr.key, num: tr.num, pocket, scratch: tr.num === 0, at: [+tr.x.toFixed(1), +tr.y.toFixed(1)] });
   }
 
   // New rack or End session: the last shot's calls are settled now, not left waiting (Oct 30: the 9, the last ball of the

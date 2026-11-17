@@ -72,7 +72,8 @@ a.go { color: inherit; text-decoration: none; }
 .tb { min-height: 40px; padding: 0 14px; cursor: pointer; font: 500 14px var(--f); border-radius: 12px; }
 #bar { position: absolute; left: calc(env(safe-area-inset-left, 0px) + 8px); right: calc(env(safe-area-inset-right, 0px) + 8px); bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; pointer-events: none; }
 #bar > * { pointer-events: auto; }
-#card { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 60px); width: min(94vw, 560px); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+#card { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 60px); width: min(94vw, 560px); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 76px); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+/* (V3.22: a pop-up is never taller than the screen and scrolls inside itself: sideways the drills list ran off the top) */
 #card.mini { left: auto; right: calc(env(safe-area-inset-right, 0px) + 8px); bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); transform: none; width: auto; padding: 6px; }
 #cam.manual #bar { display: none; }
 #card b { font-weight: 600; } #card p { margin: 0; font-size: 14px; color: rgba(234,241,244,.88); }
@@ -123,6 +124,14 @@ a.go { color: inherit; text-decoration: none; }
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
+    <div class="card glass"><h2>New in V3.22</h2><ul>
+      <li>BU Exam I (Menu → Drills): Billiard University's eight fundamentals drills, laid out on the table and scored by their rules, with the score sheet and your Exam II level at the end. "Change last" at the bottom fixes any shot the camera got wrong.</li>
+      <li>Drills: each ball goes on an X on the cloth (touch it with a wet finger and set the ball on the mark); a mark only goes green with the ball within about an inch; the result gives the real cut when the balls were set off; no more "nothing in" before a late call; a ball called in late from its spot counts.</li>
+      <li>Pop-ups fit the screen and scroll, upright or sideways.</li>
+      <li>Coaching: the thin/thick band is gone. You see the aim line, the object ball's line, the cue ball's line, and any other ball the stroke will hit with its path.</li>
+      <li>The plan plays the simplest stroke that does the job (stun, roll, a little draw) and only adds spin, power or cushions when the simple one can't get position. Hard hits and banks or kicks are rated harder to make.</li>
+      <li>A ball hanging in the pocket is planned as a pot (it was taken as already in).</li>
+    </ul></div>
     <div class="card glass"><h2>New in V3.21</h2><ul>
       <li>Aim trainer (button above): practise aiming anywhere. The shot is seen from where your eyes are when you are down on it; drag to swing the cue, use the strip at the bottom for fine aim, and shoot.</li>
       <li>After each shot: the ghost ball you should have hit, your aim beside it, how many degrees off you were and whether it was thin or thick, and how much room the shot gave you.</li>
@@ -277,6 +286,7 @@ a.go { color: inherit; text-decoration: none; }
 </script>
 <script>
 /*DRILLS*/
+/*BU*/
 /*POSE*/
 /*COACH*/
 </script>

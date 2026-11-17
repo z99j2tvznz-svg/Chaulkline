@@ -406,7 +406,12 @@ function simulate(init, shot, P, opts = {}) {
       let cap = false;
       for (let pi = 0; pi < P.pockets.length; pi++) {
         const pk = P.pockets[pi];
-        if (Math.hypot(b.x - pk.x, b.y - pk.y) < pk.r) {
+        // (only a moving ball drops: a ball resting in the jaws, read a fraction inside the pocket's edge, is a hanger and stays
+        // until it is hit, V3.22, Nov 16 18:02. P.pocketSpeed (the coaching planner): a fast ball must come nearer the
+        // middle to drop, the pocket is smaller at speed, Dr. Dave BD Dec 2004 "slower speed, bigger pockets")
+        const vb = Math.hypot(b.vx, b.vy); if (vb < 0.5) continue;
+        const rEff = P.pocketSpeed ? pk.r - Math.min(0.8, P.pocketSpeed * Math.max(0, vb - 53)) : pk.r;
+        if (Math.hypot(b.x - pk.x, b.y - pk.y) < rEff) {
           b.out = true; b.vx = b.vy = 0; res.pocketed.push({ id: b.id, pocket: pi, t });
           if (rec && res.paths[b.id]) res.paths[b.id].push([t, pk.x, pk.y]);
           cap = true; break;
