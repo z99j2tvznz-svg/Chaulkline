@@ -2019,3 +2019,50 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   333 cue ball paths of all sessions on file: 120 unchanged, 133 through the ghost ball only, 80 with cushions (checked
   by eye: into a rail and back, off the end rail after the hit). The first hit is the tracker's, else the object ball
   seen moving first. pathsRow adds `f` (the filled points) to the debug file.
+
+## V3.24.0: Table check, ball positions read at the cloth, review of Nov 16 20:57 (owner, Nov 17)
+- Review of Nov 16 20:57 (V3.23.0, 43 minutes, 97 shots: BU F1-F3 in a run, F4 failed, then F5, F6, F7 one by one).
+  57 shots scored as soon as known (bu_early); the late-call fix worked in F5. Found:
+  - Ball positions biased toward the phone. The finder's box centre sits about a ball's radius low in the picture (near
+    the contact point), and look() read it at z = R. F7's rail balls, frozen against cushions at diamonds, read 2-3.4 in
+    toward the phone (rail ball 9 at y -0.9, rail ball 8 at y 0.0: centres on or past the near cushion). One reading
+    height for all four: 0.0 in, residual 0.54 in rms, the same at lens 0.66/0.72/0.78. A raised table plane instead
+    (quad at the cushion nose) is ruled out: a ball on the F2 mark would then sit past the far cushion. The X marks
+    (drawn at z = 0) were right all along; the Nov 16 18:11 "balls set 1-2.7 in off" was this bias, not the owner.
+    BALL_Z0 = 0 in look(), the watcher and pocketBags (dz keeps the bag lines consistent); ballZ() uses a stored value
+    once two table checks with balls agree; a ball check sets A.ballZ for its session.
+  - F2/F4 fast stop shots: the cue ball first seen at the ghost ball (relink jump), the object ball already gone 7 in
+    from the corner, beyond jawZone, so never called; it then showed in the shallow pocket's bowl as a new ball that
+    took its name. Three made F4 shots and two F2 shots were set aside as untouched. track.js startShot: a ball lost in
+    the look the cue ball turned up within 2R + 4 in of it, with a pocket within pocketZone + 6, goes pending there
+    (only in the seen-late case; without it a replay test of Oct 30 got two false calls). buFacts: an object ball hidden
+    at the start (or whose track jumped a foot) counts in when a new ball rests within 9 in of the drill's pocket, or
+    when the cue ball came within 12 in and its spot is bare.
+  - F2 shot 4 (corrected by hand): the cue ball's track at the start was a new key, so cueAt fell back to the X. Now
+    the named cue ball or the start of its path.
+  - F2 shot 9 (corrected by hand): an early "missed" from the object ball's track jumping 25 in onto another ball. No
+    early miss when the object ball was hidden at the start or its first step jumps more than 12 in.
+  - F4: the owner tapped "not a ball" on a stale track of the 3 on its mark; the spot was remembered and the 3 set there
+    was never seen again. On drill and exam marks the tap only drops the track (onMarks).
+  - F7 rail ball 1 never seen (both tries "missed"); Ready now waits for the target ball within 4 in of its mark.
+- Table check (owner: set the phone, find the table, OK; the app fine-tunes; move the phone and do it again from
+  several spots; use the spots together). Mode 'tablecheck' (practice tracker). At each spot:
+  - diamondFit searches the offset D on a quarter-inch grid (1.5-6.5) with z on the coarse grid (0, 0.8, 1.6).
+  - tcReport gives the residual per rail (median, inches at each diamond's scale), how far the corners moved, and the
+    phone's place (behind the near rail, off its middle, above the cloth, from cam.C). drawTC shows each diamond's
+    ring and seen mark joined, coloured by residual.
+  - Optional four balls frozen at the far rail's 6th diamond, the near rail's 2nd and both end rails' middles. Their
+    distance from the cushion is exact. Each is read across its cushion; a reading height is fitted on those, reported,
+    and used at once.
+  - Saved spots (last 30) are kept in chalkline.v3.tchk.<ft> and logged as tchk_spot, with the picture check-NN.jpg.
+  - Put the spots together: D over all spots, each spot's corners refit (refineWithDiamonds), the mean residual
+    least; z on the coarse grid. Stored in chalkline.v3.dia.<ft> and used by diamondFit in every mode. The median
+    reading height of 2+ ball checks goes to chalkline.v3.ballz.
+- Why z is not chased: on made-up views from three spots (true D 3.69, z 1.6), every z leaves the same few hundredths
+  of an inch of diamond residual, because the corners make up for it. But the outline is off about 1 in for each 0.4 in
+  of z (2.5/0.8 instead of 3.69/1.6 put it 3-4 in off). The ball checks cannot separate z from the reading height
+  either: both move cushion balls the same way. The owner's spots, with ball checks and pictures, are the data for
+  pinning z next (pockets, the felt edge or a ball centre measured from the picture).
+- tests/tablecheck.test.js covers the whole flow in the browser: two spots, the ball check (finder centres
+  simulated at the contact point and read at R: the far rail ball 2.87 in short and the near one 1.83 in past its
+  cushion, as on Nov 16), putting the spots together, and the list. The track test covers the struck ball.

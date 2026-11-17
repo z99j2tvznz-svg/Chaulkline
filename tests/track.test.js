@@ -667,3 +667,14 @@ test('V3.17: "not a ball" on a ball lying in a shallow pocket teaches that pocke
   settle(tk2, 0, [...others, { num: 5, x: 39.3, y: 35.9 }], 3);
   assert.ok(!tk2.S.tracks.some(tr => tr.state !== 'dropped' && Math.hypot(tr.x - 39.3, tr.y - 35.9) < 2));
 });
+
+test('V3.24: a ball gone the look the cue ball turns up next to it was struck: with a pocket within 10 in it went in (Nov 16 20:57, BU stop shots)', () => {
+  const tk = makeTracker(P, { practice: true, autoRack: false, rackNew: false }); let t = 0;
+  const W = { y: 0, r: 0, w: 0.9 }, O5 = { y: 0.1, r: 0.3, w: 0.05 }, cue = { num: 0, x: 10, y: 34, col: W }, ob = { num: 5, x: 72.2, y: 34.9, col: O5 }; // (position 7: 60 in in one look)
+  for (; t < 3; t += 0.33) look(tk, t, [cue, ob]);
+  // a firm stop shot: one look later the cue ball is at the ghost ball and the 5 (7 in from the corner) is already in
+  look(tk, t, [{ num: 0, x: 69.6, y: 34.9, col: W }, Object.assign({}, ob, { hide: true })]); t += 0.33; // (read white, as on the phone)
+  for (let i = 0; i < 20; i++, t += 0.33) look(tk, t, [{ num: 0, x: 69.6, y: 34.8, col: W }, Object.assign({}, ob, { hide: true })]);
+  const sh = tk.S.shots[tk.S.shots.length - 1];
+  assert.ok(sh, 'a shot'); assert.ok(sh.made.some(m => m.num === 5 && m.pocket === 5), JSON.stringify(sh.made) + ' ' + JSON.stringify(tk.S.events.filter(e => /lost|shot|relink|pocket/.test(e.k)).slice(-8)));
+});

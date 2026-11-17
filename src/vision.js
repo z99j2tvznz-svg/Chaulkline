@@ -623,11 +623,13 @@ function whiteMarks(img, quad) {
   }
   return out;
 }
-function findDiamonds(img, quad, rot, ft, fRatio, pp) {
+// (opt.Ds, opt.zs: the offsets and heights to try; V3.24's table check tries a fine grid, and once checks from two or more
+// phone spots agree on the table's own D and z, only those)
+function findDiamonds(img, quad, rot, ft, fRatio, pp, opt) {
   const { L, Wd } = tableDims(ft), W = img.width, H = img.height, cam = makeCam(tableCornersFor(rot, L, Wd), quad, W, H, fRatio * Math.max(W, H), pp);
-  const marks = whiteMarks(img, quad); let best = null;
+  const marks = (opt && opt.marks) || whiteMarks(img, quad); let best = null;
   if (!cam.ok || marks.length < 4) return { found: [], expected: 18, n: 0, marks: marks.length };
-  for (const D of [1.5, 2.5, 3.5, 4.5, 5.5, 6.5]) for (const z of [0, 0.8, 1.6]) {
+  for (const D of (opt && opt.Ds) || [1.5, 2.5, 3.5, 4.5, 5.5, 6.5]) for (const z of (opt && opt.zs) || [0, 0.8, 1.6]) {
     const spots = diamondSpots(L, Wd, D), used = new Set(), found = []; let cost = 0;
     spots.forEach(([sx, sy], si) => {
       const c = cam.proj(sx, sy, z), tol = Math.max(6, 2.4 * cam.rad(sx, sy, z, 1)); let bi = -1, bd = tol;
@@ -637,9 +639,11 @@ function findDiamonds(img, quad, rot, ft, fRatio, pp) {
     const score = cost;
     if (!best || score > best.score) best = { score, found, D, z };
   }
-  return { found: best.found, expected: 18, n: best.found.length, D: best.D, z: best.z, marks: marks.length };
+  return { found: best.found, expected: 18, n: best.found.length, D: best.D, z: best.z, marks: marks.length, allMarks: marks };
 }
 // Nudge the four corners so the model's diamond positions land on the marks that were seen.
+// (dia.reg: how strongly the corners are held where they were; V3.24's table check, putting spots together, holds them
+// loosely so the corners can follow the diamonds and the offset and height can show)
 function refineWithDiamonds(img, quad, rot, ft, fRatio, dia, pp) {
   const { L, Wd } = tableDims(ft), W = img.width, H = img.height, spots = diamondSpots(L, Wd, dia.D), tc = tableCornersFor(rot, L, Wd), f = fRatio * Math.max(W, H), found = dia.found;
   const sides = new Set(found.map(d => spots[d.si][1] < 0 ? 'a' : spots[d.si][1] > Wd ? 'b' : spots[d.si][0] < 0 ? 'c' : 'd'));
@@ -648,7 +652,7 @@ function refineWithDiamonds(img, quad, rot, ft, fRatio, dia, pp) {
   const cost = q => {
     const cam = makeCam(tc, q, W, H, f, pp); if (!cam.ok) return 1e18; let s = 0;
     for (const d of found) { const [sx, sy] = spots[d.si], p = cam.proj(sx, sy, dia.z), e = Math.min(Math.hypot(p[0] - d.px, p[1] - d.py), cap); s += e * e; }
-    for (let i = 0; i < 4; i++) s += 0.05 * ((q[i][0] - q0[i][0]) ** 2 + (q[i][1] - q0[i][1]) ** 2);
+    for (let i = 0; i < 4; i++) s += (dia.reg != null ? dia.reg : 0.05) * ((q[i][0] - q0[i][0]) ** 2 + (q[i][1] - q0[i][1]) ** 2);
     return s;
   };
   let q = q0.map(p => p.slice()), c = cost(q), step = 0.006 * Math.max(W, H);

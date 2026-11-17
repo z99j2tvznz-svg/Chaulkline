@@ -124,6 +124,7 @@ a.go { color: inherit; text-decoration: none; }
     <button class="go glass" id="goBtn"><b>Play a rack</b><small>A rack at a time: made balls, scratches, the first ball hit, runs; the rack is done by itself when only the cue ball is left.</small><i>›</i></button>
     <button class="go glass" id="pracBtn"><b>Practice</b><small>Set balls where you like and shoot. Moving or picking up balls is fine; tries of the same shot are put together.</small><i>›</i></button>
     <button class="go glass" id="coachBtn"><b>Coaching test</b><small>Small runouts, the 9 always on: set out any balls and shoot the lowest first. A dot and a number at each pocket show the pocket for this ball, the next and the one after; the green is where the cue ball should land for the next one.</small><i>›</i></button>
+    <button class="go glass" id="tchkBtn"><b>Table check</b><small>Set the phone, find the table and say OK: the outline is fine-tuned on the rail diamonds and you see how well it sits, rail by rail. Then move or turn the phone and do it again from other spots; the spots together work out the table. Optional at each spot: four balls against the cushions show how true ball positions read.</small><i>›</i></button>
     <a class="go glass" id="aimLink" href="aim/"><b>Aim trainer</b><small>Away from the table: see the shot from behind the cue ball, swing the cue and shoot, then see where the ghost ball really was and whether you cut it thin or thick.</small><i>›</i></a>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Game for Play a rack</div><div class="seg" id="segGame"></div></div>
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Your level, about (Fargo): the coaching plays one level up</div><div class="seg" id="segFargo"></div></div>
@@ -131,6 +132,12 @@ a.go { color: inherit; text-decoration: none; }
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
+    <div class="card glass"><h2>New in V3.24</h2><ul>
+      <li>Table check (button above): set the phone, find the table and tap Use this spot. The outline is fine-tuned on the rail diamonds and you see how well each rail sits and where the phone is. Optional: freeze four balls against the cushions at the rings to see how true ball positions read; that spot's reading is corrected at once. Save the spot, move or turn the phone, Next spot. With two or more spots, Put the spots together works out this table's diamonds for every session after.</li>
+      <li>Ball positions are truer: they had read 1 to 3½ inches toward the phone, most at the far rail (the four rail balls of BU F7 on Nov 16 read up to 3.4 in off, two of them on or past the near cushion). Now within about half an inch. This is also why the drill and exam marks seemed hard to hit.</li>
+      <li>BU exam: firm stop shots on F2 and F4 count now (the ball was in before the camera saw the shot start, so three made shots were set aside); a stop is measured from where the cue ball really started; a quick miss call no longer comes from a track that jumped across the table; F7 waits for its rail ball to be seen on its mark.</li>
+      <li>"Not a ball" on a drill or exam mark no longer stops a ball being seen there afterwards.</li>
+    </ul></div>
     <div class="card glass"><h2>New in V3.23</h2><ul>
       <li>Cut ladder in rounds: 10°, 20°, 30°, 40° and 50° cuts, three shots at each, a diamond from the pocket; then the same ladder 2, 3, 4 and 5 diamonds out. Pick where to start: easy (1 diamond out) to expert (5). The cue ball moves a little from step to step.</li>
       <li>More room setting up: a ball counts as on its X within about 2½ inches. In BU drills F2, F3 and F4 (down the rail) only the place along the rail counts: set each ball anywhere on the faint line through its X, from the rail out to a diamond, and line the shot up straight yourself (the rules allow it). The marks now sit on a line that goes in.</li>
@@ -1561,11 +1568,13 @@ function whiteMarks(img, quad) {
   }
   return out;
 }
-function findDiamonds(img, quad, rot, ft, fRatio, pp) {
+// (opt.Ds, opt.zs: the offsets and heights to try; V3.24's table check tries a fine grid, and once checks from two or more
+// phone spots agree on the table's own D and z, only those)
+function findDiamonds(img, quad, rot, ft, fRatio, pp, opt) {
   const { L, Wd } = tableDims(ft), W = img.width, H = img.height, cam = makeCam(tableCornersFor(rot, L, Wd), quad, W, H, fRatio * Math.max(W, H), pp);
-  const marks = whiteMarks(img, quad); let best = null;
+  const marks = (opt && opt.marks) || whiteMarks(img, quad); let best = null;
   if (!cam.ok || marks.length < 4) return { found: [], expected: 18, n: 0, marks: marks.length };
-  for (const D of [1.5, 2.5, 3.5, 4.5, 5.5, 6.5]) for (const z of [0, 0.8, 1.6]) {
+  for (const D of (opt && opt.Ds) || [1.5, 2.5, 3.5, 4.5, 5.5, 6.5]) for (const z of (opt && opt.zs) || [0, 0.8, 1.6]) {
     const spots = diamondSpots(L, Wd, D), used = new Set(), found = []; let cost = 0;
     spots.forEach(([sx, sy], si) => {
       const c = cam.proj(sx, sy, z), tol = Math.max(6, 2.4 * cam.rad(sx, sy, z, 1)); let bi = -1, bd = tol;
@@ -1575,9 +1584,11 @@ function findDiamonds(img, quad, rot, ft, fRatio, pp) {
     const score = cost;
     if (!best || score > best.score) best = { score, found, D, z };
   }
-  return { found: best.found, expected: 18, n: best.found.length, D: best.D, z: best.z, marks: marks.length };
+  return { found: best.found, expected: 18, n: best.found.length, D: best.D, z: best.z, marks: marks.length, allMarks: marks };
 }
 // Nudge the four corners so the model's diamond positions land on the marks that were seen.
+// (dia.reg: how strongly the corners are held where they were; V3.24's table check, putting spots together, holds them
+// loosely so the corners can follow the diamonds and the offset and height can show)
 function refineWithDiamonds(img, quad, rot, ft, fRatio, dia, pp) {
   const { L, Wd } = tableDims(ft), W = img.width, H = img.height, spots = diamondSpots(L, Wd, dia.D), tc = tableCornersFor(rot, L, Wd), f = fRatio * Math.max(W, H), found = dia.found;
   const sides = new Set(found.map(d => spots[d.si][1] < 0 ? 'a' : spots[d.si][1] > Wd ? 'b' : spots[d.si][0] < 0 ? 'c' : 'd'));
@@ -1586,7 +1597,7 @@ function refineWithDiamonds(img, quad, rot, ft, fRatio, dia, pp) {
   const cost = q => {
     const cam = makeCam(tc, q, W, H, f, pp); if (!cam.ok) return 1e18; let s = 0;
     for (const d of found) { const [sx, sy] = spots[d.si], p = cam.proj(sx, sy, dia.z), e = Math.min(Math.hypot(p[0] - d.px, p[1] - d.py), cap); s += e * e; }
-    for (let i = 0; i < 4; i++) s += 0.05 * ((q[i][0] - q0[i][0]) ** 2 + (q[i][1] - q0[i][1]) ** 2);
+    for (let i = 0; i < 4; i++) s += (dia.reg != null ? dia.reg : 0.05) * ((q[i][0] - q0[i][0]) ** 2 + (q[i][1] - q0[i][1]) ** 2);
     return s;
   };
   let q = q0.map(p => p.slice()), c = cost(q), step = 0.006 * Math.max(W, H);
@@ -1856,11 +1867,13 @@ function bareCloth(img, px, py, rpx, cl) {
 // the cloth, is found by the ball finder (weakly, part of it hidden by the rim) and maps onto the table 4 to 10 in in
 // front of the pocket (Oct 27: the 7 in the far right corner came out at 76, 33 and looked like it rolled back out).
 // One line per pocket, in table inches, from a ball 0.5 in down to 4 in down; only the pockets whose line lands on the cloth.
-function pocketBags(cam, P) {
-  const out = [];
+function pocketBags(cam, P, bz) {
+  // (read at the height found balls are read at, V3.24: the cloth; the finder's centre of a ball sits about a radius below
+  // its middle, so a ball lying in the pocket shows that much lower too, dz)
+  const out = [], z = bz != null ? bz : P.R, dz = P.R - z;
   P.pockets.forEach((pk, i) => {
-    const a = cam.proj(pk.x, pk.y, -0.5), b = cam.proj(pk.x, pk.y, -4); if (!a || !b) return;
-    const ua = cam.unproj(a[0], a[1], P.R), ub = cam.unproj(b[0], b[1], P.R);
+    const a = cam.proj(pk.x, pk.y, -0.5 - dz), b = cam.proj(pk.x, pk.y, -4 - dz); if (!a || !b) return;
+    const ua = cam.unproj(a[0], a[1], z), ub = cam.unproj(b[0], b[1], z);
     if (ub[0] < 0 || ub[1] < 0 || ub[0] > P.L || ub[1] > P.W) return;
     out.push({ i, ax: ua[0], ay: ua[1], bx: ub[0], by: ub[1] });
   });
@@ -2584,9 +2597,12 @@ function makeTracker(P, opts) {
     ev('shot', { n: S.shot.n, key: tr.key, num: tr.num, break: S.shot.break });
     // a shot seen late (the cue ball found again only after it jumped): a ball that vanished since it started, by a pocket
     // and struck or in the jaws, went in (Oct 27: the 1 in the jaws, gone the same look the cue ball reached it)
+    // (V3.24: or gone the look the cue ball turned up next to where it sat, so it was struck, with a pocket within 10 in: Nov
+    // 16 20:57, BU F2 and F4, stop shots from the half-diamond spot 7 in from the corner, the cue ball seen first at the ghost
+    // ball and the object ball already in; never called, and three made shots were set aside as untouched)
     if (back < t) for (const b of ballsNow()) {
-      if (b.state !== 'hidden' || !(b.lostT >= back - 0.05) || b.vLost) continue; const near = pocketNear(b.x, b.y);
-      if (near.d <= O.jawZone || (b.knock && near.d <= O.pocketZone)) { b.state = 'pending'; b.pocket = near.i; ev('lost_at_pocket', { key: b.key, num: b.num, pocket: near.i }); }
+      if (b.state !== 'hidden' || !(b.lostT >= back - 0.05) || b.vLost) continue; const near = pocketNear(b.x, b.y), struck = dist(b, tr) <= 2 * R + 4 && near.d <= O.pocketZone + 6;
+      if (back < t && (near.d <= O.jawZone || (b.knock && near.d <= O.pocketZone) || struck)) { b.state = 'pending'; b.pocket = near.i; ev('lost_at_pocket', { key: b.key, num: b.num, pocket: near.i, struck: struck || undefined }); }
     }
   }
   // anything but the cue ball changed in a shot: a ball on the table before it moved, went out of sight, or is gone
@@ -3912,7 +3928,7 @@ const COACH = coachFactory(typeof simulate !== 'undefined' ? simulate : typeof m
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.23.0';
+const VERSION = 'V3.24.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -3921,6 +3937,15 @@ const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a
 const LENS = 0.72;
 const SMALL = 800;          // the table is looked for on a copy of the picture this many pixels across
 const BALL_PX_MAX = 23;     // the finder learned balls up to about this radius: the table strip is not enlarged past it
+// The height a found ball's centre is read at (V3.24). The finder's box centre sits about a ball's radius low in the picture,
+// near where the ball touches the cloth, not at its middle: on Nov 16 20:57 the four rail balls of BU F7, frozen against
+// the cushions at diamonds, read 2 to 3.4 in toward the phone when taken at the ball's middle height (R), two of them on or
+// past the near cushion, which no ball can be; taken at the cloth they are within half an inch (0.54 rms), at any lens
+// setting. The X marks are drawn on the cloth and stay where they were. A table check with balls measures it again (see
+// TCHK) and keeps what the checks agree on.
+const BALL_Z0 = 0;
+const BZ_KEY = KEY + '.ballz';
+function ballZ() { try { const v = JSON.parse(localStorage.getItem(BZ_KEY) || 'null'); if (v && isFinite(v.z) && v.n >= 2) return Math.max(-1, Math.min(1.2, v.z)); } catch (e) { } return BALL_Z0; }
 const A = { ft: 7, engine: 'cpu', live: false, stream: null, phase: 'home', W: 0, H: 0, quad: null, rot: 0, cam: null, P: null, tk: null, box: null, kmax: 1.5, shape: null,
   frame: document.createElement('canvas'), small: document.createElement('canvas'), fctx: null, looks: 0, errs: 0, nShots: 0, sess: null, lastSess: null,
   pics: new Map(), taps: [], stillPic: null, stillPicT: 0, pick: null, timing: [], camInfo: null, man: null, cand: null };
@@ -4080,6 +4105,7 @@ renderGate();
 $('#goBtn').onclick = () => start('play');
 $('#pracBtn').onclick = () => start('practice');
 $('#coachBtn').onclick = () => start('coach');
+$('#tchkBtn').onclick = () => start('tablecheck');
 $('#dbgHome').onclick = () => saveDebug($('#dbgHome'));
 function homeMsg(t, bad) { const m = $('#homeMsg'); m.textContent = t || ''; m.classList.toggle('bad', !!bad); }
 
@@ -4134,9 +4160,9 @@ const ALL15 = Array.from({ length: 16 }, (_, i) => i);
 const SH_KEY = () => KEY + '.shallow.' + A.ft;
 function shallowGet() { try { return JSON.parse(localStorage.getItem(SH_KEY()) || '{}') || {}; } catch (e) { return {}; } }
 function shallowSave() { if (!A.tk) return; try { localStorage.setItem(SH_KEY(), JSON.stringify(A.tk.S.shallow)); } catch (e) { } }
-const TK_OPTS = mode => mode === 'practice' ? { practice: true, autoRack: false, rackNew: false, ids: ALL15 } : mode === 'coach' ? { practice: true, autoRack: false, rackNew: false } : A.game === 8 ? { ids: ALL15, eightEnds: true } : {};
+const TK_OPTS = mode => mode === 'practice' || mode === 'tablecheck' ? { practice: true, autoRack: false, rackNew: false, ids: ALL15 } : mode === 'coach' ? { practice: true, autoRack: false, rackNew: false } : A.game === 8 ? { ids: ALL15, eightEnds: true } : {};
 async function start(mode) {
-  homeMsg(''); A.mode = mode === 'practice' || mode === 'coach' ? mode : 'play'; CO.plan = null; CO.sig = ''; CO.atStart = null;
+  homeMsg(''); A.mode = mode === 'practice' || mode === 'coach' || mode === 'tablecheck' ? mode : 'play'; CO.plan = null; CO.sig = ''; CO.atStart = null; A.tchk = null; if (A.mode === 'tablecheck') tcStart();
   if (!window.ort) { homeMsg('The ball finder did not load. Check the connection and reload the page.', true); return; }
   if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { homeMsg('This browser cannot reach the camera. Open the page in Safari from its https address.', true); return; }
   // the session before this one, for the debug file (V3.15: read only when the page loaded, so a second session in the same
@@ -4144,9 +4170,9 @@ async function start(mode) {
   if (A.sess && DBG.ev.length) dbgPersist(); try { PREV = JSON.parse(localStorage.getItem(KEY + '.dbg') || 'null'); } catch (e) { }
   DBG.t0 = Date.now(); DBG.ev = []; DBG.looks = []; DBG.drop = 0; A.pics.clear(); A.taps = []; A.nShots = 0; A.looks = 0;
   A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt, shallow: shallowGet() })); A.sess = { t0: Date.now(), sid: DBG.t0, version: VERSION, ft: A.ft, mode: A.mode, game: A.mode === 'play' ? (A.game || 9) : null, shots: [], rack: 1, rackOpen: false }; $('#rackBtn').hidden = A.mode !== 'play'; $('#rejectBtn').hidden = true; A.strokeCheck = false; A.drill = null; $('#drillTag').hidden = true; A.sess.drillTries = []; A.handsN = 0; A.handsT = 0; A.drillReadyOf = new Map(); A.drillStOf = new Map();
-  STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0;
+  STORE.begin(DBG.t0, { t0: DBG.t0, version: VERSION, ft: A.ft }); WATCH.nClips = 0; A.ballZ = ballZ();
   $('#home').hidden = true; $('#sum').hidden = true; $('#cam').hidden = false; A.phase = 'boot'; A.frozen = false; A.findN = 0; A.live = true; setStatus('Starting the camera…');
-  dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
+  dbg('start', { mode: A.mode, ft: A.ft, version: VERSION, engine: A.engine, isolated: !!window.crossOriginIsolated, ballZ: A.ballZ }); CRASH = null; $('#crashCard').hidden = true; crumb('start');
   // the weights (10 MB) download while the table is found
   DET.prefetch(BASE, 'models/v3/finder-v1.weights', (g, t) => { A.dl = t ? g / t : 0; }).catch(e => dbg('error', { m: 'weights ' + String(e).slice(0, 100) }));
   try { await openCamera(); } catch (e) {
@@ -4208,8 +4234,9 @@ function showVerify() {
   // an outline that is not twice as long as it is wide (seen through the lens) is off: often on the outer edge of the rails
   const ratio = A.shapeRatio ? Math.max(A.shapeRatio, 1 / A.shapeRatio) : 2, odd = c && (ratio < 1.6 || ratio > 2.5);
   const tip = c ? (odd ? 'This outline is not the shape of a table (' + ratio.toFixed(1) + ' to 1, a table is 2 to 1): it may be on the outer edge of the rails. Tap the corners to set it on the cloth.' : good ? 'The teal outline should sit on the cushions, with a dot in each corner pocket.' : (c.tips && c.tips[0]) || 'Not sure about this one.') : 'The table was not found. Make sure the whole table is in view and the lights are on.';
-  showCard('<div><b>' + (good ? 'Table found' : c ? 'Not sure about this table' : 'Table not found') + '</b><p>' + tip + '</p></div>' + sizes +
-    '<div class="row">' + (c ? '<button class="btn primary" data-act="accept">Looks right</button>' : '') + '<button class="btn" data-act="retry">Try again</button><button class="btn" data-act="manual">Tap the corners</button></div>');
+  const tcHead = A.mode === 'tablecheck' ? 'Spot ' + ((A.tchk ? A.tchk.spots.length : 0) + 1) + ': move the phone until the outline sits on the cushions (Find again looks again), then Use this spot. ' : '';
+  showCard('<div><b>' + (good ? 'Table found' : c ? 'Not sure about this table' : 'Table not found') + '</b><p>' + tcHead + tip + '</p></div>' + sizes +
+    '<div class="row">' + (c ? '<button class="btn primary" data-act="accept">' + (A.mode === 'tablecheck' ? 'Use this spot' : 'Looks right') + '</button>' : '') + '<button class="btn" data-act="retry">' + (A.mode === 'tablecheck' ? 'Find again' : 'Try again') + '</button><button class="btn" data-act="manual">Tap the corners</button></div>');
   setStatus(good ? 'Check the outline' : 'Table');
 }
 // Setting the corners by hand is done on a still picture (owner, Oct 28: a finger is not exact enough, and pressing the
@@ -4257,16 +4284,22 @@ function diamondFit() {
   try {
     if (!A.fctx || !A.W) return; const img = A.fctx.getImageData(0, 0, A.W, A.H), pp = [A.W / 2, A.H / 2];
     const med = d => { const e = d.found.map(f => Math.hypot(f.px - f.ex, f.py - f.ey)).sort((a, b) => a - b); return e.length ? e[e.length >> 1] : null; };
-    const d = findDiamonds(img, A.quad, A.rot, A.ft, LENS, pp); let use = d, moved = 0;
+    // (V3.24: the table's own diamond offset and height once table checks from two or more phone spots have put them
+    // together; in a table check the offset on a fine grid, a quarter inch at a time (WPA puts the diamonds' centres 3 11/16
+    // in from the cushion nose; Nov 16 20:57 came out 2.5 on the coarse grid). The height stays on the coarse grid: the
+    // diamonds cannot tell it, the corners make up for it (tried on made-up views from three spots: any height leaves the
+    // same few hundredths of an inch), so it is not chased)
+    const tab = diaGet(), grid = A.mode === 'tablecheck' ? { Ds: [...Array(21)].map((_, i) => 1.5 + i * 0.25), zs: [0, 0.8, 1.6] } : null, opt = tab ? { Ds: [tab.D], zs: [tab.z] } : grid;
+    const d = findDiamonds(img, A.quad, A.rot, A.ft, LENS, pp, opt); let use = d, moved = 0; const q0 = A.quad.map(p => p.slice());
     if (d.n >= 8) { const rq = refineWithDiamonds(img, A.quad, A.rot, A.ft, LENS, d, pp);
-      if (rq) { const d2 = findDiamonds(img, rq, A.rot, A.ft, LENS, pp); if (d2.n >= d.n - 1 && med(d2) < med(d)) { moved = Math.max(...rq.map((q, i) => Math.hypot(q[0] - A.quad[i][0], q[1] - A.quad[i][1]))); A.quad = rq; use = d2; } } }
-    A.dia = use.n >= 8 ? use.found.map(f => [f.px, f.py]) : null;
-    dbg('diamonds', { n: d.n, off: d.n ? r1(med(d)) : null, after: r1(med(use) || 0), moved: r1(moved), D: use.D, z: use.z });
+      if (rq) { const d2 = findDiamonds(img, rq, A.rot, A.ft, LENS, pp, { Ds: [d.D], zs: [d.z], marks: d.allMarks }); if (d2.n >= d.n - 1 && med(d2) < med(d)) { moved = Math.max(...rq.map((q, i) => Math.hypot(q[0] - A.quad[i][0], q[1] - A.quad[i][1]))); A.quad = rq; use = d2; } } }
+    A.dia = use.n >= 8 ? use.found.map(f => [f.px, f.py]) : null; A.diaFit = { d: use, q0, moved, tab: !!tab };
+    dbg('diamonds', { n: d.n, off: d.n ? r1(med(d)) : null, after: r1(med(use) || 0), moved: r1(moved), D: use.D, z: use.z, tab: tab ? true : undefined });
   } catch (e) { dbg('error', { m: 'diamonds ' + String(e && e.message || e).slice(0, 100) }); }
 }
 async function acceptTable() {
   const my = A.acceptN = (A.acceptN || 0) + 1; // (the table found again while the finder starts: only the latest goes on)
-  const c = A.cand; A.quad = c.quad; A.rot = c.rot; if (!c.manual) diamondFit(); else A.dia = null;
+  const c = A.cand; A.quad = c.quad; A.rot = c.rot; if (!c.manual) diamondFit(); else { A.dia = null; A.diaFit = null; }
   const { L, Wd } = tableDims(A.ft), f = LENS * Math.max(A.W, A.H);
   A.cam = makeCam(tableCornersFor(A.rot, L, Wd), A.quad, A.W, A.H, f, [A.W / 2, A.H / 2]);
   if (A.drill) drillSetup(); // (the rings follow the table found again)
@@ -4294,7 +4327,8 @@ async function acceptTable() {
   if (my !== A.acceptN) return;
   // (corners set on a still picture: the steady check's reference comes from that picture, so the outline follows the phone
   // if it moved since)
-  steadyRef(); A.frozen = false; clothRef(); A.tk.setBags(pocketBags(A.cam, A.P)); A.phase = 'run'; setStatus('Watching'); runLoop(); watchStart();
+  steadyRef(); A.frozen = false; clothRef(); A.tk.setBags(pocketBags(A.cam, A.P, A.ballZ)); A.phase = 'run'; setStatus(A.mode === 'tablecheck' ? 'Table check' : 'Watching'); runLoop(); watchStart();
+  if (A.mode === 'tablecheck') tcAccepted();
 }
 // the cloth's colour, once the table is accepted: a hidden ball's spot that shows only this colour is bare (see bareCloth)
 function clothRef() {
@@ -4358,7 +4392,8 @@ async function look() {
   preKeep(t);
   const found = await DET.find(A.frame, A.W, A.H, { box: A.box, kmax: A.kmax }), t1 = performance.now();
   const on = [];
-  for (const s of found) { const q = A.cam.unproj(s.px, s.py, R); s.x = q[0]; s.y = q[1]; if (s.x > -3 && s.y > -3 && s.x < P.L + 3 && s.y < P.W + 3) on.push(s); }
+  const bz = A.ballZ != null ? A.ballZ : BALL_Z0;
+  for (const s of found) { const q = A.cam.unproj(s.px, s.py, bz); s.x = q[0]; s.y = q[1]; if (s.x > -3 && s.y > -3 && s.x < P.L + 3 && s.y < P.W + 3) on.push(s); }
   // the reader runs every look (about 10 ms against 220 for the finder on the owner's phone). During a shot its numbers
   // are not votes (the tracker votes on resting balls only), but white or not still tells the cue ball from the rest
   const read = true; await DET.read(A.fctx, on, tk.O.ids);
@@ -4376,7 +4411,7 @@ async function look() {
   if (before !== 'hands' && tk.S.phase === 'hands' && Date.now() - A.handsT > 4000) { A.handsT = Date.now(); const hn = 'hands-' + String(++A.handsN).padStart(3, '0'); clipStart(hn, 2000, 2000); preSave(hn, t); }
   if (tk.S.shots.length > A.nShots) { for (const sh of tk.S.shots.slice(A.nShots)) onShotEnd(sh); A.nShots = tk.S.shots.length; }
   for (const s of tk.S.say.splice(0)) onSay(s);
-  drillReadyLook(); buReadyLook();
+  drillReadyLook(); buReadyLook(); tcLook();
   // in the stroke test the 1 is put back after every pot: no number stays counted in, so it is found and named again
   // (Nov 1: it showed ? every time it came back)
   // a picture of the still table every 1.5 s, kept as the "before" of the next shot
@@ -4637,7 +4672,7 @@ function steady() {
   // two readings 2.7 px apart, y held)
   A.quad = STEADY.quad0.map(p => [p[0] + dx, p[1] + dy]);
   const { L, Wd } = tableDims(A.ft); A.cam = makeCam(tableCornersFor(A.rot, L, Wd), A.quad, A.W, A.H, LENS * Math.max(A.W, A.H), [A.W / 2, A.H / 2]);
-  if (A.tk) A.tk.setBags(pocketBags(A.cam, A.P));
+  if (A.tk) A.tk.setBags(pocketBags(A.cam, A.P, A.ballZ));
   A.box = [Math.max(0, A.box0[0] + dx), Math.max(0, A.box0[1] + dy), A.box0[2], A.box0[3]];
   STEADY.last = [r1(dx), r1(dy)]; dbgOnce('steady', 1000, { shift: STEADY.last, n: ok.length });
 }
@@ -4869,6 +4904,122 @@ function drawDrill(c, S2) {
   c.restore();
 }
 
+// ---------- Table check (V3.24, owner Nov 17) ----------
+// The owner's plan: set the phone where it should be, find the table and say OK; the app fine-tunes the outline on the rail
+// diamonds (a fine grid of offsets and heights, then the corners nudged onto them) and shows how well it sits rail by rail and
+// where the phone is; then the phone moves and turns and the table is found again from the next spot, as many as wanted.
+// Each spot is kept on the phone and in the debug file. Optional at each spot: four balls frozen against the cushions at
+// diamonds. Their distance from the cushion is exact whatever the camera thinks, so they show how far a ball reads from where
+// it really is, across each cushion, and the height the finder's ball centres are best read at from there. With two or more
+// spots: the diamond offset and height they agree on (the table's own: from then on every mode fits the outline with them)
+// and the reading height the ball checks agree on (used from then on, see ballZ).
+const TC_KEY = () => KEY + '.tchk.' + A.ft, DIA_KEY = () => KEY + '.dia.' + A.ft;
+function tcHist() { try { return JSON.parse(localStorage.getItem(TC_KEY()) || '[]') || []; } catch (e) { return []; } }
+function diaGet() { try { const v = JSON.parse(localStorage.getItem(DIA_KEY()) || 'null'); return v && v.n >= 2 && isFinite(v.D) && isFinite(v.z) ? v : null; } catch (e) { return null; } }
+// the rails as the player sees the table (the phone behind the near rail): which side of the table coordinates each is
+function railSide() {
+  const P = A.P, nearY = A.cam.proj(P.L / 2, 0, 0)[1] > A.cam.proj(P.L / 2, P.W, 0)[1] ? 0 : P.W, leftX = A.cam.proj(0, P.W / 2, 0)[0] < A.cam.proj(P.L, P.W / 2, 0)[0] ? 0 : P.L;
+  return { nearY, leftX, of: (sx, sy) => sy < 0 ? (nearY === 0 ? 'near' : 'far') : sy > P.W ? (nearY === 0 ? 'far' : 'near') : sx < 0 ? (leftX === 0 ? 'left end' : 'right end') : (leftX === 0 ? 'right end' : 'left end') };
+}
+const RAILS = ['far', 'near', 'left end', 'right end'];
+// how the outline sits: each diamond seen against where the model puts it, in inches, by rail; how far the corners moved;
+// where the phone is (behind the near rail, off its middle, above the cloth)
+function tcReport() {
+  const f = A.diaFit, P = A.P; if (!A.cam) return null; const rs = railSide(), C = A.cam.C;
+  const phone = { back: r1(rs.nearY === 0 ? -C[1] : C[1] - P.W), side: r1(rs.leftX === 0 ? C[0] - P.L / 2 : P.L / 2 - C[0]), up: r1(C[2]) };
+  if (!f || !f.d || !f.d.n) return { n: 0, rails: {}, phone, manual: !f };
+  const d = f.d, { L, Wd } = tableDims(A.ft), spots = diamondSpots(L, Wd, d.D), per = {};
+  for (const x of d.found) { const [sx, sy] = spots[x.si], k = A.cam.rad(sx, sy, d.z, 1) || 1, r = rs.of(sx, sy); (per[r] = per[r] || []).push(Math.hypot(x.px - x.ex, x.py - x.ey) / k); }
+  const rails = {}; for (const r of RAILS) { const a = (per[r] || []).sort((p, q) => p - q); rails[r] = { n: a.length, med: a.length ? r2(a[a.length >> 1]) : null }; }
+  return { n: d.n, D: d.D, z: d.z, rails, moved: r1(f.moved / (A.cam.rad(P.L / 2, P.W / 2, 0, 1) || 1)), phone, tab: f.tab, marks: d.found.map(x => [r1(x.px), r1(x.py), x.si]) };
+}
+const tcRail = r => r.n ? r.n + ' diamond' + (r.n > 1 ? 's' : '') + ', ' + (r.med < 0.3 ? 'within ' + r.med + ' in' : r.med + ' in off') : 'none seen';
+function tcStart() { A.tchk = { spots: [], cur: null, balls: null }; }
+// accepted at a spot: fine-tuned already (diamondFit), measured, shown
+function tcAccepted() {
+  if (!A.tchk) tcStart(); const T = A.tchk, rep = tcReport(), n = T.spots.length + 1, pic = 'check-' + String(n).padStart(2, '0') + '.jpg';
+  T.cur = { n, rep, t: Date.now(), quad: A.quad.map(p => p.map(r1)), rot: A.rot, wh: [A.W, A.H], pic }; T.balls = null;
+  jpeg(960).then(b => setPic(pic, b)).catch(() => { }); dbg('tchk_fit', { n, rep }); tcCard();
+}
+function tcCard() {
+  const T = A.tchk, c = T.cur, rep = c.rep, ph = rep.phone, b = c.balls;
+  const where = 'The phone is ' + Math.round(ph.back) + ' in behind the near rail, ' + Math.abs(Math.round(ph.side)) + ' in ' + (ph.side >= 0 ? 'right' : 'left') + ' of its middle, ' + Math.round(ph.up) + ' in above the cloth.';
+  const fit = rep.n ? 'Fine-tuned on ' + rep.n + ' of 18 rail diamonds' + (rep.moved ? ' (the outline moved ' + rep.moved + ' in)' : '') + ':<br>' + RAILS.map(r => '&nbsp;· ' + r + ' rail: ' + tcRail(rep.rails[r] || { n: 0 })).join('<br>') : 'No rail diamonds were found to fine-tune on' + (rep.manual ? ' (corners set by hand)' : '') + '.';
+  const balls = b ? '<br><br>Balls against the cushions (how far each reads from where it is, across the cushion):<br>' + b.map(x => '&nbsp;· ' + x.w + ': ' + Math.abs(x.now).toFixed(1) + ' in ' + (x.now < 0 ? 'short of' : 'past') + ' it').join('<br>') + '<br>From here balls read truest taken ' + b.hFit + ' in above the cloth (each then ' + b.map(x => Math.abs(x.atFit).toFixed(1)).join(' / ') + ' in); used from now on in this session.' : '';
+  showCard('<div><b>Spot ' + c.n + '</b><p>' + fit + '<br><br>' + where + balls + '</p></div><div class="row">' +
+    (b ? '' : '<button class="btn" data-act="tc_balls">Check with 4 balls</button>') + '<button class="btn primary" data-act="tc_save">Save this spot</button><button class="btn" data-act="tc_again">Find again</button></div>');
+}
+// the four balls: frozen against each cushion at a diamond, as the player sees the table
+function tcTargets() {
+  const P = A.P, R = P.R, inT = p => [p[0] < 0.01 ? R : p[0] > P.L - 0.01 ? P.L - R : p[0], p[1] < 0.01 ? R : p[1] > P.W - 0.01 ? P.W - R : p[1]];
+  return [['far rail, 6th diamond from the left', viewXY(6, 4), 1], ['near rail, 2nd diamond from the left', viewXY(2, 0), 1], ['left end rail, middle diamond', viewXY(0, 2), 0], ['right end rail, middle diamond', viewXY(8, 2), 0]].map(([w, p, ax]) => ({ w, at: inT(p), ax }));
+}
+function tcBalls() { A.tchk.balls = { targets: tcTargets(), since: null }; hideCard(); $('#drillTag').hidden = false; $('#drillTag').innerHTML = '<b>Freeze a ball against each cushion at its ring</b><br>4 balls, touching the cushion, in line with the diamond; then step back'; }
+// each look while the balls are set: all four resting near their rings for 1.5 s, then read
+function tcLook() {
+  const T = A.tchk, B = T && T.balls; if (!B || A.phase !== 'run' || !A.tk || A.tk.S.phase === 'shot') return;
+  const bs = A.tk.balls().filter(b => b.state === 'rest'), pick = B.targets.map(g => bs.filter(b => Math.hypot(b.x - g.at[0], b.y - g.at[1]) < 7).sort((a, b) => Math.hypot(a.x - g.at[0], a.y - g.at[1]) - Math.hypot(b.x - g.at[0], b.y - g.at[1]))[0]);
+  if (pick.some(b => !b)) { B.since = null; return; } if (B.since == null) { B.since = performance.now(); return; } if (performance.now() - B.since < 1500) return;
+  const bz = A.ballZ != null ? A.ballZ : BALL_Z0, img = pick.map(b => A.cam.proj(b.x, b.y, bz)), perp = (i, h) => A.cam.unproj(img[i][0], img[i][1], h)[B.targets[i].ax] - B.targets[i].at[B.targets[i].ax];
+  // (signed: toward the table's middle is short of the cushion, so the sign is turned for the near and left sides)
+  const sgn = i => (B.targets[i].at[B.targets[i].ax] < (B.targets[i].ax ? A.P.W : A.P.L) / 2 ? -1 : 1);
+  let best = null; for (let h = -1; h <= 1.5001; h += 0.05) { let s = 0; for (let i = 0; i < 4; i++) s += perp(i, h) ** 2; if (!best || s < best.s) best = { h, s }; }
+  const res = B.targets.map((g, i) => ({ w: g.w, at: g.at.map(r1), read: [r1(pick[i].x), r1(pick[i].y)], now: r2(sgn(i) * perp(i, bz)), atFit: r2(sgn(i) * perp(i, best.h)) }));
+  res.forEach((x, i) => { x.img = img[i].map(r1); });
+  // (what the four balls say is used at once for the rest of the session: the phone stays where it was checked)
+  res.hFit = r2(best.h); T.cur.balls = res; T.balls = null; $('#drillTag').hidden = true; A.ballZ = res.hFit; if (A.tk) A.tk.setBags(pocketBags(A.cam, A.P, A.ballZ));
+  dbg('tchk_balls', { n: T.cur.n, res, hFit: res.hFit, bz }); tcCard();
+}
+function tcSave() {
+  const T = A.tchk, c = T.cur; if (!c) return;
+  const rec = { t: c.t, v: VERSION, n: c.n, ft: A.ft, quad: c.quad, rot: c.rot, wh: c.wh, lens: LENS, rep: c.rep, balls: c.balls ? { res: c.balls, hFit: c.balls.hFit } : null, pic: c.pic };
+  T.spots.push(rec); const h = tcHist(); h.push(rec); try { localStorage.setItem(TC_KEY(), JSON.stringify(h.slice(-30))); } catch (e) { }
+  dbg('tchk_spot', rec); T.cur = null;
+  const all = tcHist(), withDia = all.filter(r => r.rep && r.rep.n >= 8).length;
+  showCard('<div><b>Spot ' + rec.n + ' saved</b><p>' + all.length + ' spot' + (all.length > 1 ? 's' : '') + ' kept for the ' + A.ft + ' ft table. Move or turn the phone, then Next spot.' + (withDia >= 2 ? ' Or put the spots together: the table\'s own diamond offset and height, and the reading height, from all of them.' : '') + '</p></div><div class="row"><button class="btn primary" data-act="tc_next">Next spot</button>' + (withDia >= 2 ? '<button class="btn" data-act="tc_combine">Put the spots together</button>' : '') + '<button class="btn" data-act="tc_done">Done</button></div>');
+}
+function tcNext() { const n = (A.tchk ? A.tchk.spots.length : 0) + 1; A.tchk.cur = null; A.tchk.balls = null; $('#drillTag').hidden = true; refind('Spot ' + n + ': set the phone, then the table is looked for'); }
+// all the spots kept for this table size: for each diamond offset and height, every spot's corners nudged onto its own
+// diamonds with them, and the inches left over added up; the pair that leaves the least is the table's (a wrong pair can be
+// hidden by moving the corners at one spot, not at all of them at once). Coarse, then fine; a step at a time so the screen
+// keeps going.
+async function tcCombine() {
+  const recs = tcHist().filter(r => r.rep && r.rep.n >= 8 && r.rep.marks && r.quad && r.wh); if (recs.length < 2) return;
+  const { L, Wd } = tableDims(A.ft), err = (r, D, z) => {
+    const img = { width: r.wh[0], height: r.wh[1] }, pp = [r.wh[0] / 2, r.wh[1] / 2], found = r.rep.marks.map(m => ({ px: m[0], py: m[1], si: m[2] }));
+    const q = refineWithDiamonds(img, r.quad, r.rot, A.ft, r.lens || LENS, { D, z, found }, pp) || r.quad, cam = makeCam(tableCornersFor(r.rot, L, Wd), q, r.wh[0], r.wh[1], (r.lens || LENS) * Math.max(r.wh[0], r.wh[1]), pp), spots = diamondSpots(L, Wd, D);
+    if (!cam.ok) return 9; let s = 0; for (const f of found) { const [sx, sy] = spots[f.si], p = cam.proj(sx, sy, z); s += (Math.hypot(p[0] - f.px, p[1] - f.py) / (cam.rad(sx, sy, z, 1) || 1)) ** 2; } return Math.sqrt(s / found.length);
+  };
+  // (the height on the coarse grid only: see diamondFit)
+  const tryAll = async (Ds, zs) => { let best = null, k = 0; for (const D of Ds) for (const z of zs) { const e = recs.map(r => err(r, D, z)), m = e.reduce((a, b) => a + b, 0) / e.length; if (!best || m < best.m) best = { D, z, m, e }; if (++k % 4 === 0) { setStatus('Putting ' + recs.length + ' spots together…'); await sleep(0); } } return best; };
+  showCard('<div><b>Putting the spots together</b><p>Working through ' + recs.length + ' spots…</p></div>');
+  const c1 = await tryAll([1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5], [0, 0.8, 1.6]);
+  const c2 = await tryAll([-0.5, -0.25, 0, 0.25, 0.5].map(v => c1.D + v).filter(v => v >= 1), [c1.z]);
+  const own = recs.map(r => r.rep.D + '/' + r.rep.z).join(', '), hs = tcHist().filter(r => r.balls && isFinite(r.balls.hFit)).map(r => r.balls.hFit).sort((a, b) => a - b);
+  const out = { D: c2.D, z: r2(c2.z), n: recs.length, rms: r2(c2.m), each: c2.e.map(r2), t: Date.now() }; try { localStorage.setItem(DIA_KEY(), JSON.stringify(out)); } catch (e) { }
+  let hz = null; if (hs.length >= 2) { hz = { z: hs[hs.length >> 1], n: hs.length, all: hs }; try { localStorage.setItem(BZ_KEY, JSON.stringify(hz)); } catch (e) { } A.ballZ = ballZ(); }
+  dbg('tchk_combine', { dia: out, own, ballz: hz });
+  showCard('<div><b>' + recs.length + ' spots put together</b><p>The rail diamonds sit ' + out.D + ' in out from the cushion on this table (each spot alone said ' + own + ', offset/height). With that, each spot\'s outline sits within ' + out.each.join(', ') + ' in of its diamonds. From now on the outline is fitted with it.' +
+    (hz ? '<br><br>The ball checks agree on reading ball centres ' + hz.z + ' in above the cloth (each: ' + hs.join(', ') + '); used from now on.' : hs.length === 1 ? '<br><br>One ball check so far: a second from another spot sets the reading height.' : '') + '</p></div><div class="row"><button class="btn primary" data-act="tc_next">Next spot</button><button class="btn" data-act="tc_done">Done</button></div>');
+  setStatus('Table check');
+}
+function tcDone() {
+  const all = tcHist(), dia = diaGet(); let bz = null; try { bz = JSON.parse(localStorage.getItem(BZ_KEY) || 'null'); } catch (e) { }
+  const rows = all.slice(-8).map(r => 'Spot ' + r.n + ' (' + new Date(r.t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + '): ' + (r.rep.n ? r.rep.n + ' diamonds, rails ' + RAILS.map(k => r.rep.rails[k] && r.rep.rails[k].med != null ? r.rep.rails[k].med : '-').join(' / ') + ' in' : 'no diamonds') + '; phone ' + Math.round(r.rep.phone.back) + ' in back, ' + Math.round(r.rep.phone.up) + ' in up' + (r.balls ? '; balls ' + r.balls.res.map(x => Math.abs(x.now).toFixed(1)).join(' / ') + ' in' : ''));
+  showCard('<div><b>Table check</b><p>' + (rows.join('<br>') || 'No spots saved.') + '<br><br>' + (dia ? 'Diamonds: ' + dia.D + ' in out, ' + dia.z + ' in up (from ' + dia.n + ' spots).' : 'Diamonds: not put together yet (needs 2 spots).') + ' Reading height: ' + r2(A.ballZ != null ? A.ballZ : BALL_Z0) + ' in' + (bz && bz.n >= 2 ? ' (from ' + bz.n + ' ball checks)' : ' (from the Nov 16 rail balls)') + '.<br>Rails in the list: far / near / left end / right end.</p></div><div class="row"><button class="btn" data-act="tc_next">Next spot</button><button class="btn primary" data-act="home">Home</button></div>');
+}
+// on the live view: the outline at the cushion noses, each rail diamond where the model puts it (ring) and where it was seen
+// (dot, joined), green within 0.3 in, yellow within 0.7, red past; the four balls' rings
+function drawTC(c, S2) {
+  if (A.mode !== 'tablecheck' || !A.tchk || !A.cam) return; const T = A.tchk, f = A.diaFit, P = A.P, { L, Wd } = tableDims(A.ft);
+  c.save(); c.lineWidth = 1.2; c.strokeStyle = 'rgba(89,214,232,.8)'; c.beginPath(); [[0, 0], [L, 0], [L, Wd], [0, Wd], [0, 0]].forEach(([x, y], i) => { const p = S2(A.cam.proj(x, y, 1.4)); i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]); }); c.stroke();
+  if ((T.cur || T.balls) && f && f.d && f.d.n) { const spots = diamondSpots(L, Wd, f.d.D);
+    for (const x of f.d.found) { const [sx, sy] = spots[x.si], e = Math.hypot(x.px - x.ex, x.py - x.ey) / (A.cam.rad(sx, sy, f.d.z, 1) || 1), col = e < 0.3 ? '#3ddc84' : e < 0.7 ? '#ffb84d' : '#ff5a5a', a = S2([x.ex, x.ey]), b = S2([x.px, x.py]);
+      c.strokeStyle = col; c.fillStyle = col; c.beginPath(); c.arc(a[0], a[1], 5, 0, Math.PI * 2); c.stroke(); c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); c.beginPath(); c.arc(b[0], b[1], 2, 0, Math.PI * 2); c.fill(); } }
+  if (T.balls) for (const g of T.balls.targets) { c.strokeStyle = 'rgba(244,241,232,.9)'; c.setLineDash([3, 3]); c.beginPath(); for (let i = 0; i <= 36; i++) { const a = i / 36 * Math.PI * 2, s2 = S2(A.cam.proj(g.at[0] + P.R * Math.cos(a), g.at[1] + P.R * Math.sin(a), P.R)); i ? c.lineTo(s2[0], s2[1]) : c.moveTo(s2[0], s2[1]); } c.stroke(); c.setLineDash([]); }
+  c.restore();
+}
+
 // ---------- BU Exam I (V3.22, owner Nov 16; the rules and layouts in src/v3/bu.js) ----------
 // Billiard University's eight fundamentals drills, one after another (or one on its own), each shot judged by the drill's
 // rule from what the camera saw: the object ball in its pocket, where the cue ball stopped, the end rail touched, the rail
@@ -4917,7 +5068,10 @@ function buReadyLook() {
   if (B.ready) { if (A.tk.S.phase === 'hands') { B.ready = false; B.since = null; dbg('bu_unready', { why: 'hands' }); } buTag(); return; }
   const L = B.lay, marks = [L.O].concat(L.C ? [L.C] : []), near = b => marks.some(p => Math.hypot(b.x - p[0], b.y - p[1]) < (L.free ? 14 : 10));
   const cueStill = A.tk.balls().some(b => b.num === 0 && b.state === 'rest'), bo = buBall(L, L.O, false), bc = L.C ? buBall(L, L.C, true) : null;
-  const on = A.tk.S.phase === 'still' && cueStill && !A.tk.balls().some(b => near(b) && (b.state === 'moving' || b.state === 'pending')) && bo && (!L.C || bc) && !(B.since != null && handAtSpots({ O: [bo.x, bo.y], C: bc ? [bc.x, bc.y] : null }));
+  // (F7: the rail ball to hit must be seen on its mark too, or the hit cannot be judged: Nov 16 20:57, rail ball 1 was never
+  // seen and both tries were "missed rail ball 1"; one was changed by hand)
+  const tbOk = !L.tball || A.tk.balls().some(b => b.state !== 'hidden' && b.num !== 0 && Math.hypot(b.x - L.tball[0], b.y - L.tball[1]) < 4);
+  const on = A.tk.S.phase === 'still' && cueStill && !A.tk.balls().some(b => near(b) && (b.state === 'moving' || b.state === 'pending')) && bo && (!L.C || bc) && tbOk && !(B.since != null && handAtSpots({ O: [bo.x, bo.y], C: bc ? [bc.x, bc.y] : null }));
   if (!on) { B.since = null; B.ready = false; }
   else { if (B.since == null) B.since = performance.now(); if (!B.ready && performance.now() - B.since >= READY_S * 1000) { B.ready = true; dbg('bu_ready', { id: B.id, shot: B.stt.shot }); } }
   buTag();
@@ -4931,7 +5085,16 @@ function buFacts(sh, lay) {
   if (ob && !m) { const af = (sh.after || []).find(b => b.key === ob.key), pth = (sh.paths || []).find(p => p.key === ob.key), pk = A.P.pockets[lay.pocket];
     const lastP = pth && pth.p.length ? [pth.p[pth.p.length - 1][1], pth.p[pth.p.length - 1][2]] : null;
     if ((!af || af.state === 'hidden') && lastP && Math.hypot(lastP[0] - pk.x, lastP[1] - pk.y) < 10) m = { key: ob.key, pocket: lay.pocket, vanished: true };
-    else if (af && onBag(lay.pocket, af.x, af.y)) m = { key: ob.key, pocket: lay.pocket, bag: true }; }
+    else if (af && onBag(lay.pocket, af.x, af.y)) m = { key: ob.key, pocket: lay.pocket, bag: true };
+    // (V3.24, Nov 16 20:57, F2 and F4: on a firm stop shot the object ball is in before the shot is seen, so it was "hidden"
+    // when the shot started, and then showed lying in the far right pocket's bowl as a new ball: in. Or hidden, never seen
+    // again, the cue ball came up to it and its spot is bare cloth now: in, the pocket not known)
+    else if (ob.state === 'hidden' || (pth && pth.p.length > 1 && Math.hypot(pth.p[1][1] - pth.p[0][1], pth.p[1][2] - pth.p[0][2]) > 12)) {
+      const fresh = (sh.after || []).filter(b => b.key !== sh.cueKey && b.num !== 0 && b.state !== 'hidden' && !(sh.before || []).some(q => q.key === b.key) && Math.hypot(b.x - pk.x, b.y - pk.y) < 9);
+      const cpts = ((sh.paths || []).find(p => p.key === sh.cueKey) || { p: [] }).p, reached = cpts.some(q => Math.hypot(q[1] - at(ob)[0], q[2] - at(ob)[1]) < 12);
+      if (fresh.length) m = { key: ob.key, pocket: lay.pocket, bag: true, fresh: true };
+      else if (reached && (!af || af.state === 'hidden' || Math.hypot(af.x - at(ob)[0], af.y - at(ob)[1]) > 12) && emptyAt(at(ob)[0], at(ob)[1]) !== false) m = { key: ob.key, pocket: null, vanished: true };
+    } }
   const ca = (sh.after || []).find(b => b.key === sh.cueKey), cp = (sh.paths || []).find(p => p.key === sh.cueKey);
   let targetMoved = false;
   if (lay.tball) { const tb = (sh.before || []).filter(b => b.key !== sh.cueKey && (!ob || b.key !== ob.key) && dist(b, lay.tball) <= 4).sort((a, b) => dist(a, lay.tball) - dist(b, lay.tball))[0];
@@ -4940,9 +5103,13 @@ function buFacts(sh, lay) {
   // (a late call's pocket, or one worked out for a ball not seen going in, is a guess: not held against the shot, as in
   // the drills. Nov 16 20:10: F5 shot 7, the 8 straight into the near side pocket, and F6 shot 4 were scored "wrong pocket"
   // on such guesses)
-  const cb = (sh.before || []).find(b => b.key === sh.cueKey), far = cp && cp.p.length ? Math.max(...cp.p.map(q => Math.hypot(q[1] - cp.p[0][1], q[2] - cp.p[0][2]))) : 0;
+  // (the cue ball's start: its track at the shot's start, else the cue ball named before it, else where its path began;
+  // Nov 16 20:57, F2 shot 4: the cue ball was found again as a new track, so the stop was measured from the X and the made
+  // stop was scored a miss)
+  const cb = (sh.before || []).find(b => b.key === sh.cueKey) || (sh.before || []).find(b => b.num === 0), far = cp && cp.p.length ? Math.max(...cp.p.map(q => Math.hypot(q[1] - cp.p[0][1], q[2] - cp.p[0][2]))) : 0;
+  const cueAt = cb ? at(cb) : cp && cp.p.length ? [cp.p[0][1], cp.p[0][2]] : null;
   return { ob, obIn: !!m, obPocket: m && m.pocket != null && m.seen !== false && !m.late && !m.vanished && !m.bag ? m.pocket : null, scratch: !!sh.scratch, cueEnd: ca && ca.state !== 'hidden' ? [ca.x, ca.y] : null, cuePath: cp ? cp.p.map(q => [q[1], q[2]]) : [], targetMoved, obMoved,
-    obAt: ob ? at(ob) : null, cueAt: cb ? at(cb) : null, cueFar: far };
+    obAt: ob ? at(ob) : null, cueAt, cueFar: far };
 }
 function buScore(sh, q) {
   const B = A.bu; if (!B) return;
@@ -4966,7 +5133,10 @@ function buEarly() {
   const f = buFacts(live, L); if (!f.ob) return;
   const rest = x => x && x.state === 'rest' && x.restSince != null && tk.S.t - x.restSince >= 0.7, tr = tk.S.tracks.find(x => x.key === f.ob.key);
   if (!f.obIn && rest(tr) && onBag(L.pocket, tr.x, tr.y)) { f.obIn = true; f.obPocket = null; }
-  const missed = !f.obIn && rest(tr) && Math.hypot(tr.x - f.obAt[0], tr.y - f.obAt[1]) > 2 && !A.P.pockets.some(pk => Math.hypot(pk.x - tr.x, pk.y - tr.y) < 6);
+  // (not when the object ball was hidden as the shot started or its track jumped a foot at once: Nov 16 20:57, F2 shot 9, its
+  // track took another ball across the table and the made ball was called a miss)
+  const op = live.paths.find(p => p.key === f.ob.key), jump = op && op.p.length > 1 && Math.hypot(op.p[1][1] - op.p[0][1], op.p[1][2] - op.p[0][2]) > 12;
+  const missed = !f.obIn && f.ob.state !== 'hidden' && !jump && rest(tr) && Math.hypot(tr.x - f.obAt[0], tr.y - f.obAt[1]) > 2 && !A.P.pockets.some(pk => Math.hypot(pk.x - tr.x, pk.y - tr.y) < 6);
   const cue = tk.S.tracks.find(x => x.key === sh.cueKey), cueRest = !live.scratch && rest(cue) && f.cueFar >= 4;
   if (!missed && !(f.obIn && (L.id === 'F1' || L.id === 'F6' || live.scratch || cueRest))) return;
   if (cueRest) f.cueEnd = [cue.x, cue.y];
@@ -5071,7 +5241,7 @@ function strokeFrame(img, t) {
 function strokeShot(n) {
   const t = Date.now() - DBG.t0, W = WATCH; STK.shotT = t;
   setTimeout(() => {
-    const obs = STK.obs.filter(q => q.t >= t - 6000), k = W.w / W.box[2], toTable = (px, py) => A.cam.unproj(W.box[0] + px / k, W.box[1] + py / k, A.P.R);
+    const obs = STK.obs.filter(q => q.t >= t - 6000), k = W.w / W.box[2], toTable = (px, py) => A.cam.unproj(W.box[0] + px / k, W.box[1] + py / k, A.ballZ != null ? A.ballZ : BALL_Z0);
     let r = null; try { r = obs.length > 10 ? STROKE.summarize(obs, toTable) : null; } catch (e) { dbg('error', { m: 'stroke sum ' + String(e && e.message || e).slice(0, 100) }); }
     const pre = obs.filter(q => r && r.strike != null && q.t < r.strike), angs = pre.map(q => q.ang).filter(a => a != null).sort((a, b) => a - b), med = angs.length ? angs[angs.length >> 1] : null;
     const level = med != null && Math.min(Math.abs(((med + 180) % 180)), 180 - ((med + 180) % 180)) <= 25, seen = pre.length ? angs.length / pre.length : 0;
@@ -5145,7 +5315,7 @@ function drawLoop() {
   if (A.phase === 'manual' && A.man) drawManual(c, S2, F);
   // a drill's rings as soon as the table is accepted, while the ball finder starts (Nov 2, 16:55: it never started, and
   // the rings never showed)
-  if ((A.phase === 'run' || A.phase === 'load') && A.cam) { drawDrill(c, S2); drawBU(c, S2); }
+  if ((A.phase === 'run' || A.phase === 'load') && A.cam) { drawDrill(c, S2); drawBU(c, S2); drawTC(c, S2); }
   if (A.pathClearAt && performance.now() > A.pathClearAt) { PATH.clear(); A.pathClearAt = null; }
   if (A.phase !== 'run' || !A.tk || !A.cam) return;
   if (A.mode === 'coach') drawCoach(c, S2, F);
@@ -5623,7 +5793,11 @@ function pickBall(n) {
   const was = b.num; saveTap(b, n, was); A.tk.pin(b.key, n); dbg('tap', { key: b.key, num: n, was, at: [r1(b.x), r1(b.y)] });
   toast(n === was ? 'Kept: the ' + (n === 0 ? 'cue ball' : n) : 'Renamed: the ' + (n === 0 ? 'cue ball' : n) + (was != null ? ' (was ' + (was === 0 ? 'cue' : was) + ')' : ''));
 }
-$('#pickNot').onclick = () => { const k = A.pick, b = A.tk.S.tracks.find(t => t.key === k); closePick(); if (b) { saveTap(b, 'not', b.num); const was = JSON.stringify(A.tk.S.shallow); A.tk.notBall(k); const learnt = JSON.stringify(A.tk.S.shallow) !== was; if (learnt) shallowSave(); dbg('tap_not', { key: k, shallow: learnt ? A.tk.S.shallow : undefined }); toast(learnt ? 'Removed: a ball lying in the pocket. Remembered for this pocket' : 'Removed: not a ball'); } };
+// (V3.24: on a drill's or the exam's marks the spot is not remembered, only the track dropped: balls are set there again and
+// again. Nov 16 20:57, F4: a stale track of the 3 on its mark was tapped away, the spot remembered as "not a ball", and the
+// 3 set there for the next shots was never seen)
+function onMarks(x, y) { const ps = [].concat(A.drill && A.drill.st ? [A.drill.st.O, A.drill.st.C] : [], A.bu && A.bu.lay ? [A.bu.lay.O, A.bu.lay.C, A.bu.lay.tball] : []).filter(Boolean); return ps.some(p => Math.hypot(p[0] - x, p[1] - y) < 6); }
+$('#pickNot').onclick = () => { const k = A.pick, b = A.tk.S.tracks.find(t => t.key === k); closePick(); if (b) { saveTap(b, 'not', b.num); const was = JSON.stringify(A.tk.S.shallow), nAt = A.tk.S.notAt.length, mark = onMarks(b.x, b.y); A.tk.notBall(k); if (mark && A.tk.S.notAt.length > nAt) A.tk.S.notAt.length = nAt; const learnt = JSON.stringify(A.tk.S.shallow) !== was; if (learnt) shallowSave(); dbg('tap_not', { key: k, shallow: learnt ? A.tk.S.shallow : undefined, mark: mark || undefined }); toast(learnt ? 'Removed: a ball lying in the pocket. Remembered for this pocket' : 'Removed: not a ball'); } };
 $('#pickPocket').onclick = () => { const k = A.pick; closePick(); A.tk.inPocket(k); dbg('tap_pocketed', { key: k }); toast('Marked as in a pocket'); };
 $('#pickCancel').onclick = closePick;
 $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closePick(); });
@@ -5652,12 +5826,13 @@ $('#card').addEventListener('click', e => {
   else if (a === 'dbg') saveDebug(b); else if (a === 'useman') useManual();
   else if (a === 'drills') drillMenu(); else if (a === 'drill_stop') drillStop();
   else if (a === 'bu_menu') buMenu(); else if (a === 'bu_stop' || a === 'bu_close') buStop(); else if (a === 'bu_fix') buFix();
+  else if (a === 'tc_balls') tcBalls(); else if (a === 'tc_save') tcSave(); else if (a === 'tc_again') { A.tchk.cur = null; hideCard(); refind(); } else if (a === 'tc_next') { hideCard(); tcNext(); } else if (a === 'tc_combine') tcCombine(); else if (a === 'tc_done') tcDone();
   else if (a && a.startsWith('st_')) { hideCard(); const k = a.slice(3); if (A.stest) stStop(); else stStart(k); }
   // (Check my stroke taken out, V3.8.9, owner Nov 8: the stroke is read on every shot anyway, shown in the review; the
   // full-rate close-up clips it added were for checking the measure, done on Nov 2, and its message after each shot asked
   // the player to look at the phone. A.strokeCheck stays false.)
 });
-$('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row">' + (A.mode === 'coach' ? (A.stest ? '<button class="btn" data-act="st_stop">Stop the ' + TESTS[A.stest.kind].name.toLowerCase() + '</button>' : ['power', 'spin', 'draw'].map(k => '<button class="btn" data-act="st_' + k + '">' + TESTS[k].name + '</button>').join('')) : '') + (A.bu ? '<button class="btn" data-act="bu_stop">Stop the BU exam</button>' : '') + '<button class="btn" data-act="drills">' + (A.drill ? 'Drill: ' + DRILL.byId(A.drill.id).name : 'Drills') + '</button><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="dbg">Save debug</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
+$('#menuBtn').onclick = () => showCard('<div><b>Menu</b><p>' + (A.tk ? A.tk.S.shots.length + ' shots so far.' : '') + '</p></div><div class="row">' + (A.mode === 'coach' ? (A.stest ? '<button class="btn" data-act="st_stop">Stop the ' + TESTS[A.stest.kind].name.toLowerCase() + '</button>' : ['power', 'spin', 'draw'].map(k => '<button class="btn" data-act="st_' + k + '">' + TESTS[k].name + '</button>').join('')) : '') + (A.bu ? '<button class="btn" data-act="bu_stop">Stop the BU exam</button>' : '') + (A.mode === 'tablecheck' ? '<button class="btn" data-act="tc_next">Table check: next spot</button><button class="btn" data-act="tc_done">Table check: spots so far</button>' : '') + '<button class="btn" data-act="drills">' + (A.drill ? 'Drill: ' + DRILL.byId(A.drill.id).name : 'Drills') + '</button><button class="btn" data-act="refind">Find the table again</button><button class="btn" data-act="dbg">Save debug</button><button class="btn" data-act="home">Home</button><button class="btn" data-act="close">Close</button></div>');
 // (pressed again after the rack was done by itself, or twice: no shot since, so it is not another rack)
 $('#rackBtn').onclick = () => { if (!A.tk) return; const dup = A.tk.S.setup && A.tk.S.shots.length === A.tk.S.rackAt; A.tk.newRack(); flushShots(); PATH.clear(); rackOpen(); dbg('new_rack', dup ? { dup: true } : {}); toast('New rack. Names come once the break spreads the balls.'); };
 let toastT = 0;

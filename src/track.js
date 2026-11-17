@@ -698,9 +698,12 @@ function makeTracker(P, opts) {
     ev('shot', { n: S.shot.n, key: tr.key, num: tr.num, break: S.shot.break });
     // a shot seen late (the cue ball found again only after it jumped): a ball that vanished since it started, by a pocket
     // and struck or in the jaws, went in (Oct 27: the 1 in the jaws, gone the same look the cue ball reached it)
+    // (V3.24: or gone the look the cue ball turned up next to where it sat, so it was struck, with a pocket within 10 in: Nov
+    // 16 20:57, BU F2 and F4, stop shots from the half-diamond spot 7 in from the corner, the cue ball seen first at the ghost
+    // ball and the object ball already in; never called, and three made shots were set aside as untouched)
     if (back < t) for (const b of ballsNow()) {
-      if (b.state !== 'hidden' || !(b.lostT >= back - 0.05) || b.vLost) continue; const near = pocketNear(b.x, b.y);
-      if (near.d <= O.jawZone || (b.knock && near.d <= O.pocketZone)) { b.state = 'pending'; b.pocket = near.i; ev('lost_at_pocket', { key: b.key, num: b.num, pocket: near.i }); }
+      if (b.state !== 'hidden' || !(b.lostT >= back - 0.05) || b.vLost) continue; const near = pocketNear(b.x, b.y), struck = dist(b, tr) <= 2 * R + 4 && near.d <= O.pocketZone + 6;
+      if (back < t && (near.d <= O.jawZone || (b.knock && near.d <= O.pocketZone) || struck)) { b.state = 'pending'; b.pocket = near.i; ev('lost_at_pocket', { key: b.key, num: b.num, pocket: near.i, struck: struck || undefined }); }
     }
   }
   // anything but the cue ball changed in a shot: a ball on the table before it moved, went out of sight, or is gone

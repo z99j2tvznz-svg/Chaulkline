@@ -17,11 +17,13 @@ function bareCloth(img, px, py, rpx, cl) {
 // the cloth, is found by the ball finder (weakly, part of it hidden by the rim) and maps onto the table 4 to 10 in in
 // front of the pocket (Oct 27: the 7 in the far right corner came out at 76, 33 and looked like it rolled back out).
 // One line per pocket, in table inches, from a ball 0.5 in down to 4 in down; only the pockets whose line lands on the cloth.
-function pocketBags(cam, P) {
-  const out = [];
+function pocketBags(cam, P, bz) {
+  // (read at the height found balls are read at, V3.24: the cloth; the finder's centre of a ball sits about a radius below
+  // its middle, so a ball lying in the pocket shows that much lower too, dz)
+  const out = [], z = bz != null ? bz : P.R, dz = P.R - z;
   P.pockets.forEach((pk, i) => {
-    const a = cam.proj(pk.x, pk.y, -0.5), b = cam.proj(pk.x, pk.y, -4); if (!a || !b) return;
-    const ua = cam.unproj(a[0], a[1], P.R), ub = cam.unproj(b[0], b[1], P.R);
+    const a = cam.proj(pk.x, pk.y, -0.5 - dz), b = cam.proj(pk.x, pk.y, -4 - dz); if (!a || !b) return;
+    const ua = cam.unproj(a[0], a[1], z), ub = cam.unproj(b[0], b[1], z);
     if (ub[0] < 0 || ub[1] < 0 || ub[0] > P.L || ub[1] > P.W) return;
     out.push({ i, ax: ua[0], ay: ua[1], bx: ub[0], by: ub[1] });
   });
