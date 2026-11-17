@@ -2099,3 +2099,14 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
     fit). A ball check records its zDia, and putting spots together stores h16 (each check turned to z 1.6).
   - Spots 1 and 7 had the right end rail 2.4 and 1.4 in off: three diamonds seen steeply from the near-right side. The
     other rails at those spots were within 0.55 in.
+- V3.24.3 (owner, Nov 17: set the balls once at diamonds and leave them, only the camera moves; a "capture position" button):
+  - The table check's balls are five numbered balls left on the table for every spot (TC_BALLS, tcLayout): the 1 and 2
+    against the far rail at its 2nd and 6th diamonds from the left, the 3 against the near rail at its 3rd, the 4
+    against the right end rail's middle diamond, the 5 against the left end rail's diamond nearest the far rail. "Far",
+    "near" and "left" are as seen from the owner's usual spot.
+  - Turned half round, the layout is a different one, so tcMatch tries both ways round. Each ball is found within 10 in
+    of its place, its number counting 4 in; the lower cost wins. With none seen, the near rail goes on the phone's side.
+  - tcSide names where the phone is in the layout's terms.
+  - "Capture the balls" (tcCapture) reads them where they are. Each ball's distance from its cushion is exact; the fit
+    of the reading height uses those distances. How far each was set from its diamond is shown and kept.
+  - The record keeps flip, side, each ball's number as read, its image point and zDia. The rings carry the numbers.
