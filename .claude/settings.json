@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Read",
+      "Edit",
+      "Write",
+      "WebFetch",
+      "WebSearch",
+      "mcp__Google_Docs__read_doc",
+      "mcp__Google_Docs__update_doc",
+      "mcp__Google_Drive__search_files",
+      "mcp__Google_Drive__get_file_metadata",
+      "mcp__Google_Drive__read_file_content",
+      "mcp__Google_Drive__download_file_content",
+      "mcp__Google_Drive__copy_file",
+      "mcp__Google_Drive__update_file",
+      "mcp__Google_Drive__create_file"
+    ],
+    "deny": [
+      "mcp__Google_Drive__trash_file"
+    ]
+  }
+}
