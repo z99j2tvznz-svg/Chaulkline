@@ -16,11 +16,11 @@ test('every level of every drill sets out on the table, as cut as it says', () =
   });
 });
 
-test('a shot scored: in the pocket it was for is made; another pocket, a scratch or no ball in is missed; off its ring it does not count', () => {
+test('a shot scored: in the pocket it was for is made, scratch or not (owner, Nov 17); another pocket or no ball in is missed; off its ring it does not count', () => {
   const st = DRILL.setup('cut', 2, P, view);
   assert.strictEqual(DRILL.score(st, shot(st), P).made, true);
   assert.strictEqual(DRILL.score(st, shot(st, { pocket: (st.pocket + 1) % 6 }), P).made, false);
-  assert.strictEqual(DRILL.score(st, shot(st, { scratch: true }), P).made, false);
+  assert.strictEqual(DRILL.score(st, shot(st, { scratch: true }), P).made, true);
   assert.strictEqual(DRILL.score(st, shot(st, { made: false }), P).made, false);
   assert.strictEqual(DRILL.score(st, shot(st, { off: 12 }), P).scored, false);
   // set out roughly: 3 in off the ring still counts, and the cut is the one really played
@@ -35,7 +35,7 @@ test('the stop shot: in, and the cue ball within two balls of where it hit; the 
 });
 
 test('progressive: up a level on a make, down on a miss, within the drill', () => {
-  assert.deepStrictEqual([DRILL.next('cut', 0, true), DRILL.next('cut', 0, false), DRILL.next('cut', 5, true), DRILL.next('cut', 3, false)], [1, 0, 5, 2]);
+  assert.deepStrictEqual([DRILL.next('thin', 0, true), DRILL.next('thin', 0, false), DRILL.next('thin', 5, true), DRILL.next('thin', 3, false)], [1, 0, 5, 2]);
   const s = DRILL.summary([{ id: 'cut', level: 0, made: true }, { id: 'cut', level: 1, made: false }, { id: 'cut', level: 0, made: true }]);
   assert.deepStrictEqual(s.map(x => [x.id, x.tries, x.made, x.best]), [['cut', 3, 2, 0]]);
 });
@@ -50,16 +50,25 @@ test('no drill is shot from where the phone stands (owner, Nov 3: the phone behi
   });
 });
 
-test('the cut ladder (V3.22.1): further from the corner at each step, the cue ball moved a little; thin cuts: the ball against the end rail', () => {
+test('the cut ladder (V3.23): 10-50 degree cuts at each distance, 1 to 5 diamonds out round by round; the cue ball moved a little; thin cuts: the ball against the end rail', () => {
   for (const ft of [7, 8, 9]) {
-    const Pt = makeP(ft), vt = (dx, dy) => [dx * Pt.L / 8, dy * Pt.W / 4], sts = DRILL.byId('cut').levels.map((v, l) => DRILL.setup('cut', l, Pt, vt)), pk = [Pt.pockets[sts[0].pocket].x, Pt.pockets[sts[0].pocket].y];
-    const d = st => Math.hypot(st.O[0] - pk[0], st.O[1] - pk[1]);
-    for (let i = 1; i < sts.length; i++) assert.ok(d(sts[i]) > d(sts[i - 1]), ft + ' ft: further from the pocket at step ' + (i + 1) + ': ' + sts.map(d).map(Math.round));
-    assert.ok(sts.every(st => Math.hypot(st.C[0] - 3 * Pt.L / 8, st.C[1] - Pt.W / 2) < 0.7 * Pt.L / 8), 'the cue ball within about half a diamond of its start');
-    assert.ok(new Set(sts.map(st => st.C.join())).size >= 5, 'moved for a different look');
-    assert.ok(/diamonds? out/.test(sts[3].word), sts[3].word);
+    const Pt = makeP(ft), dt = Pt.L / 8, vt = (dx, dy) => [dx * dt, dy * dt], d = DRILL.byId('cut');
+    d.rounds.forEach((rd, ri) => {
+      const sts = d.levels.map((v, l) => DRILL.setup('cut', l, Pt, vt, ri)), pk = [Pt.pockets[sts[0].pocket].x, Pt.pockets[sts[0].pocket].y];
+      sts.forEach((st, l) => {
+        const on = p => p[0] >= Pt.R && p[1] >= Pt.R && p[0] <= Pt.L - Pt.R && p[1] <= Pt.W - Pt.R;
+        assert.ok(on(st.O) && on(st.C), ft + ' ft round ' + ri + ' step ' + l + ' on the table');
+        assert.ok(Math.abs(Math.hypot(st.O[0] - pk[0], st.O[1] - pk[1]) / dt - rd) < 0.05, ft + ' ft: ' + st.word + ' really ' + rd + ' out');
+        const r = DRILL.score(st, shot(st), Pt); assert.ok(r.made && Math.abs(r.cut - d.levels[l]) <= 1, ft + ' ft ' + st.word + ': cut ' + r.cut);
+        assert.strictEqual(st.word, d.levels[l] + '° cut, ' + rd + ' diamond' + (rd > 1 ? 's' : '') + ' out');
+      });
+      assert.ok(new Set(sts.map(st => Math.round(Math.hypot(st.C[0] - st.O[0], st.C[1] - st.O[1])))).size >= 3, 'the cue ball a different distance back at the steps');
+    });
   }
   const th = DRILL.setup('thin', 0, P, view); assert.ok(P.L - th.O[0] < P.R + 0.5, 'against the end rail'); assert.strictEqual(P.pocketNames[th.pocket], 'bottom-right');
+  // the summary keeps the rounds apart
+  const s = DRILL.summary([{ id: 'cut', level: 0, round: 0, made: true }, { id: 'cut', level: 0, round: 2, made: true }]);
+  assert.deepStrictEqual(s[0].levels.map(x => x[0]), ['10° cut, 1 diamond out', '10° cut, 3 diamonds out']); assert.strictEqual(s[0].best, 10);
 });
 
 test('a late call of the object ball counts whatever pocket it guessed (Nov 8 10:48, 6: the 8 called in late, in the wrong pocket)', () => {

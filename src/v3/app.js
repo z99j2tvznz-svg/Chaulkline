@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.22.1';
+const VERSION = 'V3.23.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -563,7 +563,10 @@ function onShotEnd(sh) {
   if (A.bu && A.buReadyOf && A.buReadyOf.has(sh.n) && !A.buReadyOf.get(sh.n).ready) row1.notShot = 'setup'; // (moved before Ready in the exam: setting up)
   if (A.drill && A.drillReadyOf.has(sh.n)) {
     const cp = (sh.paths || []).find(p => p.key === sh.cueKey), far = cp ? Math.max(...cp.p.map(q => Math.hypot(q[1] - cp.p[0][1], q[2] - cp.p[0][2]))) : 0;
-    const nudge = far < 6 && !(sh.paths || []).some(p => p.key !== sh.cueKey) && !row.made.length && !sh.scratch;
+    // (V3.23: another ball's path under 3 in is flicker, not a hit: Nov 16 20:10, 3, the cue ball eased 2.3 in into place
+    // and the ball beside it read 1.4 in off)
+    const mv = q => Math.max(...q.p.map(z => Math.hypot(z[1] - q.p[0][1], z[2] - q.p[0][2])));
+    const nudge = far < 6 && !(sh.paths || []).some(p => p.key !== sh.cueKey && mv(p) >= 3) && !row.made.length && !sh.scratch;
     if (!A.drillReadyOf.get(sh.n) || nudge) { row1.notShot = 'setup'; dbg('drill_setup_move', { n: sh.n, ready: A.drillReadyOf.get(sh.n), far: r1(far) }); }
   }
   const dt = (A.sess.drillTries || []).find(x => x.n === sh.n); if (dt) row1.drill = dt;
@@ -601,8 +604,22 @@ function pathLook() {
   }
 }
 const moved = pts => { let m = 0; for (const q of pts) m = Math.max(m, Math.hypot(q.x - pts[0].x, q.y - pts[0].y)); return m; };
-// for the debug file: each ball that moved, its path in table inches, 0.1 in and 0.01 s from the shot's start
-function pathsRow(sh) { const o = []; for (const [key, e] of PATH) if (moved(e.pts) > 1) o.push({ key, num: e.num, p: e.pts.map(q => [r2(q.t - sh.t0), r1(q.x), r1(q.y)]) }); return o; }
+// for the debug file: each ball that moved, its path in table inches, 0.1 in and 0.01 s from the shot's start (and f, the
+// points the trail filled in where the ball was not seen, V3.23)
+function pathsRow(sh) { const o = [], th = trailHit(sh);
+  for (const [key, e] of PATH) if (moved(e.pts) > 1) { const r = { key, num: e.num, p: e.pts.map(q => [r2(q.t - sh.t0), r1(q.x), r1(q.y)]) };
+    const f = TRAIL.fill(e.pts, A.P, key === sh.cueKey ? th : null).filter(q => q.fill); if (f.length) r.f = f.map(q => [r2(q.t - sh.t0), r1(q.x), r1(q.y)]); o.push(r); }
+  return o; }
+// The cue ball's first hit, for its trail through what was not seen (TRAIL, V3.23): the tracker's first ball, else the
+// object ball seen moving first; where the cue ball met it (the ghost ball) and when that ball was first seen moving
+function trailHit(sh) {
+  if (!sh) return null; let key = sh.first;
+  if (key == null) { let bt = Infinity; for (const [k, e] of PATH) { if (k === sh.cueKey || e.num === 0) continue; const st = (sh.before || []).find(q => q.key === k); if (!st || st.rx == null) continue;
+    const t = TRAIL.movedAt([st.rx, st.ry], e.pts); if (t != null && t < bt) { bt = t; key = k; } } }
+  if (key == null) return null; const st = (sh.before || []).find(q => q.key === key); if (!st || st.rx == null) return null;
+  const e = PATH.get(key), m = (sh.made || []).find(q => q.key === key && q.pocket != null), ob = [st.rx, st.ry];
+  const hit = TRAIL.hitOf(A.P, ob, e && e.pts, m ? A.P.pockets[m.pocket] : null); return hit ? { hit, hitT: TRAIL.movedAt(ob, e && e.pts) } : null;
+}
 // a ball found to have gone in after its shot ended (its spot is bare cloth now): the shot's line is corrected and said
 function onLateMade(n) {
   const row = A.sess.shots.find(s => s.n === n.n), sh = A.tk.S.shots.find(s => s.n === n.n);
@@ -794,19 +811,20 @@ function viewXY(dx, dy) {
 function drillMenu() {
   showCard('<div><b>Drills</b><p>Each ball goes on its X: touch the X on the cloth with a wet finger, set the ball on the mark, wait for Ready, and shoot. Three shots at each step, then the next. Practice rules apply: move and pick up balls as you like.</p></div><div class="dlist">' +
     '<button class="btn" data-act="bu_menu"><b>BU Exam I: Fundamentals</b><small>Billiard University\'s eight fundamentals drills, laid out and scored by its rules (100 points). You can correct any shot the camera got wrong.</small></button>' +
-    DRILL.LIST.map(d => '<button class="btn" data-drill="' + d.id + '"><b>' + d.name + '</b><small>' + d.about + '</small></button>').join('') + '</div><div class="row">' + (A.drill ? '<button class="btn" data-act="drill_stop">Stop the drill</button>' : '') + '<button class="btn" data-act="close">Close</button></div>');
+    DRILL.LIST.map(d => d.rounds ? '<div class="btn" style="cursor:default"><b>' + d.name + '</b><small>' + d.about + '</small><div class="row" style="margin-top:6px;flex-wrap:wrap;gap:6px">' + d.rounds.map((r, i) => '<button class="btn" data-drill="' + d.id + '" data-round="' + i + '" style="flex:1 1 30%;min-width:84px;padding:6px 4px;font-size:12px">' + DRILL.outWord(r) + '<br><small>' + d.roundWords[i] + '</small></button>').join('') + '</div></div>'
+      : '<button class="btn" data-drill="' + d.id + '"><b>' + d.name + '</b><small>' + d.about + '</small></button>').join('') + '</div><div class="row">' + (A.drill ? '<button class="btn" data-act="drill_stop">Stop the drill</button>' : '') + '<button class="btn" data-act="close">Close</button></div>');
 }
-function drillStart(id) {
-  if (A.bu) buStop(true);
+function drillStart(id, round) {
+  if (A.bu) buStop(true); if (A.stest) stStop();
   if (!A.tk || !A.cam) return; hideCard();
   Object.assign(A.tk.O, { practice: true, autoRack: false, rackNew: false }); A.mode = 'practice'; if (A.sess) A.sess.mode = 'practice'; $('#rackBtn').hidden = true;
-  A.drill = { id, level: 0, n: 0, from: A.tk.S.shots.length }; drillSetup(); dbg('drill_start', { id });
-  toast(DRILL.byId(id).name + ': set the balls where the lines cross, wait for Ready, and shoot.', 5000);
+  A.drill = { id, level: 0, n: 0, round: round || 0, from: A.tk.S.shots.length }; drillSetup(); dbg('drill_start', { id, round: round || undefined });
+  toast(DRILL.byId(id).name + ': each ball on its X, wait for Ready, and shoot.', 5000);
 }
 function drillStop() { if (A.drill) dbg('drill_stop', { id: A.drill.id }); A.drill = null; $('#drillTag').hidden = true; hideCard(); }
 function drillSetup() {
-  const D = A.drill; D.st = DRILL.setup(D.id, D.level, A.P, viewXY); const ts = (A.sess.drillTries || []).filter(t => t.id === D.id);
-  D.base = DRILL.byId(D.id).name + ' · ' + D.st.word + ' · shot ' + ((D.n || 0) + 1) + ' of ' + DRILL.PER + ' · step ' + (D.level + 1) + ' of ' + DRILL.byId(D.id).levels.length + (ts.length ? ' · made ' + ts.filter(t => t.made).length + ' of ' + ts.length : '');
+  const D = A.drill, dd = DRILL.byId(D.id); D.st = DRILL.setup(D.id, D.level, A.P, viewXY, D.round); const ts = (A.sess.drillTries || []).filter(t => t.id === D.id);
+  D.base = dd.name + (dd.rounds ? ' (' + dd.roundWords[D.round] + ')' : '') + ' · ' + D.st.word + ' · shot ' + ((D.n || 0) + 1) + ' of ' + DRILL.PER + ' · step ' + (D.level + 1) + ' of ' + dd.levels.length + (ts.length ? ' · made ' + ts.filter(t => t.made).length + ' of ' + ts.length : '');
   D.ready = false; D.since = null; $('#drillTag').hidden = false; drillTag();
 }
 // Ready to shoot (owner, Nov 3: moving a ball onto its ring was taken for a shot): both balls on their rings and still for
@@ -889,20 +907,30 @@ function drillScore(sh, st, early) {
   if (!early) { const ob = drillOb(sh, st), af = ob && (sh.after || []).find(b => b.key === ob.key); if (af && !sh.made.some(m => m.key === ob.key) && onBag(st.pocket, af.x, af.y)) { sh = Object.assign({}, sh, { made: sh.made.concat([{ key: ob.key, num: ob.num, pocket: st.pocket, bag: true }]) }); dbg('drill_bag', { n: sh.n }); } }
   const r = DRILL.score(st, sh, A.P);
   if (!r.scored) { toast('Not a drill shot: the object ball was not on its spot.'); return; }
-  const t = { id: D.id, level: D.level, value: st.value, made: r.made, pocketed: r.pocketed, stopped: r.stopped, cut: r.cut, n: sh.n }; A.sess.drillTries.push(t);
+  const t = Object.assign({ id: D.id, level: D.level, value: st.value, made: r.made, pocketed: r.pocketed, stopped: r.stopped, cut: r.cut, n: sh.n }, st.round != null ? { round: st.round, dist: st.dist } : {}); A.sess.drillTries.push(t);
   const row = A.sess.shots.find(x => x.n === sh.n); if (row) row.drill = t; // (scored early: the row gets it at the shot's end)
   // three at each step, in order, made or missed (owner, Nov 3: progressive kept him from getting on; it may come back
   // as a choice); after the last step the drill is done
   // (V3.22: the cut as the balls were really set, when it is off what the step asked)
   dbg('drill', t); const res = (r.made ? 'Made' : r.pocketed && r.stopped === false ? 'In, but the cue ball did not stop' : 'Missed') + (r.cut != null && DRILL.byId(D.id).kind !== 'bank' && DRILL.byId(D.id).kind !== 'stop' && Math.abs(r.cut - st.value) >= 3 ? ' (' + r.cut + '° as set)' : '');
   D.n = (D.n || 0) + 1; if (D.n >= DRILL.PER) { D.n = 0; D.level++; }
+  // (the cut ladder: after its last step, the next round, a diamond further out)
+  const dd = DRILL.byId(D.id); if (dd.rounds && D.level >= dd.levels.length && D.round < dd.rounds.length - 1) {
+    const ts = A.sess.drillTries.filter(x => x.id === D.id && x.round === D.round && x.n > (D.from || 0)); D.round++; D.level = 0; drillSetup();
+    toast(res + ' · ' + DRILL.outWord(dd.rounds[D.round - 1]) + ' done: made ' + ts.filter(x => x.made).length + ' of ' + ts.length + ' · next: ' + D.st.word + ' (' + dd.roundWords[D.round] + ')', 6000); return; }
   if (D.level >= DRILL.byId(D.id).levels.length) { const ts = A.sess.drillTries.filter(x => x.id === D.id && x.n > (D.from || 0)); toast(res + ' · ' + DRILL.byId(D.id).name + ' done: made ' + ts.filter(x => x.made).length + ' of ' + ts.length + '.', 7000); drillStop(); return; }
   drillSetup(); toast(res + ' · next: ' + D.st.word + ' (' + (D.n + 1) + ' of ' + DRILL.PER + ')', 4000);
 }
 // the setup on the live view: rings where the balls go (green when a ball is on it), the cue ball's aim to where it
 // meets the ball, the ball's line to the pocket (off the near cushion for the bank), the pocket ringed
-// (V3.22: a ball counts as on its mark within 1.2 in, was 4: Nov 16 18:11 the balls sat 1-2.7 in off and Ready came anyway)
-function drillTaken(p, cue) { return A.tk.balls().some(b => b.state !== 'hidden' && Math.hypot(b.x - p[0], b.y - p[1]) < 1.2 && (cue ? b.num === 0 || b.num == null : b.num !== 0)); }
+// (V3.22: a ball counts as on its mark within 1.2 in, was 4: Nov 16 18:11 the balls sat 1-2.7 in off and Ready came anyway.
+// V3.23, owner Nov 17: setting a ball within an inch takes longer than it should; on Nov 16 20:00 and 20:10 three made shots
+// were not counted with a ball 2.0-2.4 in off. 2.5 in: the result gives the cut as really set when it is 3 degrees off.)
+const MARK_TOL = 2.5;
+function drillTaken(p, cue) { return A.tk.balls().some(b => b.state !== 'hidden' && Math.hypot(b.x - p[0], b.y - p[1]) < MARK_TOL && (cue ? b.num === 0 || b.num == null : b.num !== 0)); }
+// the exam's marks: along the rail only, out to a diamond off it, for F2-F4 (BU.onMark)
+function buBall(L, p, cue) { return A.tk.balls().filter(b => b.state !== 'hidden' && (cue ? b.num === 0 || b.num == null : b.num !== 0) && BU.onMark(L, p, [b.x, b.y], MARK_TOL)).sort((a, b) => Math.hypot(a.x - p[0], a.y - p[1]) - Math.hypot(b.x - p[0], b.y - p[1]))[0] || null; }
+function buTaken(L, p, cue) { return !!buBall(L, p, cue); }
 // where a ball goes: an X on the cloth, right under the ball's middle (V3.22, owner Nov 16: the player touches it with a
 // wet finger and sets the ball on the mark; the old dashed outline was drawn at the ball's middle height and the rail lines
 // crossed on the cloth, two different places on a slanted view, and balls were set 2 in off). Green once a ball is on it.
@@ -949,7 +977,10 @@ function buMenu() {
     '</div><div class="row"><button class="btn" data-act="close">Close</button></div>');
 }
 function buStart(which) {
-  if (A.drill) drillStop();
+  if (A.drill) drillStop(); if (A.stest) stStop();
+  // practice rules, as a drill (Nov 16 20:10: started from Play, the rack was called complete during F6 and the tracks
+  // dropped; 20:00, from the Coaching test, plans ran and the spin test was started over the exam)
+  if (A.tk) Object.assign(A.tk.O, { practice: true, autoRack: false, rackNew: false }); A.mode = 'practice'; if (A.sess) A.sess.mode = 'practice'; $('#rackBtn').hidden = true;
   const list = which === 'all' ? BU.DRILLS.map(d => d.id) : [which];
   A.bu = { list, i: 0, res: {}, log: [], scores: {}, t0: Date.now() }; A.buReadyOf = new Map(); for (const id of list) A.bu.res[id] = [];
   hideCard(); dbg('bu_start', { list }); buSetup();
@@ -972,11 +1003,11 @@ function buTag() {
 $('#drillTag').addEventListener('click', e => { if (e.target.closest('[data-bu-fix]')) buFix(); });
 function buReadyLook() {
   const B = A.bu; if (!B || !B.lay || B.finished || A.phase !== 'run' || !A.tk) return;
-  if (A.tk.S.phase === 'shot') return;
+  if (A.tk.S.phase === 'shot') { buEarly(); return; }
   if (B.ready) { if (A.tk.S.phase === 'hands') { B.ready = false; B.since = null; dbg('bu_unready', { why: 'hands' }); } buTag(); return; }
-  const L = B.lay, marks = [L.O].concat(L.C ? [L.C] : []), near = b => marks.some(p => Math.hypot(b.x - p[0], b.y - p[1]) < 10);
-  const cueStill = A.tk.balls().some(b => b.num === 0 && b.state === 'rest');
-  const on = A.tk.S.phase === 'still' && cueStill && !A.tk.balls().some(b => near(b) && (b.state === 'moving' || b.state === 'pending')) && drillTaken(L.O, false) && (!L.C || drillTaken(L.C, true)) && !(B.since != null && handAtSpots({ O: L.O, C: L.C }));
+  const L = B.lay, marks = [L.O].concat(L.C ? [L.C] : []), near = b => marks.some(p => Math.hypot(b.x - p[0], b.y - p[1]) < (L.free ? 14 : 10));
+  const cueStill = A.tk.balls().some(b => b.num === 0 && b.state === 'rest'), bo = buBall(L, L.O, false), bc = L.C ? buBall(L, L.C, true) : null;
+  const on = A.tk.S.phase === 'still' && cueStill && !A.tk.balls().some(b => near(b) && (b.state === 'moving' || b.state === 'pending')) && bo && (!L.C || bc) && !(B.since != null && handAtSpots({ O: [bo.x, bo.y], C: bc ? [bc.x, bc.y] : null }));
   if (!on) { B.since = null; B.ready = false; }
   else { if (B.since == null) B.since = performance.now(); if (!B.ready && performance.now() - B.since >= READY_S * 1000) { B.ready = true; dbg('bu_ready', { id: B.id, shot: B.stt.shot }); } }
   buTag();
@@ -984,7 +1015,7 @@ function buReadyLook() {
 // what the camera saw of a shot, for the drill's rule
 function buFacts(sh, lay) {
   const at = b => [b.rx != null ? b.rx : b.x, b.ry != null ? b.ry : b.y], dist = (b, p) => Math.hypot(at(b)[0] - p[0], at(b)[1] - p[1]);
-  const ob = (sh.before || []).filter(b => b.key !== sh.cueKey && b.num !== 0 && dist(b, lay.O) <= 4).sort((a, b) => dist(a, lay.O) - dist(b, lay.O))[0] || null;
+  const ob = (sh.before || []).filter(b => b.key !== sh.cueKey && b.num !== 0 && (dist(b, lay.O) <= 4 || BU.onMark(lay, lay.O, at(b), MARK_TOL + 1))).sort((a, b) => dist(a, lay.O) - dist(b, lay.O))[0] || null;
   let m = ob && (sh.made || []).find(q => q.key === ob.key || (q.key == null && ob.num != null && q.num === ob.num));
   // the object ball lost on its way to the pocket and not seen again, or resting in the pocket's bowl in view: in
   if (ob && !m) { const af = (sh.after || []).find(b => b.key === ob.key), pth = (sh.paths || []).find(p => p.key === ob.key), pk = A.P.pockets[lay.pocket];
@@ -996,17 +1027,54 @@ function buFacts(sh, lay) {
   if (lay.tball) { const tb = (sh.before || []).filter(b => b.key !== sh.cueKey && (!ob || b.key !== ob.key) && dist(b, lay.tball) <= 4).sort((a, b) => dist(a, lay.tball) - dist(b, lay.tball))[0];
     if (tb) { const af = (sh.after || []).find(b => b.key === tb.key), pth = (sh.paths || []).find(p => p.key === tb.key); targetMoved = !!pth || !af || Math.hypot(af.x - at(tb)[0], af.y - at(tb)[1]) > 1; } }
   const obMoved = ob && (!!m || !!(sh.paths || []).find(p => p.key === ob.key) || (() => { const af = (sh.after || []).find(b => b.key === ob.key); return !af || Math.hypot(af.x - at(ob)[0], af.y - at(ob)[1]) > 1; })());
-  return { ob, obIn: !!m, obPocket: m && m.pocket != null && m.seen !== false ? m.pocket : null, scratch: !!sh.scratch, cueEnd: ca && ca.state !== 'hidden' ? [ca.x, ca.y] : null, cuePath: cp ? cp.p.map(q => [q[1], q[2]]) : [], targetMoved, obMoved };
+  // (a late call's pocket, or one worked out for a ball not seen going in, is a guess: not held against the shot, as in
+  // the drills. Nov 16 20:10: F5 shot 7, the 8 straight into the near side pocket, and F6 shot 4 were scored "wrong pocket"
+  // on such guesses)
+  const cb = (sh.before || []).find(b => b.key === sh.cueKey), far = cp && cp.p.length ? Math.max(...cp.p.map(q => Math.hypot(q[1] - cp.p[0][1], q[2] - cp.p[0][2]))) : 0;
+  return { ob, obIn: !!m, obPocket: m && m.pocket != null && m.seen !== false && !m.late && !m.vanished && !m.bag ? m.pocket : null, scratch: !!sh.scratch, cueEnd: ca && ca.state !== 'hidden' ? [ca.x, ca.y] : null, cuePath: cp ? cp.p.map(q => [q[1], q[2]]) : [], targetMoved, obMoved,
+    obAt: ob ? at(ob) : null, cueAt: cb ? at(cb) : null, cueFar: far };
 }
 function buScore(sh, q) {
-  const B = A.bu; if (!B || B.finished || B.id !== q.id || B.stt.shot !== q.k || !q.ready) return; // (not ready: setting up; or moved on or changed meanwhile)
+  const B = A.bu; if (!B) return;
+  if (B.early === sh.n) { buAfter(sh, q); return; } // (scored as soon as it was known)
+  if (B.finished || B.id !== q.id || B.stt.shot !== q.k || !q.ready) return; // (not ready: setting up; or moved on or changed meanwhile)
   const f = buFacts(sh, q.lay);
   if (!f.ob) { toast('BU: the ball was not on its X: not counted.'); return; }
-  if (!f.obMoved && !f.obIn && !f.targetMoved) { dbg('bu_untouched', { n: sh.n }); return; } // (the ball never touched: the cue ball moved by hand)
-  const j = BU.judge(q.lay, f); B.res[q.id].push(j.ok);
-  B.log.push({ n: sh.n, id: q.id, k: q.k, ok: j.ok, why: j.why, lay: q.lay, f: { obIn: f.obIn, obPocket: f.obPocket, scratch: f.scratch, cueEnd: f.cueEnd && f.cueEnd.map(r1), targetMoved: f.targetMoved } });
-  dbg('bu_shot', { n: sh.n, id: q.id, k: q.k, ok: j.ok, why: j.why, obIn: f.obIn, obPocket: f.obPocket, cueEnd: f.cueEnd && f.cueEnd.map(r1), scratch: f.scratch, target: f.targetMoved });
+  // the ball never touched (the cue ball moved by hand), or the cue ball nudged under 4 in with nothing in (Nov 16 20:10,
+  // 3: the cue ball eased 2.3 in into place, the 5 beside it read 1.4 in off by flicker; after Ready it would have been a miss)
+  if ((!f.obMoved && !f.obIn && !f.targetMoved) || (!f.obIn && f.cueFar < 4)) { dbg('bu_untouched', { n: sh.n, far: r1(f.cueFar) }); return; }
+  buJudged(sh, q, f, false);
+}
+// Scored as soon as the result is known (V3.23, owner Nov 17: once the ball is in, pick up the cue ball, rolling or not, and
+// set up the next shot): F1 (scratches allowed) and F6 when the object ball is in its pocket; the others when it is in and
+// the cue ball has rested 0.7 s, since where it stops is the test. Missed when the object ball rests away from the pockets.
+// F6 allows no scratch: if the cue ball is then seen going in, the shot is changed to missed at the shot's end (buAfter).
+function buEarly() {
+  const B = A.bu, tk = A.tk, sh = tk.S.shot; if (!B || B.finished || !sh) return;
+  const q = A.buReadyOf && A.buReadyOf.get(sh.n); if (!q || !q.ready || B.early === sh.n || B.id !== q.id || B.stt.shot !== q.k) return;
+  const L = q.lay, live = { n: sh.n, t0: sh.t0, cueKey: sh.cueKey, before: sh.before, made: sh.made.slice(), scratch: sh.made.some(m => m.key === sh.cueKey), after: tk.snapshot(), paths: pathsRow(sh) };
+  const f = buFacts(live, L); if (!f.ob) return;
+  const rest = x => x && x.state === 'rest' && x.restSince != null && tk.S.t - x.restSince >= 0.7, tr = tk.S.tracks.find(x => x.key === f.ob.key);
+  if (!f.obIn && rest(tr) && onBag(L.pocket, tr.x, tr.y)) { f.obIn = true; f.obPocket = null; }
+  const missed = !f.obIn && rest(tr) && Math.hypot(tr.x - f.obAt[0], tr.y - f.obAt[1]) > 2 && !A.P.pockets.some(pk => Math.hypot(pk.x - tr.x, pk.y - tr.y) < 6);
+  const cue = tk.S.tracks.find(x => x.key === sh.cueKey), cueRest = !live.scratch && rest(cue) && f.cueFar >= 4;
+  if (!missed && !(f.obIn && (L.id === 'F1' || L.id === 'F6' || live.scratch || cueRest))) return;
+  if (cueRest) f.cueEnd = [cue.x, cue.y];
+  B.early = sh.n; dbg('bu_early', { n: sh.n, obIn: f.obIn, missed: missed || undefined }); buJudged(live, q, f, true);
+}
+function buJudged(sh, q, f, early) {
+  const B = A.bu, j = BU.judge(q.lay, f); B.res[q.id].push(j.ok);
+  B.log.push({ n: sh.n, id: q.id, k: q.k, ok: j.ok, why: j.why, lay: q.lay, early, f: { obIn: f.obIn, obPocket: f.obPocket, scratch: f.scratch, cueEnd: f.cueEnd && f.cueEnd.map(r1), targetMoved: f.targetMoved } });
+  dbg('bu_shot', { n: sh.n, id: q.id, shot: q.k, ok: j.ok, why: j.why, obIn: f.obIn, obPocket: f.obPocket, cueEnd: f.cueEnd && f.cueEnd.map(r1), scratch: f.scratch, target: f.targetMoved, early: early || undefined });
   buSay(q.id, q.k, j.ok, j.why); buSetup();
+}
+// after a shot scored early, at its end: F6's no-scratch rule (the cue ball picked up while rolling is not a scratch: in
+// practice a cue ball gone without being seen going in was picked up, track.js)
+function buAfter(sh, q) {
+  const B = A.bu, L = B.log.find(x => x.n === sh.n); if (!L || q.id !== 'F6' || !L.ok || !sh.scratch || L.fixed) return;
+  L.ok = false; L.why = 'scratch'; B.res[L.id][L.k] = false; dbg('bu_scratch', { n: sh.n, id: L.id, shot: L.k });
+  if (B.finished && B.saved) { const h = buHist(); h.pop(); try { localStorage.setItem(BU_KEY, JSON.stringify(h)); } catch (e) { } B.saved = false; hideCard(); }
+  B.finished = false; buSay(L.id, L.k, false, 'scratch', 'After all: '); buSetup();
 }
 function buSay(id, k, ok, why, pre) {
   const d = BU.byId(id), st = BU.state(id, A.bu.res[id]), head = (pre || '') + id + ' shot ' + (k + 1) + ': ' + (ok ? 'made' : 'missed') + (why && why !== 'made' && why !== 'missed' ? ' (' + why + ')' : '');
@@ -1017,7 +1085,7 @@ function buSay(id, k, ok, why, pre) {
 function buFix() {
   const B = A.bu; if (!B || !B.log.length) return; const L = B.log[B.log.length - 1];
   if (B.finished && B.saved) { const h = buHist(); h.pop(); try { localStorage.setItem(BU_KEY, JSON.stringify(h)); } catch (e) { } B.saved = false; hideCard(); }
-  L.ok = !L.ok; L.fixed = !L.fixed; B.res[L.id][L.k] = L.ok; dbg('bu_fix', { n: L.n, id: L.id, k: L.k, ok: L.ok });
+  L.ok = !L.ok; L.fixed = !L.fixed; B.res[L.id][L.k] = L.ok; dbg('bu_fix', { n: L.n, id: L.id, shot: L.k, ok: L.ok });
   B.finished = false; buSay(L.id, L.k, L.ok, 'changed', 'Changed: '); buSetup();
 }
 // a ball called in after the result was said (the late check): the last shot judged again
@@ -1026,7 +1094,7 @@ function buLate(n) {
   const sh = A.tk.S.shots.find(s => s.n === n.n); if (!sh) return; const f = buFacts(sh, L.lay);
   if (!f.obIn && !(n.at && Math.hypot(n.at[0] - L.lay.O[0], n.at[1] - L.lay.O[1]) < 3.5)) return;
   f.obIn = true; if (n.seen === false || f.obPocket == null) f.obPocket = null; const j = BU.judge(L.lay, f); if (!j.ok) return;
-  L.ok = true; L.why = j.why; B.res[L.id][L.k] = true; dbg('bu_late', { n: n.n, id: L.id, k: L.k });
+  L.ok = true; L.why = j.why; B.res[L.id][L.k] = true; dbg('bu_late', { n: n.n, id: L.id, shot: L.k });
   if (B.finished && B.saved) { const h = buHist(); h.pop(); try { localStorage.setItem(BU_KEY, JSON.stringify(h)); } catch (e) { } B.saved = false; hideCard(); }
   B.finished = false; buSay(L.id, L.k, true, 'called in late', 'After all: '); buSetup();
 }
@@ -1052,8 +1120,11 @@ function drawBU(c, S2) {
   drillLine(c, S2, L.O, [P.pockets[L.pocket].x, P.pockets[L.pocket].y]);
   c.setLineDash([3, 3]); c.strokeStyle = L.id === 'F2' ? 'rgba(61,220,132,.8)' : 'rgba(244,241,232,.3)'; ring(L.G, P.R, P.R); c.stroke();
   c.strokeStyle = 'rgba(255,184,77,.45)'; ring([P.pockets[L.pocket].x, P.pockets[L.pocket].y], P.pockets[L.pocket].r + 1); c.stroke(); c.setLineDash([]);
-  drawX(c, S2, L.O, drillTaken(L.O, false));
-  if (L.C) drawX(c, S2, L.C, drillTaken(L.C, true), 'cue');
+  // (F2-F4: a faint line across the rail through each X, from the cushion out to a diamond: the ball may go anywhere on it)
+  if (L.free) { c.setLineDash([2, 5]); c.lineWidth = 1; c.strokeStyle = 'rgba(244,241,232,.35)'; const sy = Math.sign(P.W / 2 - L.free.railY);
+    for (const p of [L.O, L.C]) if (p) drillLine(c, S2, [p[0], L.free.railY + sy * P.R], [p[0], L.free.railY + sy * L.free.max]); c.setLineDash([]); }
+  drawX(c, S2, L.O, buTaken(L, L.O, false));
+  if (L.C) drawX(c, S2, L.C, buTaken(L, L.C, true), 'cue');
   else { const m = S2(A.cam.proj(L.O[0], L.O[1] + 2.4 * P.R, 0)); c.font = '500 10px system-ui, -apple-system, sans-serif'; c.textAlign = 'center'; c.fillStyle = 'rgba(244,241,232,.8)'; c.fillText('cue ball in hand', m[0], m[1]); }
   if (L.tball) { drawX(c, S2, L.tball, drillTaken(L.tball, false), 'hit ' + L.tnum); c.globalAlpha = 0.45; for (const p of L.others) drawX(c, S2, p, drillTaken(p, false)); c.globalAlpha = 1; }
   c.restore();
@@ -1447,7 +1518,7 @@ const TESTS = {
   draw: { name: 'Draw test', steps: [].concat(...['draw', 'follow'].map(d => PT_LEVELS.map(L => ({ d, L })))), say: s => 'a ball about 2 diamonds straight ahead, hit it full: your ' + s.L.toUpperCase() + ' ' + s.d.toUpperCase() }
 };
 function stArm() { if (A.tk) A.tk.S.setup = false; } // every lone roll is a shot in the test, not the cue ball put in place
-function stStart(kind) { A.stest = { kind, i: 0, res: [], start: null }; stArm(); stTag(); dbg('stroke_test', { kind, start: true }); }
+function stStart(kind) { if (A.drill) drillStop(); if (A.bu) buStop(true); A.stest = { kind, i: 0, res: [], start: null }; stArm(); stTag(); dbg('stroke_test', { kind, start: true }); }
 function stStop() { const t = A.stest; A.stest = null; $('#drillTag').hidden = true; if (t) dbg('stroke_test', { kind: t.kind, stop: true }); }
 function stTag() { const t = A.stest, el = $('#drillTag'); if (!t) return; stArm(); const T = TESTS[t.kind]; el.hidden = false; el.textContent = T.name + ': ' + T.say(T.steps[t.i]) + ' · ' + (t.i + 1) + ' of ' + T.steps.length; }
 const footSpots = () => [[A.P.L / 4, A.P.W / 2], [A.P.L * 3 / 4, A.P.W / 2]];
@@ -1562,10 +1633,14 @@ function drawBalls(c, S2, F) {
     c.setLineDash([]); c.strokeStyle = pc.band ? '#f4f1e8' : pc.col; c.stroke(); if (pc.band) { c.setLineDash([5, 5]); c.strokeStyle = pc.col; c.stroke(); c.setLineDash([]); } };
   c.lineCap = 'round'; c.lineJoin = 'round';
   const dtv = Math.min(0.1, Math.max(0, now - (A.tailT || now))); A.tailT = now;
+  // (V3.23, owner Nov 17: where the ball was not seen, a hard shot's gaps, the trail goes the way it must have gone, off
+  // the ball it hit and the cushions, rather than straight to where it was next found: src/v3/trail.js)
+  const tsh = tk.S.shot || tk.S.shots[tk.S.shots.length - 1], thit = tsh ? trailHit(tsh) : null;
   for (const [key, e] of PATH) {
     if (e.pts.length < 2 || moved(e.pts) < 1) continue;
     const it = items.find(i => i.b.key === key), pc = pathCol(key, it ? it.b.num : e.num), proj = q => S2(A.cam.proj(q.x, q.y, P.R));
-    const pts = e.pts.map(q => ({ x: q.x, y: q.y })); if (it && it.b.state !== 'hidden') pts.push({ x: it.tx, y: it.ty });
+    const raw = e.pts.slice(); if (it && it.b.state !== 'hidden') raw.push({ t: tk.S.t, x: it.tx, y: it.ty });
+    const pts = TRAIL.fill(raw, P, tsh && key === tsh.cueKey ? thit : null).map(q => ({ x: q.x, y: q.y }));
     line(pts.map(proj), 1.3, 0.6, pc);
     // a dot where the ball started, about half an inch across (a ball is 2 1/4 in)
     const s0 = proj(pts[0]), rd = Math.max(2, A.cam.ballRad(pts[0].x, pts[0].y, P.R, 0.25) * F.k);
@@ -1657,7 +1732,7 @@ function showCard(html, mini, cls) { const c = $('#card'); c.innerHTML = html; c
 function hideCard() { $('#card').hidden = true; $('#cam').classList.remove('manual'); }
 $('#card').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.drill) { drillStart(b.dataset.drill); return; }
+  if (b.dataset.drill) { drillStart(b.dataset.drill, +(b.dataset.round || 0)); return; }
   if (b.dataset.bu) { buStart(b.dataset.bu); return; }
   if (b.dataset.ft) { A.ft = +b.dataset.ft; save(); A.P = makeP(A.ft); A.tk = makeTracker(A.P, Object.assign(TK_OPTS(A.mode), { stance: stanceAt, shallow: shallowGet() })); A.nShots = 0; dbg('ft', { ft: A.ft }); refind('Table size ' + A.ft + ' ft: looking again…'); return; }
   const a = b.dataset.act;

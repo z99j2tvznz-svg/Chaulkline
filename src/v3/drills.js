@@ -12,11 +12,13 @@ const DRILL = (() => {
   // (owner, Nov 3: the phone stands behind the near rail at the middle; no drill may have the player shooting from there.
   // Cuts go the long way of the table, from the left end; the bank is shot from the far side.)
   const LIST = [
-    // (V3.22.1, owner Nov 17: progressive, further and further from the corner as it goes, the cue ball moved a little at
-    // each step for a different look, three shots at each step as before)
-    { id: 'cut', name: 'Cut ladder', about: 'Into the far right corner: straight in from a diamond out, then at each step 10° thinner and half a diamond further from the pocket (3½ diamonds at the last). The cue ball starts 3 diamonds from the left end in the middle and moves a little at each step.',
-      levels: [0, 10, 20, 30, 40, 50], word: c => c ? c + '° cut' : 'straight in', kind: 'turn', pocket: [8, 4],
-      obDists: [1, 1.5, 2, 2.5, 3, 3.5], cues: [[3, 2], [2.6, 2.5], [3.4, 1.5], [2.7, 1.6], [3.3, 2.4], [2.9, 2]] },
+    // (V3.23, owner Nov 17: a ladder of cuts, 10 to 50 degrees, three shots at each, played at one distance from the pocket
+    // and then again further out, round by round: 1 diamond out (easy) to 5 (expert), the round to start at chosen in the
+    // menu. The object ball's line into the pocket and the cue ball's distance change a little from step to step, for a
+    // different look. V3.22.1 had the cut and the distance growing together.)
+    { id: 'cut', name: 'Cut ladder', about: 'Into the far right corner: 10°, 20°, 30°, 40° and 50° cuts, three shots at each, with the object ball a diamond from the pocket; then the same ladder 2, 3, 4 and 5 diamonds out. Start at any distance.',
+      levels: [10, 20, 30, 40, 50], word: c => c + '° cut', kind: 'ladder', pocket: [8, 4],
+      rounds: [1, 2, 3, 4, 5], roundWords: ['easy', 'medium', 'hard', 'very hard', 'expert'], thetas: [28, 22, 34, 25, 31], cueDs: [1.6, 1.9, 1.4, 1.8, 1.5] },
     { id: 'thin', name: 'Thin cuts', about: 'The object ball almost against the right end rail, a diamond and a quarter from the near right corner; the cue ball moves out for each cut, from 50° to 77°, shot from the far side.',
       levels: [50, 57, 63, 68, 73, 77], word: c => c + '° cut', kind: 'cut', ob: 'rail', obFrom: 1.25, pocket: [8, 0], cueDist: 2.5 },
     { id: 'bank', name: 'Cross-side bank', about: 'The object ball a diamond and a half off the near rail, a little right of the side pockets, banked off the near rail into the far side pocket, shot from the far side. Each step moves it a quarter diamond further right.',
@@ -25,14 +27,32 @@ const DRILL = (() => {
       levels: [1.2, 2, 2.8, 3.6, 4.4], word: d => d + ' diamonds back', kind: 'stop', ob: [6.6, 3.3], pocket: [8, 4], cueDist: null },
   ];
   const byId = id => LIST.find(d => d.id === id);
-  // where the balls go for a drill's level: { O, C, G (where the cue ball meets it), pocketAt, pocket (index), aimAt }
-  function setup(id, level, P, view) {
+  const outWord = d => d + ' diamond' + (d > 1 ? 's' : '') + ' out';
+  // where the balls go for a drill's level (and round, for the cut ladder): { O, C, G (where the cue ball meets it),
+  // pocketAt, pocket (index), aimAt }
+  function setup(id, level, P, view, round) {
     const d = byId(id), v = d.levels[Math.max(0, Math.min(d.levels.length - 1, level))], dia = P.L / 8, R = P.R, T = p => view(p[0], p[1]);
     const pkAt = T(d.pocket), pocket = P.pockets.reduce((b, q, i) => Math.hypot(q.x - pkAt[0], q.y - pkAt[1]) < Math.hypot(P.pockets[b].x - pkAt[0], P.pockets[b].y - pkAt[1]) ? i : b, 0);
     const Pk = [P.pockets[pocket].x, P.pockets[pocket].y];
     let O = d.ob === 'rail' ? null : d.ob ? T(d.ob) : null, aimAt = Pk;
     // the object ball almost against the end rail by the pocket (a hair off the cushion), obFrom diamonds along it
     if (d.ob === 'rail') { const e = T([d.pocket[0] ? 8 : 0, d.pocket[1] ? 4 - d.obFrom : d.obFrom]); O = [e[0] < P.L / 2 ? R + 0.3 : P.L - R - 0.3, e[1]]; }
+    // the cut ladder: the object ball rd diamonds from the pocket on a line into the table theta degrees off the long rail;
+    // the cue ball k diamonds back from the ghost ball at the cut, on the side that keeps it on the table and the player away
+    // from the phone (the near rail's middle); theta and k vary a little by step, and give way if the table is too small
+    if (d.kind === 'ladder') {
+      const li = Math.max(0, Math.min(d.levels.length - 1, level)), ri = Math.max(0, Math.min(d.rounds.length - 1, round || 0)), rd = d.rounds[ri], m = R + 1;
+      const on = p => p[0] > m && p[1] > m && p[0] < P.L - m && p[1] < P.W - m, phone = T([4, 0]), sx = Math.sign(d.pocket[0] - 4) || 1, sy = Math.sign(d.pocket[1] - 2) || 1;
+      const stands = (C, w) => { let p = C.slice(); while (p[0] > 0 && p[1] > 0 && p[0] < P.L && p[1] < P.W) p = [p[0] - w[0], p[1] - w[1]]; return Math.hypot(p[0] - phone[0], p[1] - phone[1]) >= 2 * dia; };
+      const th0 = d.thetas[(li + ri) % d.thetas.length], k0 = d.cueDs[(li + 2 * ri) % d.cueDs.length];
+      for (const dth of [0, 4, -4, 8, -8, 12, -12, 16, -16, 20, 24, 28]) {
+        const th = (th0 + dth) * D2, O = T([d.pocket[0] - sx * rd * Math.cos(th), d.pocket[1] - sy * rd * Math.sin(th)]); if (!on(O)) continue;
+        const u = unit(O, Pk), G = [O[0] - 2 * R * u[0], O[1] - 2 * R * u[1]];
+        for (let k = k0; k >= 0.9; k -= 0.1) { const cs = [1, -1].map(s => { const w = rot(u, s * v * D2); return { C: [G[0] - w[0] * k * dia, G[1] - w[1] * k * dia], w }; })
+            .filter(c => on(c.C) && stands(c.C, c.w)).sort((a, b) => Math.abs(a.C[1] - P.W / 2) - Math.abs(b.C[1] - P.W / 2));
+          if (cs.length) return { id, level, round: ri, value: v, dist: rd, word: d.word(v) + ', ' + outWord(rd), O, C: cs[0].C, G, pocket, aimAt: Pk, Pk }; }
+      }
+    }
     // the cue ball where it is set (cue); the object ball obDist diamonds from the pocket, turned round it until the cut is
     // right, on the side toward the end rail (the cut gets thinner as it comes round)
     if (d.kind === 'turn') {
@@ -69,7 +89,9 @@ const DRILL = (() => {
     const ob = obs[0].b, O = at(ob), cue = (shot.before || []).find(b => b.num === 0), C = cue ? at(cue) : null;
     const m = (shot.made || []).find(q => (q.key != null && q.key === ob.key) || (ob.num != null && q.num === ob.num));
     // in the pocket it was for (a call without a pocket counts: the ball was set up for that one)
-    const made = !!m && !shot.scratch && (m.pocket == null || m.pocket === st.pocket || !!m.late); // (a late call's pocket is a guess from where the ball was last seen: Nov 8 10:48, 6)
+    // (a scratch does not matter: owner, Nov 17, "I'm not worried about the scratch"; he picks up the rolling cue ball to set up
+    // the next shot. The stop shot needs the cue ball seen at rest, so a scratch misses it anyway)
+    const made = !!m && (m.pocket == null || m.pocket === st.pocket || !!m.late); // (a late call's pocket is a guess from where the ball was last seen: Nov 8 10:48, 6)
     // the cut as really set out: from the cue ball to where it had to meet the ball, against the line the ball had to take
     let cut = null; if (C) { const u = unit(O, st.aimAt), G = [O[0] - 2 * R * u[0], O[1] - 2 * R * u[1]], a = Math.atan2(u[1], u[0]) - Math.atan2(G[1] - C[1], G[0] - C[0]); cut = Math.round(Math.abs(((a / D2) + 540) % 360 - 180)); }
     let stopped = null;
@@ -82,11 +104,12 @@ const DRILL = (() => {
   // a session's drill tries: [{ id, level, made }] -> per drill { id, name, tries, made, best (level index), levels: [made, tries] }
   function summary(tries) {
     const out = [];
-    for (const d of LIST) { const ts = tries.filter(t => t.id === d.id); if (!ts.length) continue;
-      out.push({ id: d.id, name: d.name, tries: ts.length, made: ts.filter(t => t.made).length, best: Math.max(...ts.map(t => t.made ? t.level : -1)),
-        levels: d.levels.map((v, i) => [d.word(v), ts.filter(t => t.level === i && t.made).length, ts.filter(t => t.level === i).length]).filter(r => r[2]) }); }
+    for (const d of LIST) { const ts = tries.filter(t => t.id === d.id); if (!ts.length) continue; const nr = d.rounds ? d.rounds.length : 1, ix = t => (t.round || 0) * d.levels.length + t.level;
+      const steps = []; for (let r = 0; r < nr; r++) d.levels.forEach((v, i) => steps.push([d.word(v) + (d.rounds ? ', ' + outWord(d.rounds[r]) : ''), r, i]));
+      out.push({ id: d.id, name: d.name, tries: ts.length, made: ts.filter(t => t.made).length, best: Math.max(...ts.map(t => t.made ? ix(t) : -1)),
+        levels: steps.map(([w, r, i]) => [w, ts.filter(t => (t.round || 0) === r && t.level === i && t.made).length, ts.filter(t => (t.round || 0) === r && t.level === i).length]).filter(x => x[2]) }); }
     return out;
   }
-  return { LIST, byId, setup, score, next, summary, PER };
+  return { LIST, byId, setup, score, next, summary, PER, outWord };
 })();
 if (typeof module !== 'undefined') module.exports = DRILL;

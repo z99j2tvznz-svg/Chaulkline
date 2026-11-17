@@ -1971,3 +1971,51 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   next found, even when that direction makes no sense. Start the trail where the ball is first seen moving and
   reconstruct the missing part (the simulation from the seen start and direction, cushions included) so the drawn path
   is right even when the tracker cannot keep up.
+
+## V3.23.0: BU fixes from the first exam sessions, faster drills, the cut ladder in rounds, the trail through gaps (owner, Nov 17)
+- Review of Nov 16 20:00 (F1, F2 from the Coaching test screen) and 20:10 (F3-F6 from Play 9-ball), filed on `sessions`.
+  Scoring checked shot by shot against the Exam I document: right except two late calls. F5 shot 7 (the 8 straight into the
+  near side pocket, the cue ball on target 1) and F6 shot 4 were "wrong pocket": the late call's pocket was a guess
+  (track.js lateIn: a ball newly seen in a pocket's bag, here the far left one). buFacts now takes no pocket from a late,
+  vanished, bag or not-seen call, as the drills do.
+- Not counted: three made shots with a ball 2.0-2.4 in off its mark (no Ready at 1.2 in). MARK_TOL = 2.5 in for drills and
+  the exam. F2-F4: BU.onMark holds only the place along the rail (2.5 in) and allows anywhere from the cushion to a
+  diamond off it (the document: "You are allowed to vary the CB and OB positions away from the rail as long as the CB
+  remains within one diamond of the rail"); a faint line across the rail through each X shows it. F2's ghost ball is
+  taken from where the balls really were (BU.ghostAt).
+- F2-F4 layout: V3.22 put both balls 3R off the rail and parallel to it. On a 7 ft table the half-diamond spot is 4.9 in
+  from the corner and a ball 3.4 in off the side cushion travelling parallel meets the end rail's jaw (a corner mouth of
+  about 4.7 in puts the jaw point about 3.3 in from the corner along each cushion; the ball's centre must pass within about
+  2.2 in of the side cushion to clear it), so the owner had to cut it slightly (F2 shot 1: in, the cue ball 6 in off the
+  line). Now the line enters 1.5 in off the side cushion through the object ball 2 in off it at the half diamond; the cue
+  ball sits on that line (8.5 in off the rail at position 7, within the document's diamond).
+- The exam ran in whatever mode it was started from: in Play, "Rack complete" came during F6 and dropped the tracks; in
+  the Coaching test, plans ran and the spin test was started over it (its "only the cue ball, please" after each shot).
+  buStart sets practice rules like drillStart; a stroke test, a drill and the exam stop each other.
+- dbg('bu_shot', { k }) overwrote the event's own k (the logs showed events named 0, 1, 2...): now `shot`.
+- Early scoring (owner: grab the rolling cue ball once the ball is in): buEarly while the tracker's shot runs. F1 and F6:
+  the object ball in its pocket; F2-F5, F7, F8: in, and the cue ball at rest 0.7 s; missed: the object ball at rest away
+  from the pockets (more than 2 in from its spot, 6 in from a pocket). buScore at the shot's end then only applies F6's
+  no-scratch rule (buAfter: a scratch seen after all changes it to missed). In practice a cue ball that vanishes without
+  being seen going in was picked up (track.js), so grabbing it is not a scratch. The app's drills already scored on the
+  pot (drillEarly); DRILL.score no longer counts a scratch as a miss (owner: "I'm not worried about the scratch").
+- Nudges: the cue ball moving under 4 in with nothing in is not an exam shot (Nov 16 20:10 shot 3: eased 2.3 in into
+  place, the 5 beside it read 1.4 in off by flicker); in the drills another ball's path under 3 in is flicker, not a hit.
+- Cut ladder (owner: keep the ladder of cuts, add harder steps: easy, medium, hard; 1, 2, 3, 4, 5 diamonds): kind
+  'ladder', levels 10-50 degrees, rounds 1-5 diamonds from the far right corner, chosen in the menu to start; after the
+  last step the next round. The object ball rd diamonds out along a line theta off the long rail; the cue ball k diamonds
+  back from the ghost ball at the cut, on the side that keeps it on the table and the shooter 2+ diamonds from the phone;
+  theta and k vary by step and round. Tries carry round and dist; DRILL.summary keeps rounds apart. Checked on 7, 8 and
+  9 ft: every step exactly rd diamonds out and as cut as it says.
+- Trail through gaps (src/v3/trail.js, tests/trail.test.js; owner: on a hard shot the cue ball's trail went straight to
+  wherever it was next found). TRAIL.fill fills each gap over 8 in between seen places with the way a ball goes: through
+  the ghost ball of the first hit (TRAIL.hitOf: the first ball's spot less 2R along its first move, or toward its pocket
+  when made; only in the gap that ends within a look of that ball's first move, TRAIL.movedAt) and off 0-2 cushions
+  (mirror images; a bounce point in a pocket mouth or off a cushion's length is not a way). Scored: the arrival direction
+  against the direction next seen, the departure against the direction last seen, 10 per cushion, 30 per unit of length
+  over the straight way, and speed: not slower than next seen, and arriving at most 4 times faster than then seen after
+  halving at each cushion (Dr. Dave: a cushion about halves the speed). A cushion way is drawn only if it scores 50 or
+  less and 10 better than straight; otherwise the straight line stays (a ball hit on the way that was not seen). On the
+  333 cue ball paths of all sessions on file: 120 unchanged, 133 through the ghost ball only, 80 with cushions (checked
+  by eye: into a rail and back, off the end rail after the hit). The first hit is the tracker's, else the object ball
+  seen moving first. pathsRow adds `f` (the filled points) to the debug file.

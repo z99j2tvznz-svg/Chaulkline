@@ -11,9 +11,9 @@
 const BU = (() => {
   const DRILLS = [
     { id: 'F1', name: 'Cut shot', kind: 'prog', shots: 10, early: true, about: 'Cut the ball a ball off the end rail into the near right corner; the cue ball moves back a diamond with each make. Scratches are allowed.' },
-    { id: 'F2', name: 'Stop shot', kind: 'prog', shots: 10, early: true, about: 'Straight along the far rail into the far right corner; the cue ball must stop overlapping the ghost ball.' },
-    { id: 'F3', name: 'Follow shot', kind: 'prog', shots: 10, early: true, about: 'Cue ball and object ball a diamond apart along the far rail; follow into the paper target by the far right corner, no scratch.' },
-    { id: 'F4', name: 'Draw shot', kind: 'prog', shots: 10, early: true, about: 'Along the far rail into the far right corner; draw the cue ball back into the 2-by-1-diamond box beside the far side pocket.' },
+    { id: 'F2', name: 'Stop shot', kind: 'prog', shots: 10, early: true, about: 'Straight down the far rail into the far right corner; the cue ball must stop overlapping the ghost ball. Each ball goes on the faint line through its X, anywhere from the rail out to a diamond: line it up straight.' },
+    { id: 'F3', name: 'Follow shot', kind: 'prog', shots: 10, early: true, about: 'Cue ball and object ball a diamond apart down the far rail; follow into the target by the far right corner, no scratch. Each ball anywhere on the faint line through its X.' },
+    { id: 'F4', name: 'Draw shot', kind: 'prog', shots: 10, early: true, about: 'Down the far rail into the far right corner; draw the cue ball back into the 2-by-1-diamond box beside the far side pocket. Each ball anywhere on the faint line through its X.' },
     { id: 'F5', name: 'Stun shot', kind: 'prog', shots: 10, early: false, about: 'Cue ball in hand; the ball a ball short of the table\'s middle into the near side pocket; stun the cue ball into the target, which moves along the middle (positions 5 to 7 off the end rail).' },
     { id: 'F6', name: 'Ball pocketing', kind: 'list', n: 10, about: 'Ten set shots, five from each of two cue ball spots, one try each, no scratch.' },
     { id: 'F7', name: 'Wagon wheel', kind: 'list', n: 20, about: 'Cue ball in hand; pot the ball into the far side pocket and send the cue ball into each of ten rail balls in turn, two tries each.' },
@@ -52,12 +52,19 @@ const BU = (() => {
       out.C = pt(8 - pos, 3); out.O = pt(8, 1, -3 * R, 0); out.pocket = pocketAt(8, 0); out.aim = [P.pockets[out.pocket].x, P.pockets[out.pocket].y];
       out.word = 'position ' + pos;
     } else if (id === 'F2' || id === 'F3' || id === 'F4') {
-      // along the far rail, a ball's gap off it (3R from the cushion to the middle), into the far right corner
-      out.pocket = pocketAt(8, 4); out.aim = pt(9, 4, 0, -3 * R);
-      out.C = pt(8 - pos, 4, 0, -3 * R);
-      if (id === 'F3') { const ox = Math.min(9 - pos, 8 - (R + 0.6) / dia); out.O = pt(ox, 4, 0, -3 * R); out.targets.push(rect(8, 4, -PAPER[1] / 2, -1 - PAPER[0] / 2, PAPER[1], PAPER[0])); }
-      else out.O = pt(7.5, 4, 0, -3 * R);
+      // Down the far rail into the far right corner, on a line that really goes in (V3.23, owner Nov 17: with both balls a
+      // ball's gap off the rail and parallel to it, as V3.22 had them, the ball meets the end rail's jaw on a 7 ft table,
+      // where the half-diamond spot is under 5 in from the corner, so a slight cut was needed and the stop shot could not
+      // stop): the line enters the pocket 1.5 in off the side cushion, through the object ball 2 in off it at the half
+      // diamond, so the cue ball sits a little further off the rail the further back it is (8.5 in at position 7). As the
+      // document allows, the balls may sit anywhere from the rail out to a diamond off it (free): only the place along the
+      // rail is held, so the player can line the shot up straight by eye.
+      out.pocket = pocketAt(8, 4); const E = pt(8, 4, 0, -1.5), O2 = pt(7.5, 4, 0, -2), onLine = dx => { const x = view(dx, 4)[0], s = (x - E[0]) / (O2[0] - E[0]); return [x, E[1] + s * (O2[1] - E[1])]; };
+      out.aim = E; out.C = onLine(8 - pos);
+      if (id === 'F3') { const ox = Math.min(9 - pos, 8 - (R + 0.6) / dia); out.O = onLine(ox); out.targets.push(rect(8, 4, -PAPER[1] / 2, -1 - PAPER[0] / 2, PAPER[1], PAPER[0])); }
+      else out.O = O2;
       if (id === 'F4') { const a = pt(4, 3), b = pt(6, 4); out.zone = { x0: Math.min(a[0], b[0]), x1: Math.max(a[0], b[0]), y0: Math.min(a[1], b[1]), y1: Math.max(a[1], b[1]) }; }
+      out.free = { railY: view(0, 4)[1], max: dia };
       out.word = 'position ' + pos;
     } else if (id === 'F5') {
       // the target: positions 1-3 along the middle at the 5th, 6th and 7th diamonds, 4 against the end rail, 5-7 back at 3,
@@ -87,6 +94,17 @@ const BU = (() => {
     return out;
   }
   const inRect = (p, r, m) => !!p && p[0] >= r.x0 - m && p[0] <= r.x1 + m && p[1] >= r.y0 - m && p[1] <= r.y1 + m;
+  // the ghost ball as the balls were set: the object ball's spot less two radii back along the line from the cue ball
+  function ghostAt(lay, f) {
+    if (!f.obAt || !f.cueAt) return lay.G; const u = [f.obAt[0] - f.cueAt[0], f.obAt[1] - f.cueAt[1]], l = Math.hypot(u[0], u[1]);
+    return l > 4 * lay.R ? [f.obAt[0] - 2 * lay.R * u[0] / l, f.obAt[1] - 2 * lay.R * u[1] / l] : lay.G;
+  }
+  // a ball on its mark: within tol of the X; with free (F2-F4) only along the rail, and anywhere from the cushion to a
+  // diamond off it (V3.23, owner Nov 17: more leeway; the document allows the balls anywhere within a diamond of the rail)
+  function onMark(lay, mark, p, tol) {
+    if (!lay.free) return Math.hypot(p[0] - mark[0], p[1] - mark[1]) <= tol;
+    return Math.abs(p[0] - mark[0]) <= tol && Math.abs(p[1] - lay.free.railY) <= lay.free.max;
+  }
   // one shot: made or not by the drill's rule. f: { obIn, obPocket (null when not known), scratch, cueEnd [x,y],
   // cuePath [[x,y]...], targetMoved }. Returns { ok, why }
   function judge(lay, f) {
@@ -97,7 +115,8 @@ const BU = (() => {
     if (lay.id === 'F6') return { ok: true, why: 'made' };
     if (lay.id === 'F7') return f.targetMoved ? { ok: true, why: 'made and hit rail ball ' + lay.tnum } : { ok: false, why: 'missed rail ball ' + lay.tnum };
     if (!f.cueEnd) return { ok: false, why: 'cue ball not seen' };
-    if (lay.id === 'F2') return Math.hypot(f.cueEnd[0] - lay.G[0], f.cueEnd[1] - lay.G[1]) <= 2 * lay.R + 0.3 ? { ok: true, why: 'stopped on the ghost ball' } : { ok: false, why: 'the cue ball did not stop on the ghost ball' };
+    // (the ghost ball where the balls really were: the cue ball meets the object ball on the line the player set up, V3.23)
+    if (lay.id === 'F2') { const G = ghostAt(lay, f); return Math.hypot(f.cueEnd[0] - G[0], f.cueEnd[1] - G[1]) <= 2 * lay.R + 0.3 ? { ok: true, why: 'stopped on the ghost ball' } : { ok: false, why: 'the cue ball did not stop on the ghost ball' }; }
     if (lay.id === 'F4') return inRect(f.cueEnd, lay.zone, 0) ? { ok: true, why: 'in the box' } : { ok: false, why: 'the cue ball not in the box' };
     const inT = lay.targets.some(r => inRect(f.cueEnd, r, lay.R)); // (overlapping the paper counts)
     if (!inT) return { ok: false, why: 'the cue ball not on the target' };
@@ -108,6 +127,6 @@ const BU = (() => {
     }
     return { ok: true, why: 'on the target' };
   }
-  return { DRILLS, byId, MAX, state, total, layout, judge, prog };
+  return { DRILLS, byId, MAX, state, total, layout, judge, prog, onMark, ghostAt };
 })();
 if (typeof module !== 'undefined') module.exports = BU;

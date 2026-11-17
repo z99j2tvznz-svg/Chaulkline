@@ -124,8 +124,14 @@ a.go { color: inherit; text-decoration: none; }
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
+    <div class="card glass"><h2>New in V3.23</h2><ul>
+      <li>Cut ladder in rounds: 10°, 20°, 30°, 40° and 50° cuts, three shots at each, a diamond from the pocket; then the same ladder 2, 3, 4 and 5 diamonds out. Pick where to start: easy (1 diamond out) to expert (5). The cue ball moves a little from step to step.</li>
+      <li>More room setting up: a ball counts as on its X within about 2½ inches. In BU drills F2, F3 and F4 (down the rail) only the place along the rail counts: set each ball anywhere on the faint line through its X, from the rail out to a diamond, and line the shot up straight yourself (the rules allow it). The marks now sit on a line that goes in.</li>
+      <li>Faster drills: a shot is scored the moment the ball drops when only the pot counts (BU F1 and F6, Cut ladder, Thin cuts, Bank), so you can grab the cue ball while it's still rolling and set up the next one. Scratches don't count against drill shots (except F6, by BU's rules).</li>
+      <li>BU scoring fixes: a ball seen going in late is no longer called "wrong pocket" (Nov 16: F5 shot 7 and F6 shot 4 were); the exam runs on practice rules whatever screen you start it from; a little nudge of the cue ball is not a shot.</li>
+      <li>The cue ball's trail on hard shots: where the camera couldn't keep up, the trail now goes the way the ball must have gone, off the ball it hit and the cushions, instead of straight to where it was next found.</li>
+    </ul></div>
     <div class="card glass"><h2>New in V3.22</h2><ul>
-      <li>V3.22.1: the Cut ladder is progressive: each step is 10° thinner and half a diamond further from the corner (from 1 diamond out to 3½), and the cue ball moves a little at each step for a different look; still three shots at each step.</li>
       <li>BU Exam I (Menu → Drills): Billiard University's eight fundamentals drills, laid out on the table and scored by their rules, with the score sheet and your Exam II level at the end. "Change last" at the bottom fixes any shot the camera got wrong.</li>
       <li>Drills: each ball goes on an X on the cloth (touch it with a wet finger and set the ball on the mark); a mark only goes green with the ball within about an inch; the result gives the real cut when the balls were set off; no more "nothing in" before a late call; a ball called in late from its spot counts.</li>
       <li>Pop-ups fit the screen and scroll, upright or sideways.</li>
@@ -288,6 +294,7 @@ a.go { color: inherit; text-decoration: none; }
 <script>
 /*DRILLS*/
 /*BU*/
+/*TRAIL*/
 /*POSE*/
 /*COACH*/
 </script>

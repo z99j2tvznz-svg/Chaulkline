@@ -39,7 +39,10 @@ test('every layout is on the table, with the pockets and targets of the diagrams
   }
   const f1 = BU.layout('F1', { pos: 4, shot: 0 }, P, view); assert.strictEqual(f1.pocket, pk(8, 0)); assert.ok(Math.abs(f1.C[0] - P.L / 2) < 0.01);
   // F2-F4 along the far rail into the far right corner; the stop shot's ghost ball straight behind the object ball
-  const f2 = BU.layout('F2', { pos: 7, shot: 0 }, P, view); assert.strictEqual(f2.pocket, pk(8, 4)); assert.ok(Math.abs(f2.G[1] - f2.O[1]) < 1e-6 && f2.G[0] < f2.O[0]);
+  // (V3.23: on one line into the pocket, the object ball 2 in off the rail, the cue ball a little further off the further back)
+  const f2 = BU.layout('F2', { pos: 7, shot: 0 }, P, view), cr = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  assert.strictEqual(f2.pocket, pk(8, 4)); assert.ok(Math.abs(cr(f2.C, f2.O, f2.G)) < 1e-6 && Math.abs(cr(f2.C, f2.O, f2.aim)) < 1e-6 && f2.G[0] < f2.O[0]);
+  assert.ok(Math.abs(P.W - f2.O[1] - 2) < 0.01 && P.W - f2.C[1] > 6 && P.W - f2.C[1] < P.L / 8, 'the cue ball within a diamond of the rail');
   const f3 = BU.layout('F3', { pos: 3, shot: 0 }, P, view); assert.ok(Math.abs(f3.O[0] - f3.C[0] - P.L / 8) < 0.01, 'a diamond apart');
   const f4 = BU.layout('F4', { pos: 2, shot: 0 }, P, view); assert.ok(Math.abs(f4.zone.x1 - f4.zone.x0 - 2 * P.L / 8) < 0.01 && Math.abs(f4.zone.y1 - P.W) < 0.01);
   // F5: target 1 at the 5th diamond straight to it, 4 against the end rail, 7 back at the 5th diamond off the end rail
@@ -74,4 +77,16 @@ test('each drill\'s rule: pocket, scratch, the stop on the ghost ball, the box, 
   assert.ok(BU.judge(w, { obIn: true, targetMoved: true }).ok && !BU.judge(w, { obIn: true, targetMoved: false }).ok && !BU.judge(w, { obIn: false, targetMoved: true }).ok);
   const g = L('F8', { shot: 8 }), q = g.targets[0];
   assert.ok(BU.judge(g, { obIn: true, cueEnd: [(q.x0 + q.x1) / 2, (q.y0 + q.y1) / 2] }).ok && !BU.judge(g, { obIn: true, scratch: true, cueEnd: [(q.x0 + q.x1) / 2, (q.y0 + q.y1) / 2] }).ok);
+});
+
+test('F2-F4 (V3.23): a ball counts as on its mark anywhere from the rail out to a diamond at its place along it; the stop shot judged on the line set up', () => {
+  const L = BU.layout('F2', { pos: 4, shot: 0 }, P, view), off = P.L / 8;
+  assert.ok(BU.onMark(L, L.C, [L.C[0] + 2, P.W - 0.6 * off], 2.5) && !BU.onMark(L, L.C, [L.C[0] + 3, L.C[1]], 2.5) && !BU.onMark(L, L.C, [L.C[0], P.W - 1.2 * off], 2.5));
+  const f1 = BU.layout('F1', { pos: 4, shot: 0 }, P, view); assert.ok(BU.onMark(f1, f1.C, [f1.C[0] + 1.5, f1.C[1] + 1.5], 2.5) && !BU.onMark(f1, f1.C, [f1.C[0], f1.C[1] + 2.6], 2.5));
+  // set up 3 in further off the rail and lined up: the ghost ball moves with it
+  const cueAt = [L.C[0], L.C[1] - 3], obAt = [L.O[0], L.O[1] - 0.3], G = BU.ghostAt(L, { cueAt, obAt });
+  assert.ok(BU.judge(L, { obIn: true, obPocket: L.pocket, cueEnd: G, cueAt, obAt }).ok);
+  assert.ok(!BU.judge(L, { obIn: true, obPocket: L.pocket, cueEnd: [G[0] - 3, G[1] - 3], cueAt, obAt }).ok);
+  // a pocket not known (a late call's guess) is not held against it
+  assert.ok(BU.judge(BU.layout('F6', { shot: 3 }, P, view), { obIn: true, obPocket: null }).ok);
 });

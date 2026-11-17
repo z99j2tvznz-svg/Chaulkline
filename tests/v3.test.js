@@ -66,8 +66,8 @@ async function run(rot, viewport, sway, strokeTest) {
       // V3.8.9: no Check my stroke in the menu (the stroke is read on every shot, above)
       await page.click('#menuBtn'); assert.strictEqual(await page.locator('[data-act=stroke]').count(), 0); await page.click('[data-act=close]');
       // V3.6: Menu -> Drills -> Cut ladder: its setup on the table, its line at the bottom
-      await page.click('#menuBtn'); await page.click('[data-act=drills]'); await page.click('[data-drill=cut]');
-      assert.match(await page.textContent('#drillTag'), /Set the balls on their X.*Cut ladder · straight in, 1 diamond out · shot 1 of 3 · step 1 of 6/s);
+      await page.click('#menuBtn'); await page.click('[data-act=drills]'); await page.click('[data-drill=cut][data-round="0"]');
+      assert.match(await page.textContent('#drillTag'), /Set the balls on their X.*Cut ladder \(easy\) · 10° cut, 1 diamond out · shot 1 of 3 · step 1 of 5/s);
       // V3.7.2: both balls on their rings and the table still: counted down to "Ready: shoot" by itself
       await page.evaluate(() => { window.drillTaken = () => true; });
       await page.waitForFunction(() => /Ready: shoot/.test(document.querySelector('#drillTag').textContent), null, { timeout: 15000 });
@@ -75,15 +75,26 @@ async function run(rot, viewport, sway, strokeTest) {
       const stepped = await page.evaluate(() => { const A = window.__v3.A;
         for (let i = 0; i < 3; i++) { const st = A.drill.st; drillScore({ n: 900 + i, before: [{ key: 1, num: 0, x: st.C[0], y: st.C[1] }, { key: 2, num: 3, x: st.O[0], y: st.O[1] }], made: i === 1 ? [] : [{ key: 2, num: 3, pocket: st.pocket }], after: [], scratch: false }, st); }
         return document.querySelector('#drillTag').textContent; });
-      assert.match(stepped, /10° cut, 1½ diamonds out · shot 1 of 3 · step 2 of 6 · made 2 of 3/);
+      assert.match(stepped, /20° cut, 1 diamond out · shot 1 of 3 · step 2 of 5 · made 2 of 3/);
       // V3.8.5: scored as soon as the object ball is called in, while the shot is still going (the cue ball rolling)
       const early = await page.evaluate(() => { const A = window.__v3.A, S = A.tk.S, st = A.drill.st, keep = [S.shot, S.phase];
         A.drillReadyOf.set(950, true); S.shot = { n: 950, cueKey: 'c', before: [{ key: 'c', num: 0, x: st.C[0], y: st.C[1], rx: st.C[0], ry: st.C[1] }, { key: 'o', num: 3, x: st.O[0], y: st.O[1], rx: st.O[0], ry: st.O[1] }], made: [{ key: 'o', num: 3, pocket: st.pocket }] };
         drillEarly(); S.shot = keep[0]; S.phase = keep[1];
         const t = A.sess.drillTries.find(x => x.n === 950); return { made: t && t.made, tag: document.querySelector('#drillTag').textContent }; });
-      assert.strictEqual(early.made, true); assert.match(early.tag, /shot 2 of 3 · step 2 of 6/);
+      assert.strictEqual(early.made, true); assert.match(early.tag, /shot 2 of 3 · step 2 of 5/);
       const dr = await page.evaluate(() => { const A = window.__v3.A; return [A.drill.st.O, A.drill.st.C].every(p => p[0] > 0 && p[1] > 0 && p[0] < A.P.L && p[1] < A.P.W); }); assert.ok(dr);
       await page.click('#menuBtn'); await page.click('[data-act=drills]'); await page.click('[data-act=drill_stop]'); assert.ok(await page.isHidden('#drillTag'));
+      // V3.23: BU Exam I runs on practice rules; F1 is scored as soon as the ball is in (the cue ball still rolling); a late
+      // call's guessed pocket is not "wrong pocket" (Nov 16 20:10); F2's marks are free across the rail
+      const bu = await page.evaluate(() => { const A = window.__v3.A, S = A.tk.S, keep = [S.shot, S.phase], mode0 = A.mode;
+        window.__v3.buStart('F1'); const out = { mode: A.mode, practice: A.tk.O.practice, auto: A.tk.O.autoRack };
+        const L = A.bu.lay, ball = (k, n, p) => ({ key: k, num: n, x: p[0], y: p[1], rx: p[0], ry: p[1] }); A.buReadyOf.set(960, { ready: true, lay: L, id: 'F1', k: 0 });
+        S.shot = { n: 960, t0: S.t, cueKey: 'c', before: [ball('c', 0, L.C), ball('o', 3, L.O)], made: [{ key: 'o', num: 3, pocket: L.pocket }] }; S.phase = 'shot';
+        buEarly(); S.shot = keep[0]; S.phase = keep[1]; out.res = A.bu.res.F1.slice(); out.tag = document.querySelector('#drillTag').textContent;
+        const L2 = A.bu.lay; window.__v3.buScore({ n: 961, cueKey: 'c', before: [ball('c', 0, L2.C), ball('o', 3, L2.O)], made: [{ key: 'o', num: 3, pocket: (L2.pocket + 1) % 6, late: true }], after: [], paths: [{ key: 'c', p: [[0, L2.C[0], L2.C[1]], [1, L2.O[0] - 3, L2.O[1]]] }] }, { ready: true, lay: L2, id: 'F1', k: 1 });
+        out.res2 = A.bu.res.F1.slice(); window.__v3.buStart('F2'); out.free = !!A.bu.lay.free; buStop(true); A.mode = mode0; return out; });
+      assert.deepStrictEqual([bu.mode, bu.practice, bu.auto, bu.res, bu.res2, bu.free], ['practice', true, false, [true], [true, true], true], JSON.stringify(bu));
+      assert.match(bu.tag, /BU F1 Cut shot · position 5 · shot 2 of 10 · score 5/);
     }
     // End session: the camera goes off and the session screen shows; Save debug there (no share sheet in headless
     // Chromium: it downloads)
