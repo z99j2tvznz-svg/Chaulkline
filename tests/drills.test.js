@@ -50,10 +50,15 @@ test('no drill is shot from where the phone stands (owner, Nov 3: the phone behi
   });
 });
 
-test('the cut ladder: the cue ball stays put, the object ball comes round toward the end rail as the cut grows; thin cuts: the ball against the end rail', () => {
-  const sts = DRILL.byId('cut').levels.map((v, l) => DRILL.setup('cut', l, P, view));
-  assert.ok(sts.every(st => st.C[0] === sts[0].C[0] && st.C[1] === sts[0].C[1]));
-  for (let i = 1; i < sts.length; i++) assert.ok(sts[i].O[0] > sts[i - 1].O[0], 'closer to the right end rail at each level');
+test('the cut ladder (V3.22.1): further from the corner at each step, the cue ball moved a little; thin cuts: the ball against the end rail', () => {
+  for (const ft of [7, 8, 9]) {
+    const Pt = makeP(ft), vt = (dx, dy) => [dx * Pt.L / 8, dy * Pt.W / 4], sts = DRILL.byId('cut').levels.map((v, l) => DRILL.setup('cut', l, Pt, vt)), pk = [Pt.pockets[sts[0].pocket].x, Pt.pockets[sts[0].pocket].y];
+    const d = st => Math.hypot(st.O[0] - pk[0], st.O[1] - pk[1]);
+    for (let i = 1; i < sts.length; i++) assert.ok(d(sts[i]) > d(sts[i - 1]), ft + ' ft: further from the pocket at step ' + (i + 1) + ': ' + sts.map(d).map(Math.round));
+    assert.ok(sts.every(st => Math.hypot(st.C[0] - 3 * Pt.L / 8, st.C[1] - Pt.W / 2) < 0.7 * Pt.L / 8), 'the cue ball within about half a diamond of its start');
+    assert.ok(new Set(sts.map(st => st.C.join())).size >= 5, 'moved for a different look');
+    assert.ok(/diamonds? out/.test(sts[3].word), sts[3].word);
+  }
   const th = DRILL.setup('thin', 0, P, view); assert.ok(P.L - th.O[0] < P.R + 0.5, 'against the end rail'); assert.strictEqual(P.pocketNames[th.pocket], 'bottom-right');
 });
 

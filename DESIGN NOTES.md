@@ -1962,3 +1962,12 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
     stays until hit. The Nov 16 hanger got no plan.
   - Optional P.pocketSpeed: the capture radius shrinks by 0.012 in per in/s over 3 mph, at most 0.8 in. Slower speed,
     bigger pockets (Dr. Dave BD Dec 2004); the coaching planner sets it, V2 and the rest are unchanged.
+- V3.22.1 (owner, Nov 17): the Cut ladder is progressive in distance too. obDists [1, 1.5, 2, 2.5, 3, 3.5] diamonds from
+  the far right corner with the cuts 0-50 degrees; cues [[3,2], [2.6,2.5], [3.4,1.5], [2.7,1.6], [3.3,2.4], [2.9,2]] (the
+  cue ball moved up to about half a diamond at each step, the same for the step's three shots). If a cut cannot be set out
+  that far on a table, the distance comes down a quarter diamond at a time. The words say the distance ("30° cut,
+  2½ diamonds out"). Checked on 7, 8 and 9 ft tables (tests/drills.test.js).
+- Next build (owner, Nov 17): on a hard shot the trail draws a straight line from the cue ball's start to wherever it is
+  next found, even when that direction makes no sense. Start the trail where the ball is first seen moving and
+  reconstruct the missing part (the simulation from the seen start and direction, cushions included) so the drawn path
+  is right even when the tracker cannot keep up.

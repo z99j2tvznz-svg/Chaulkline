@@ -67,7 +67,7 @@ async function run(rot, viewport, sway, strokeTest) {
       await page.click('#menuBtn'); assert.strictEqual(await page.locator('[data-act=stroke]').count(), 0); await page.click('[data-act=close]');
       // V3.6: Menu -> Drills -> Cut ladder: its setup on the table, its line at the bottom
       await page.click('#menuBtn'); await page.click('[data-act=drills]'); await page.click('[data-drill=cut]');
-      assert.match(await page.textContent('#drillTag'), /Set the balls on their spots.*Cut ladder · straight in · shot 1 of 3 · step 1 of 6/s);
+      assert.match(await page.textContent('#drillTag'), /Set the balls on their X.*Cut ladder · straight in, 1 diamond out · shot 1 of 3 · step 1 of 6/s);
       // V3.7.2: both balls on their rings and the table still: counted down to "Ready: shoot" by itself
       await page.evaluate(() => { window.drillTaken = () => true; });
       await page.waitForFunction(() => /Ready: shoot/.test(document.querySelector('#drillTag').textContent), null, { timeout: 15000 });
@@ -75,7 +75,7 @@ async function run(rot, viewport, sway, strokeTest) {
       const stepped = await page.evaluate(() => { const A = window.__v3.A;
         for (let i = 0; i < 3; i++) { const st = A.drill.st; drillScore({ n: 900 + i, before: [{ key: 1, num: 0, x: st.C[0], y: st.C[1] }, { key: 2, num: 3, x: st.O[0], y: st.O[1] }], made: i === 1 ? [] : [{ key: 2, num: 3, pocket: st.pocket }], after: [], scratch: false }, st); }
         return document.querySelector('#drillTag').textContent; });
-      assert.match(stepped, /10° cut · shot 1 of 3 · step 2 of 6 · made 2 of 3/);
+      assert.match(stepped, /10° cut, 1½ diamonds out · shot 1 of 3 · step 2 of 6 · made 2 of 3/);
       // V3.8.5: scored as soon as the object ball is called in, while the shot is still going (the cue ball rolling)
       const early = await page.evaluate(() => { const A = window.__v3.A, S = A.tk.S, st = A.drill.st, keep = [S.shot, S.phase];
         A.drillReadyOf.set(950, true); S.shot = { n: 950, cueKey: 'c', before: [{ key: 'c', num: 0, x: st.C[0], y: st.C[1], rx: st.C[0], ry: st.C[1] }, { key: 'o', num: 3, x: st.O[0], y: st.O[1], rx: st.O[0], ry: st.O[1] }], made: [{ key: 'o', num: 3, pocket: st.pocket }] };

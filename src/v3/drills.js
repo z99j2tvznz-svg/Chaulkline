@@ -12,8 +12,11 @@ const DRILL = (() => {
   // (owner, Nov 3: the phone stands behind the near rail at the middle; no drill may have the player shooting from there.
   // Cuts go the long way of the table, from the left end; the bank is shot from the far side.)
   const LIST = [
-    { id: 'cut', name: 'Cut ladder', about: 'The cue ball 3 diamonds from the left end, in the middle; the object ball a diamond and a half from the far right corner. Straight in, then 10° thinner at each step: the object ball comes round toward the short rail.',
-      levels: [0, 10, 20, 30, 40, 50], word: c => c ? c + '° cut' : 'straight in', kind: 'turn', cue: [3, 2], pocket: [8, 4], obDist: 1.5 },
+    // (V3.22.1, owner Nov 17: progressive, further and further from the corner as it goes, the cue ball moved a little at
+    // each step for a different look, three shots at each step as before)
+    { id: 'cut', name: 'Cut ladder', about: 'Into the far right corner: straight in from a diamond out, then at each step 10° thinner and half a diamond further from the pocket (3½ diamonds at the last). The cue ball starts 3 diamonds from the left end in the middle and moves a little at each step.',
+      levels: [0, 10, 20, 30, 40, 50], word: c => c ? c + '° cut' : 'straight in', kind: 'turn', pocket: [8, 4],
+      obDists: [1, 1.5, 2, 2.5, 3, 3.5], cues: [[3, 2], [2.6, 2.5], [3.4, 1.5], [2.7, 1.6], [3.3, 2.4], [2.9, 2]] },
     { id: 'thin', name: 'Thin cuts', about: 'The object ball almost against the right end rail, a diamond and a quarter from the near right corner; the cue ball moves out for each cut, from 50° to 77°, shot from the far side.',
       levels: [50, 57, 63, 68, 73, 77], word: c => c + '° cut', kind: 'cut', ob: 'rail', obFrom: 1.25, pocket: [8, 0], cueDist: 2.5 },
     { id: 'bank', name: 'Cross-side bank', about: 'The object ball a diamond and a half off the near rail, a little right of the side pockets, banked off the near rail into the far side pocket, shot from the far side. Each step moves it a quarter diamond further right.',
@@ -33,15 +36,17 @@ const DRILL = (() => {
     // the cue ball where it is set (cue); the object ball obDist diamonds from the pocket, turned round it until the cut is
     // right, on the side toward the end rail (the cut gets thinner as it comes round)
     if (d.kind === 'turn') {
-      const C0 = T(d.cue), r = d.obDist * dia, m = R + 1; let best = null;
-      for (let t = 0; t < 360; t += 0.25) {
+      const li = Math.max(0, Math.min(d.levels.length - 1, level)), C0 = T(d.cues ? d.cues[li] : d.cue), m = R + 1; let best = null, rd = d.obDists ? d.obDists[li] : d.obDist;
+      // (the distance comes down a quarter diamond at a time if that cut cannot be set out so far on this table)
+      for (; !best && rd > 0.5; rd -= 0.25) { const r = rd * dia; for (let t = 0; t < 360; t += 0.25) {
         const o = [Pk[0] + r * Math.cos(t * D2), Pk[1] + r * Math.sin(t * D2)]; if (!(o[0] > m && o[1] > m && o[0] < P.L - m && o[1] < P.W - m)) continue;
         const u = unit(o, Pk), g = [o[0] - 2 * R * u[0], o[1] - 2 * R * u[1]], a = Math.atan2(u[1], u[0]) - Math.atan2(g[1] - C0[1], g[0] - C0[0]), cut = Math.abs(((a / D2) + 540) % 360 - 180);
         if (Math.abs(cut - v) > 0.4) continue; const side = Math.abs(o[0] - Pk[0]);
         if (!best || side < best.side) best = { o, side };
-      }
+      } if (best) best.rd = rd; }
       O = best.o; const u = unit(O, Pk), G = [O[0] - 2 * R * u[0], O[1] - 2 * R * u[1]];
-      return { id, level, value: v, word: d.word(v), O, C: C0, G, pocket, aimAt: Pk, Pk };
+      const out = d.obDists ? ', ' + String(best.rd).replace('.5', '½').replace('.25', '¼').replace('.75', '¾') + ' diamond' + (best.rd > 1 ? 's' : '') + ' out' : '';
+      return { id, level, value: v, word: d.word(v) + out, O, C: C0, G, pocket, aimAt: Pk, Pk, dist: best.rd };
     }
     if (d.kind === 'bank') { O = T([d.ob[0] + v, d.ob[1]]); const near = T([d.ob[0], 0]); aimAt = [Pk[0], 2 * near[1] + (near[1] < P.W / 2 ? R : -R) * 2 - Pk[1]]; } // the pocket's mirror in the near cushion
     if (d.kind === 'stop') { const u0 = unit(Pk, T([4, 2])); O = [Pk[0] + u0[0] * 1.4 * dia, Pk[1] + u0[1] * 1.4 * dia]; }
