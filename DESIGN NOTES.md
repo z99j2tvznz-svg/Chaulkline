@@ -2066,3 +2066,20 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
 - tests/tablecheck.test.js covers the whole flow in the browser: two spots, the ball check (finder centres
   simulated at the contact point and read at R: the far rail ball 2.87 in short and the near one 1.83 in past its
   cushion, as on Nov 16), putting the spots together, and the list. The track test covers the struck ball.
+- V3.24.1 (owner, Nov 17):
+  - On Nov 16 20:57 the owner made a stop shot the app said nothing about (shot 25, set aside as untouched), missed the
+    next one badly (shot 26) and changed that miss to a make to even it up. So F2 shot 9 was a real miss: its object ball
+    did roll across the table. V3.24.0's rule that distrusted an object ball track jumping 12 in in a look is out (a
+    struck ball covers 25 in in a look at 75 in/s); so is the "seen again over 12 in away" clause. A hidden object ball
+    counts in only if never seen again, the cue ball was sent at it (within 8 degrees) and came within 18 in (F4's
+    draws are back a foot by the next look), and its spot is bare.
+  - Re-judged with the app's buFacts (the right cue track): shots 16 and 25 (made stop shots set aside) are made; 20
+    (changed by hand) is made by itself; 26 is missed; F4's 40 and 41 are made and 42 is missed (the cue ball an inch
+    short of the box).
+  - fx(kind): the result as a picture (owner: the words are hard to read from the TV). 'ok' a green check drawn in with
+    sparkles, 'no' a red X that slams in, shakes and sags, 'unk' a yellow question mark that wobbles. It is shown for
+    drill results, late makes and "not on its spot", and in the exam for each result, F6's scratch after all, late
+    makes, Change last and "not on its X". An unjudgeable real stroke (the cue ball sent 12 in or more) gets the
+    question mark and "shoot it again"; nudges say nothing.
+  - Owner: every fix made for Safari's slow look rate (2-3 looks a second) must be checked again when a native app runs
+    the camera and the finder faster. Noted in the work log's standing rules.

@@ -90,11 +90,11 @@ async function run(rot, viewport, sway, strokeTest) {
         window.__v3.buStart('F1'); const out = { mode: A.mode, practice: A.tk.O.practice, auto: A.tk.O.autoRack };
         const L = A.bu.lay, ball = (k, n, p) => ({ key: k, num: n, x: p[0], y: p[1], rx: p[0], ry: p[1] }); A.buReadyOf.set(960, { ready: true, lay: L, id: 'F1', k: 0 });
         S.shot = { n: 960, t0: S.t, cueKey: 'c', before: [ball('c', 0, L.C), ball('o', 3, L.O)], made: [{ key: 'o', num: 3, pocket: L.pocket }] }; S.phase = 'shot';
-        buEarly(); S.shot = keep[0]; S.phase = keep[1]; out.res = A.bu.res.F1.slice(); out.tag = document.querySelector('#drillTag').textContent;
+        buEarly(); S.shot = keep[0]; S.phase = keep[1]; out.res = A.bu.res.F1.slice(); out.tag = document.querySelector('#drillTag').textContent; out.fx = !document.querySelector('#fx').hidden && document.querySelector('#fx').className;
         const L2 = A.bu.lay; window.__v3.buScore({ n: 961, cueKey: 'c', before: [ball('c', 0, L2.C), ball('o', 3, L2.O)], made: [{ key: 'o', num: 3, pocket: (L2.pocket + 1) % 6, late: true }], after: [], paths: [{ key: 'c', p: [[0, L2.C[0], L2.C[1]], [1, L2.O[0] - 3, L2.O[1]]] }] }, { ready: true, lay: L2, id: 'F1', k: 1 });
         out.res2 = A.bu.res.F1.slice(); window.__v3.buStart('F2'); out.free = !!A.bu.lay.free; buStop(true); A.mode = mode0; return out; });
       assert.deepStrictEqual([bu.mode, bu.practice, bu.auto, bu.res, bu.res2, bu.free], ['practice', true, false, [true], [true, true], true], JSON.stringify(bu));
-      assert.match(bu.tag, /BU F1 Cut shot · position 5 · shot 2 of 10 · score 5/);
+      assert.match(bu.tag, /BU F1 Cut shot · position 5 · shot 2 of 10 · score 5/); assert.strictEqual(bu.fx, 'ok', 'the green check shows (V3.24.1)');
     }
     // End session: the camera goes off and the session screen shows; Save debug there (no share sheet in headless
     // Chromium: it downloads)

@@ -99,6 +99,27 @@ a.go { color: inherit; text-decoration: none; }
 .hbars { width: 100%; height: 64px; display: block; margin: 8px 0 4px; }
 .stats b { display: block; font: 600 22px var(--f); } .stats span { font: 500 12px var(--f); color: var(--muted); }
 #toast { position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 70px); transform: translateX(-50%); padding: 9px 16px; font: 500 14px var(--f); z-index: 30; pointer-events: none; max-width: 92vw; text-align: center; }
+/* V3.24.1 (owner, Nov 17: the words are hard to read from the TV): a drill's result as a big picture in the middle, a green
+   check drawn with sparkles for a make, a red X that slams in and sags for a miss, a yellow question mark that wobbles when
+   it cannot tell */
+#fx { position: fixed; left: 50%; top: 50%; width: min(48vh, 48vw); height: min(48vh, 48vw); transform: translate(-50%, -50%); z-index: 31; pointer-events: none; }
+#fx svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 6px 18px rgba(0,0,0,.55)); }
+#fx .disc { animation: fxPop 1.7s cubic-bezier(.2,1.4,.4,1) both; transform-origin: 50% 50%; transform-box: fill-box; }
+#fx .ring { fill: rgba(11,16,20,.55); stroke-width: 7; stroke-dasharray: 302; stroke-dashoffset: 302; animation: fxDraw .45s ease-out .05s forwards; }
+#fx .mark { fill: none; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: var(--l); stroke-dashoffset: var(--l); animation: fxDraw .4s cubic-bezier(.6,0,.2,1) forwards; }
+#fx.ok .ring, #fx.ok .mark { stroke: #3ddc84; } #fx.no .ring, #fx.no .mark { stroke: #ff4d4d; } #fx.unk .ring, #fx.unk .mark { stroke: #ffd23f; }
+#fx.ok .ring { fill: rgba(16,60,36,.55); } #fx.no .ring { fill: rgba(70,14,14,.55); } #fx.unk .ring { fill: rgba(70,58,8,.55); }
+#fx .spark { fill: #eaffd0; opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; animation: fxSpark 1s ease-out forwards; }
+#fx.no .disc { animation: fxPop 1.7s cubic-bezier(.2,1.4,.4,1) both, fxShake .45s ease-in-out .5s, fxSag .7s ease-in 1s forwards; }
+#fx.unk .disc { animation: fxPop 1.7s cubic-bezier(.2,1.4,.4,1) both, fxWobble .9s ease-in-out .45s; }
+#fx .dot { fill: #ffd23f; opacity: 0; animation: fxIn .2s ease-out .6s forwards; }
+@keyframes fxDraw { to { stroke-dashoffset: 0; } }
+@keyframes fxPop { 0% { transform: scale(.3); opacity: 0; } 14% { transform: scale(1.1); opacity: 1; } 24% { transform: scale(1); } 82% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes fxShake { 0%, 100% { translate: 0 0; } 20% { translate: -7% 0; } 40% { translate: 6% 0; } 60% { translate: -4% 0; } 80% { translate: 2% 0; } }
+@keyframes fxSag { to { translate: 0 9%; rotate: -8deg; } }
+@keyframes fxWobble { 0%, 100% { rotate: 0deg; } 20% { rotate: -12deg; } 50% { rotate: 10deg; } 80% { rotate: -5deg; } }
+@keyframes fxSpark { 0% { opacity: 0; transform: translate(0,0) scale(.2) rotate(0deg); } 25% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.2) rotate(90deg); } }
+@keyframes fxIn { to { opacity: 1; } }
 #sheet { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; z-index: 9; }
 .sheetBox { background: rgba(18,26,32,.94); border: 1px solid var(--glass-line); width: min(100%, 520px); border-radius: 20px 20px 0 0; padding: 16px 16px calc(env(safe-area-inset-bottom, 0px) + 16px); display: flex; flex-direction: column; gap: 12px; }
 @media (orientation: landscape) { #sheet { align-items: center; } .sheetBox { border-radius: 20px; } }
@@ -126,6 +147,7 @@ a.go { color: inherit; text-decoration: none; }
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
     <div class="card glass"><h2>New in V3.24</h2><ul>
+      <li>V3.24.1: drill and exam results as a big picture you can read from the TV: a green check with sparkles for a make, a red X for a miss, a yellow question mark when the app can't tell (shoot that one again). And the exam's scoring checked against your Nov 16 corrections: the made stop shots that were set aside count, and a real miss stays a miss.</li>
       <li>Table check (button above): set the phone, find the table and tap Use this spot. The outline is fine-tuned on the rail diamonds and you see how well each rail sits and where the phone is. Optional: freeze four balls against the cushions at the rings to see how true ball positions read; that spot's reading is corrected at once. Save the spot, move or turn the phone, Next spot. With two or more spots, Put the spots together works out this table's diamonds for every session after.</li>
       <li>Ball positions are truer: they had read 1 to 3½ inches toward the phone, most at the far rail (the four rail balls of BU F7 on Nov 16 read up to 3.4 in off, two of them on or past the near cushion). Now within about half an inch. This is also why the drill and exam marks seemed hard to hit.</li>
       <li>BU exam: firm stop shots on F2 and F4 count now (the ball was in before the camera saw the shot start, so three made shots were set aside); a stop is measured from where the cue ball really started; a quick miss call no longer comes from a track that jumped across the table; F7 waits for its rail ball to be seen on its mark.</li>
@@ -277,6 +299,7 @@ a.go { color: inherit; text-decoration: none; }
   <div class="row"><button class="btn" id="pickNot">Not a ball</button><button class="btn" id="pickPocket">It went in</button><button class="btn" id="pickCancel">Cancel</button></div>
 </div></div>
 <div id="toast" class="glass" hidden></div>
+<div id="fx" hidden></div>
 <div id="drillTag" class="glass" hidden></div>
 
 <script src="vendor/ort/ort.webgpu.min.js?v=1.29.0"></script>
