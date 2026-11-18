@@ -71,3 +71,28 @@ test('V3.24 table check: two spots, the ball check, put together', { timeout: 40
     assert.deepStrictEqual(errors, []);
   } finally { await browser.close(); srv.close(); fs.rmSync(dir, { recursive: true, force: true }); }
 });
+
+test('V3.25.1: the table set by hand from the eight cushion points comes out on the cloth', { timeout: 300000 }, async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'chalk-tc-')), y4m = path.join(dir, 'cam.y4m');
+  execFileSync('python3', [path.join(ROOT, 'tests/lib/y4m.py'), PHOTO, y4m, '3', '0', '0']);
+  const srv = await serve(ROOT), browser = await chromium.launch({ args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--use-file-for-fake-video-capture=' + y4m] });
+  try {
+    const page = await (await browser.newContext({ viewport: { width: 956, height: 440 }, permissions: ['camera'] })).newPage(), errors = [];
+    page.on('pageerror', e => errors.push(String(e)));
+    await page.goto(srv.url + '/index.html'); await page.waitForFunction(() => window.crossOriginIsolated === true && window.__v3, null, { timeout: 30000 });
+    await page.click('#tchkBtn'); await page.waitForFunction(() => window.__v3.A.phase === 'verify', null, { timeout: 60000 });
+    assert.match(await page.textContent('#card'), /Tap the rail points/);
+    // the table the automatic outline found stands in for the real one: its cushion points at the noses' height, shuffled
+    const set = await page.evaluate(() => { const A = window.__v3.A, c = A.cand, { L, Wd } = tableDims(A.ft), cam = tableCam(c.quad, c.rot, A.W, A.H, edgeIn(false)), pts = [];
+      for (const [x, y] of [[0, 0], [L, 0], [L, Wd], [0, Wd]]) { const sx = x ? -1 : 1, sy = y ? -1 : 1; pts.push(cam.proj(x + 3.4 * sx, y, 1.4), cam.proj(x, y + 3.4 * sy, 1.4)); }
+      const order = [5, 2, 7, 0, 3, 6, 1, 4], cloth = tableCornersFor(c.rot, L, Wd).map(([x, y]) => cam.proj(x, y, 0));
+      beginManual(); A.man = order.map(i => pts[i]); manualCard(); return { cloth, rot: c.rot, card: document.querySelector('#card').textContent };
+    });
+    assert.match(set.card, /Use these points/);
+    await page.click('[data-act=useman]'); await page.waitForFunction(() => window.__v3.A.phase === 'verify', null, { timeout: 30000 });
+    const got = await page.evaluate(() => { const c = window.__v3.A.cand; return { quad: c.quad, rot: c.rot, manual: c.manual, rails: c.rails, ev: window.__v3.DBG.ev.filter(e => e.k === 'table_manual').pop() }; });
+    assert.ok(got.manual && got.rails && got.rot === set.rot && got.ev && got.ev.pts.length === 8, JSON.stringify(got).slice(0, 300));
+    for (const p of set.cloth) { const d = Math.min(...got.quad.map(q => Math.hypot(q[0] - p[0], q[1] - p[1]))); assert.ok(d < 2, 'each corner on the cloth within 2 px: ' + d.toFixed(2)); }
+    assert.deepStrictEqual(errors, []);
+  } finally { await browser.close(); srv.close(); fs.rmSync(dir, { recursive: true, force: true }); }
+});

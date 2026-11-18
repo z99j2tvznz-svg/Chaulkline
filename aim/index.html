@@ -277,6 +277,8 @@ function makeShot() {
     shot.right = Math.atan2(ghost.y - cb.y, ghost.x - cb.x);
     if (!simulate(shot, shot.right).made) continue;
     shot.window = windowOf(shot);
+    // (V3.25.1: a sliver from far can leave a window under a twentieth of a degree, which no one can aim: not dealt)
+    if (shot.window.hi - shot.window.lo < 0.1) continue;
     return shot;
   }
   return null;

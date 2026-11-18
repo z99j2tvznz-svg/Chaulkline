@@ -161,6 +161,7 @@ a.go { color: inherit; text-decoration: none; }
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
     <div class="card glass"><h2>New in V3.25</h2><ul>
+      <li>V3.25.1: setting the table by hand, you now tap the two points where the cushions end at each corner pocket (8 in all, any order) instead of guessing the corner inside the pocket. The app draws each cushion through its two points and puts the corners where they cross. It also allows for those points being at cushion height, not on the cloth: the old corner taps could put balls 2 to 3½ in toward the phone.</li>
       <li>Coaching test, the zone the way you asked: the white line is the ideal line for this ball to get shape on the next one. Green is the right side of it, with more angle on the next ball (a little harder to pot, the cue ball moves naturally). Yellow is the other side, less angle toward straight in: still workable, but it takes more stroke. Past those, it's a different shot. The white ring is still where this stroke sends the cue ball.</li>
       <li>After each coached shot, big enough to read from the TV: where the cue ball ended (in the green, in the yellow, outside the zone, or the miss), then what your stroke did against the plan's: overcut or undercut on a miss, too hard or too soft (with the speed it really was), not enough draw or too much follow. It's worked out from where the balls went and when they were seen there, in the same physics the plan uses. When it can't tell, it says nothing rather than guess.</li>
       <li>A planned ball that goes in late now counts for the shot's position too (on Nov 17 five of them first said "outside the zone").</li>
@@ -1039,6 +1040,36 @@ function bestQuad(hull) {
 function orderQuad(q) {
   const cx = q.reduce((s, p) => s + p[0], 0) / 4, cy = q.reduce((s, p) => s + p[1], 0) / 4;
   return q.slice().sort((a, b) => Math.atan2(a[1] - cy, a[0] - cx) - Math.atan2(b[1] - cy, b[0] - cx));
+}
+// The table's corners from the cushion points (V3.25.1, owner Nov 18: "tap the points of the rails ... I'm trying to guess
+// the position where those two rails intersect"): at each corner pocket the two points where the cushion noses end, eight
+// in all, in any order. They are paired by pocket (each point with its nearest), the pockets put in order round the table,
+// and each cushion's nose drawn as the straight line through its two points (one at each end: the point of each pocket
+// that lies toward the other); each corner is where its two cushions' lines cross. A straight line stays straight through
+// the lens, so the crossing is exact; the corner itself is inside the pocket's mouth and cannot be seen. These corners are
+// at the noses' height. Returns them in orderQuad's order, or null (points not in four pairs, or lines that do not meet
+// near their pockets).
+function quadFromRailPoints(pts) {
+  if (!pts || pts.length !== 8) return null; const d = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+  const left = pts.map(p => p.slice()), pairs = [];
+  while (left.length) { let bi = 0, bj = 1, bd = Infinity; for (let i = 0; i < left.length; i++) for (let j = i + 1; j < left.length; j++) { const dd = d(left[i], left[j]); if (dd < bd) { bd = dd; bi = i; bj = j; } }
+    const b = left.splice(bj, 1)[0], a = left.splice(bi, 1)[0]; pairs.push({ a, b, c: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], w: bd }); }
+  const cen = orderQuad(pairs.map(p => p.c)), pk = cen.map(c => pairs.find(p => p.c === c));
+  // (each pocket's two points well apart from the next pocket: a pair spread over half the way to its neighbour is not a pocket)
+  for (let k = 0; k < 4; k++) { const n = pk[(k + 1) % 4], m = pk[(k + 3) % 4]; if (pk[k].w > 0.5 * Math.min(d(pk[k].c, n.c), d(pk[k].c, m.c))) return null; }
+  // which of each pocket's points is on the cushion toward the next pocket (the one nearer it, and farther from the one before)
+  const toNext = [], toPrev = [];
+  for (let k = 0; k < 4; k++) { const { a, b } = pk[k], n = pk[(k + 1) % 4].c, m = pk[(k + 3) % 4].c, s = d(a, n) - d(b, n) + d(b, m) - d(a, m); toNext[k] = s < 0 ? a : b; toPrev[k] = s < 0 ? b : a; }
+  const line = (p, q) => [p[1] - q[1], q[0] - p[0], p[0] * q[1] - q[0] * p[1]], meet = (l, m) => { const z = l[0] * m[1] - l[1] * m[0]; return Math.abs(z) < 1e-9 ? null : [(l[1] * m[2] - l[2] * m[1]) / z, (l[2] * m[0] - l[0] * m[2]) / z]; };
+  const rail = k => line(toNext[k], toPrev[(k + 1) % 4]), out = [];
+  for (let k = 0; k < 4; k++) { const q = meet(rail((k + 3) % 4), rail(k)); if (!q || d(q, pk[k].c) > 4 * pk[k].w + 40) return null; out.push(q); }
+  return out;
+}
+// The outline on the cloth from one at the cushion noses' height (z up, inches): the camera worked out with the noses' plane
+// taken for the cloth, then the table's corners projected that much lower
+function clothQuadFromNose(q, rot, ft, W, H, fRatio, z) {
+  const { L, Wd } = tableDims(ft), tc = tableCornersFor(rot, L, Wd), cam = makeCam(tc, q, W, H, fRatio * Math.max(W, H), [W / 2, H / 2]);
+  if (!cam.ok) return null; return tc.map(([x, y]) => cam.proj(x, y, -z));
 }
 
 // Find the cloth: dominant saturated hue, largest region, four extreme corners.
@@ -4094,7 +4125,7 @@ const COACH = coachFactory(typeof simulate !== 'undefined' ? simulate : typeof m
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.25.0';
+const VERSION = 'V3.25.1';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -4431,16 +4462,24 @@ function showVerify() {
   const sizes = '<div class="row"><span class="lbl">Table</span>' + [7, 8, 9].map(f => '<button class="btn" data-ft="' + f + '"' + (f === A.ft ? ' style="border-color:var(--accent)"' : '') + '>' + f + ' ft</button>').join('') + '</div>';
   // an outline that is not twice as long as it is wide (seen through the lens) is off: often on the outer edge of the rails
   const ratio = A.shapeRatio ? Math.max(A.shapeRatio, 1 / A.shapeRatio) : 2, odd = c && (ratio < 1.6 || ratio > 2.5);
-  const tip = c ? (odd ? 'This outline is not the shape of a table (' + ratio.toFixed(1) + ' to 1, a table is 2 to 1): it may be on the outer edge of the rails. Tap the corners to set it on the cloth.' : good ? 'The teal outline should sit on the cushions, with a dot in each corner pocket.' : (c.tips && c.tips[0]) || 'Not sure about this one.') : 'The table was not found. Make sure the whole table is in view and the lights are on.';
+  const tip = c ? (odd ? 'This outline is not the shape of a table (' + ratio.toFixed(1) + ' to 1, a table is 2 to 1): it may be on the outer edge of the rails. Tap the rail points to set it by hand.' : good ? 'The teal outline should sit on the cushions, with a dot in each corner pocket.' : (c.tips && c.tips[0]) || 'Not sure about this one.') : 'The table was not found. Make sure the whole table is in view and the lights are on.';
   const tcHead = A.mode === 'tablecheck' ? 'Spot ' + ((A.tchk ? A.tchk.spots.length : 0) + 1) + ': move the phone until the outline sits on the cushions (Find again looks again), then Use this spot. ' : '';
   showCard('<div><b>' + (good ? 'Table found' : c ? 'Not sure about this table' : 'Table not found') + '</b><p>' + tcHead + tip + '</p></div>' + sizes +
-    '<div class="row">' + (c ? '<button class="btn primary" data-act="accept">' + (A.mode === 'tablecheck' ? 'Use this spot' : 'Looks right') + '</button>' : '') + '<button class="btn" data-act="retry">' + (A.mode === 'tablecheck' ? 'Find again' : 'Try again') + '</button><button class="btn" data-act="manual">Tap the corners</button></div>');
+    '<div class="row">' + (c ? '<button class="btn primary" data-act="accept">' + (A.mode === 'tablecheck' ? 'Use this spot' : 'Looks right') + '</button>' : '') + '<button class="btn" data-act="retry">' + (A.mode === 'tablecheck' ? 'Find again' : 'Try again') + '</button><button class="btn" data-act="manual">Tap the rail points</button></div>');
   setStatus(good ? 'Check the outline' : 'Table');
 }
 // Setting the corners by hand is done on a still picture (owner, Oct 28: a finger is not exact enough, and pressing the
 // screen moved the phone): the picture is frozen, each corner can be dragged with a magnifier above the finger, and once
 // the outline is accepted the steady check (see steady) measures how far the phone moved since that picture and moves the
 // outline with it. A corner goes on the corner of the cloth, where the two cushion noses would meet.
+// V3.25.1 (owner, Nov 18: "tap the points of the rails ... I'm trying to guess the position where those two rails
+// intersect"): the corner is inside the pocket's mouth and has to be guessed; the cushion points either side of it can be
+// seen. At each corner pocket the two points where the cushions end, eight in all, any order (vision.js
+// quadFromRailPoints): each cushion is the straight line through its two points, each corner where two lines cross. The
+// points are at the noses' height, 1.4 in up, not on the cloth: taken for the cloth, as the corners guessed before were,
+// balls in the owner's usual view read 2.3 to 3.7 in toward the phone. So the outline is worked out at that height and
+// brought down to the cloth (clothQuadFromNose).
+const NOSE_Z = 1.4;
 function beginManual() {
   if (!A.frozen) { grab(); A.frozen = true; } A.phase = 'manual'; A.man = []; A.drag = null; ov.style.touchAction = 'none';
   const n = 'manual-' + String(++A.findN).padStart(2, '0') + '.jpg'; jpeg(960).then(b => setPic(n, b)).catch(() => { }); A.manPic = n;
@@ -4448,21 +4487,23 @@ function beginManual() {
 }
 function manualCard() {
   // the buttons only, small, in the bottom corner (a card in the middle covered the near pockets); what to do goes on top
-  const n = A.man.length;
-  showCard('<div class="row">' + (n === 4 ? '<button class="btn primary" data-act="useman">Use these corners</button>' : '') + '<button class="btn" data-act="undo">Undo</button><button class="btn" data-act="retry">Automatic</button></div>', true);
-  setStatus(n < 4 ? 'Corner pocket ' + (n + 1) + ' of 4: touch and slide, the magnifier shows the spot' : 'Drag any corner to adjust, then Use these corners',
-    'The picture is still, so the phone can move. Aim for the corner of the cloth, where the cushion edges would meet.');
+  const n = A.man.length, ok = n === 8 && !!quadFromRailPoints(A.man);
+  showCard('<div class="row">' + (ok ? '<button class="btn primary" data-act="useman">Use these points</button>' : '') + '<button class="btn" data-act="undo">Undo</button><button class="btn" data-act="retry">Automatic</button></div>', true);
+  setStatus(n < 8 ? 'Corner pocket ' + (Math.floor(n / 2) + 1) + ' of 4, point ' + (n % 2 + 1) + ' of 2: touch and slide onto the tip of a cushion' : ok ? 'Drag any point to adjust, then Use these points' : 'These do not pair up into four pockets: drag each point onto a cushion tip',
+    'The picture is still, so the phone can move. At each corner pocket, the two points where the cushions end; the magnifier shows the spot.');
 }
 function useManual() {
-  if (!A.man || A.man.length < 4) return;
-  const quad = orderQuad(A.man), { img, k } = smallImg(), rot = tableRot(quad, pickRot(img, quad.map(p => [p[0] * k, p[1] * k])));
-  A.cand = { quad, rot, conf: 1, manual: true }; dbg('table_manual', { quad: quad.map(p => p.map(r1)), rot, pic: A.manPic }); A.man = null; A.drag = null; ov.style.touchAction = ''; showVerify();
+  if (!A.man || A.man.length < 8) return; const nose = quadFromRailPoints(A.man); if (!nose) { manualCard(); return; }
+  const { img, k } = smallImg(), rot = tableRot(nose, pickRot(img, nose.map(p => [p[0] * k, p[1] * k]))), quad = clothQuadFromNose(nose, rot, A.ft, A.W, A.H, LENS, NOSE_Z) || nose;
+  A.cand = { quad, rot, conf: 1, manual: true, rails: true }; dbg('table_manual', { pts: A.man.map(p => p.map(r1)), nose: nose.map(p => p.map(r1)), quad: quad.map(p => p.map(r1)), rot, pic: A.manPic }); A.man = null; A.drag = null; ov.style.touchAction = ''; showVerify();
 }
 const picAt = e => { const F = fit(), rc = ov.getBoundingClientRect(); return { x: (e.clientX - rc.left - F.x) / F.k, y: (e.clientY - rc.top - F.y) / F.k, F }; };
 ov.addEventListener('pointerdown', e => {
   if (A.phase !== 'manual' || !A.man) return; e.preventDefault(); const q = picAt(e);
-  let i = -1, bd = 40 / q.F.k; A.man.forEach((p, j) => { const d = Math.hypot(p[0] - q.x, p[1] - q.y); if (d < bd) { bd = d; i = j; } });
-  if (i < 0) { if (A.man.length >= 4) return; A.man.push([q.x, q.y]); i = A.man.length - 1; }
+  // (a pocket's two points are close on the screen: while points are still being set, a touch picks one up only right on
+  // it, else it sets the next; once all eight are set, the nearest within 40 px)
+  let i = -1, bd = (A.man.length < 8 ? 12 : 40) / q.F.k; A.man.forEach((p, j) => { const d = Math.hypot(p[0] - q.x, p[1] - q.y); if (d < bd) { bd = d; i = j; } });
+  if (i < 0) { if (A.man.length >= 8) return; A.man.push([q.x, q.y]); i = A.man.length - 1; }
   A.drag = { i, id: e.pointerId, fx: e.clientX, fy: e.clientY }; try { ov.setPointerCapture(e.pointerId); } catch (err) { }
 });
 ov.addEventListener('pointermove', e => { if (!A.drag || e.pointerId !== A.drag.id) return; const q = picAt(e); A.man[A.drag.i] = [q.x, q.y]; A.drag.fx = e.clientX; A.drag.fy = e.clientY; });
@@ -5146,7 +5187,7 @@ function tcAccepted() {
 function tcCard() {
   const T = A.tchk, c = T.cur, rep = c.rep, ph = rep.phone, b = c.balls;
   const where = 'The phone is ' + Math.round(ph.back) + ' in behind the near rail, ' + Math.abs(Math.round(ph.side)) + ' in ' + (ph.side >= 0 ? 'right' : 'left') + ' of its middle, ' + Math.round(ph.up) + ' in above the cloth.';
-  const fit = rep.n ? 'Fine-tuned on ' + rep.n + ' of 18 rail diamonds' + (rep.moved ? ' (the outline moved ' + rep.moved + ' in)' : '') + ':<br>' + RAILS.map(r => '&nbsp;· ' + r + ' rail: ' + tcRail(rep.rails[r] || { n: 0 })).join('<br>') : 'No rail diamonds were found to fine-tune on' + (rep.manual ? ' (corners set by hand)' : '') + '.';
+  const fit = rep.n ? 'Fine-tuned on ' + rep.n + ' of 18 rail diamonds' + (rep.moved ? ' (the outline moved ' + rep.moved + ' in)' : '') + ':<br>' + RAILS.map(r => '&nbsp;· ' + r + ' rail: ' + tcRail(rep.rails[r] || { n: 0 })).join('<br>') : 'No rail diamonds were found to fine-tune on' + (rep.manual ? ' (set by hand)' : '') + '.';
   const balls = b ? '<br><br>The five balls say the phone is ' + b.side + '. How far each reads from its cushion:<br>' + b.map(x => '&nbsp;· the ' + x.num + ': ' + Math.abs(x.now).toFixed(1) + ' in ' + (x.now < 0 ? 'short of' : 'past') + ' it' + (Math.abs(x.along) >= 1 ? ' (set ' + Math.abs(x.along).toFixed(1) + ' in off its diamond, fine)' : '')).join('<br>') + '<br>From here balls read truest taken ' + b.hFit + ' in above the cloth (each then ' + b.map(x => Math.abs(x.atFit).toFixed(1)).join(' / ') + ' in); used from now on in this session.' : '';
   showCard('<div><b>Spot ' + c.n + '</b><p>' + fit + '<br><br>' + where + balls + '</p></div><div class="row">' +
     (b ? '' : '<button class="btn" data-act="tc_balls">Check with the 5 balls</button>') + '<button class="btn primary" data-act="tc_save">Save this spot</button><button class="btn" data-act="tc_again">Find again</button></div>');
@@ -6005,8 +6046,13 @@ function stShot(sh, row) {
   showCard('<div><b>' + nm + ' done</b><p>' + words + '</p></div><div class="row"><button class="btn" data-act="close">Close</button></div>');
 }
 function drawManual(c, S2, F) {
-  const m = A.man; if (m.length === 4) { const q = orderQuad(m); c.strokeStyle = 'rgba(255,184,77,.9)'; c.lineWidth = 1.2; c.beginPath(); q.forEach((p, i) => { const s = S2(p); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); }); c.closePath(); c.stroke(); }
-  for (const p of m) { const s = S2(p); c.strokeStyle = '#ffb84d'; c.lineWidth = 1.5; c.beginPath(); c.arc(s[0], s[1], 9, 0, Math.PI * 2); c.stroke(); c.beginPath(); c.moveTo(s[0] - 13, s[1]); c.lineTo(s[0] + 13, s[1]); c.moveTo(s[0], s[1] - 13); c.lineTo(s[0], s[1] + 13); c.stroke(); }
+  // (V3.25.1: the cushion points; a pocket's two joined as they are set; all eight set, the cushions' lines through them to
+  // the corners where they cross, each corner a dot)
+  const m = A.man, q = m.length === 8 ? quadFromRailPoints(m) : null;
+  if (q) { c.strokeStyle = 'rgba(255,184,77,.9)'; c.lineWidth = 1.2; c.beginPath(); q.forEach((p, i) => { const s = S2(p); i ? c.lineTo(s[0], s[1]) : c.moveTo(s[0], s[1]); }); c.closePath(); c.stroke();
+    for (const p of q) { const s = S2(p); c.fillStyle = '#ffb84d'; c.beginPath(); c.arc(s[0], s[1], 3.5, 0, Math.PI * 2); c.fill(); } }
+  else for (let i = 0; i + 1 < m.length; i += 2) { const a = S2(m[i]), b = S2(m[i + 1]); c.strokeStyle = 'rgba(255,184,77,.6)'; c.lineWidth = 1; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); }
+  for (const p of m) { const s = S2(p); c.strokeStyle = '#ffb84d'; c.lineWidth = 1.5; c.beginPath(); c.arc(s[0], s[1], 6, 0, Math.PI * 2); c.stroke(); c.beginPath(); c.moveTo(s[0] - 10, s[1]); c.lineTo(s[0] + 10, s[1]); c.moveTo(s[0], s[1] - 10); c.lineTo(s[0], s[1] + 10); c.stroke(); }
   // the magnifier: 4x the picture around the corner being placed, above the finger so the finger does not hide it
   const d = A.drag; if (!d || !m[d.i]) return;
   const rc = ov.getBoundingClientRect(), p = m[d.i], R = 58, Z = 4, cx = d.fx - rc.left, cy = Math.max(R + 8, d.fy - rc.top - R - 46);

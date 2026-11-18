@@ -921,6 +921,36 @@ function orderQuad(q) {
   const cx = q.reduce((s, p) => s + p[0], 0) / 4, cy = q.reduce((s, p) => s + p[1], 0) / 4;
   return q.slice().sort((a, b) => Math.atan2(a[1] - cy, a[0] - cx) - Math.atan2(b[1] - cy, b[0] - cx));
 }
+// The table's corners from the cushion points (V3.25.1, owner Nov 18: "tap the points of the rails ... I'm trying to guess
+// the position where those two rails intersect"): at each corner pocket the two points where the cushion noses end, eight
+// in all, in any order. They are paired by pocket (each point with its nearest), the pockets put in order round the table,
+// and each cushion's nose drawn as the straight line through its two points (one at each end: the point of each pocket
+// that lies toward the other); each corner is where its two cushions' lines cross. A straight line stays straight through
+// the lens, so the crossing is exact; the corner itself is inside the pocket's mouth and cannot be seen. These corners are
+// at the noses' height. Returns them in orderQuad's order, or null (points not in four pairs, or lines that do not meet
+// near their pockets).
+function quadFromRailPoints(pts) {
+  if (!pts || pts.length !== 8) return null; const d = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+  const left = pts.map(p => p.slice()), pairs = [];
+  while (left.length) { let bi = 0, bj = 1, bd = Infinity; for (let i = 0; i < left.length; i++) for (let j = i + 1; j < left.length; j++) { const dd = d(left[i], left[j]); if (dd < bd) { bd = dd; bi = i; bj = j; } }
+    const b = left.splice(bj, 1)[0], a = left.splice(bi, 1)[0]; pairs.push({ a, b, c: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], w: bd }); }
+  const cen = orderQuad(pairs.map(p => p.c)), pk = cen.map(c => pairs.find(p => p.c === c));
+  // (each pocket's two points well apart from the next pocket: a pair spread over half the way to its neighbour is not a pocket)
+  for (let k = 0; k < 4; k++) { const n = pk[(k + 1) % 4], m = pk[(k + 3) % 4]; if (pk[k].w > 0.5 * Math.min(d(pk[k].c, n.c), d(pk[k].c, m.c))) return null; }
+  // which of each pocket's points is on the cushion toward the next pocket (the one nearer it, and farther from the one before)
+  const toNext = [], toPrev = [];
+  for (let k = 0; k < 4; k++) { const { a, b } = pk[k], n = pk[(k + 1) % 4].c, m = pk[(k + 3) % 4].c, s = d(a, n) - d(b, n) + d(b, m) - d(a, m); toNext[k] = s < 0 ? a : b; toPrev[k] = s < 0 ? b : a; }
+  const line = (p, q) => [p[1] - q[1], q[0] - p[0], p[0] * q[1] - q[0] * p[1]], meet = (l, m) => { const z = l[0] * m[1] - l[1] * m[0]; return Math.abs(z) < 1e-9 ? null : [(l[1] * m[2] - l[2] * m[1]) / z, (l[2] * m[0] - l[0] * m[2]) / z]; };
+  const rail = k => line(toNext[k], toPrev[(k + 1) % 4]), out = [];
+  for (let k = 0; k < 4; k++) { const q = meet(rail((k + 3) % 4), rail(k)); if (!q || d(q, pk[k].c) > 4 * pk[k].w + 40) return null; out.push(q); }
+  return out;
+}
+// The outline on the cloth from one at the cushion noses' height (z up, inches): the camera worked out with the noses' plane
+// taken for the cloth, then the table's corners projected that much lower
+function clothQuadFromNose(q, rot, ft, W, H, fRatio, z) {
+  const { L, Wd } = tableDims(ft), tc = tableCornersFor(rot, L, Wd), cam = makeCam(tc, q, W, H, fRatio * Math.max(W, H), [W / 2, H / 2]);
+  if (!cam.ok) return null; return tc.map(([x, y]) => cam.proj(x, y, -z));
+}
 
 // Find the cloth: dominant saturated hue, largest region, four extreme corners.
 function detectTable(img) {

@@ -2181,3 +2181,27 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
     - The plan's direction off the object ball matched within 6° on the made shots with a clean path (12, 15, 19, 22).
     - Most strokes were 1.1-1.4× the plan's speed. Not yet used to change the plan's speeds: the player was choosing
       their own strokes. coach_fit logs each for the next reviews.
+- V3.25.1 (owner, Nov 18: tap the points of the rails instead of guessing where two rails meet):
+  - Setting the table by hand now takes eight taps, any order: at each corner pocket, the two points where the cushion
+    noses end. Same still picture, magnifier and dragging as before.
+  - vision.js quadFromRailPoints:
+    - Pair the points greedily by nearest; order the pockets with orderQuad.
+    - For each pocket, the point toward the next pocket is the one that minimises d(a, next) − d(b, next) + d(b, prev) −
+      d(a, prev). Each cushion is the line through its two points (homogeneous cross product); each corner is where the
+      lines of its two cushions cross.
+    - Refused when a pair is spread over half the way to a neighbour, or a corner lands more than 4 × pair spread + 40 px
+      from its pocket.
+    - Tested on two Nov 17 22:43 views, shuffled, ±0.33 px noise: corners within 1.5 px.
+  - The points sit at nose height (NOSE_Z 1.4). clothQuadFromNose builds the camera with the nose plane taken for the
+    cloth, then projects the table corners 1.4 in lower.
+    - Taking nose-height corners for the cloth, in the usual sideways view, moves rail balls 2.3 (near cushion) to 3.7 in
+      (far cushion) toward the phone, and 1.3-1.5 in at the ends.
+    - The old "where the cushion edges would meet" taps were probably at nose height, so had that error. Manual outlines
+      are still not refined on the diamonds and use no inset (edgeIn(true) = 0).
+  - While setting: a touch picks up an existing point only within 12 px until all eight are set (a pocket's two points
+    are close on the screen), then within 40 px. Each pocket's pair is joined as it is set. With all eight, the cushion
+    lines and the corners are drawn. "Use these points" appears only when the eight pair up into four pockets.
+  - A.cand.rails = true. table_manual logs the eight points, the nose-height corners and the cloth corners.
+  - The aim trainer's test failed about one run in two, before and after this build. Its sliver band sometimes dealt a
+    68° cut from 3-4 ft with a potting window under 0.05°, which no one can aim. makeShot now skips shots with a window
+    under 0.1° (5 runs of the test clean).
