@@ -2110,3 +2110,34 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   - "Capture the balls" (tcCapture) reads them where they are. Each ball's distance from its cushion is exact; the fit
     of the reading height uses those distances. How far each was set from its diamond is shown and kept.
   - The record keeps flip, side, each ball's number as read, its image point and zDia. The rings carry the numbers.
+- V3.24.4 (Nov 17 22:43 table check: 8 spots, 6 with the five balls captured; corners set by hand at spot 3):
+  - Every ball read short of its cushion, on every rail, from all six spots (0.3 to 1 in at height 0.8). A height error
+    moves balls along the line to the phone (short of the far cushion, past the near one). An outline that is too big
+    moves them toward the middle from every cushion. So the two can be told apart.
+  - Cause: autoCalibrate's growQuad moves the felt corners out 0.7 in in x and y "to the corner pockets", and that moves
+    each whole rail out with them. The diamond refine keeps the corners close (reg 0.05), so its D of 2.5 is measured
+    from the grown outline: about 3.1 in from the noses.
+  - The cameras were rebuilt offline from each record's quad. They reproduced the logged readings to within 0.03 in
+    once the outline was moved by the steady check's shift at the capture: 0 to 2 px, solved for, since the steady log
+    is throttled to once a second.
+  - Fitting the six spots together with an inset e (the table grown by e all round in the camera's corners) and a height
+    h gives e 0.6, h 0.95 (z 1.6), 0.28 in rms. Before: 0.57 in. The height alone: 0.59 in at h 0.85.
+  - Leaving each spot out, the other five say e 0.55-0.65 and h 0.95. The spot left out gets better by a third to four
+    fifths: 0.38→0.25, 0.57→0.29, 0.65→0.27, 0.76→0.40, 0.46→0.36, 0.58→0.11.
+  - tableCam(quad, rot, W, H, e) builds A.cam everywhere it is built: at accept, in steady, and the verify outline.
+    e = edgeIn(manual): 0 for corners set by hand (they go on the noses), else the stored check value, else EDGE_IN 0.6.
+  - findDiamonds, refineWithDiamonds and tcCombine's diamond error keep the plain outline frame, and their stored D/z
+    keep their meaning.
+  - BALL_ZH 0.95 (clamp now -0.5..1.5). The ball checks moved to chalkline.v3.ballz2 ({h16, e, rms, n}); the old
+    '.ballz' was fitted without the inset and is ignored.
+  - tcCapture keeps the outline at the capture (cq), the inset used, the steady shift, each ball's ax, image points to
+    0.01 px, and fitHE: this spot's height and inset together. One spot can leave the two trading off (22:43's spot 4).
+  - tcCombine fits the height and inset together over every check that has cq (bcFit: a 0.05 grid of e -0.5..1.5 and
+    h16 -0.5..1.6, one camera per record per e). It stores the result when there are two or more checks.
+    V3.24.3's checks have no cq and are left out: a 2 px steady shift changes a reading by up to 0.4 in.
+  - tcMatch: each ball within 4 in across its cushion and 14 in along it. The 3 was set at the near rail's 2nd diamond
+    (9.5 in from the 3rd) at every spot, and the old 10 in radius missed it twice. Taken the other way round, that
+    table scores about 45 against -10.
+  - No "went in too" toasts in the table check: moving the phone made five late_made calls at 22:43.
+  - Steady shifts of 2-4 px came and went while the phone was set at spot 1, before the capture (up to about 0.5 in at
+    the far rail). Not known whether the phone moved; the shift at each capture is now logged to tell.
