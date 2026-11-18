@@ -128,6 +128,35 @@ test('V3 coaching test: the plan for the balls at rest, drawn without errors', {
     console.log('coach_plan:', JSON.stringify(r.e).slice(0, 400));
     assert.strictEqual(r.mode, 'coach'); assert.ok(r.e.order.length >= 1 && r.e.A.pocket != null, 'a plan'); assert.deepStrictEqual(r.err, []);
     await new Promise(res => setTimeout(res, 1500)); // a few frames drawn with the plan
+    // V3.25: the zone's fan in green and yellow sides; a shot played 35% harder than planned (made up in the page's own
+    // simulation, seen at three looks a second) goes through the read-back worker and is said big
+    const fz = await page.evaluate(() => { const z = CO.plan && CO.plan.zoneFan; return z ? { s: z.s, rings: z.rings.length, green: z.rings.every(g => g.green && g.green.length > 2) } : null; });
+    if (fz) assert.ok(Math.abs(fz.s) === 1 && fz.rings >= 3 && fz.green, JSON.stringify(fz));
+    const shot = await page.evaluate(() => {
+      // (the test photo's balls are bunched and its plan a kick: the layout of Nov 17 22:50 shot 19 instead, planned here)
+      let p = CO.plan, bs = CO.balls;
+      if (!p || !p.path || p.path.shot !== 'pot' || !p.path.stroke) { bs = [{ n: 2, x: 20.6, y: 23.6 }, { n: 3, x: 51.2, y: 15.6 }, { n: 4, x: 66.4, y: 25.9 }, { n: 5, x: 13.4, y: 8.1 }, { n: 0, x: 29.9, y: 17.8 }]; p = COACH.plan(bs, JSON.parse(JSON.stringify(A.P)), Object.assign({ step: 2 }, coachOpts())); CO.plan = p; CO.balls = bs; }
+      if (!p || !p.path || p.path.shot !== 'pot' || !p.path.stroke) return { none: p && p.path && p.path.shot };
+      const cue = bs.find(b => b.n === 0), st = p.path.stroke, init = bs.map(b => ({ id: b.n, x: b.x, y: b.y })), P = Object.assign({}, A.P, { cushionRoll: 0.6, railMu: 0.25, pocketSpeed: 0.012 });
+      const ang = Math.atan2(p.path.ghost[1] - cue.y, p.path.ghost[0] - cue.x), r = simulate(init, { angle: ang, speed: st.mph * 17.6 * 1.35, a: st.side || 0, b: st.tip || 0 }, P, { record: true, maxT: 9 });
+      if (r.firstHit !== p.A.n) return { none: 'missed the ball' };
+      const look = q => { const out = []; for (let t = 0; t <= q[q.length - 1][0] + 0.34; t += 0.33) { let z = q[0]; for (const w of q) if (w[0] <= t) z = w; out.push([t, z[1], z[2]]); } return out; };
+      const cb = look(r.paths[0]), ob = look(r.paths[p.A.n] || [[0, 0, 0]]), fin = r.final.find(z => z.id === 0), inA = r.pocketed.find(z => z.id === p.A.n);
+      const sh = { n: 99, firstNum: p.A.n, cueKey: 0, scratch: false, made: inA ? [{ key: 1, num: p.A.n, pocket: inA.pocket }] : [], before: bs.map((b, i) => ({ key: b.n === 0 ? 0 : i + 1, num: b.n < 100 ? b.n : null, rx: b.x, ry: b.y })),
+        after: fin ? [{ key: 0, num: 0, rx: fin.x, ry: fin.y }] : [], paths: [{ key: 0, num: 0, p: cb }, { key: 1, num: p.A.n, p: ob }] };
+      const row = { made: inA ? [{ num: p.A.n, pocket: inA.pocket }] : [] }, row1 = {};
+      CO.atStart = { plan: p, balls: bs }; coachShotEnd(sh, row, row1); return { made: !!inA, coach: row1.coach && { landed: row1.coach.landed, madeA: row1.coach.madeA } };
+    });
+    console.log('made-up shot:', JSON.stringify(shot));
+    assert.ok(shot && !shot.none, 'a made-up pot: ' + JSON.stringify(shot));
+    if (shot) {
+      await page.waitForFunction(() => window.__v3.DBG.ev.some(e => e.k === 'coach_fit' && e.n === 99), null, { timeout: 60000 });
+      const fit = await page.evaluate(() => ({ e: window.__v3.DBG.ev.filter(e => e.k === 'coach_fit' && e.n === 99).pop(), say: !document.querySelector('#coachSay').hidden, text: document.querySelector('#coachSay').textContent }));
+      console.log('coach_fit:', JSON.stringify(fit).slice(0, 500));
+      assert.ok(fit.e && !fit.e.error && !fit.e.skip && fit.e.v > 1.1 && fit.e.v < 1.6 && fit.say, JSON.stringify(fit));
+      assert.match(fit.text, shot.made ? /In the green|In the yellow|Outside the zone|Made/ : /Missed/);
+      if (fit.e.sure && fit.e.sure.speed && fit.e.err <= 3.5) assert.match(fit.text, /Too hard/);
+    }
     assert.deepStrictEqual(errors, []);
   } finally { await browser.close(); srv.close(); fs.rmSync(dir, { recursive: true, force: true }); }
 });

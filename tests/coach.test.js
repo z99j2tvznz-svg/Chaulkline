@@ -84,8 +84,9 @@ test('V3.14: a ball a quarter inch in the way is a tight pot, not a safety; the 
   assert.ok(r1.path.ob && r1.path.ob.length > 1, 'the object ball\'s line to the pocket');
   const r2 = COACH.plan([{ n: 9, x: 10.8, y: 24.8 }, { n: 5, x: 20.4, y: 23.2 }, { n: 7, x: 41.9, y: 32.3 }, { n: 0, x: 57.3, y: 27.4 }, { n: 6, x: 23.5, y: 5.9 }, { n: 2, x: 28.1, y: 18.6 }, { n: 4, x: 37.5, y: 14.7 }, { n: 3, x: 57.1, y: 22.4 }], P);
   assert.notStrictEqual(r2.path.shot, 'safety', 'a pot is there: ' + JSON.stringify({ shot: r2.path.shot, make: r2.path.make }));
-  // (V3.18: the fan in rings along the good stretch of its line, each at most 30 degrees, the target its middle)
-  for (const r of [r1, r2]) if (r.zoneFan) { const z = r.zoneFan; assert.ok(z.rings.length >= 3 && z.rings.every(g => g.lo + g.hi <= 30 && g.lo >= 1.5 && g.hi >= 1.5) && z.r1 - z.r0 >= 4 && z.rm > z.r0 && z.rm < z.r1, JSON.stringify({ r0: z.r0, r1: z.r1, rm: z.rm, rings: z.rings.map(g => [g.lo, g.hi, g.q]) })); }
+  // (V3.18: the fan in rings along the good stretch of its line; V3.25: green at most 30 degrees on the correct side,
+  // yellow at most 30 on the other and never past straight in)
+  for (const r of [r1, r2]) if (r.zoneFan) { const z = r.zoneFan; assert.ok(z.rings.length >= 3 && z.rings.every(g => g.g >= 1.5 && g.g <= 30 && g.y >= 0 && g.y <= 30 && (Math.abs(z.phi) < 5 || g.y <= Math.abs(z.phi))) && z.r1 - z.r0 >= 4 && z.rm > z.r0 && z.rm < z.r1, JSON.stringify({ r0: z.r0, r1: z.r1, rm: z.rm, phi: z.phi, rings: z.rings.map(g => [g.g, g.y, g.q]) })); }
 });
 
 test('V3.15: the spin and draw tests read the player\'s side spin and tip back from where the cue ball went', () => {
@@ -151,7 +152,10 @@ test('V3.18: closer leaves; the zone a long fan of graded rings along the leave\
   assert.ok(r.zoneFan && r.zoneFan.rings.length >= 3 && r.target, 'a fan and a target');
   // (V3.20: no fixed best distance, from the sources; the leave's distance counts through the next shot's make)
   const z = r.zoneFan, B = lay.find(b => b.n === r.B.n), dT = Math.hypot(r.target[0] - B.x, r.target[1] - B.y);
-  assert.ok(Math.abs(dT - z.rm) < 1.5 && z.rm > z.r0 && z.rm < z.r1, 'the target is the middle of the good stretch: ' + JSON.stringify({ dT, r0: z.r0, r1: z.r1, rm: z.rm }));
+  // (V3.25: the fan's line is the ideal one; the target stays the middle of the good stretch on the planned leave's line,
+  // the same line when the two are about as good)
+  if (z.onLine) assert.ok(Math.abs(dT - z.rm) < 1.5 && z.rm > z.r0 && z.rm < z.r1, 'the target is the middle of the good stretch: ' + JSON.stringify({ dT, r0: z.r0, r1: z.r1, rm: z.rm }));
+  assert.ok(COACH.fanGrade(z, r.target[0], r.target[1]) || !z.onLine, 'the target in the fan');
 });
 
 test('V3.22: a hanger read inside the pocket\'s edge is a pot; other balls the stroke moves come with their paths; routine pots are simple', () => {
@@ -167,4 +171,56 @@ test('V3.22: a hanger read inside the pocket\'s edge is a pot; other balls the s
   // Nov 16 18:02: the 1 into the top-left corner was played at break speed round three cushions; now a simple stroke
   const s = COACH.plan([{ n: 0, x: 22.5, y: 6.6 }, { n: 8, x: 44.1, y: 2.1 }, { n: 4, x: 41.4, y: 35.5 }, { n: 9, x: 67.3, y: 30.1 }, { n: 3, x: 29.9, y: 19.5 }, { n: 6, x: 22.2, y: 20.6 }, { n: 1, x: 10.8, y: 21.5 }, { n: 7, x: 9.3, y: 32.7 }, { n: 2, x: 47.1, y: 13.4 }, { n: 5, x: 8.7, y: 8 }], P);
   assert.ok(s.path.stroke.speed !== 'very hard' && s.path.tier <= 1, JSON.stringify({ st: s.path.stroke, tier: s.path.tier }));
+});
+
+test('V3.25: the zone\'s line is the ideal one, green on the side with more angle, yellow on the side toward straight in (owner, Nov 18)', () => {
+  // Nov 17 22:50 shot 19's layout: the 2 in the top-left, then the 3 to the bottom-right
+  const lay = [{ n: 2, x: 20.6, y: 23.6 }, { n: 3, x: 51.2, y: 15.6 }, { n: 4, x: 66.4, y: 25.9 }, { n: 5, x: 13.4, y: 8.1 }, { n: 0, x: 29.9, y: 17.8 }];
+  for (const L0 of [lay, NOV2]) {
+    const r = COACH.plan(L0, P, { speeds: [3.1, 5, 7.5], level: 600 }), z = r.zoneFan; if (!z) continue;
+    assert.ok(Math.abs(z.s) === 1 && isFinite(z.a0) && isFinite(z.back), JSON.stringify({ s: z.s, phi: z.phi }));
+    // the green side is the side away from straight in (when the ideal has an angle)
+    if (Math.abs(z.phi) >= 5) assert.strictEqual(z.s, Math.sign(z.phi), 'green on the side with more angle: ' + JSON.stringify({ s: z.s, phi: z.phi }));
+    // a spot on the ideal line in the middle of the fan is green; one just to the green side green, just to the yellow side yellow
+    const ring = z.rings[Math.floor(z.rings.length / 2)], at = (d, rr) => [z.from[0] + rr * Math.cos(z.a0 + z.s * d * Math.PI / 180), z.from[1] + rr * Math.sin(z.a0 + z.s * d * Math.PI / 180)];
+    assert.strictEqual(COACH.fanGrade(z, ...at(0, ring.r)), 'green');
+    assert.strictEqual(COACH.fanGrade(z, ...at(Math.min(ring.g, 6) * 0.8, ring.r)), 'green');
+    if (ring.y >= 3) assert.strictEqual(COACH.fanGrade(z, ...at(-ring.y * 0.7, ring.r)), 'yellow');
+    assert.strictEqual(COACH.fanGrade(z, ...at(0, z.r1 + 12)), null, 'past the fan');
+    assert.strictEqual(COACH.fanGrade(z, ...at(ring.g + 25, ring.r)), null, 'beside it');
+  }
+});
+
+test('V3.25: the stroke read back from the balls\' ways: too hard with less draw, and a miss overcut or undercut', () => {
+  const C = require('../src/core.js'), Pp = Object.assign({}, P, { cushionRoll: 0.6, railMu: 0.25, pocketSpeed: 0.012 });
+  // a cut into the bottom-left corner: the 5 near the corner, the cue ball up the table
+  const balls = [{ n: 0, x: 14, y: 26 }, { n: 5, x: 8, y: 9 }, { n: 7, x: 52, y: 17.4 }, { n: 9, x: 66.9, y: 14 }];
+  const init = balls.map(b => ({ id: b.n, x: b.x, y: b.y })), pk = 0, A5 = balls[1], cue = balls[0];
+  const run = (ang, v, b) => C.simulate(init, { angle: ang, speed: v, a: 0, b }, Pp, { record: true, only: new Set([0, 5]), maxT: 9 });
+  // the aim that pots it at the plan's stroke (middle of the window)
+  const ang0 = Math.atan2(A5.y - cue.y, A5.x - cue.x); let lo = null, hi = null;
+  for (let k = -150; k <= 150; k++) { const r = run(ang0 + k * 0.05 * Math.PI / 180, 3.2 * 17.6, -0.3); const z = r.pocketed.find(w => w.id === 5); if (r.firstHit === 5 && z && z.pocket === pk && !r.pocketed.some(w => w.id === 0)) { if (lo == null) lo = k; hi = k; } }
+  assert.ok(lo != null, 'a pot at the plan\'s stroke'); const aimOk = ang0 + (lo + hi) / 2 * 0.05 * Math.PI / 180;
+  // what a camera at three looks a second sees (to a tenth of an inch)
+  const look = (r, id) => { const q = r.paths[id] || [], out = []; for (let t = 0; t <= q[q.length - 1][0] + 0.34; t += 0.33) { let z = q[0]; for (const w of q) if (w[0] <= t) z = w; out.push([t, Math.round(z[1] * 10) / 10, Math.round(z[2] * 10) / 10]); } const e = q[q.length - 1]; out.push([e[0] + 0.3, Math.round(e[1] * 10) / 10, Math.round(e[2] * 10) / 10]); return out; };
+  const plan = { v: 3.2 * 17.6, a: 0, b: -0.3, pk, speed: 'medium' };
+  // 1. played 30% harder with a centre ball (no draw): made, and the read says too hard, not enough draw
+  const real = run(aimOk, 3.2 * 17.6 * 1.3, 0); assert.ok(real.pocketed.some(w => w.id === 5), 'made as played');
+  const cb = look(real, 0), f = COACH.fitStroke(balls, P, 5, plan, { ob: [], cb: cb.map(z => [z[1], z[2]]), cbT: cb.map(z => z[0]), made: pk }, { railMu: 0.25 });
+  // (harder with no draw and a little softer with follow stop an inch apart here, each look within an inch: the read may
+  // not be sure of the speed, and then says nothing of it; never too soft, and the draw it is sure of)
+  assert.ok(f && f.v > 0.9 && f.v < 1.45 && f.b > -0.1 && f.err < 2, JSON.stringify(f));
+  const w = COACH.strokeWords(f, plan, true, [1.6, 3.2, 6]); assert.ok(w.read && w.words.includes('not enough draw') && !w.words.some(x => /^too soft/.test(x)) && !w.cut, JSON.stringify(w));
+  if (f.sure.speed) assert.ok(w.words.some(x => /^too hard/.test(x)), JSON.stringify(w));
+  // 2. aimed a degree and a half thinner: missed, overcut; a degree and a half fuller: undercut
+  const dir = Math.sign(aimOk - ang0) || 1;
+  for (const [d, want] of [[1.5, 'overcut'], [-1.5, 'undercut']]) {
+    const r2 = run(aimOk + dir * d * Math.PI / 180, plan.v, plan.b); if (r2.pocketed.some(z => z.id === 5) || r2.firstHit !== 5) continue;
+    const c2 = look(r2, 0), o2 = look(r2, 5), f2 = COACH.fitStroke(balls, P, 5, plan, { ob: o2.map(z => [z[1], z[2]]), cb: c2.map(z => [z[1], z[2]]), cbT: c2.map(z => z[0]), made: null }, { railMu: 0.25 });
+    assert.ok(f2 && f2.cut === want, d + ': ' + JSON.stringify(f2));
+    assert.ok(COACH.strokeWords(f2, plan, false, null).words[0] === want);
+  }
+  // 3. a stroke read badly says nothing of speed or tip
+  assert.deepStrictEqual(COACH.strokeWords({ v: 1.5, b: 0.4, mph: 5, err: 6, obErr: 0.5, cut: null }, plan, true, null).words, []);
+  assert.strictEqual(COACH.speedWordOf(5, [3.1, 5, 7.5]), 'medium'); assert.strictEqual(COACH.speedWordOf(3.9, [3.1, 5, 7.5]), 'soft to medium');
 });

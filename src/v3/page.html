@@ -102,6 +102,13 @@ a.go { color: inherit; text-decoration: none; }
 /* V3.24.1 (owner, Nov 17: the words are hard to read from the TV): a drill's result as a big picture in the middle, a green
    check drawn with sparkles for a make, a red X that slams in and sags for a miss, a yellow question mark that wobbles when
    it cannot tell */
+/* V3.25 (owner, Nov 18): after a coached shot, what happened, big enough to read from the TV: where the cue ball ended (or
+   the miss), then what the stroke did against the plan */
+#coachSay { position: fixed; left: 50%; top: 18%; transform: translateX(-50%); z-index: 31; pointer-events: none; text-align: center; padding: 14px 26px 16px; border-radius: 18px; background: rgba(11,16,20,.72); box-shadow: 0 8px 28px rgba(0,0,0,.5); max-width: 94vw; animation: saySlide .35s cubic-bezier(.2,1.3,.4,1) both; }
+#coachSay b { display: block; font: 800 clamp(28px, 8vh, 72px)/1.05 var(--f); letter-spacing: -.01em; }
+#coachSay span { display: block; margin-top: 6px; font: 600 clamp(17px, 4.6vh, 40px)/1.15 var(--f); color: #f4f1e8; }
+#coachSay.ok b { color: #3ddc84; } #coachSay.mid b { color: #ffd23f; } #coachSay.out b { color: #ff9f43; } #coachSay.no b { color: #ff4d4d; }
+@keyframes saySlide { from { opacity: 0; transform: translate(-50%, -14px) scale(.96); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
 #fx { position: fixed; left: 50%; top: 50%; width: min(48vh, 48vw); height: min(48vh, 48vw); transform: translate(-50%, -50%); z-index: 31; pointer-events: none; }
 #fx svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 6px 18px rgba(0,0,0,.55)); }
 #fx .disc { animation: fxPop 1.7s cubic-bezier(.2,1.4,.4,1) both; transform-origin: 50% 50%; transform-box: fill-box; }
@@ -146,6 +153,11 @@ a.go { color: inherit; text-decoration: none; }
     <div class="card glass"><div class="lbl" style="margin-bottom:8px">Ball finder runs on</div><div class="seg" id="segEng"></div><div class="lbl" id="engHint" style="margin-top:8px"></div></div>
     <div class="card glass" id="lastCard" hidden><h2>Last session</h2><div id="lastList"></div><div class="row" style="margin-top:10px"><button class="btn primary" id="lastOpen">Review it shot by shot</button></div></div>
     <div class="card glass" id="histCard" hidden><h2>Your sessions</h2><div class="lbl">Share of shots that made a ball, session by session</div><div id="histChart"></div><div id="histCuts" hidden></div><div id="histList"></div></div>
+    <div class="card glass"><h2>New in V3.25</h2><ul>
+      <li>Coaching test, the zone the way you asked: the white line is the ideal line for this ball to get shape on the next one. Green is the right side of it, with more angle on the next ball (a little harder to pot, the cue ball moves naturally). Yellow is the other side, less angle toward straight in: still workable, but it takes more stroke. Past those, it's a different shot. The white ring is still where this stroke sends the cue ball.</li>
+      <li>After each coached shot, big enough to read from the TV: where the cue ball ended (in the green, in the yellow, outside the zone, or the miss), then what your stroke did against the plan's: overcut or undercut on a miss, too hard or too soft (with the speed it really was), not enough draw or too much follow. It's worked out from where the balls went and when they were seen there, in the same physics the plan uses. When it can't tell, it says nothing rather than guess.</li>
+      <li>A planned ball that goes in late now counts for the shot's position too (on Nov 17 five of them first said "outside the zone").</li>
+    </ul></div>
     <div class="card glass"><h2>New in V3.24</h2><ul>
       <li>V3.24.4: your five-ball check from 6 spots found the last big error: every ball read a little short of its cushion, on every rail, because the outline the app finds sits about ½ in outside the cushions. That's now allowed for, and balls are read at the height that goes with it. Your 6 spots read twice as close to true (about ¼ in, was over ½ in). More ball checks keep tuning both. The 3 can stay where it is (you set it at the 2nd diamond; it's found there now).</li>
       <li>V3.24.3: the table check's balls stay put. Set five numbered balls once, against the cushions at diamonds (the list is in the check), and leave them for every spot: from wherever the phone is, the app knows which ball is which and which side it's on. Capture the balls reads them where they are; they need not be exactly on the rings.</li>
@@ -303,6 +315,7 @@ a.go { color: inherit; text-decoration: none; }
 </div></div>
 <div id="toast" class="glass" hidden></div>
 <div id="fx" hidden></div>
+<div id="coachSay" hidden></div>
 <div id="drillTag" class="glass" hidden></div>
 
 <script src="vendor/ort/ort.webgpu.min.js?v=1.29.0"></script>

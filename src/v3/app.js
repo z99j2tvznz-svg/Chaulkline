@@ -2,7 +2,7 @@
 // Watch: find the table, then every look runs the ball finder on the table strip, maps the balls to table inches and
 // hands them to the tracker (src/track.js), which keeps each ball's name and calls the shots. The screen shows what the
 // tracker knows; a tap on a ball renames it. Everything is written to the debug log for Save debug.
-const VERSION = 'V3.24.4';
+const VERSION = 'V3.25.0';
 const $ = s => document.querySelector(s);
 const KEY = 'chalkline.v3', BASE = new URL('./', location.href).href;
 const BALLCOL = ['#f4f1e8', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433', '#16181b', '#e8c11d', '#2a52c9', '#d03a2f', '#6a3fa0', '#e8782a', '#1f8a4c', '#8c2433'];
@@ -632,13 +632,14 @@ function onShotEnd(sh) {
 // the shot's words against the plan (V3.14, owner Nov 9: "30% off plan" said nothing): where the cue ball stopped against the
 // perfect spot, long or short along the way it was going and to the side, in inches; and the angle off the object ball
 function coachWords(c) {
-  if (!c) return ''; const w = [], k = c.compare, s = c.stop;
-  if (k && Math.abs(k.angle) >= 6) w.push('came off ' + Math.abs(k.angle) + '° off the line');
+  if (!c) return ''; const w = [], s = c.stop;
+  // (V3.25: the angle it came off the object ball is no longer said: at two or three looks a second it read 116 to 170
+  // degrees on Nov 17 22:50's made shots; the stroke read back (fitStroke) says what the stroke did)
   if (s) { if (s.off <= 4) w.push('stopped on the spot'); else if (s.along == null) w.push('stopped ' + Math.round(s.off) + ' in off the spot');
     else { const a = Math.round(Math.abs(s.along)), b = Math.round(Math.abs(s.side)), t = []; if (a >= 3) t.push(a + ' in ' + (s.along > 0 ? 'long' : 'short')); if (b >= 3) t.push(b + ' in to the side'); w.push('stopped ' + (t.join(', ') || Math.round(s.off) + ' in off the spot')); } }
   return w.length ? ' · ' + w.join(', ') : '';
 }
-function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row) + coachWords(row.coach) + (row.coach && row.coach.landed ? ' · cue ball ' + ({ green: 'great position: in the green (90%+)', lightgreen: 'good position: in the light green (80-90%)', yellow: 'in the yellow (60-80%)', red: 'in the red (50-60%)', low: 'where the next shot is under 50%', blocked: 'behind a ball' })[row.coach.landed] : row.coach && row.coach.zone ? ' · cue ball outside the zone' : '')); }
+function shotToast(row) { toast('Shot ' + row.n + ': ' + shotWords(row) + coachWords(row.coach) + (row.coach && row.coach.landed ? ' · cue ball ' + ({ green: 'in the green: the right side', yellow: 'in the yellow: workable', out: 'outside the zone' })[row.coach.landed] : row.coach && row.coach.zone ? ' · cue ball outside the zone' : '')); }
 // Each ball's path in the shot: the tracker's positions from just before the shot started, kept after it ends (and for the
 // balls that went in) until the next shot starts, so a quick look at the phone after the shot shows the whole of it.
 const PATH = new Map(); // ball key -> { num, pts: [{ t, x, y }] }
@@ -677,7 +678,7 @@ function onLateMade(n) {
   const row = A.sess.shots.find(s => s.n === n.n), sh = A.tk.S.shots.find(s => s.n === n.n);
   if (sh) { guessPockets(sh); const m = sh.made.find(q => q.key === n.key || (n.num != null && q.num === n.num)); if (m && n.pocket == null && m.pocket != null) { n.pocket = m.pocket; n.seen = false; } }
   if (row && sh) { row.made = shotRow(sh).made; row.scratch = sh.scratch; if (row.notShot === 'move' && (row.made.length || row.scratch)) delete row.notShot; } // (something went in: it was a shot)
-  dbg('late_made', n); renderDown(); drillLate(n.n, n); if (A.bu) buLate(n);
+  dbg('late_made', n); renderDown(); drillLate(n.n, n); if (A.bu) buLate(n); coachLate(n);
   // (a drill or the exam says Made or Missed itself; in a table check the "shots" are the phone being moved: Nov 17 22:43
   // said balls went in five times)
   if (A.drill || A.bu || A.mode === 'tablecheck') return;
@@ -1505,18 +1506,25 @@ function drawLoop() {
 // ball's colour; the zone for the next ball (green: the right side, red: the wrong side, grey: a ball in the way, yellow:
 // harder); the cue ball's way from this shot into the green. After the shot: where the cue ball stopped against that zone,
 // in the shot's row, the log (coach_plan, coach_shot) and the shot's words. No buttons.
-const CO = { sig: '', plan: null, balls: null, busy: false, worker: null, id: 0, atStart: null, poly: null };
+const CO = { sig: '', plan: null, balls: null, busy: false, worker: null, id: 0, atStart: null, poly: null, fits: new Map() };
 $('#rejectBtn').onclick = () => coachReject();
+// the planner with the physics simulation (core.js) in a worker (V3.11); V3.25: the same code reads back each coached
+// stroke (COACH.fitStroke), in a second worker so the next plan is not kept waiting
+const coachSrc = () => 'const clamp=' + clamp.toString() + ';' + stepBall.toString() + cushion.toString() + simulate.toString() + 'const COACH=(' + coachFactory.toString() + ')(simulate);onmessage=e=>{const d=e.data;if(d.fit){let f=null;try{f=COACH.fitStroke(d.fit.balls,d.fit.P,d.fit.An,d.fit.plan,d.fit.obs,d.fit.opts);}catch(x){f={error:String(x)};}postMessage({id:d.id,fit:f});return;}let r=null;try{r=COACH.plan(d.balls,d.P,d.opts);}catch(x){r={error:String(x)};}postMessage({id:d.id,r});};';
 function coachWorker() {
   if (CO.worker !== null) return CO.worker;
   try {
-    // the planner with the physics simulation (core.js) in the worker (V3.11)
-    const src = 'const clamp=' + clamp.toString() + ';' + stepBall.toString() + cushion.toString() + simulate.toString() + 'const COACH=(' + coachFactory.toString() + ')(simulate);onmessage=e=>{let r=null;try{r=COACH.plan(e.data.balls,e.data.P,e.data.opts);}catch(x){r={error:String(x)};}postMessage({id:e.data.id,r});};';
-    CO.worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+    CO.worker = new Worker(URL.createObjectURL(new Blob([coachSrc()], { type: 'text/javascript' })));
     CO.worker.onmessage = e => coachDone(e.data.id, e.data.r);
     CO.worker.onerror = e => { dbg('error', { m: 'coach worker ' + String(e && e.message || '').slice(0, 100) }); CO.worker = false; CO.busy = false; };
   } catch (e) { CO.worker = false; dbg('error', { m: 'coach worker ' + String(e).slice(0, 100) }); }
   return CO.worker;
+}
+function fitWorker() {
+  if (CO.fitW !== undefined && CO.fitW !== null) return CO.fitW;
+  try { CO.fitW = new Worker(URL.createObjectURL(new Blob([coachSrc()], { type: 'text/javascript' }))); CO.fitW.onmessage = e => fitDone(e.data.id, e.data.fit);
+    CO.fitW.onerror = e => { dbg('error', { m: 'fit worker ' + String(e && e.message || '').slice(0, 100) }); CO.fitW = false; }; } catch (e) { CO.fitW = false; }
+  return CO.fitW;
 }
 function coachLayout() {
   // the balls on the table: named for sure (the cue ball and 1-9) at rest; unnamed ones still count as balls in the way
@@ -1549,7 +1557,7 @@ function coachDone(id, r) {
   if (!r || r.error) { if (r && r.error) dbg('error', { m: 'coach ' + r.error.slice(0, 120), balls: CO.pending, opts: coachOpts() }); CO.plan = null; return; }
   CO.plan = r; CO.balls = CO.pending; CO.poly = null; $('#rejectBtn').hidden = A.mode !== 'coach';
   const cnt = { green: 0, red: 0, blocked: 0 }; if (r.cells) for (const v of r.cells) { if (v === 1) cnt.green++; else if (v === 3) cnt.red++; else if (v === 4) cnt.blocked++; }
-  dbg('coach_plan', { order: r.order, A: r.A, B: r.B, C: r.C, inHand: !!r.inHand, noShot: r.noShot || null, spot: r.spot && r.spot.map(r1), path: r.path ? { shot: r.path.shot, kind: r.path.kind, cut: r.path.cut, stroke: r.path.stroke || null, make: r.path.make, next: r.path.next, legal: r.path.legal, opp: r.path.opp, alt: r.path.alt || null, alts: r.path.alts || null, n: (r.path.pts || []).length, end: r.path.p && r.path.p.map(r1) } : null, route: r.route ? { kind: r.route.kind, s: r.route.s } : null, fan: r.zoneFan ? { lo: r.zoneFan.lo, hi: r.zoneFan.hi, r0: r.zoneFan.r0, r1: r.zoneFan.r1, rm: r.zoneFan.rm, q0: r.zoneFan.q0, qmax: r.zoneFan.qmax } : null, target: r.target ? r.target.map(r1) : null, tight: r.path && r.path.tight || null, thin: r.path ? r.path.fanThin : null, cells: cnt, ms: r.ms, balls: CO.balls });
+  dbg('coach_plan', { order: r.order, A: r.A, B: r.B, C: r.C, inHand: !!r.inHand, noShot: r.noShot || null, spot: r.spot && r.spot.map(r1), path: r.path ? { shot: r.path.shot, kind: r.path.kind, cut: r.path.cut, stroke: r.path.stroke || null, make: r.path.make, next: r.path.next, legal: r.path.legal, opp: r.path.opp, alt: r.path.alt || null, alts: r.path.alts || null, n: (r.path.pts || []).length, end: r.path.p && r.path.p.map(r1) } : null, route: r.route ? { kind: r.route.kind, s: r.route.s } : null, fan: r.zoneFan ? { g: r.zoneFan.g, y: r.zoneFan.y, phi: r.zoneFan.phi, s: r.zoneFan.s, onLine: r.zoneFan.onLine, r0: r.zoneFan.r0, r1: r.zoneFan.r1, rm: r.zoneFan.rm, q0: r.zoneFan.q0, qmax: r.zoneFan.qmax } : null, target: r.target ? r.target.map(r1) : null, tight: r.path && r.path.tight || null, thin: r.path ? r.path.fanThin : null, cells: cnt, ms: r.ms, balls: CO.balls });
 }
 // the player rejects the plan on the screen (owner, Nov 9: "this isn't realistic"): everything the plan was made from and a
 // picture of the table, for the review (was a ball or the table read wrong, or was the plan wrong); the next shot's row says so
@@ -1564,8 +1572,9 @@ function coachShotEnd(sh, row, row1) {
   const st = CO.atStart; CO.atStart = null; if (!st) return;
   const p = st.plan, cueAfter = (sh.after || []).find(b => b.key === sh.cueKey) || (sh.after || []).find(b => b.num === 0);
   const madeA = row.made.find(m => m.num === p.A.n), at = cueAfter ? [cueAfter.rx != null ? cueAfter.rx : cueAfter.x, cueAfter.ry != null ? cueAfter.ry : cueAfter.y] : null;
-  const c = { order: p.order, plan: { A: p.A.pocket, B: p.B && p.B.pocket, C: p.C && p.C.pocket }, lowestFirst: sh.firstNum == null ? null : sh.firstNum === p.A.n, madeA: !!madeA, pocketA: madeA ? madeA.pocket : null,
-    cueAt: at && at.map(r1), zone: !!p.cells, landed: at && p.cells && madeA ? COACH.gradeAt(p, at[0], at[1]) : null, spot: p.spot && p.spot.map(r1), scratch: !!sh.scratch,
+  // (V3.25: where it stopped against the zone's fan, green or yellow side; the grid's band, cell, for the next shot's %)
+  const c = { An: p.A.n, order: p.order, plan: { A: p.A.pocket, B: p.B && p.B.pocket, C: p.C && p.C.pocket }, lowestFirst: sh.firstNum == null ? null : sh.firstNum === p.A.n, madeA: !!madeA, pocketA: madeA ? madeA.pocket : null,
+    cueAt: at && at.map(r1), zone: !!p.zoneFan, landed: at && p.zoneFan && madeA ? COACH.fanGrade(p.zoneFan, at[0], at[1]) || 'out' : null, cell: at && p.cells ? COACH.gradeAt(p, at[0], at[1]) : null, spot: p.spot && p.spot.map(r1), scratch: !!sh.scratch,
     stroke: p.path && p.path.stroke || null, shot: p.path && p.path.shot || null, make: p.path && p.path.make, next: p.path && p.path.next, rejected: CO.rejectedPlan === p };
   // the planned shot's geometry (for the player's own percentages later: cut, cue ball to object ball, object ball to pocket)
   { const a0 = st.balls && st.balls.find(b => b.n === p.A.n), cb = st.balls && st.balls.find(b => b.n === 0), pk = p.A.pocket != null ? A.P.pockets[p.A.pocket] : null, g = p.path && p.path.ghost;
@@ -1597,6 +1606,56 @@ function coachShotEnd(sh, row, row1) {
   }
   if (sh.scratch) CO.scratchT = A.tk.S.t; // ball in hand next
   row1.coach = c; dbg('coach_shot', Object.assign({ n: sh.n }, c));
+  fitStart(sh, p, c, st.balls);
+}
+// V3.25 (owner, Nov 18): the stroke the player really played, read back from the balls' ways (COACH.fitStroke), against the
+// plan's: overcut or undercut on a miss, too hard or soft, more or less draw or follow, said big after the shot. Only for a
+// planned pot or bank on the ball planned, hit first, no scratch, the cue ball where the plan had it. Said once the shot's
+// late calls are in (2.2 s after its end: a ball found in late changes a miss to a make).
+function fitStart(sh, p, c, planBalls) {
+  const st = p.path && p.path.stroke; if (!st || !['pot', 'bank'].includes(p.path.shot) || !c.lowestFirst || sh.scratch) return;
+  const before = sh.before || [], seen = new Set(), balls = [];
+  for (const b of before) { let n = b.num === 0 ? 0 : b.num != null ? b.num : 100 + b.key; if (seen.has(n)) n = 100 + b.key; seen.add(n); balls.push({ n, x: b.rx != null ? b.rx : b.x, y: b.ry != null ? b.ry : b.y }); }
+  const cue = balls.find(b => b.n === 0), cueP = planBalls && planBalls.find(b => b.n === 0);
+  if (!cue || !balls.some(b => b.n === p.A.n) || (cueP && Math.hypot(cue.x - cueP.x, cue.y - cueP.y) > 2.5)) { dbg('coach_fit', { n: sh.n, skip: !cue ? 'no cue ball' : 'not where planned' }); return; }
+  const cb = (sh.paths || []).find(q => q.key === sh.cueKey) || (sh.paths || []).find(q => q.num === 0), ob = (sh.paths || []).find(q => q.num === p.A.n);
+  if (!cb || cb.p.length < 2) return;
+  const plan = { v: st.mph * 17.6, a: st.side || 0, b: st.tip || 0, pk: p.A.pocket, speed: st.speed }, made = c.madeA ? c.pocketA : null;
+  const job = { balls, P: JSON.parse(JSON.stringify(A.P)), An: p.A.n, plan, obs: { ob: ob ? ob.p.map(z => [z[1], z[2]]) : [], cb: cb.p.map(z => [z[1], z[2]]), cbT: cb.p.map(z => z[0]), made }, opts: { railMu: coachOpts().railMu } };
+  const rec = { n: sh.n, t: Date.now(), c, plan, fan: p.zoneFan, job }; CO.fits.set(sh.n, rec); for (const k of CO.fits.keys()) if (k < sh.n - 4) CO.fits.delete(k);
+  const w = fitWorker(); if (w) w.postMessage({ id: sh.n, fit: job });
+  else setTimeout(() => { let f = null; try { f = COACH.fitStroke(job.balls, job.P, job.An, job.plan, job.obs, job.opts); } catch (e) { f = { error: String(e) }; } fitDone(sh.n, f); }, 50);
+}
+function fitDone(n, f) {
+  const rec = CO.fits.get(n); if (!rec || rec.done) return; rec.fit = f;
+  const wait = 2200 - (Date.now() - rec.t); if (wait > 0) { setTimeout(() => fitDone2(rec), wait); return; } fitDone2(rec);
+}
+function fitDone2(rec) {
+  if (rec.done) return; rec.done = true; const f = rec.fit, c = rec.c;
+  if (!f || f.error) { dbg('coach_fit', { n: rec.n, error: f && f.error ? f.error.slice(0, 120) : 'none' }); return; }
+  // (a late call may have changed the miss to a make, and its pocket: the cut said only for a real miss)
+  const w = COACH.strokeWords(c.madeA ? Object.assign({}, f, { cut: null }) : f, rec.plan, c.madeA, (coachOpts().speeds || null));
+  c.fit = { v: f.v, mph: f.mph, b: f.b, aim: f.aim, err: f.err, obErr: f.obErr, cut: c.madeA ? null : f.cut, need: f.need, sure: f.sure, words: w.words };
+  dbg('coach_fit', Object.assign({ n: rec.n, made: c.madeA, landed: c.landed, plan: { mph: +(rec.plan.v / 17.6).toFixed(1), b: rec.plan.b, a: rec.plan.a, speed: rec.plan.speed } }, f, { words: w.words }));
+  if (A.mode !== 'coach' || A.stest) return;
+  coachSay(c, w);
+}
+// said big (owner, Nov 17: words are hard to read from the TV): the first line where it ended, the second what the stroke did
+function coachSay(c, w) {
+  const top = !c.madeA ? ['Missed' + (w.cut ? ': ' + w.cut : ''), 'no'] : c.landed === 'green' ? ['In the green', 'ok'] : c.landed === 'yellow' ? ['In the yellow', 'mid'] : c.landed === 'out' ? ['Outside the zone', 'out'] : ['Made', 'ok'];
+  const rest = w.words.filter(x => x !== w.cut).map(x => x.replace(/ \((.+), the plan said (.+)\)$/, ' ($1, not $2)'));
+  // (a good stroke said only when the read is sure of both the speed and the tip)
+  const low = rest.length ? rest.map(x => x[0].toUpperCase() + x.slice(1)).join(' · ') : c.madeA && w.sure && (c.landed === 'green' || c.landed === 'yellow') ? 'Good stroke' : w.sure ? 'Stroke as planned' : '';
+  const el = $('#coachSay'); if (!el) return; el.className = top[1]; el.innerHTML = '<b>' + top[0] + '</b>' + (low ? '<span>' + low + '</span>' : ''); el.hidden = false;
+  clearTimeout(CO.sayT); CO.sayT = setTimeout(() => { el.hidden = true; }, 5500);
+  toast('The stroke: ' + (w.words.join(', ') || (w.sure ? 'as planned' : 'not read clearly')), 5500);
+}
+// a ball found in late (V3.25: Nov 17 22:50 had five planned balls found in late, each first said "outside the zone"): the
+// shot's coaching row made, and where the cue ball stopped graded
+function coachLate(n) {
+  if (A.mode !== 'coach') return; const rec = CO.fits.get(n.n), row = A.sess && A.sess.shots.find(s => s.n === n.n), c = row && row.coach; if (!c || c.madeA || n.num !== c.An) return;
+  c.madeA = true; c.pocketA = n.pocket != null ? n.pocket : null; const fan = rec ? rec.fan : null; if (fan && c.cueAt) c.landed = COACH.fanGrade(fan, c.cueAt[0], c.cueAt[1]) || 'out';
+  dbg('coach_late', { n: n.n, landed: c.landed });
 }
 // the pockets for this ball, the next and the one after (V3.14.1, owner Nov 10: the rings were big and piled on the rest):
 // a dot on the pocket and a short line out away from the table to the ball's number on its colour. Several balls on one
@@ -1632,16 +1691,19 @@ function drawCoach1(c, S2, F) {
   const poly = (q, z = 0) => { c.beginPath(); q.forEach((v, i) => { const a = S2(A.cam.proj(v[0], v[1], z)); i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1]); }); c.closePath(); };
   const sh = p.shapes, safety = p.path && p.path.shot === 'safety';
   if (sh && !safety) { // (no zone for a safety: the next shot is the other player's)
-    // the zone (V3.18, owner Nov 10: longer, to show how good it is further out and how it narrows nearer the ball): along
-    // the planned leave's line from the next ball, the good stretch in rings, each as wide as the good window at its
-    // distance and coloured by the next shot's percentage there (the owner's bands); a thin line down the middle; no
-    // outlines. The target is the middle of the stretch (drawn as the perfect spot below).
+    // the zone (V3.18, owner Nov 10: long, to show how good it is further out and how it narrows nearer the ball): a fan
+    // from the next ball in rings along the good stretch of its line; no outlines. V3.25 (owner, Nov 18): the line is the
+    // ideal one, green on its correct side (more angle on the next ball), yellow on the other (less angle, still workable,
+    // to straight in); nothing past them. Each ring a little lighter further out. The target, where this stroke sends the
+    // cue ball, is the white ring below.
     const fz = p.zoneFan, fin = q => q && q.length > 2 && q.every(v => isFinite(v[0]) && isFinite(v[1]));
     if (fz && fz.rings) {
-      const col = q => q >= 0.9 ? '46,204,113' : q >= 0.8 ? '140,230,170' : q >= 0.6 ? '241,196,15' : '231,76,60';
-      for (const g of fz.rings) if (fin(g.poly)) { poly(g.poly); c.fillStyle = 'rgba(' + col(g.q) + ',.6)'; c.fill(); }
+      fz.rings.forEach((g, k) => { const a = (0.62 - 0.22 * k / Math.max(1, fz.rings.length - 1)).toFixed(2);
+        if (fin(g.green)) { poly(g.green); c.fillStyle = 'rgba(46,204,113,' + a + ')'; c.fill(); }
+        if (fin(g.yellow)) { poly(g.yellow); c.fillStyle = 'rgba(241,196,15,' + a + ')'; c.fill(); } });
       const l0 = S2(A.cam.proj(fz.line[0][0], fz.line[0][1], 0)), l1 = S2(A.cam.proj(fz.line[1][0], fz.line[1][1], 0));
-      c.lineWidth = 0.9; c.strokeStyle = 'rgba(244,241,232,.6)'; c.beginPath(); c.moveTo(l0[0], l0[1]); c.lineTo(l1[0], l1[1]); c.stroke();
+      c.lineWidth = 2.6; c.strokeStyle = 'rgba(11,16,20,.35)'; c.beginPath(); c.moveTo(l0[0], l0[1]); c.lineTo(l1[0], l1[1]); c.stroke();
+      c.lineWidth = 1.3; c.strokeStyle = 'rgba(244,241,232,.9)'; c.stroke();
     }
   }
   // (V3.22, owner Nov 16: the thin/thick band was too crowded and is gone: the aim line, the object ball's line, the cue
@@ -1721,9 +1783,9 @@ function coachStroke(c, F, st, n, pa) {
   else if (pa && shot !== 'safety' && !pa.noShape && (pa.next || 0) < 0.6) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(255,184,77,.95)'; c.fillText('No stroke reaches the zone from here', X, y + 34); }
   else if (pa && pa.alt) { c.font = '500 11px system-ui, -apple-system, sans-serif'; c.fillStyle = 'rgba(244,241,232,.65)'; c.fillText('Also: ' + ({ pot: 'pot', bank: 'bank', kick: 'kick', kick2: '2-rail kick', safety: 'safety' }[pa.alt.kind] || pa.alt.kind) + (pa.alt.kind === 'safety' ? '' : ' ' + pct(pa.alt.make)), X, y + 34); }
   const lv = st.speed ? st.power : [1, 3, 5][PT_LEVELS.indexOf(pw)] || 3; for (let i = 0; i < 6; i++) { c.fillStyle = i < lv ? 'rgba(89,214,232,.95)' : 'rgba(244,241,232,.18)'; c.fillRect(x - R + i * 8.4, y + R + 8, 6.6, 6); }
-  // the zone's colours, for reading it (owner's bands)
+  // the zone's colours, for reading it (V3.25: the line ideal, green the right side, yellow workable)
   const ly = y + R + 30; let lx = x - R; c.font = '500 10px system-ui, -apple-system, sans-serif';
-  for (const [col, t] of [['rgba(46,204,113,.95)', '90%+'], ['rgba(140,230,170,.95)', '80'], ['rgba(241,196,15,.95)', '60'], ['rgba(231,76,60,.95)', '50']]) { c.fillStyle = col; c.fillRect(lx, ly - 4, 9, 9); c.fillStyle = 'rgba(244,241,232,.8)'; c.fillText(t, lx + 12, ly + 1); lx += 12 + c.measureText(t).width + 10; }
+  for (const [col, t] of [['rgba(244,241,232,.95)', 'line: ideal'], ['rgba(46,204,113,.95)', 'right side'], ['rgba(241,196,15,.95)', 'workable']]) { c.fillStyle = col; c.fillRect(lx, ly - 4, 9, 9); c.fillStyle = 'rgba(244,241,232,.8)'; c.fillText(t, lx + 12, ly + 1); lx += 12 + c.measureText(t).width + 10; }
 }
 // ---------- the stroke tests (V3.11 power; V3.14 soft, medium, hard; V3.15 spin and draw/follow) ----------
 // From the Menu in the Coaching test, the cue ball (and for the draw test one object ball) on the player's own table:

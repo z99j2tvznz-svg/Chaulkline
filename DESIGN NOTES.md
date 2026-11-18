@@ -2141,3 +2141,43 @@ scoreboard. (A 10:48 session came as part 2 of 2; part 1 still to come.)
   - No "went in too" toasts in the table check: moving the phone made five late_made calls at 22:43.
   - Steady shifts of 2-4 px came and went while the phone was set at spot 1, before the capture (up to about 0.5 in at
     the far rail). Not known whether the phone moved; the shift at each capture is now logged to tell.
+- V3.25.0 (owner, Nov 18, with the Nov 17 22:50 Coaching test session; 27 shots, 25 plans, 3 rejected):
+  - Owner: the zone had green on both sides of its line. They want the ideal line, green on the correct side, yellow on
+    the other side ("still workable"), and nothing past. They play better looking at the position than following the
+    stroke, and asked to be told after the shot whether it was too hard, too much spin, overcut or undercut.
+  - The zone (coach.js zoneFan):
+    - The line is the direction from the next ball, within 60° of straight in on the planned leave's side, whose good
+      stretch is best (lineRun's Qm, smoothed over 5°). The planned leave's own direction is used when it is within 0.03.
+    - Green: from the line toward more angle, out to where q < run.T. Yellow: from the line toward straight in, q ≥
+      max(0.5, T − 0.12), never past straight in. At most 30° each way. Under 5° from straight in, green takes the
+      better side.
+    - Same-side search: without it, the ideal sometimes lay across straight in from the plan (another route to C), and
+      the white ring fell outside the fan. Over the session's 36 layouts, offline with default options: the target is
+      on the line in 31 and inside the fan in 33. The 3 outside are plans whose stroke can't reach the zone.
+    - The target is unchanged: the middle of the good stretch on the planned leave's line. fanGrade(fz, x, y) gives
+      'green' | 'yellow' | null; landed now uses it ('out' when the ball was made outside the fan). The grid's band is
+      kept as c.cell. Legend: line ideal, right side, workable.
+  - Reading the stroke back (coach.js fitStroke, in a second worker):
+    - The aim comes from the object ball's first three moving places (and the pocket it went in), at the planned speed
+      and tip. If it was made and never seen, the middle of the pocket's window.
+    - Then speed 0.4-2.6× (8% steps) × tip −0.6..0.6 (0.1), refined round the three best separate cells (2%, 0.025).
+      Error: distance to where the cue ball stopped, + 0.5 × the mean distance of the places seen to the simulated way,
+      + 0.7 × the mean distance at the looks' own times (clocks lined up on the first place 3 in from the start).
+    - A miss gets the potting window at that stroke: fuller than needed is undercut, thinner is overcut; within 0.15°
+      it is "just missed".
+    - "Sure" only when every cell within max(1 in, 25%) of the best gives the same verdict. Harder with less follow and
+      softer with more make a narrow slanting valley, often within an inch at three looks a second.
+    - About 600 runs, 0.4-1.3 s in node.
+  - Words (strokeWords): the cut first on a miss. Then too hard (≥1.12×) or too soft (≤0.89×), naming the speed word it
+    was against the plan's (speedWordOf on the player's speeds). Then the tip: 0.2 of the radius off is not enough /
+    too much draw or follow. Nothing on speed or tip when err > 3.5 in or obErr > 2. "Good stroke" only when sure of both.
+  - Said big (#coachSay, 5.5 s) 2.2 s after the shot ends, once late calls are in. A late make of the planned ball now
+    marks the row made and grades its landing (coachLate). Nov 17 had five, each first said "outside the zone".
+  - The "came off N° off the line" words are gone: at 2-3 looks a second they read 116-170° on made shots.
+  - Nov 17 22:50 read back with the real positions at each shot (the 15 shots with A hit first):
+    - #3 too soft. #8 undercut, too hard, not enough follow. #10 undercut, too hard. #12 too hard.
+    - #13 not enough draw (it still landed in the green). #14 overcut, too soft. #18 not enough draw. #20 too hard.
+    - The rest are unsure or not read.
+    - The plan's direction off the object ball matched within 6° on the made shots with a clean path (12, 15, 19, 22).
+    - Most strokes were 1.1-1.4× the plan's speed. Not yet used to change the plan's speeds: the player was choosing
+      their own strokes. coach_fit logs each for the next reviews.
